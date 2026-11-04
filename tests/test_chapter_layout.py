@@ -61,6 +61,21 @@ def unresolved_svg_references(page):
 
 
 class ChapterLayoutTests(unittest.TestCase):
+    def test_source_offsets_count_only_lf_inside_opaque_scripts(self):
+        for separator in ('\u2028', '\r', '\f'):
+            with self.subTest(separator=repr(separator)):
+                opaque = ('<script>const text = "before' + separator + 'after";</script>'
+                          '<script type="application/json">{"text":"before' + separator + 'after"}</script>')
+                opening = '<a id="later" href="index.html#part">'
+                source = '<div>' + opaque + '\n' + opening + 'Label</a></div>'
+                nodes = [node for root in Structure(source).roots for node in root.descendants()]
+                anchor = next(node for node in nodes if node.tag == 'a')
+                self.assertEqual(anchor.start, source.index(opening))
+                self.assertEqual(source[anchor.start:anchor.opening_end], opening)
+                self.assertEqual(source[anchor.closing_start:anchor.end], '</a>')
+                scripts = [node for node in nodes if node.tag == 'script']
+                self.assertEqual(''.join(source[node.start:node.end] for node in scripts), opaque)
+
     def test_public_anchors_and_original_content(self):
         text = '<h1 id="name">A guide</h1><p>Original introduction.</p><h2 id="first">First</h2><p>1.25 m</p><h3 id="sub">Detail</h3><pre>keep(x)</pre><h2 id="last">Last</h2><p>Done.</p>'
         markup, toc = reader_page([(None, text)], [['Overview', '#top'], ['First', '#first'], ['-Detail', '#sub'], ['Last', '#last']], 'Guide', '')

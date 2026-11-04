@@ -4,6 +4,7 @@ const fs = require('node:fs/promises');
 const http = require('node:http');
 const path = require('node:path');
 const assert = require('node:assert/strict');
+const {settle, checkLayout, setView, goHash, readerChecks} = require('../tooling/browser_checks.cjs');
 const kit = path.resolve(__dirname, '..');
 const root = path.join(kit, 'examples/starter/.build/docs');
 const output = path.join(kit, '.build/visual-review');
@@ -33,21 +34,23 @@ const server = http.createServer(async (req,res) => {
       page.on('pageerror',error=>failures.push(error.message));
       page.on('response',response=>{if(response.status()>=400) failures.push(response.url()+': '+response.status());});
       await page.goto(origin+'/html/guide.html',{waitUntil:'networkidle'});
-      await page.evaluate(()=>document.fonts.ready);
-      await page.waitForSelector('body.reader-enabled');
-      const count=await page.locator('.chapter-body').count();
+      await settle(page);
+      const readerScope = await readerChecks(page, {url:origin+'/html/guide.html', expectedChapters:6,
+        onPair:async () => {
+          await checkLayout(page);
+          await page.screenshot({path:path.join(output,`${viewport.width}-comparison-pinned.png`)});
+        }});
+      const {chapterIds} = readerScope;
+      const count=chapterIds.length;
       for(let index=0;index<count;index++) {
-        if(index) await page.keyboard.press('ArrowRight');
+        await goHash(page, origin+'/html/guide.html', chapterIds[index]);
         await page.screenshot({path:path.join(output,`${viewport.width}-chapter-${index+1}.png`)});
-        const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);
-        assert.equal(overflow,false,`page overflow at ${viewport.width}, chapter ${index+1}`);
-        const broken=await page.locator('img').evaluateAll(images=>images.filter(i=>!i.complete||i.naturalWidth===0).length);
-        assert.equal(broken,0,'broken image');
+        await checkLayout(page);
       }
       if(viewport.width>900) {
-        await page.locator('[data-reader-view="pair"]').click();
+        await setView(page, 'pair');
+        await checkLayout(page);
         await page.screenshot({path:path.join(output,`${viewport.width}-comparison.png`)});
-        assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
       } else {
         const region=page.locator('.scroll[aria-label="Maintenance options; scroll horizontally"]');
         const metrics=await region.evaluate(el=>({scroll:el.scrollWidth,client:el.clientWidth,minWidth:getComputedStyle(el.querySelector('table')).minWidth}));
@@ -57,14 +60,14 @@ const server = http.createServer(async (req,res) => {
         await region.evaluate(el=>{el.scrollLeft=el.scrollWidth;});
         await page.screenshot({path:path.join(output,'390-table-end.png')});
       }
-      if(viewport.width<900) await page.locator('[data-reader-view-select]').selectOption('full');
-      else await page.locator('[data-reader-view="full"]').click();
+      await setView(page, 'full');
+      await checkLayout(page);
       await page.screenshot({path:path.join(output,`${viewport.width}-all.png`),fullPage:true});
       assert.deepEqual(failures,[]);
       await page.goto(origin+'/html/index.html',{waitUntil:'networkidle'});
       await page.screenshot({path:path.join(output,`${viewport.width}-home.png`),fullPage:true});
-      assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'Home page overflow');
-      results.push({viewport,chapters:count,consoleErrors:failures,horizontalOverflow:false});
+      await checkLayout(page);
+      results.push({viewport,chapters:count,readerScope,consoleErrors:failures,horizontalOverflow:false});
       await context.close();
     }
     const fallback=await browser.newContext({viewport:{width:390,height:844},javaScriptEnabled:false});

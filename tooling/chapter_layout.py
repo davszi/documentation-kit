@@ -35,8 +35,9 @@ class Structure(HTMLParser):
         super().__init__(convert_charrefs=False)
         self.text, self.roots, self.stack = text, [], []
         self.offsets = [0]
-        for line in text.splitlines(keepends=True):
-            self.offsets.append(self.offsets[-1] + len(line))
+        # HTMLParser advances its line counter only for LF, not the other
+        # separators recognized by str.splitlines (for example U+2028 or CR).
+        self.offsets.extend(match.end() for match in re.finditer("\n", text))
         self.feed(text)
         self.close()
         if self.stack:

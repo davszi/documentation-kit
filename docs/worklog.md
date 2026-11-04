@@ -2,6 +2,25 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-04 — Shared publication and browser checks
+
+- Extract the optional existing-site exporter and common browser checks from
+  adaptation. Projects retain publication admission, stable URLs, historical
+  packaging, credentials and scientific assertions. The
+  [maintenance contracts](../rules/maintenance.md#exporting-into-an-existing-publication)
+  own both APIs. Homepage composition stays project-owned; the starter is an
+  optional example, as recorded in the [writing rules](../rules/writing.md#project-owned-homepages).
+- Preserve embedded JavaScript/JSON and unrelated HTML bytes. Align source-span
+  offsets with HTMLParser's LF counting and cover literal Unicode/control
+  separators plus mixed mapped/unmapped routes. Browser checks retain real
+  clipping/visibility rules and report impossible short-reader cases as skipped.
+- Strict starter lint has zero warnings; all 52 Python checks, JavaScript checks,
+  real browser failure fixtures and desktop/phone reader checks pass. Independent
+  source review findings are resolved. [Receipts](../verification/publication-browser.json)
+  retain tested inputs and bounded resources under the shared lock. Consumer
+  adoption and public-bundle comparison remain project-owned. This landing
+  supplies the commit identity.
+
 ## 2026-11-04 — Generated-content compatibility
 
 - Support a tracked project `content_transform` for importing scientific or

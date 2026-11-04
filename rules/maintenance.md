@@ -57,8 +57,10 @@ project files, for example `"viewer/renderer.js" = "docs/site/assets/vendor/rend
 List licenses/source notices alongside their dependencies. Paths must stay
 inside the project, and project assets cannot overwrite shared kit assets.
 
-The reader-free home page also selects shared `home.css` for its hero, links and
-automatically generated topic cards. Keep its content and page registry local.
+The starter's reader-free home page selects shared `home.css` for its hero,
+links and generated topic cards. That stylesheet and arrangement are optional;
+projects may author their own homepage and local styles. Follow
+[project-owned homepage composition](writing.md#project-owned-homepages).
 
 Wrap a wide comparison table in `.scroll` with `role="region"`, a useful
 `aria-label`, `tabindex="0"` and `data-reader-horizontal`. This keeps scrolling
@@ -116,6 +118,56 @@ path must stay inside the repository. New projects use `docs/worklog.md`.
 
 Generated figures retain generator, revision, inputs, date and output hash. Frozen document collections retain original logical paths, revisions, bytes and hashes. Validate those identities separately from link resolution and presentation. Do not rewrite historical originals to make current lint convenient.
 
+## Exporting into an existing publication
+
+`tooling/publication.py` exports an already-generated kit bundle into a
+project-owned publication directory. It does not build a second site or choose
+which repository files are public. Import `export_pages` from the pinned kit's
+`tooling` directory after building. Supply:
+
+- `generated_root`, `destination` and repository `root` as explicit paths.
+- `tracked` repository paths and `public_files`, a repository-to-public path
+  mapping admitted by the project and already present in the publication.
+- `page_routes` for generated-to-public paths and `pages` for output HTML to
+  rewrite. Unmapped generated outputs retain their names. Relative links account
+  for moved pages and their unchanged siblings.
+- `private_suffixes`, `private_prefixes` and `local_notice` for the project's
+  source-link and unavailable-evidence policy.
+- `replace` for the exact existing output paths that may be overwritten.
+  Byte-identical copies need no replacement permission.
+
+The exporter validates paths, symlinks, mapped resources and collisions before
+writing. It modifies actual HTML attributes and unavailable-evidence anchors;
+embedded JavaScript/JSON and unrelated source bytes remain opaque. The shared
+source-span parser counts LF exactly as `HTMLParser` does. Keep output selection,
+historical guide packaging, source URLs, privacy decisions and deployment
+credentials in the consuming project. The generated input is the trusted kit
+build, not an arbitrary repository directory.
+
+## Reusable browser checks
+
+`tooling/browser_checks.cjs` accepts an existing Playwright page. It never starts
+a browser, server or experiment. Projects own those lifetimes, page routes,
+expected counts, screenshots and domain assertions. The shared module provides:
+
+- `settle`, `visibleMedia`, `measureOverflow`, `assertHorizontalContainment` and
+  `checkLayout` for fonts, actually visible images and viewport containment.
+  Image visibility includes ancestor clipping; hidden/inert and offscreen lazy
+  images do not become broken-image failures merely because they are mounted.
+- `setView`, `activeChapter`, `waitActive` and `goHash` for shared reader control.
+- `readerChecks(page, {url, expectedChapters, check?, onPair?})` for real
+  navigation/history and comparison pinning. It returns
+  `{chapterIds, checked, skipped}`; short readers report impossible interactions
+  as skipped rather than passed. Caller callbacks may retain project reports
+  and capture the paired state.
+
+Kit fixtures verify both failures and valid contained layouts, including readers
+with one to three chapters. The kit's visual review and consuming-project
+harnesses use the same functions. Domain numbers, recordings, task controls and
+scientific qualification remain project assertions. Run browser jobs under the
+consumer's shared local resource policy; importing these helpers grants no
+permission to start another heavy job.
+
 ## Shared reading layout
 
 Keep fonts and browser/math dependencies vendored with licenses and source/version notices. The shared build-sheet theme uses its bundled font families; pages load no external fonts. Local page CSS adds only page-specific needs.
@@ -124,7 +176,7 @@ Keep fonts and browser/math dependencies vendored with licenses and source/versi
 
 The tree contains home, ordered groups/pages and the current page's chapters. Wide screens use a docked sidebar by default; narrow screens start closed and open it over content. Preserve the shared breakpoint behavior and remembered choices. Adjacent chapters and keyboard navigation remain discoverable; pinned columns remain fixed while the other navigates. Controls adapt to actual column width.
 
-Home uses `reader = false` and `<!-- site-map -->`. The builder derives cards from visible registered pages, their title/description and available first-figure thumbnail. Handwritten status summaries are dated and updated when their underlying state changes; they must not become another status owner.
+A reader-free home uses `reader = false`. The optional `<!-- site-map -->` marker derives cards from visible registered pages, their title/description and available first-figure thumbnail. Projects may instead compose their own homepage. Handwritten status summaries are dated and updated when their underlying state changes; they must not become another status owner.
 
 Each column independently selects Math, Experiments, Code and Alternatives; Story stays visible. Preserve layer preferences, individual fold states and reading positions across revisits. Changing a layer preserves the visible anchor or its closed summary. A deep link opens its containing fold. History restores arrangements without undoing current reading preferences. Without JavaScript, content and native folds remain usable; print includes every layer; transitions respect reduced motion.
 

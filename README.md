@@ -108,6 +108,13 @@ captures require explicit configuration. Optional `evidence_manifests` enable
 exact-byte verification without requiring any platform-specific collection.
 See [maintenance](rules/maintenance.md) for source paths and extension points.
 
+Existing sites can use the shared [publication exporter](rules/maintenance.md#exporting-into-an-existing-publication)
+to preserve their public routes and selected evidence. The
+[browser-check helpers](rules/maintenance.md#reusable-browser-checks) support
+project harnesses without moving their domain assertions. Homepage composition
+stays [project-owned](rules/writing.md#project-owned-homepages); the starter is
+optional.
+
 ## Develop the kit
 
 ```bash
@@ -128,6 +135,7 @@ development environment:
 
 ```bash
 DOCS_PLAYWRIGHT=/path/to/playwright DOCS_CHROMIUM=/path/to/chromium node tests/visual_review.cjs
+DOCS_PLAYWRIGHT=/path/to/playwright DOCS_CHROMIUM=/path/to/chromium node tests/test_browser_checks.cjs
 DOCS_PLAYWRIGHT=/path/to/playwright DOCS_CHROMIUM=/path/to/chromium node tests/test_panel_switcher.cjs
 ```
 

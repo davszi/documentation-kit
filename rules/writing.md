@@ -12,6 +12,19 @@ Navigation follows prerequisite order. Important comparisons have direct entries
 
 Use available width. Text, figures and tables share a left edge. Avoid narrow centered text columns and half-empty rows. Expressive details may include short transitions, rich syntax colors, gradient hairlines and hover emphasis; they must respect reduced motion and accessibility.
 
+### Project-owned homepages
+
+Each project chooses its homepage composition, information hierarchy, sections,
+hero treatment and visual story. Using the shared kit does not require projects
+to have matching homepages. A research narrative, an engineering reference and
+a navigation dashboard can use different arrangements and local presentation.
+
+Shared visual components are optional building blocks with clear recurring
+uses, such as disclosures, comparison controls and table treatment. Sharing one
+component does not transfer ownership of the surrounding page. Keep project
+illustrations, scientific figures, domain widgets and distinctive compositions
+local. The starter homepage is an example, not a required project template.
+
 ## Build-sheet pages
 
 Opt in with `page_css = ["build-sheet.css"]`. Keep page-specific extras in a separate local stylesheet. The shared theme supplies vendored Saira Condensed headings, IBM Plex Sans body text and IBM Plex Mono labels/units; do not fetch remote fonts.
