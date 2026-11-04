@@ -45,6 +45,13 @@ Prefer `.html` links when the purpose is reading a page and explicit source link
 
 Includes resolve from `docs/site/`. `page_css = ["build-sheet.css"]` selects the kit's shared theme resource. Local stylesheet entries such as `../site/assets/example.css` resolve from the shared `docs/topics/` configuration base. Do not introduce machine-specific absolute paths or remote font/media dependencies.
 
+Register project-specific script components with `extra_components = ["viewer"]`;
+each uses a tracked `docs/site/components/<name>.js`. For dynamically loaded
+dependencies, `[extra_assets]` maps output names below `html/assets/` to tracked
+project files, for example `"viewer/renderer.js" = "docs/site/assets/vendor/renderer.js"`.
+List licenses/source notices alongside their dependencies. Paths must stay
+inside the project, and project assets cannot overwrite shared kit assets.
+
 The reader-free home page also selects shared `home.css` for its hero, links and
 automatically generated topic cards. Keep its content and page registry local.
 
@@ -73,6 +80,18 @@ For local review, serve the generated `.build/docs/` directory on loopback and o
 Package only allowlisted tracked inputs actually needed by pages. Do not mirror the repository, include untracked fragments, follow symlinks into unrelated files or upload large local captures automatically. Verify physical closure: referenced CSS, scripts, fonts, figures, media and nested resources must resolve inside the intended bundle or be explicitly declared source/local-evidence links.
 
 Register intentionally retained local media in the project's supported local-artifact manifest or `local_media` configuration. Do not mask a typo or genuinely missing required resource as local evidence. Preserve large recordings and hashes with the producing experiment; publish a tracked poster/keyframe and visible local-capture notice. A deliberately tracked, approved small clip may be packaged. File-mode access to a local recording is not proof that a hosted reader can open it.
+
+Projects with existing historical-path or evidence schemas can register local
+Python adapters using `path_resolver = "tools/docs/site_paths.py"` and
+`evidence_validator = "tools/docs/evidence_documents.py"` in `site.toml`.
+Adapter files must be tracked, contained regular Python files without symlink
+components. They execute as project tooling, so review them with configuration.
+The path adapter exports `resolve_legacy_path(path, root, *, recorded_roots=())`
+and owns the complete mapping, including generated documentation paths. The
+evidence adapter exports `MANIFESTS`, `manifest_documents(root, *, require_all_manifests=False)`
+returning `(documents, revisions)`, and `verify` with the same arguments; invalid
+evidence raises `ValueError`. Projects keep adapter tests and schema policy;
+the kit keeps one build/lint engine and uses the adapters consistently.
 
 Generated figures retain generator, revision, inputs, date and output hash. Frozen document collections retain original logical paths, revisions, bytes and hashes. Validate those identities separately from link resolution and presentation. Do not rewrite historical originals to make current lint convenient.
 

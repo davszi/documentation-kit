@@ -77,6 +77,12 @@ _evidence_spec = importlib.util.spec_from_file_location(
     "docsite_evidence_documents", Path(__file__).with_name("evidence_documents.py"))
 _evidence = importlib.util.module_from_spec(_evidence_spec)
 _evidence_spec.loader.exec_module(_evidence)
+from project_extensions import load_extension
+_project_evidence = load_extension(REPO, 'evidence_validator')
+if _project_evidence is not None:
+    if not all(callable(getattr(_project_evidence, name, None)) for name in ('manifest_documents', 'verify')) or not hasattr(_project_evidence, 'MANIFESTS'):
+        raise ValueError('evidence_validator must export MANIFESTS, manifest_documents and verify')
+    _evidence = _project_evidence
 
 
 def evidence_document_locations() -> dict[Path, Path]:

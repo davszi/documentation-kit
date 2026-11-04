@@ -2,6 +2,19 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-04 — Consumer compatibility adapters
+
+- Add explicit tracked/contained project path and evidence adapters, keeping
+  consumer historical identities and schema policy out of the shared engine.
+  Declare project-only dynamic dependencies through `extra_assets`; reject
+  shared-asset collisions and noncanonical/escaping target paths. The
+  [maintenance contract](../rules/maintenance.md) owns configuration and API.
+- Strict starter build/lint, all 26 Python checks, math/source-link JavaScript
+  checks and existing desktop/phone reader browser checks pass. [Receipts](../verification/project-extensions.json)
+  retain inputs, output and the owned 4 GiB/zero-swap scope under the shared
+  lock. No application runtime was launched. This landing supplies the commit
+  identity; consumer adoption and its content validation remain project-owned.
+
 ## 2026-11-04 — Shared local comparison controls
 
 - Extract the reusable width-lesson interaction as `panel-switcher`, with neutral

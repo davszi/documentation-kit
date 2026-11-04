@@ -547,6 +547,19 @@ def gather_assets(site: dict) -> dict[str, bytes]:
         for p in sorted(KATEX_SRC.rglob("*")):
             if p.is_file():
                 assets[f"assets/katex/{p.relative_to(KATEX_SRC).as_posix()}"] = p.read_bytes()
+    extra = site.get('extra_assets', {})
+    if not isinstance(extra, dict):
+        raise ValueError('extra_assets must map asset names to project files')
+    for name, source in extra.items():
+        if (not isinstance(name, str) or not name or Path(name).is_absolute()
+                or '\\' in name or Path(name).as_posix() != name
+                or '..' in Path(name).parts or not isinstance(source, str)
+                or Path(source).is_absolute() or '..' in Path(source).parts):
+            raise ValueError('extra_assets must use contained relative paths')
+        destination = 'assets/' + name
+        if destination in assets:
+            raise ValueError('Project asset would overwrite a shared asset: ' + name)
+        assets[destination] = local_resource(REPO / source).read_bytes()
     return assets
 
 

@@ -2,6 +2,7 @@
 import os
 from pathlib import Path
 import tomllib
+from project_extensions import load_extension
 
 REPO = Path(os.environ.get("DOCSITE_PROJECT_ROOT", Path.cwd())).resolve()
 DOCS = REPO / "docs"
@@ -12,6 +13,9 @@ OUTPUT_ROOT = REPO / ".build" / "docs"
 HTML = OUTPUT_ROOT / "html"
 _config_path = SITE / "site.toml"
 _config = tomllib.loads(_config_path.read_text()) if _config_path.is_file() else {}
+_project_paths = load_extension(REPO, 'path_resolver')
+if _project_paths is not None and not callable(getattr(_project_paths, 'resolve_legacy_path', None)):
+    raise ValueError('path_resolver must export resolve_legacy_path')
 _ALIASES = ((Path("docs/html"), Path(".build/docs/html")),)
 # Optional historical identities belong to the consuming project.
 LEGACY_FILES = {Path(old): Path(new) for old, new in _config.get("legacy_files", {}).items()}
@@ -33,6 +37,8 @@ def is_topic_page(path, root=REPO):
 
 
 def resolve_legacy_path(path, root=REPO, *, recorded_roots=()):
+    if _project_paths is not None:
+        return _project_paths.resolve_legacy_path(path, root=root, recorded_roots=recorded_roots)
     root = Path(root).resolve()
     path = Path(path)
     absolute = Path(os.path.abspath(path if path.is_absolute() else root / path))

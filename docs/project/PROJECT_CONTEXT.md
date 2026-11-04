@@ -17,7 +17,8 @@ The [README](../../README.md) owns consumer setup and update commands;
 The [extraction record](../topics/extraction/extraction.md) owns initial scope,
 evidence and limits. [Worklog](../worklog.md) owns chronology. Source files in
 `rules/` remain canonical for transferable rules; consumer exceptions stay in
-the consuming repository. The original project has not yet adopted this kit.
+the consuming repository. Consumer adoption and compatibility status belong in
+each consuming project's own documentation.
 
 The [local comparison contract](../topics/panel-switcher/panel-switcher.md)
 owns the shared panel switcher's authoring, behavior and extraction checks.

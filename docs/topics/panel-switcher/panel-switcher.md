@@ -41,9 +41,8 @@ This implementation is extracted from ADP's `width-lessons.js` with neutral
 attribute names. The [origin receipt](../../../verification/panel-switcher-origin.json)
 records source and extracted identities. At ADP adoption, rename the component
 and `data-width-*` switching attributes to this contract; retain its track
-figures and specialized CSS locally. ADP still uses its original toolchain and
-compatibility copy until that migration. No new submodule integration is
-implied by this extraction.
+figures and specialized CSS locally. The consuming project's documentation
+owns its adoption and compatibility status.
 
 ## Verification
 

@@ -77,7 +77,7 @@ The later [panel-switcher extraction](../docs/topics/panel-switcher/panel-switch
 shares the generic switching, hash, print and control-style portions of
 `docs/site/components/width-lessons.{js,css}`. Track scenarios, figures, data,
 legends and specialized figure layouts remain project-owned. The source
-project's compatibility copy remains until its kit adoption.
+project's own documentation records adoption and compatibility status.
 
 The original home page's embedded stylesheet is also extracted into shared
 `theme/assets/home.css`: hero, navigation cards, topic gallery, hover states and

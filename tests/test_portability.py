@@ -67,6 +67,51 @@ class Consumers(unittest.TestCase):
         result = invoke('lint', '--project', self.root, '--strict')
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_project_path_and_evidence_adapters_are_used(self):
+        config = self.root / 'docs/site/site.toml'
+        config.write_text('path_resolver = "adapter.py"\nevidence_validator = "evidence.py"\n' + config.read_text())
+        (self.root / 'adapter.py').write_text('''from pathlib import Path
+import os
+def resolve_legacy_path(path, root, *, recorded_roots=()):
+    path = Path(path)
+    path = Path(os.path.abspath(path if path.is_absolute() else root / path))
+    old = root / "docs/html"
+    return root / ".build/docs/html" / path.relative_to(old) if path.is_relative_to(old) else path
+''')
+        (self.root / 'evidence.py').write_text('''MANIFESTS = ()
+def manifest_documents(root, *, require_all_manifests=False): return [], {}
+def verify(root, *, require_all_manifests=False): raise ValueError("project evidence gate exercised")
+''')
+        self.track()
+        subprocess.run(['git', 'add', 'adapter.py', 'evidence.py'], cwd=self.root, check=True)
+        result = invoke('build', '--project', self.root)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        result = invoke('lint', '--project', self.root)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('project evidence gate exercised', result.stdout + result.stderr)
+
+    def test_untracked_adapter_is_rejected_before_execution(self):
+        config = self.root / 'docs/site/site.toml'
+        config.write_text('path_resolver = "adapter.py"\n' + config.read_text())
+        (self.root / 'adapter.py').write_text('raise RuntimeError("must never execute")\n')
+        self.track()
+        result = invoke('build', '--project', self.root)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('must be tracked', result.stderr)
+        self.assertNotIn('RuntimeError: must never execute', result.stderr)
+
+    def test_adapter_symlink_is_rejected_before_execution(self):
+        config = self.root / 'docs/site/site.toml'
+        config.write_text('path_resolver = "adapter.py"\n' + config.read_text())
+        (self.root / 'real.py').write_text('raise RuntimeError("must never execute")\n')
+        (self.root / 'adapter.py').symlink_to('real.py')
+        self.track()
+        subprocess.run(['git', 'add', 'adapter.py', 'real.py'], cwd=self.root, check=True)
+        result = invoke('build', '--project', self.root)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('cannot use symlinks', result.stderr)
+        self.assertNotIn('RuntimeError: must never execute', result.stderr)
+
     def test_title_and_source_links_belong_to_the_consumer(self):
         config = self.root / 'docs/site/site.toml'
         config.write_text(config.read_text().replace('Documentation kit', 'Second project').replace('home_label = "Docs"', 'home_label = "Second"'))
@@ -77,6 +122,28 @@ class Consumers(unittest.TestCase):
         self.assertIn('<title>Second project</title>', home)
         page = (self.root / '.build/docs/html/guide.html').read_text()
         self.assertIn('data-site-home-label="Second"', page)
+
+    def test_declared_project_assets_are_packaged_without_shared_overwrite(self):
+        config = self.root / 'docs/site/site.toml'
+        original = config.read_text()
+        dependency = self.root / 'renderer.js'
+        dependency.write_text('// local renderer dependency\n')
+        config.write_text(original + '\n[extra_assets]\n"viewer/renderer.js" = "renderer.js"\n')
+        self.track()
+        subprocess.run(['git', 'add', 'renderer.js'], cwd=self.root, check=True)
+        result = invoke('build', '--project', self.root)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual((self.root / '.build/docs/html/assets/viewer/renderer.js').read_bytes(), dependency.read_bytes())
+        config.write_text(original + '\n[extra_assets]\n"base.css" = "renderer.js"\n')
+        result = invoke('build', '--project', self.root)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('overwrite a shared asset', result.stderr)
+        for name in ('./base.css', 'other/../base.css', '..\\base.css'):
+            with self.subTest(name=name):
+                config.write_text(original + '\n[extra_assets]\n' + json.dumps(name) + ' = "renderer.js"\n')
+                result = invoke('build', '--project', self.root)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('contained relative paths', result.stderr)
 
     def test_missing_required_resource_fails_instead_of_publishing_broken_media(self):
         guide = self.root / 'docs/topics/guide/index.md'
