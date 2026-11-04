@@ -1,0 +1,35 @@
+{
+  "legacy": true,
+  "source": "/home/deivid/dev/Autonomous_Driving_Platform/docs/site/components/width-lessons.js",
+  "results": [
+    {
+      "viewport": {
+        "width": 1600,
+        "height": 1000
+      },
+      "defaults": true,
+      "independentGroups": true,
+      "buttonsAndKeyboard": true,
+      "hashReveal": true,
+      "printRestore": true,
+      "invalidInputReadable": true,
+      "horizontalOverflow": false,
+      "pageErrors": []
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "defaults": true,
+      "independentGroups": true,
+      "buttonsAndKeyboard": true,
+      "hashReveal": true,
+      "printRestore": true,
+      "invalidInputReadable": true,
+      "horizontalOverflow": false,
+      "pageErrors": []
+    }
+  ],
+  "noJavaScriptReadable": true
+}

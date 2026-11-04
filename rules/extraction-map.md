@@ -73,6 +73,12 @@ This map accounts for the headings in the source documents used to extract this 
 
 ## Additional user design policy
 
+The later [panel-switcher extraction](../docs/topics/panel-switcher/panel-switcher.md)
+shares the generic switching, hash, print and control-style portions of
+`docs/site/components/width-lessons.{js,css}`. Track scenarios, figures, data,
+legends and specialized figure layouts remain project-owned. The source
+project's compatibility copy remains until its kit adoption.
+
 The original home page's embedded stylesheet is also extracted into shared
 `theme/assets/home.css`: hero, navigation cards, topic gallery, hover states and
 responsive layout. The shared version uses the available width. Its project

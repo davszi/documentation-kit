@@ -105,6 +105,11 @@ Keep existing marker names and saved values stable. Human labels may differ from
 
 ## Maintaining shared interactions
 
+For independent option comparisons, select the shared `panel-switcher`
+component and follow its [authoring contract](../docs/topics/panel-switcher/panel-switcher.md).
+It owns local switching and generic controls; projects keep their comparison
+content, data and specialized figure styling.
+
 Load optional heavy components only on pages that use them. Recorded or linked viewers consume declared local data with stable identities and one shared selected state. Keep a poster while loading, confine gestures and keyboard handling to the component, and preserve no-JavaScript reading.
 
 Version-specific renderer/color-space behavior, application viewers, recording protocols and domain datasets belong in the consuming project's component or topic records. Their availability must be checked against the pinned kit; do not promote application-specific or planned features into shared guarantees.

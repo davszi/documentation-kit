@@ -19,6 +19,9 @@ evidence and limits. [Worklog](../worklog.md) owns chronology. Source files in
 `rules/` remain canonical for transferable rules; consumer exceptions stay in
 the consuming repository. The original project has not yet adopted this kit.
 
+The [local comparison contract](../topics/panel-switcher/panel-switcher.md)
+owns the shared panel switcher's authoring, behavior and extraction checks.
+
 Development checks use Python 3.12, the pinned root `requirements.txt` and Node
 22. Run `bash tests/run_checks.sh` with `DOCS_PYTHON` selecting that interpreter.
 Browser review additionally uses Playwright/Chromium as documented in README.

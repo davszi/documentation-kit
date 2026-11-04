@@ -49,7 +49,7 @@ KATEX_SRC = KIT_SITE / "assets" / "vendor" / "katex"
 
 FRONTMATTER_KEYS = {"title", "slug", "brand", "brand_sub", "math", "components", "page_css", "toc", "raw", "ongoing", "reader"}
 KNOWN_COMPONENTS = ("toc", "nav", "tabs", "diagram", "code", "filelinks",
-                    "lightbox", "plot-toggles", "carousel",
+                    "lightbox", "plot-toggles", "carousel", "panel-switcher",
                     "fold-controls", "chapter-reader", "page-redirect")  # emission order
 # Vendored font folders under assets/vendor/, published to assets/fonts/<family>/.
 FONT_FAMILIES = ("atkinson-hyperlegible", "saira-condensed", "ibm-plex-sans", "ibm-plex-mono")
@@ -474,6 +474,8 @@ def build_page(md_path: Path, site: dict, shell: str) -> tuple[str, str] | None:
         head_extra += '<link rel="stylesheet" href="assets/chapter-reader.css">\n'
     if "width-lessons" in comps:
         head_extra += '<link rel="stylesheet" href="assets/width-lessons.css">\n'
+    if "panel-switcher" in comps:
+        head_extra += '<link rel="stylesheet" href="assets/panel-switcher.css">\n'
     for css in meta.get("page_css", []):
         if not page_stylesheet(css).is_file():
             err(f"{name}: page_css not found: {css}")
@@ -531,6 +533,7 @@ def gather_assets(site: dict) -> dict[str, bytes]:
     assets: dict[str, bytes] = {}
     assets["assets/base.css"] = (COMPONENTS / "base.css").read_bytes()
     assets["assets/chapter-reader.css"] = (COMPONENTS / "chapter-reader.css").read_bytes()
+    assets["assets/panel-switcher.css"] = (COMPONENTS / "panel-switcher.css").read_bytes()
     for c in KNOWN_COMPONENTS:
         text = component_script(c).read_text()
         if c == "filelinks":

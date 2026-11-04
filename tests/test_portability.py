@@ -51,6 +51,22 @@ class Consumers(unittest.TestCase):
         self.assertIn('No files written', result.stderr)
         self.assertEqual(source.read_text(), 'keep this\n')
 
+    def test_shared_panel_switcher_needs_no_local_extension(self):
+        guide = self.root / 'docs/topics/guide/index.md'
+        guide.write_text(guide.read_text().replace('components = ["toc",', 'components = ["panel-switcher", "toc",'))
+        self.track()
+        result = invoke('build', '--project', self.root)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        output = self.root / '.build/docs/html'
+        page = (output / 'guide.html').read_text()
+        self.assertIn('href="assets/panel-switcher.css"', page)
+        self.assertIn('src="assets/panel-switcher.js"', page)
+        for extension in ('js', 'css'):
+            name = 'panel-switcher.' + extension
+            self.assertEqual((output / 'assets' / name).read_bytes(), (KIT / 'theme/components' / name).read_bytes())
+        result = invoke('lint', '--project', self.root, '--strict')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_title_and_source_links_belong_to_the_consumer(self):
         config = self.root / 'docs/site/site.toml'
         config.write_text(config.read_text().replace('Documentation kit', 'Second project').replace('home_label = "Docs"', 'home_label = "Second"'))

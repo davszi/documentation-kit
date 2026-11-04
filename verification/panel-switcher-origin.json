@@ -1,0 +1,23 @@
+{
+  "date": "2026-11-04",
+  "source_repository": "https://github.com/davszi/Autonomous_Driving_Platform",
+  "executable_body_matches_after_attribute_renaming": true,
+  "files": [
+    {
+      "source": "docs/site/components/width-lessons.js",
+      "source_sha256": "4edcc5010fbe2ad8f2d9c281f45e2c5b2815f188b6cf68b8226c12bd9679cc44",
+      "source_revision": "9930b919d8d9e9bcba42e94c352329bf2c39b616",
+      "destination": "theme/components/panel-switcher.js",
+      "extracted_sha256": "54bf5c40e7d274f806083a692da0824e05d1abd9abc081cfc40ec2d4e3900f7a",
+      "scope": "Attribute names neutralized; executable body otherwise preserved."
+    },
+    {
+      "source": "docs/site/components/width-lessons.css",
+      "source_sha256": "f531ac932f76f561f812b2ecf7c59fe3b08ea6406c5993c0e6e8cf3ce28e55f8",
+      "source_revision": "9930b919d8d9e9bcba42e94c352329bf2c39b616",
+      "destination": "theme/components/panel-switcher.css",
+      "extracted_sha256": "40e9c42596370ee9bdd7928c551e724441504872af2fd683017c8537504118b5",
+      "scope": "Generic controls, animation, reduced-motion and print rules only; domain figure/legend/grid styles excluded."
+    }
+  ]
+}

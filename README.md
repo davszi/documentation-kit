@@ -15,6 +15,9 @@ reading layers, code highlighting, local math rendering, diagrams, figure
 controls, carousels, lightboxes and locally bundled fonts. It needs no JavaScript
 package installation for building a site.
 
+Independent comparisons can use the shared [panel switcher](docs/topics/panel-switcher/panel-switcher.md),
+including button controls, hash reveal, print restoration and no-script reading.
+
 ## Start a project
 
 Add this repository at `.docs-kit` using its shared repository URL:
@@ -125,6 +128,7 @@ development environment:
 
 ```bash
 DOCS_PLAYWRIGHT=/path/to/playwright DOCS_CHROMIUM=/path/to/chromium node tests/visual_review.cjs
+DOCS_PLAYWRIGHT=/path/to/playwright DOCS_CHROMIUM=/path/to/chromium node tests/test_panel_switcher.cjs
 ```
 
 It starts an owned loopback server, checks desktop/phone and paired layouts,
