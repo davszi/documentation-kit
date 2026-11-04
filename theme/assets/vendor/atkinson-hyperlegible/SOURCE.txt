@@ -1,0 +1,3 @@
+Atkinson Hyperlegible (Braille Institute of America), SIL Open Font License 1.1 (OFL.txt).
+WOFF2 latin and latin-ext subsets, weights 400/700, normal and italic,
+from Google Fonts v12 on 2026-10-30.

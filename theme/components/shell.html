@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<link rel="stylesheet" href="assets/base.css">
+{{HEAD_EXTRA}}</head>
+<body>
+
+<div class="backdrop" id="backdrop"></div>
+
+<div class="layout">
+<nav class="sidebar" id="sidebar">
+  <a class="brand" href="index.html">{{BRAND}}<small>{{BRAND_SUB}}</small></a>
+  <div class="toc" id="toc">
+{{TOC}}
+{{CROSSNAV}}
+  </div>
+</nav>
+
+<main class="content" id="top">
+<div class="topbar"><button class="menu-btn" id="menu" aria-label="Menu">☰</button><span class="t">{{TITLE}}</span></div>
+
+{{CONTENT}}
+</main>
+</div>
+
+{{SCRIPTS}}
+</body>
+</html>

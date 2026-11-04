@@ -1,0 +1,3 @@
+# Documentation tools only; no application runtime is installed.
+mistune==3.3.4
+Pygments==2.21.0

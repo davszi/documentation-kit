@@ -1,0 +1,3 @@
+IBM Plex Mono (IBM Corp.), SIL Open Font License 1.1 (OFL.txt).
+WOFF2 latin and latin-ext subsets, weights 400/500/600, normal,
+from Google Fonts on 2026-11-01. Label and number face of the vehicle-visuals page.

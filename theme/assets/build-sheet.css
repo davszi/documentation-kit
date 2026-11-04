@@ -1,0 +1,174 @@
+/* build-sheet.css — the shared page kit (opt in with page_css).
+   Type: Saira Condensed capitals for headings and big numbers, IBM Plex Sans
+   for text, IBM Plex Mono for labels and units (vendored under
+   assets/vendor/). The chapter number sits in the card header in the page's
+   sidebar group colour. Blocks are prefixed bs-; usage rules live in
+   docs/project/writing-docs.md ("Build-sheet pages"). */
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/ibm-plex-mono/ibm-plex-mono-400-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/ibm-plex-mono/ibm-plex-mono-400-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/ibm-plex-mono/ibm-plex-mono-500-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/ibm-plex-mono/ibm-plex-mono-500-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/ibm-plex-mono/ibm-plex-mono-600-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/ibm-plex-mono/ibm-plex-mono-600-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'IBM Plex Sans';font-style:italic;font-weight:400;font-display:swap;src:url(fonts/ibm-plex-sans/ibm-plex-sans-400-italic-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'IBM Plex Sans';font-style:italic;font-weight:400;font-display:swap;src:url(fonts/ibm-plex-sans/ibm-plex-sans-400-italic-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/ibm-plex-sans/ibm-plex-sans-400-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/ibm-plex-sans/ibm-plex-sans-400-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/ibm-plex-sans/ibm-plex-sans-500-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/ibm-plex-sans/ibm-plex-sans-500-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/ibm-plex-sans/ibm-plex-sans-600-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/ibm-plex-sans/ibm-plex-sans-600-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Saira Condensed';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/saira-condensed/saira-condensed-600-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Saira Condensed';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/saira-condensed/saira-condensed-600-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Saira Condensed';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/saira-condensed/saira-condensed-700-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Saira Condensed';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/saira-condensed/saira-condensed-700-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Saira Condensed';font-style:normal;font-weight:800;font-display:swap;src:url(fonts/saira-condensed/saira-condensed-800-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Saira Condensed';font-style:normal;font-weight:800;font-display:swap;src:url(fonts/saira-condensed/saira-condensed-800-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+:root {
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --display: "Saira Condensed", "Arial Narrow", sans-serif;
+  --bs-number: var(--adp);
+}
+
+body:has(.xpage.current[data-group="method"]) { --bs-number: #85b7eb; }
+body:has(.xpage.current[data-group="road"]) { --bs-number: #ffb35c; }
+body:has(.xpage.current[data-group="racing"]) { --bs-number: #6ee7c5; }
+body:has(.xpage.current[data-group="sim"]) { --bs-number: #b69cff; }
+body:has(.xpage.current[data-group="related work"]) { --bs-number: #8394a7; }
+
+/* Chapter text spans the full card; headings are condensed capitals. */
+.chapter-body > section.card { color: #e5ebf0; font-size: 16px; line-height: 1.65; }
+.topic-card .chapter-header { min-height: 64px; }
+.topic-card .chapter-identity { align-items: baseline; gap: 12px; }
+.topic-card .chapter-number { font: 800 30px/1 var(--display); color: var(--bs-number); letter-spacing: 0;
+  background: none; border: 0; padding: 0; min-width: 0; height: auto; font-variant-numeric: tabular-nums; }
+.topic-card .chapter-label { font: 700 17px/1.1 var(--display); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.chapter-body h2.chapter-headline { font: 700 clamp(30px, 3.4vw, 46px)/1.02 var(--display); text-transform: uppercase;
+  letter-spacing: .005em; color: var(--bright); border: 0; padding: 0; margin: 0 0 16px; text-wrap: balance; }
+.chapter-body h3 { font: 700 22px/1.1 var(--display); text-transform: uppercase; letter-spacing: .01em;
+  color: var(--bright); border: 0; padding: 0; margin: 26px 0 8px; }
+.chapter-body code { font-family: var(--mono); }
+.chapter-body figure { margin: 18px 0; min-width: 0; }  /* figures keep the shared left edge */
+.chapter-body figcaption { font-size: 14px; color: var(--muted); margin-top: 7px; line-height: 1.5; }
+.chapter-body figcaption b { color: var(--bright); font-weight: 600; }
+
+/* Tables: lines between rows only. */
+.chapter-body table { font-size: 15px; border: 0; background: none; }
+.chapter-body th { background: none; font: 600 12px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); border: 0; border-bottom: 1px solid var(--border); padding: 10px 12px; }
+.chapter-body td { border: 0; border-bottom: 1px solid var(--border); padding: 11px 12px; color: #e5ebf0; }
+.chapter-body tbody tr { transition: background .15s; }
+.chapter-body tbody tr:hover { background: rgba(255, 166, 87, .05); }
+
+/* Tones: set --tone on a block. */
+.bs-orange { --tone: var(--orange); } .bs-teal { --tone: var(--adp); } .bs-violet { --tone: #b69cff; }
+.bs-blue { --tone: var(--blue); } .bs-green { --tone: var(--green); } .bs-red { --tone: var(--red); } .bs-muted { --tone: var(--muted); }
+
+/* Lead: one sentence that makes the chapter's claim. */
+.bs-lead { font-size: 19px; line-height: 1.6; color: var(--bright); margin: 0 0 18px; }
+/* Small mono label used inside blocks. */
+.bs-label { display: block; font: 600 11.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase;
+  color: var(--tone, var(--muted)); margin-bottom: 4px; }
+
+/* Spec strip: a row of labelled values. */
+.bs-specs { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden; margin: 20px 0; background: var(--bg2); }
+.bs-specs > div { padding: 12px 14px; border-right: 1px solid var(--border); min-width: 0; }
+.bs-specs > div:last-child { border-right: 0; }
+.bs-specs b { display: block; font: 600 22px/1.2 var(--mono); font-variant-numeric: tabular-nums; color: var(--bright); }
+.bs-specs b small { font-size: 13px; color: var(--muted); font-weight: 500; }
+
+/* Big-number tiles for headline measurements. */
+.bs-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 18px 0; }
+.bs-stats > div { padding: 16px 18px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  transition: border-color .2s, box-shadow .2s, transform .2s; }
+.bs-stats > div:hover { border-color: rgba(57, 210, 192, .45); box-shadow: 0 0 22px rgba(57, 210, 192, .12); transform: translateY(-2px); }
+.bs-stats b { display: block; font: 700 40px/1.05 var(--display); color: var(--tone, var(--adp)); font-variant-numeric: tabular-nums; margin-bottom: 4px; }
+.bs-stats span { font-size: 14.5px; line-height: 1.55; color: var(--muted); }
+
+/* Chips: short tags; <s> for a crossed-out name, <i> for its reason. */
+.bs-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+.bs-chip { font: 500 13px/1.3 var(--mono); padding: 6px 10px; border-radius: 5px; background: var(--panel2);
+  border: 1px solid var(--border); transition: transform .15s, border-color .15s; }
+.bs-chip:hover { transform: translateY(-2px); border-color: var(--orange); }
+.bs-chip s { color: var(--muted); }
+.bs-chip i { font-style: normal; color: var(--red); }
+
+/* Figure grids: g1 full width, g2 at most half width each, g3, g4. */
+.bs-grid { display: grid; gap: 14px; margin: 18px 0; }
+.bs-grid.g1 { grid-template-columns: minmax(0, 1fr); }
+.bs-grid.g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.bs-grid.g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.bs-grid.g4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.bs-grid figure { margin: 0; min-width: 0; }
+.bs-grid figure img { display: block; width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--border);
+  transition: transform .25s ease, box-shadow .25s ease; }
+.bs-grid figure:hover img { transform: scale(1.012); box-shadow: 0 10px 28px rgba(0, 0, 0, .35); }
+
+/* Badge cards: a short claim with its state. Add .r32 for five cards (3 over 2). */
+.bs-checks { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 18px 0; }
+.bs-checks.r32 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.bs-checks.r32 > .bs-check { grid-column: span 2; }
+.bs-checks.r32 > .bs-check:nth-child(n+4) { grid-column: span 3; }
+.bs-check { padding: 16px 18px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; min-width: 0;
+  transition: border-color .2s, box-shadow .2s; }
+.bs-check:hover { border-color: rgba(87, 171, 90, .5); box-shadow: 0 0 22px rgba(87, 171, 90, .12); }
+.bs-check h3 { margin: 8px 0 6px; font-size: 21px; }
+.bs-check p { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--text); }
+.bs-badge { display: inline-block; font: 600 11px var(--mono); letter-spacing: .1em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 4px; border: 1px solid currentColor; }
+.bs-ok { color: var(--green); } .bs-wait { color: var(--orange); } .bs-bad { color: var(--red); } .bs-off { color: var(--muted); }
+
+/* Status table: state · item · what is true now. */
+.bs-board { margin: 18px 0; border-top: 1px solid var(--border); }
+.bs-row { display: grid; grid-template-columns: 120px minmax(0, 1fr) minmax(0, 1.5fr); gap: 16px; padding: 13px 0;
+  border-bottom: 1px solid var(--border); align-items: baseline; }
+.bs-row .bs-state { font: 600 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.bs-row b { font: 600 19px/1.2 var(--display); text-transform: uppercase; letter-spacing: .01em; color: var(--bright); }
+.bs-row span:last-child { font-size: 15px; color: var(--text); min-width: 0; overflow-wrap: anywhere; }
+
+/* Flow diagram: boxes joined by labelled arrows; .bs-back is the blocked way back.
+   Three boxes: node, arrow, node, arrow, node. */
+.bs-flow { display: grid; grid-template-columns: minmax(0, 1fr) 96px minmax(0, 1fr) 96px minmax(0, 1fr);
+  align-items: stretch; margin: 22px 0 8px; }
+.bs-flow.n2 { grid-template-columns: minmax(0, 1fr) 96px minmax(0, 1fr); }
+.bs-node { position: relative; padding: 16px 18px; background: var(--bg2); border: 1px solid var(--border);
+  border-top: 3px solid var(--tone, var(--adp)); border-radius: 8px; transition: box-shadow .2s, transform .2s; }
+.bs-node:hover { transform: translateY(-2px); box-shadow: 0 0 26px color-mix(in srgb, var(--tone, var(--adp)) 22%, transparent); }
+.bs-node b { display: block; font: 700 21px/1.15 var(--display); text-transform: uppercase; color: var(--bright); margin: 2px 0 8px; }
+.bs-node ul { margin: 0 0 10px; padding-left: 18px; font-size: 14.5px; line-height: 1.5; }
+.bs-node li code { font-size: 12px; color: var(--orange); background: none; padding: 0 2px; }
+.bs-node small { display: block; font-size: 13px; line-height: 1.45; color: var(--muted); }
+.bs-arrow { position: relative; display: grid; place-items: center; }
+.bs-arrow::before { content: ""; position: absolute; left: 6px; right: 10px; top: 50%; height: 2px;
+  background: linear-gradient(90deg, var(--border), var(--muted)); }
+.bs-arrow::after { content: ""; position: absolute; right: 4px; top: calc(50% - 6px); border: 7px solid transparent;
+  border-left: 9px solid var(--muted); border-right: 0; }
+.bs-arrow span { position: relative; top: -16px; font: 600 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); background: var(--panel); padding: 0 4px; white-space: nowrap; }
+/* bs-stack: two or three nodes in one flow column (inputs merge, or an output fans out). */
+.bs-stack { display: grid; gap: 12px; align-content: center; min-width: 0; }
+.bs-back { grid-column: 1 / -1; margin-top: 12px; padding: 10px 14px; border: 1px dashed rgba(244, 112, 103, .55);
+  border-radius: 8px; font-size: 14.5px; color: var(--text); background: rgba(244, 112, 103, .05); }
+.bs-back span { font: 700 16px var(--mono); color: var(--red); margin-right: 8px; }
+
+/* Part cards: two or more contrasting lists with a coloured edge. */
+.bs-part { padding: 16px 18px; background: var(--bg2); border: 1px solid var(--border); border-left: 4px solid var(--tone, var(--muted)); border-radius: 8px; }
+.bs-part ul { margin: 6px 0 0; padding-left: 18px; font-size: 15px; line-height: 1.55; }
+
+@media (max-width: 760px) {
+  .bs-grid.g2, .bs-grid.g3 { grid-template-columns: 1fr; }
+  .bs-grid.g4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bs-row { grid-template-columns: 1fr; gap: 2px; }
+  .bs-flow, .bs-flow.n2 { grid-template-columns: minmax(0, 1fr); }
+  .bs-arrow { height: 44px; }
+  .bs-arrow::before { left: 50%; right: auto; top: 4px; bottom: 10px; width: 2px; height: auto; background: linear-gradient(180deg, var(--border), var(--muted)); }
+  .bs-arrow::after { left: calc(50% - 6px); right: auto; top: auto; bottom: 2px; border: 7px solid transparent; border-top: 9px solid var(--muted); border-bottom: 0; }
+  .bs-arrow span { top: 0; left: 34px; position: absolute; }
+  .bs-checks.r32 { grid-template-columns: minmax(0, 1fr); }
+  .bs-checks.r32 > .bs-check, .bs-checks.r32 > .bs-check:nth-child(n+4) { grid-column: auto; }
+  .bs-specs > div { border-right: 0; border-bottom: 1px solid var(--border); }
+  .bs-specs b { font-size: 18px; }
+}
+@media (prefers-reduced-motion: reduce) { .bs-chip, .bs-grid figure img, .bs-stats > div, .bs-node, .bs-check { transition: none; } }

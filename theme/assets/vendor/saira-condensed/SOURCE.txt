@@ -1,0 +1,3 @@
+Saira Condensed (The Saira Project Authors), SIL Open Font License 1.1 (OFL.txt).
+WOFF2 latin and latin-ext subsets, weights 600/700/800, normal,
+from Google Fonts on 2026-11-01. Display face of the vehicle-visuals page.

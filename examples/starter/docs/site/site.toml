@@ -1,0 +1,14 @@
+title = "Documentation kit"
+home_label = "Docs"
+gh_repo = "https://github.com/example/project"
+gh_ref = "main"
+chapter_reader = true
+
+[[nav]]
+label = "Home"
+file = "index.html"
+
+[[nav]]
+label = "Guide"
+file = "guide.html"
+group = "guide"

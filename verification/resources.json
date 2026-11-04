@@ -1,0 +1,52 @@
+{
+  "command": [
+    "bash",
+    "-c",
+    "bash tests/run_checks.sh && node tests/visual_review.cjs"
+  ],
+  "initial_available_bytes": 52099330048,
+  "initial_pressure": {
+    "some": {
+      "avg10": "0.00",
+      "avg60": "0.00",
+      "avg300": "0.00",
+      "total": "664877697"
+    },
+    "full": {
+      "avg10": "0.00",
+      "avg60": "0.00",
+      "avg300": "0.00",
+      "total": "566608621"
+    }
+  },
+  "monitor_thresholds": {
+    "minimum_available_gib": 16,
+    "maximum_available_drop_gib": 16,
+    "full_psi_avg10_percent": 1.0,
+    "some_psi_avg10_percent": 5.0,
+    "consecutive_high_samples": 3,
+    "sample_interval_s": 1
+  },
+  "exit_code": 0,
+  "minimum_available_bytes": 51863617536,
+  "maximum_pressure_avg10": {
+    "some": 0.0,
+    "full": 0.0
+  },
+  "stopped": null,
+  "elapsed_s": 7.002273824065924,
+  "final_pressure": {
+    "some": {
+      "avg10": "0.00",
+      "avg60": "0.00",
+      "avg300": "0.00",
+      "total": "664877697"
+    },
+    "full": {
+      "avg10": "0.00",
+      "avg60": "0.00",
+      "avg300": "0.00",
+      "total": "566608621"
+    }
+  }
+}

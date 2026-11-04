@@ -1,0 +1,569 @@
+{
+  "source_repository": "https://github.com/davszi/Autonomous_Driving_Platform",
+  "inspected_revision": "9930b919d8d9e9bcba42e94c352329bf2c39b616",
+  "extracted_on": "2026-11-04",
+  "files": [
+    {
+      "source": "docs/site/components/toc.js",
+      "destination": "theme/components/toc.js",
+      "source_sha256": "f0bcd61d83736046b589560fe37fe1569aeb476ac285e9e5dd023aedcc5fc176",
+      "extracted_sha256": "f0bcd61d83736046b589560fe37fe1569aeb476ac285e9e5dd023aedcc5fc176"
+    },
+    {
+      "source": "docs/site/components/nav.js",
+      "destination": "theme/components/nav.js",
+      "source_sha256": "98fdae57436f3775c73a5319107de9f2e172a3898d8eb27a30357b38b8b61ccb",
+      "extracted_sha256": "98fdae57436f3775c73a5319107de9f2e172a3898d8eb27a30357b38b8b61ccb"
+    },
+    {
+      "source": "docs/site/components/tabs.js",
+      "destination": "theme/components/tabs.js",
+      "source_sha256": "0d50578847d71c071e3b29334c242a16c9474e72960f2dda45d633ae49ff3dcb",
+      "extracted_sha256": "0d50578847d71c071e3b29334c242a16c9474e72960f2dda45d633ae49ff3dcb"
+    },
+    {
+      "source": "docs/site/components/diagram.js",
+      "destination": "theme/components/diagram.js",
+      "source_sha256": "e7618a47a282bdd52a7ff0d98cac87576fbfeb5f30324f323b17dce038f7be10",
+      "extracted_sha256": "e7618a47a282bdd52a7ff0d98cac87576fbfeb5f30324f323b17dce038f7be10"
+    },
+    {
+      "source": "docs/site/components/code.js",
+      "destination": "theme/components/code.js",
+      "source_sha256": "a32fe549dafa9849acea13dc73dedb876880bdbfce783c7081020e7c79139224",
+      "extracted_sha256": "a32fe549dafa9849acea13dc73dedb876880bdbfce783c7081020e7c79139224"
+    },
+    {
+      "source": "docs/site/components/filelinks.js",
+      "destination": "theme/components/filelinks.js",
+      "source_sha256": "1e6a92c9b10fff7ef6b7255c39b162226bff7731222b240b32f6d924a5281b32",
+      "extracted_sha256": "1e6a92c9b10fff7ef6b7255c39b162226bff7731222b240b32f6d924a5281b32"
+    },
+    {
+      "source": "docs/site/components/lightbox.js",
+      "destination": "theme/components/lightbox.js",
+      "source_sha256": "4dca468fc74b26b486dd0c3e2afa7b004539b755cc703cad07728d1f87fff996",
+      "extracted_sha256": "4dca468fc74b26b486dd0c3e2afa7b004539b755cc703cad07728d1f87fff996"
+    },
+    {
+      "source": "docs/site/components/plot-toggles.js",
+      "destination": "theme/components/plot-toggles.js",
+      "source_sha256": "816945258e78de4926549a08d12875618d8aae02971dba82d1d84cece9543630",
+      "extracted_sha256": "816945258e78de4926549a08d12875618d8aae02971dba82d1d84cece9543630"
+    },
+    {
+      "source": "docs/site/components/carousel.js",
+      "destination": "theme/components/carousel.js",
+      "source_sha256": "774a82f2a08c23d1d78a360f87f55dabe3ccc1c1e210d554fdcfbc2f04cf62bf",
+      "extracted_sha256": "774a82f2a08c23d1d78a360f87f55dabe3ccc1c1e210d554fdcfbc2f04cf62bf"
+    },
+    {
+      "source": "docs/site/components/fold-controls.js",
+      "destination": "theme/components/fold-controls.js",
+      "source_sha256": "36920bba6f7392bcd0535e3143c893fa670866d16cd3a881db06c890fc991c4d",
+      "extracted_sha256": "36920bba6f7392bcd0535e3143c893fa670866d16cd3a881db06c890fc991c4d"
+    },
+    {
+      "source": "docs/site/components/chapter-reader.js",
+      "destination": "theme/components/chapter-reader.js",
+      "source_sha256": "acf9dca38877c3fc9cb5aad6eb0b5451f60514032c95aa75c7a8c6d17c566231",
+      "extracted_sha256": "108f3ee5271765b2443f60a202a8eb65ea2c2ca55bbb597fe5ce231d45a76d38"
+    },
+    {
+      "source": "docs/site/components/page-redirect.js",
+      "destination": "theme/components/page-redirect.js",
+      "source_sha256": "71a667021402f0c6793b0140573674d72ebe3e78082a7a59516cdc7edc5c02ef",
+      "extracted_sha256": "71a667021402f0c6793b0140573674d72ebe3e78082a7a59516cdc7edc5c02ef"
+    },
+    {
+      "source": "docs/site/components/base.css",
+      "destination": "theme/components/base.css",
+      "source_sha256": "477b0d5960a237fb6a21c9d0dad3c26210ce1e5eb5d259aba61945f5a546ae5b",
+      "extracted_sha256": "1604b43d1f7abb00ccf7dcd8560fdbba813e153c4a6f216c19336fe9d52099e3"
+    },
+    {
+      "source": "docs/site/components/chapter-reader.css",
+      "destination": "theme/components/chapter-reader.css",
+      "source_sha256": "f9078d0e84cfb7788bf0f4009891d0f8179584c548e99b7ca0f4160174caa0b1",
+      "extracted_sha256": "f9078d0e84cfb7788bf0f4009891d0f8179584c548e99b7ca0f4160174caa0b1"
+    },
+    {
+      "source": "docs/site/components/shell.html",
+      "destination": "theme/components/shell.html",
+      "source_sha256": "d2aec682849966bc5a1c9b8ad65d3a0567e333d27e2792bd48101b5fff9ca2bd",
+      "extracted_sha256": "d2aec682849966bc5a1c9b8ad65d3a0567e333d27e2792bd48101b5fff9ca2bd"
+    },
+    {
+      "source": "docs/site/components/chapter-reader.html",
+      "destination": "theme/components/chapter-reader.html",
+      "source_sha256": "6078e802f36630b79c299ae754a5e0f1fdf7a6a61273a37856dbb7313e5775a6",
+      "extracted_sha256": "6078e802f36630b79c299ae754a5e0f1fdf7a6a61273a37856dbb7313e5775a6"
+    },
+    {
+      "source": "docs/site/assets/build-sheet.css",
+      "destination": "theme/assets/build-sheet.css",
+      "source_sha256": "4984d1a9fc8b5860769eaea1ab4fdf2f039e532a7c12e732b95ae7e5db777826",
+      "extracted_sha256": "0fd2807123ef2361621d87fcb1654400a3416a6fa4e6f77999a77d33c5cb080e"
+    },
+    {
+      "source": "docs/site/assets/vendor/atkinson-hyperlegible/OFL.txt",
+      "destination": "theme/assets/vendor/atkinson-hyperlegible/OFL.txt",
+      "source_sha256": "f32d22b3908fcad2c86a74000614ec22e6a7f66ea7e867e616026a27aebdc143",
+      "extracted_sha256": "f32d22b3908fcad2c86a74000614ec22e6a7f66ea7e867e616026a27aebdc143"
+    },
+    {
+      "source": "docs/site/assets/vendor/atkinson-hyperlegible/SOURCE.txt",
+      "destination": "theme/assets/vendor/atkinson-hyperlegible/SOURCE.txt",
+      "source_sha256": "113dbab2724f0c6ec76346c992b91075d31492f2a6f2a5ba7d1e296838f66f93",
+      "extracted_sha256": "113dbab2724f0c6ec76346c992b91075d31492f2a6f2a5ba7d1e296838f66f93"
+    },
+    {
+      "source": "docs/site/assets/vendor/atkinson-hyperlegible/atkinson-hyperlegible-400-italic-latin-ext.woff2",
+      "destination": "theme/assets/vendor/atkinson-hyperlegible/atkinson-hyperlegible-400-italic-latin-ext.woff2",
+      "source_sha256": "90d887d541fe6e912d15f826aae6ca1190efcf172b65401704472475ed771049",
+      "extracted_sha256": "90d887d541fe6e912d15f826aae6ca1190efcf172b65401704472475ed771049"
+    },
+    {
+      "source": "docs/site/assets/vendor/atkinson-hyperlegible/atkinson-hyperlegible-400-italic-latin.woff2",
+      "destination": "theme/assets/vendor/atkinson-hyperlegible/atkinson-hyperlegible-400-italic-latin.woff2",
+      "source_sha256": "bc8825fd435d4aa8e31449937826d583a7daaae15a83832c91b38375131ebf08",
+      "extracted_sha256": "bc8825fd435d4aa8e31449937826d583a7daaae15a83832c91b38375131ebf08"
+    },
+    {
+      "source": "docs/site/assets/vendor/atkinson-hyperlegible/atkinson-hyperlegible-400-normal-latin-ext.woff2",
+      "destination": "theme/assets/vendor/atkinson-hyperlegible/atkinson-hyperlegible-400-normal-latin-ext.woff2",
+      "source_sha256": "61eeb0eb8b881a84d069e67be1723f5b353b0b9b866ad8e7ad9dba66cdc4dabd",
+      "extracted_sha256": "61eeb0eb8b881a84d069e67be1723f5b353b0b9b866ad8e7ad9dba66cdc4dabd"
+    },
+    {
+      "source": "docs/site/assets/vendor/atkinson-hyperlegible/atkinson-hyperlegible-400-normal-latin.woff2",
+      "destination": "theme/assets/vendor/atkinson-hyperlegible/atkinson-hyperlegible-400-normal-latin.woff2",
+      "source_sha256": "d64ba838ef5472bba248620ec4fd8b5aa7cf0db2908e0bb230600caf279ba7bc",
+      "extracted_sha256": "d64ba838ef5472bba248620ec4fd8b5aa7cf0db2908e0bb230600caf279ba7bc"
+    },
+    {
+      "source": "docs/site/assets/vendor/atkinson-hyperlegible/atkinson-hyperlegible-700-italic-latin-ext.woff2",
+      "destination": "theme/assets/vendor/atkinson-hyperlegible/atkinson-hyperlegible-700-italic-latin-ext.woff2",
+      "source_sha256": "43471ea6265ba9619c8c12d3f9f53c9e1741fa3af69f6b658100a841b09398c8",
+      "extracted_sha256": "43471ea6265ba9619c8c12d3f9f53c9e1741fa3af69f6b658100a841b09398c8"
+    },
+    {
+      "source": "docs/site/assets/vendor/atkinson-hyperlegible/atkinson-hyperlegible-700-italic-latin.woff2",
+      "destination": "theme/assets/vendor/atkinson-hyperlegible/atkinson-hyperlegible-700-italic-latin.woff2",
+      "source_sha256": "73e0c9e1e284128dda599558f7c15bd5f3c056442c31dfae950528a16b3835cf",
+      "extracted_sha256": "73e0c9e1e284128dda599558f7c15bd5f3c056442c31dfae950528a16b3835cf"
+    },
+    {
+      "source": "docs/site/assets/vendor/atkinson-hyperlegible/atkinson-hyperlegible-700-normal-latin-ext.woff2",
+      "destination": "theme/assets/vendor/atkinson-hyperlegible/atkinson-hyperlegible-700-normal-latin-ext.woff2",
+      "source_sha256": "840ced16f975d8abc2594b436d0206649e0c2a7327e36750ff849d3d37c3c02e",
+      "extracted_sha256": "840ced16f975d8abc2594b436d0206649e0c2a7327e36750ff849d3d37c3c02e"
+    },
+    {
+      "source": "docs/site/assets/vendor/atkinson-hyperlegible/atkinson-hyperlegible-700-normal-latin.woff2",
+      "destination": "theme/assets/vendor/atkinson-hyperlegible/atkinson-hyperlegible-700-normal-latin.woff2",
+      "source_sha256": "140e2bd25a7315c8a062508391426b0d8c3297400c947b8d847be28f73a199f0",
+      "extracted_sha256": "140e2bd25a7315c8a062508391426b0d8c3297400c947b8d847be28f73a199f0"
+    },
+    {
+      "source": "docs/site/assets/vendor/saira-condensed/OFL.txt",
+      "destination": "theme/assets/vendor/saira-condensed/OFL.txt",
+      "source_sha256": "0e2ccc5da1dd979f08ba82bca2fb61592506a1e58d3cbfc26d904f0db71bd812",
+      "extracted_sha256": "0e2ccc5da1dd979f08ba82bca2fb61592506a1e58d3cbfc26d904f0db71bd812"
+    },
+    {
+      "source": "docs/site/assets/vendor/saira-condensed/SOURCE.txt",
+      "destination": "theme/assets/vendor/saira-condensed/SOURCE.txt",
+      "source_sha256": "5229e623f8b60a63b7700a9cb4dd11a53314df3e75207bd06848e04d009e2e21",
+      "extracted_sha256": "5229e623f8b60a63b7700a9cb4dd11a53314df3e75207bd06848e04d009e2e21"
+    },
+    {
+      "source": "docs/site/assets/vendor/saira-condensed/saira-condensed-600-normal-latin-ext.woff2",
+      "destination": "theme/assets/vendor/saira-condensed/saira-condensed-600-normal-latin-ext.woff2",
+      "source_sha256": "0bf20d8abc9843a3039af6c678237d795ac09fa3695cfeaa8e29be246bfed6c6",
+      "extracted_sha256": "0bf20d8abc9843a3039af6c678237d795ac09fa3695cfeaa8e29be246bfed6c6"
+    },
+    {
+      "source": "docs/site/assets/vendor/saira-condensed/saira-condensed-600-normal-latin.woff2",
+      "destination": "theme/assets/vendor/saira-condensed/saira-condensed-600-normal-latin.woff2",
+      "source_sha256": "d20f5b8d2d6a1a236cf776fa3ac0bec671503824cbed5dedf656b61930dc87ee",
+      "extracted_sha256": "d20f5b8d2d6a1a236cf776fa3ac0bec671503824cbed5dedf656b61930dc87ee"
+    },
+    {
+      "source": "docs/site/assets/vendor/saira-condensed/saira-condensed-700-normal-latin-ext.woff2",
+      "destination": "theme/assets/vendor/saira-condensed/saira-condensed-700-normal-latin-ext.woff2",
+      "source_sha256": "f15c9a22d2d8f00bebdf7f005f95b75e502813de13ad70879a5c8bba65d6f4ea",
+      "extracted_sha256": "f15c9a22d2d8f00bebdf7f005f95b75e502813de13ad70879a5c8bba65d6f4ea"
+    },
+    {
+      "source": "docs/site/assets/vendor/saira-condensed/saira-condensed-700-normal-latin.woff2",
+      "destination": "theme/assets/vendor/saira-condensed/saira-condensed-700-normal-latin.woff2",
+      "source_sha256": "eb1cf59a1f785a890ac30d69bb59fffef3989fef4e7a2ae2367c85e861077fda",
+      "extracted_sha256": "eb1cf59a1f785a890ac30d69bb59fffef3989fef4e7a2ae2367c85e861077fda"
+    },
+    {
+      "source": "docs/site/assets/vendor/saira-condensed/saira-condensed-800-normal-latin-ext.woff2",
+      "destination": "theme/assets/vendor/saira-condensed/saira-condensed-800-normal-latin-ext.woff2",
+      "source_sha256": "645272c3bc699905d0314b17bc4f4145987051f199968364adc43c0fe689b29e",
+      "extracted_sha256": "645272c3bc699905d0314b17bc4f4145987051f199968364adc43c0fe689b29e"
+    },
+    {
+      "source": "docs/site/assets/vendor/saira-condensed/saira-condensed-800-normal-latin.woff2",
+      "destination": "theme/assets/vendor/saira-condensed/saira-condensed-800-normal-latin.woff2",
+      "source_sha256": "5afa98eefcd54d5e7c4d9e5dc5a01a8ae61dc6ad91e2bbc0aaed82525063ae91",
+      "extracted_sha256": "5afa98eefcd54d5e7c4d9e5dc5a01a8ae61dc6ad91e2bbc0aaed82525063ae91"
+    },
+    {
+      "source": "docs/site/assets/vendor/ibm-plex-sans/OFL.txt",
+      "destination": "theme/assets/vendor/ibm-plex-sans/OFL.txt",
+      "source_sha256": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da",
+      "extracted_sha256": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da"
+    },
+    {
+      "source": "docs/site/assets/vendor/ibm-plex-sans/SOURCE.txt",
+      "destination": "theme/assets/vendor/ibm-plex-sans/SOURCE.txt",
+      "source_sha256": "e4b54ac2a078cb43667b4e87601c9ee20f422666f5db489fab7e471214a6f1e5",
+      "extracted_sha256": "e4b54ac2a078cb43667b4e87601c9ee20f422666f5db489fab7e471214a6f1e5"
+    },
+    {
+      "source": "docs/site/assets/vendor/ibm-plex-sans/ibm-plex-sans-400-italic-latin-ext.woff2",
+      "destination": "theme/assets/vendor/ibm-plex-sans/ibm-plex-sans-400-italic-latin-ext.woff2",
+      "source_sha256": "c5c00e8a32022dfedd2e7e864898ed007232e1450c6de1d6b847fe8825c2c5ce",
+      "extracted_sha256": "c5c00e8a32022dfedd2e7e864898ed007232e1450c6de1d6b847fe8825c2c5ce"
+    },
+    {
+      "source": "docs/site/assets/vendor/ibm-plex-sans/ibm-plex-sans-400-italic-latin.woff2",
+      "destination": "theme/assets/vendor/ibm-plex-sans/ibm-plex-sans-400-italic-latin.woff2",
+      "source_sha256": "6de912e531b6c98084f1b2d5e5a91bad77be4e68bc4e396e43c46fc435e5f3d9",
+      "extracted_sha256": "6de912e531b6c98084f1b2d5e5a91bad77be4e68bc4e396e43c46fc435e5f3d9"
+    },
+    {
+      "source": "docs/site/assets/vendor/ibm-plex-sans/ibm-plex-sans-400-normal-latin-ext.woff2",
+      "destination": "theme/assets/vendor/ibm-plex-sans/ibm-plex-sans-400-normal-latin-ext.woff2",
+      "source_sha256": "d160e20920ae4d6556518d352d3af27a74e9b0de3d8fe17b1c1044fc75aa2f81",
+      "extracted_sha256": "d160e20920ae4d6556518d352d3af27a74e9b0de3d8fe17b1c1044fc75aa2f81"
+    },
+    {
+      "source": "docs/site/assets/vendor/ibm-plex-sans/ibm-plex-sans-400-normal-latin.woff2",
+      "destination": "theme/assets/vendor/ibm-plex-sans/ibm-plex-sans-400-normal-latin.woff2",
+      "source_sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+      "extracted_sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470"
+    },
+    {
+      "source": "docs/site/assets/vendor/ibm-plex-sans/ibm-plex-sans-500-normal-latin-ext.woff2",
+      "destination": "theme/assets/vendor/ibm-plex-sans/ibm-plex-sans-500-normal-latin-ext.woff2",
+      "source_sha256": "d160e20920ae4d6556518d352d3af27a74e9b0de3d8fe17b1c1044fc75aa2f81",
+      "extracted_sha256": "d160e20920ae4d6556518d352d3af27a74e9b0de3d8fe17b1c1044fc75aa2f81"
+    },
+    {
+      "source": "docs/site/assets/vendor/ibm-plex-sans/ibm-plex-sans-500-normal-latin.woff2",
+      "destination": "theme/assets/vendor/ibm-plex-sans/ibm-plex-sans-500-normal-latin.woff2",
+      "source_sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+      "extracted_sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470"
+    },
+    {
+      "source": "docs/site/assets/vendor/ibm-plex-sans/ibm-plex-sans-600-normal-latin-ext.woff2",
+      "destination": "theme/assets/vendor/ibm-plex-sans/ibm-plex-sans-600-normal-latin-ext.woff2",
+      "source_sha256": "d160e20920ae4d6556518d352d3af27a74e9b0de3d8fe17b1c1044fc75aa2f81",
+      "extracted_sha256": "d160e20920ae4d6556518d352d3af27a74e9b0de3d8fe17b1c1044fc75aa2f81"
+    },
+    {
+      "source": "docs/site/assets/vendor/ibm-plex-sans/ibm-plex-sans-600-normal-latin.woff2",
+      "destination": "theme/assets/vendor/ibm-plex-sans/ibm-plex-sans-600-normal-latin.woff2",
+      "source_sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470",
+      "extracted_sha256": "e2291e842cf5af167122a22881a740c7f2dda7716f1e8cd76680264f4a859470"
+    },
+    {
+      "source": "docs/site/assets/vendor/ibm-plex-mono/OFL.txt",
+      "destination": "theme/assets/vendor/ibm-plex-mono/OFL.txt",
+      "source_sha256": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da",
+      "extracted_sha256": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da"
+    },
+    {
+      "source": "docs/site/assets/vendor/ibm-plex-mono/SOURCE.txt",
+      "destination": "theme/assets/vendor/ibm-plex-mono/SOURCE.txt",
+      "source_sha256": "7e2f4a17c7c5761d9ebb0f5b616bd6e6e389c8567ed58ee7efdb307aba424b30",
+      "extracted_sha256": "7e2f4a17c7c5761d9ebb0f5b616bd6e6e389c8567ed58ee7efdb307aba424b30"
+    },
+    {
+      "source": "docs/site/assets/vendor/ibm-plex-mono/ibm-plex-mono-400-normal-latin-ext.woff2",
+      "destination": "theme/assets/vendor/ibm-plex-mono/ibm-plex-mono-400-normal-latin-ext.woff2",
+      "source_sha256": "6bc0f226a5b7884a8170e3f62c63d7675609d4631bdc5931b5cdab81821f00eb",
+      "extracted_sha256": "6bc0f226a5b7884a8170e3f62c63d7675609d4631bdc5931b5cdab81821f00eb"
+    },
+    {
+      "source": "docs/site/assets/vendor/ibm-plex-mono/ibm-plex-mono-400-normal-latin.woff2",
+      "destination": "theme/assets/vendor/ibm-plex-mono/ibm-plex-mono-400-normal-latin.woff2",
+      "source_sha256": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7",
+      "extracted_sha256": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7"
+    },
+    {
+      "source": "docs/site/assets/vendor/ibm-plex-mono/ibm-plex-mono-500-normal-latin-ext.woff2",
+      "destination": "theme/assets/vendor/ibm-plex-mono/ibm-plex-mono-500-normal-latin-ext.woff2",
+      "source_sha256": "6bb06407c97584b0867a959e05e8874693bfeb8c317de190811c51598f2d99ea",
+      "extracted_sha256": "6bb06407c97584b0867a959e05e8874693bfeb8c317de190811c51598f2d99ea"
+    },
+    {
+      "source": "docs/site/assets/vendor/ibm-plex-mono/ibm-plex-mono-500-normal-latin.woff2",
+      "destination": "theme/assets/vendor/ibm-plex-mono/ibm-plex-mono-500-normal-latin.woff2",
+      "source_sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22",
+      "extracted_sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22"
+    },
+    {
+      "source": "docs/site/assets/vendor/ibm-plex-mono/ibm-plex-mono-600-normal-latin-ext.woff2",
+      "destination": "theme/assets/vendor/ibm-plex-mono/ibm-plex-mono-600-normal-latin-ext.woff2",
+      "source_sha256": "32057cf50dd14bdb21a2c93766c4a2c43e4abe688ea3922df3203cac7751a98b",
+      "extracted_sha256": "32057cf50dd14bdb21a2c93766c4a2c43e4abe688ea3922df3203cac7751a98b"
+    },
+    {
+      "source": "docs/site/assets/vendor/ibm-plex-mono/ibm-plex-mono-600-normal-latin.woff2",
+      "destination": "theme/assets/vendor/ibm-plex-mono/ibm-plex-mono-600-normal-latin.woff2",
+      "source_sha256": "0d1f0b8d0722224e32e9f28261bdc86c79115be73444ae5eceb73976a1bcdf83",
+      "extracted_sha256": "0d1f0b8d0722224e32e9f28261bdc86c79115be73444ae5eceb73976a1bcdf83"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/LICENSE",
+      "destination": "theme/assets/vendor/katex/LICENSE",
+      "source_sha256": "766ccc1f306c885aa45542a9846bbd0a505b27a0374f146778171c2254ce18e3",
+      "extracted_sha256": "766ccc1f306c885aa45542a9846bbd0a505b27a0374f146778171c2254ce18e3"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/VERSION",
+      "destination": "theme/assets/vendor/katex/VERSION",
+      "source_sha256": "6cd346effd38f535116c035a096f7ca2ad1ead203fc99cf82cfa87d22c9028cc",
+      "extracted_sha256": "6cd346effd38f535116c035a096f7ca2ad1ead203fc99cf82cfa87d22c9028cc"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/contrib/auto-render.min.js",
+      "destination": "theme/assets/vendor/katex/contrib/auto-render.min.js",
+      "source_sha256": "7b57d427ac6270677daf8d8380ded2cc73336f9149a167b8e1fe0d6ef66604ae",
+      "extracted_sha256": "7b57d427ac6270677daf8d8380ded2cc73336f9149a167b8e1fe0d6ef66604ae"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_AMS-Regular.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_AMS-Regular.woff2",
+      "source_sha256": "0cdd387c9590a1a9f9794560022dbb59654a7d86f187aa0c81495ad42d3a7308",
+      "extracted_sha256": "0cdd387c9590a1a9f9794560022dbb59654a7d86f187aa0c81495ad42d3a7308"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_Caligraphic-Bold.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_Caligraphic-Bold.woff2",
+      "source_sha256": "de7701e42cf1f4cf0b766c03fb27977207eee2f4fd5d76fa82188406da43ea4c",
+      "extracted_sha256": "de7701e42cf1f4cf0b766c03fb27977207eee2f4fd5d76fa82188406da43ea4c"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_Caligraphic-Regular.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_Caligraphic-Regular.woff2",
+      "source_sha256": "5d53e70ad607c2352162dec9e0923fb54ecdafaccbf604cd8dcf7d00facb989b",
+      "extracted_sha256": "5d53e70ad607c2352162dec9e0923fb54ecdafaccbf604cd8dcf7d00facb989b"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_Fraktur-Bold.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_Fraktur-Bold.woff2",
+      "source_sha256": "74444efd593c005e3f4573b44524704c0af0a937fe911cca9e94068d0d140d3f",
+      "extracted_sha256": "74444efd593c005e3f4573b44524704c0af0a937fe911cca9e94068d0d140d3f"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_Fraktur-Regular.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_Fraktur-Regular.woff2",
+      "source_sha256": "51814d270d06ff0255dba0799994fa4d8c84d11f09951d47595f4abb1f3602dc",
+      "extracted_sha256": "51814d270d06ff0255dba0799994fa4d8c84d11f09951d47595f4abb1f3602dc"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_Main-Bold.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_Main-Bold.woff2",
+      "source_sha256": "0f60d1b897938ec918c8ce073092411baf9438f6739465693ff18b0f9d20b021",
+      "extracted_sha256": "0f60d1b897938ec918c8ce073092411baf9438f6739465693ff18b0f9d20b021"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_Main-BoldItalic.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_Main-BoldItalic.woff2",
+      "source_sha256": "99cd42a3c072d918f2f44984a807cf7aa16e13545fd0875fc07c6c65f99e715b",
+      "extracted_sha256": "99cd42a3c072d918f2f44984a807cf7aa16e13545fd0875fc07c6c65f99e715b"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_Main-Italic.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_Main-Italic.woff2",
+      "source_sha256": "97479ca6cce906abc961ecac96faa5f9ca2e61b8e7670d475826bcdee9a7c267",
+      "extracted_sha256": "97479ca6cce906abc961ecac96faa5f9ca2e61b8e7670d475826bcdee9a7c267"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_Main-Regular.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_Main-Regular.woff2",
+      "source_sha256": "c2342cd8b869e01752a9321dc17213fc40d4d04c79688c1d43f2cf316abd7866",
+      "extracted_sha256": "c2342cd8b869e01752a9321dc17213fc40d4d04c79688c1d43f2cf316abd7866"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_Math-BoldItalic.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_Math-BoldItalic.woff2",
+      "source_sha256": "dc47344dbb6cb5b655c8460d561f4df5f501b90c804ad3c6cec65fe322351ab1",
+      "extracted_sha256": "dc47344dbb6cb5b655c8460d561f4df5f501b90c804ad3c6cec65fe322351ab1"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_Math-Italic.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_Math-Italic.woff2",
+      "source_sha256": "7af58c5ec8f132a2ddde9027c6d7814decce4d3b822a11192a42a20e2e973264",
+      "extracted_sha256": "7af58c5ec8f132a2ddde9027c6d7814decce4d3b822a11192a42a20e2e973264"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_SansSerif-Bold.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_SansSerif-Bold.woff2",
+      "source_sha256": "e99ae51144bf1232efcc1bfe5add36262c6866b0faab24fa75740e1b98577a62",
+      "extracted_sha256": "e99ae51144bf1232efcc1bfe5add36262c6866b0faab24fa75740e1b98577a62"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_SansSerif-Italic.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_SansSerif-Italic.woff2",
+      "source_sha256": "00b26ac825e2095056396e0553b8ac26d3f8ad158c3826e28b4c45b385c4714a",
+      "extracted_sha256": "00b26ac825e2095056396e0553b8ac26d3f8ad158c3826e28b4c45b385c4714a"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_SansSerif-Regular.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_SansSerif-Regular.woff2",
+      "source_sha256": "68e8c73ef42afd3ccec58bf0fba302cce448938e7fc020a5e31f8a952eee1342",
+      "extracted_sha256": "68e8c73ef42afd3ccec58bf0fba302cce448938e7fc020a5e31f8a952eee1342"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_Script-Regular.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_Script-Regular.woff2",
+      "source_sha256": "036d4e95149b69ff9bcc0cd55771efeb25ffa3947293e69acd78d5ac328c684b",
+      "extracted_sha256": "036d4e95149b69ff9bcc0cd55771efeb25ffa3947293e69acd78d5ac328c684b"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_Size1-Regular.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_Size1-Regular.woff2",
+      "source_sha256": "6b47c40166b6dbe21a5dfca7718413f2147fd2399be1ba605d8ad39cedf25dfe",
+      "extracted_sha256": "6b47c40166b6dbe21a5dfca7718413f2147fd2399be1ba605d8ad39cedf25dfe"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_Size2-Regular.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_Size2-Regular.woff2",
+      "source_sha256": "d04c54219f9eaec6d4d4fd42dfb28785975a4794d6b2fc71e566b9cd6db842dd",
+      "extracted_sha256": "d04c54219f9eaec6d4d4fd42dfb28785975a4794d6b2fc71e566b9cd6db842dd"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_Size3-Regular.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_Size3-Regular.woff2",
+      "source_sha256": "73d591271b1604960cb10bb90fee021670af7297017e0e98480b332d11f51995",
+      "extracted_sha256": "73d591271b1604960cb10bb90fee021670af7297017e0e98480b332d11f51995"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_Size4-Regular.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_Size4-Regular.woff2",
+      "source_sha256": "a4af7d414440a1c1790825cfb700cf9cf43b0f2c4b04f0ebc523011ad9853ec0",
+      "extracted_sha256": "a4af7d414440a1c1790825cfb700cf9cf43b0f2c4b04f0ebc523011ad9853ec0"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/fonts/KaTeX_Typewriter-Regular.woff2",
+      "destination": "theme/assets/vendor/katex/fonts/KaTeX_Typewriter-Regular.woff2",
+      "source_sha256": "71d517d67827787cfabdf186914cc3358eda539e37931941f2b2fd4a21f68c0b",
+      "extracted_sha256": "71d517d67827787cfabdf186914cc3358eda539e37931941f2b2fd4a21f68c0b"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/katex.min.css",
+      "destination": "theme/assets/vendor/katex/katex.min.css",
+      "source_sha256": "717bc9ae7853b61f0f76455dddf0ecd4f527a783f42de2ac24684899c1c46258",
+      "extracted_sha256": "717bc9ae7853b61f0f76455dddf0ecd4f527a783f42de2ac24684899c1c46258"
+    },
+    {
+      "source": "docs/site/assets/vendor/katex/katex.min.js",
+      "destination": "theme/assets/vendor/katex/katex.min.js",
+      "source_sha256": "e6bfe5deebd4c7ccd272055bab63bd3ab2c73b907b6e6a22d352740a81381fd4",
+      "extracted_sha256": "e6bfe5deebd4c7ccd272055bab63bd3ab2c73b907b6e6a22d352740a81381fd4"
+    },
+    {
+      "source": "tools/docs/build.py",
+      "destination": "tooling/build.py",
+      "source_sha256": "3bc1d809ab47a854d02853a8d62b7c7ea46ebe115e3dc0a1bb077f5c2bc10d6b",
+      "extracted_sha256": "674a9254048fb801fcd323d5ccadef60a950ef50b864e559ea983718324e69db"
+    },
+    {
+      "source": "tools/docs/chapter_layout.py",
+      "destination": "tooling/chapter_layout.py",
+      "source_sha256": "cce6703e9d4369b765b74cfcf376f523e7eac3ee62492acff428e5d1c6c8b532",
+      "extracted_sha256": "cce6703e9d4369b765b74cfcf376f523e7eac3ee62492acff428e5d1c6c8b532"
+    },
+    {
+      "source": "tools/docs/site_bundle.py",
+      "destination": "tooling/site_bundle.py",
+      "source_sha256": "e6e882053ff9a8d3778e203a4f4b22ce77b2f62e1734cf9be74b0e12b6995438",
+      "extracted_sha256": "59d767a8dfb193f91fb14f5e0f530e332734854f0569b742702d52f2091a1910"
+    },
+    {
+      "source": "tools/docs/site_paths.py",
+      "destination": "tooling/site_paths.py",
+      "source_sha256": "3ac4e210e60ab845b882ac820b371a42dc99d67104cb2b1a4c0cc48463a2fb43",
+      "extracted_sha256": "c5d4c32feb20a8be9ae6822316544355c8efac60b07571bb3a61bc08758c3e23"
+    },
+    {
+      "source": "tools/docs/lint.py",
+      "destination": "tooling/lint.py",
+      "source_sha256": "2309973f4a858e4f4041870118bdb39d3298fa76fc53064dfeb115c8f584e2c2",
+      "extracted_sha256": "8266345224089ac1f1b9da6e0e609d283299ea12775ae52e022bdc9f2e62d51b"
+    },
+    {
+      "source": "tools/docs/requirements.txt",
+      "destination": "requirements.txt",
+      "source_sha256": "fb3b462fef17f83b34aaa287b1dbaf63dd311c2ab09629e47680c4c4886058c0",
+      "extracted_sha256": "0f36e0cbcdbe2df2655defb23bef08c59c023b07a193a39728c8f533f67489ca"
+    },
+    {
+      "source": "tools/docs/test_math_rendering.py",
+      "destination": "tests/test_math_rendering.py",
+      "source_sha256": "bc1cbff76261ed8d6c809af2dfbbb01c3989c47729ff85708f777419a6d572d6",
+      "extracted_sha256": "bc1cbff76261ed8d6c809af2dfbbb01c3989c47729ff85708f777419a6d572d6"
+    },
+    {
+      "source": "tools/docs/test_lint.py",
+      "destination": "tests/test_lint.py",
+      "source_sha256": "a73cfbeeebee6715faaaccda37cc4964ea182f5fada3b62605550d477c9016f4",
+      "extracted_sha256": "a73cfbeeebee6715faaaccda37cc4964ea182f5fada3b62605550d477c9016f4"
+    },
+    {
+      "source": "docs/project/documentation.md",
+      "role": "policy and visual reference",
+      "source_sha256": "c4e9abeb7a9c5a8c507b91117a11e0cb1761ae0a8dae855ca344b16912160ca0"
+    },
+    {
+      "source": "docs/project/writing-docs.md",
+      "role": "policy and visual reference",
+      "source_sha256": "fd9e85ba0d5044661079fc80007a4ec9f676e584d7e7e297c68d31a4f5ea4f51"
+    },
+    {
+      "source": "docs/site/maintenance.md",
+      "role": "policy and visual reference",
+      "source_sha256": "35a21aa8bb6daeab44eff486c005651416528f5dd77192177eeb943fccd0c6e4"
+    },
+    {
+      "source": "docs/topics/vehicle-visuals/index.md",
+      "role": "policy and visual reference",
+      "source_sha256": "c493ad036034ddb354fd83dbe66c6ca40f4267df673862cef5e9bf8fb47252df"
+    },
+    {
+      "source": "docs/topics/home/index.md",
+      "destination": "theme/assets/home.css",
+      "source_sha256": "f1a53bbfebbe66bc2515037f860429d3cd5cb5d93abc320f77e358cf99fcabeb",
+      "scope": "Shared homepage styles only; application content excluded",
+      "extracted_sha256": "02a683f402d670d5f41f6a97d438d8b58c0710c81ade4f56f9b90e87f717b770"
+    },
+    {
+      "source": "tools/docs/test_chapter_layout.py",
+      "destination": "tests/test_chapter_layout.py",
+      "source_sha256": "e7924673c8b95215f8828b17462195755690113909f2f0c39fa63f876946ebcb",
+      "extracted_sha256": "e7924673c8b95215f8828b17462195755690113909f2f0c39fa63f876946ebcb"
+    },
+    {
+      "source": "tools/docs/test_math_runtime.cjs",
+      "destination": "tests/test_math_runtime.cjs",
+      "source_sha256": "7b70da68677595817899362ff64a5708330a42dc9f9922d07a49eb4d932fe244",
+      "extracted_sha256": "2bc7b823d6eb6c0f74de742fcbaa8c8d3418c6e0fa718e3156e7a375e88e66fd"
+    },
+    {
+      "source": "tools/docs/test_site_filelinks.cjs",
+      "destination": "tests/test_site_filelinks.cjs",
+      "source_sha256": "7989db0cd1e6a098b6abfd4318d1e02a299888ebd18efd99ed902cf2e8415199",
+      "extracted_sha256": "a03e6a07845a2559d0665dcfa63c0a44a5817086f2089dad43cedea4157c6d9f"
+    }
+  ],
+  "scope": "Shared rules, neutral starter, generic site engine and reader. Source project was not migrated or retired."
+}

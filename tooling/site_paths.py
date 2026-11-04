@@ -1,0 +1,55 @@
+"""Consumer paths are independent of the shared kit's installation path."""
+import os
+from pathlib import Path
+import tomllib
+
+REPO = Path(os.environ.get("DOCSITE_PROJECT_ROOT", Path.cwd())).resolve()
+DOCS = REPO / "docs"
+TOPICS = DOCS / "topics"
+SITE = DOCS / "site"
+KIT_SITE = Path(__file__).resolve().parents[1] / "theme"
+OUTPUT_ROOT = REPO / ".build" / "docs"
+HTML = OUTPUT_ROOT / "html"
+_config_path = SITE / "site.toml"
+_config = tomllib.loads(_config_path.read_text()) if _config_path.is_file() else {}
+_ALIASES = ((Path("docs/html"), Path(".build/docs/html")),)
+# Optional historical identities belong to the consuming project.
+LEGACY_FILES = {Path(old): Path(new) for old, new in _config.get("legacy_files", {}).items()}
+for old, new in LEGACY_FILES.items():
+    if old.is_absolute() or new.is_absolute() or ".." in old.parts or ".." in new.parts:
+        raise ValueError("legacy_files paths must stay inside the project")
+
+
+def topic_pages(root=REPO):
+    return sorted((Path(root) / "docs/topics").glob("*/index.md"))
+
+
+def is_topic_page(path, root=REPO):
+    try:
+        relative = Path(path).relative_to(Path(root) / "docs/topics")
+    except ValueError:
+        return False
+    return len(relative.parts) == 2 and relative.name == "index.md"
+
+
+def resolve_legacy_path(path, root=REPO, *, recorded_roots=()):
+    root = Path(root).resolve()
+    path = Path(path)
+    absolute = Path(os.path.abspath(path if path.is_absolute() else root / path))
+    for recorded in recorded_roots:
+        if not isinstance(recorded, (str, Path)):
+            raise ValueError("Recorded source_root must be an absolute project path")
+        origin = Path(recorded)
+        if not origin.is_absolute() or origin.parent == origin or origin.as_posix() != str(recorded) or ".." in origin.parts:
+            raise ValueError("Invalid recorded source_root")
+        if not absolute.is_relative_to(root) and absolute.is_relative_to(origin):
+            absolute = root / absolute.relative_to(origin)
+    try:
+        relative = absolute.relative_to(root)
+    except ValueError:
+        return absolute
+    for old, current in _ALIASES:
+        if relative.is_relative_to(old):
+            relative = current / relative.relative_to(old)
+            break
+    return root / LEGACY_FILES.get(relative, relative)
