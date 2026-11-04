@@ -18,6 +18,7 @@ No application runtime is needed.
 from __future__ import annotations
 
 import argparse
+from copy import deepcopy
 from functools import lru_cache
 import hashlib
 import json
@@ -47,7 +48,7 @@ from site_bundle import SiteBundle, validate_resources
 COMPONENTS = KIT_SITE / "components"
 KATEX_SRC = KIT_SITE / "assets" / "vendor" / "katex"
 
-FRONTMATTER_KEYS = {"title", "slug", "brand", "brand_sub", "math", "components", "page_css", "toc", "raw", "ongoing", "reader"}
+FRONTMATTER_KEYS = {"title", "slug", "brand", "brand_sub", "body_class", "math", "components", "page_css", "toc", "raw", "ongoing", "reader"}
 KNOWN_COMPONENTS = ("toc", "nav", "tabs", "diagram", "code", "filelinks",
                     "lightbox", "plot-toggles", "carousel", "panel-switcher",
                     "fold-controls", "chapter-reader", "page-redirect")  # emission order
@@ -245,6 +246,21 @@ class DocsRenderer(mistune.HTMLRenderer):
         return f'<span class="math-inline">\\({html.escape(text)}\\)</span>'
 
 
+def validate_frontmatter(meta: dict, name: str) -> None:
+    unknown = set(meta) - FRONTMATTER_KEYS
+    if unknown:
+        err(f"{name}: unknown frontmatter keys: {sorted(unknown)}")
+    if "title" not in meta:
+        err(f"{name}: frontmatter needs title")
+    if "toc" not in meta:
+        err(f"{name}: frontmatter needs toc (the sidebar is generated)")
+    if "slug" in meta and (not isinstance(meta["slug"], str) or not re.fullmatch(r"[a-z0-9][a-z0-9-]*", meta["slug"])):
+        err(f"{name}: slug must be a lowercase filename stem without directories")
+    if "body_class" in meta and (not isinstance(meta["body_class"], str)
+            or not re.fullmatch(r"[a-zA-Z_][a-zA-Z0-9_-]*(?: [a-zA-Z_][a-zA-Z0-9_-]*)*", meta["body_class"])):
+        err(f"{name}: body_class must contain plain space-separated CSS class names")
+
+
 def parse_frontmatter(raw: str, name: str) -> tuple[dict, str]:
     if not raw.startswith("+++\n"):
         err(f"{name}: missing +++ frontmatter fence at top")
@@ -258,15 +274,7 @@ def parse_frontmatter(raw: str, name: str) -> tuple[dict, str]:
     except tomllib.TOMLDecodeError as e:
         err(f"{name}: frontmatter TOML error: {e}")
         return {}, raw[end + 5:]
-    unknown = set(meta) - FRONTMATTER_KEYS
-    if unknown:
-        err(f"{name}: unknown frontmatter keys: {sorted(unknown)}")
-    if "title" not in meta:
-        err(f"{name}: frontmatter needs title")
-    if "toc" not in meta:
-        err(f"{name}: frontmatter needs toc (the sidebar is generated)")
-    if "slug" in meta and (not isinstance(meta["slug"], str) or not re.fullmatch(r"[a-z0-9][a-z0-9-]*", meta["slug"])):
-        err(f"{name}: slug must be a lowercase filename stem without directories")
+    validate_frontmatter(meta, name)
     return meta, raw[end + 5:]
 
 
@@ -362,11 +370,33 @@ def katex_scripts() -> str:
     )
 
 
+@lru_cache(maxsize=1)
+def content_transform():
+    from project_extensions import load_extension
+    module = load_extension(REPO, 'content_transform')
+    if module is not None and not callable(getattr(module, 'transform', None)):
+        raise ValueError('content_transform must export transform')
+    return module
+
+
 def build_page(md_path: Path, site: dict, shell: str) -> tuple[str, str] | None:
     name = md_path.relative_to(PAGES).as_posix()
     meta, body = parse_frontmatter(md_path.read_text(), name)
     if _errors:
         return None
+    module = content_transform()
+    if module is not None:
+        structural = {key: deepcopy(meta.get(key)) for key in ('slug', 'page_css')}
+        body = module.transform(body, metadata=meta, source=md_path, root=REPO)
+        if not isinstance(body, str):
+            err(f'{name}: content_transform must return HTML/Markdown text')
+            return None
+        if any(meta.get(key) != value for key, value in structural.items()):
+            err(f'{name}: content_transform must keep slug and page_css in source frontmatter')
+            return None
+        validate_frontmatter(meta, name)
+        if _errors:
+            return None
     slug = meta.get("slug", md_path.parent.name)
     body = body.split(PAGE_END, 1)[0]
     comps = list(meta.get("components", ["toc", "nav"]))
@@ -494,7 +524,8 @@ def build_page(md_path: Path, site: dict, shell: str) -> tuple[str, str] | None:
     if meta.get("math"):
         scripts += katex_scripts()
 
-    page = shell.replace("<body>", '<body data-site-home-label="' + html.escape(site.get("home_label", site.get("title", "Documentation")), quote=True) + '">')
+    body_class = ' class="' + html.escape(meta['body_class'], quote=True) + '"' if meta.get('body_class') else ''
+    page = shell.replace("<body>", '<body' + body_class + ' data-site-home-label="' + html.escape(site.get("home_label", site.get("title", "Documentation")), quote=True) + '">')
     for k, v in {
         "{{TITLE}}": html.escape(meta.get("title", "")),
         "{{BRAND}}": html.escape(meta.get("brand", slug)),

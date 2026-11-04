@@ -123,6 +123,50 @@ def verify(root, *, require_all_manifests=False): raise ValueError("project evid
         self.assertIn('cannot use symlinks', result.stderr)
         self.assertNotIn('RuntimeError: must never execute', result.stderr)
 
+    def test_project_content_transform_uses_shared_renderer(self):
+        config = self.root / 'docs/site/site.toml'
+        config.write_text('content_transform = "transformer.py"\n' + config.read_text())
+        (self.root / 'transformer.py').write_text('''def transform(body, *, metadata, source, root):
+    metadata['title'] = 'Imported project content'
+    metadata['body_class'] = 'project-reader scientific-content'
+    return body.replace('Pin the tools, own the content', 'Imported source remains project-owned')
+''')
+        self.track()
+        subprocess.run(['git', 'add', 'transformer.py'], cwd=self.root, check=True)
+        result = invoke('build', '--project', self.root)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        page = (self.root / '.build/docs/html/guide.html').read_text()
+        self.assertIn('<body class="project-reader scientific-content"', page)
+        self.assertIn('Imported source remains project-owned', page)
+        self.assertIn('<title>Imported project content</title>', page)
+        self.assertIn('assets/chapter-reader.js', page)
+
+    def test_transformed_metadata_is_validated_before_output(self):
+        config = self.root / 'docs/site/site.toml'
+        config.write_text('content_transform = "transformer.py"\n' + config.read_text())
+        (self.root / 'transformer.py').write_text('''def transform(body, *, metadata, source, root):
+    metadata['body_class'] = 'reader" onload="bad()'
+    return body
+''')
+        self.track()
+        subprocess.run(['git', 'add', 'transformer.py'], cwd=self.root, check=True)
+        result = invoke('build', '--project', self.root)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('body_class must contain plain', result.stderr)
+
+    def test_content_transform_cannot_change_registered_page_identity(self):
+        config = self.root / 'docs/site/site.toml'
+        config.write_text('content_transform = "transformer.py"\n' + config.read_text())
+        (self.root / 'transformer.py').write_text('''def transform(body, *, metadata, source, root):
+    metadata['slug'] = 'unexpected-page'
+    return body
+''')
+        self.track()
+        subprocess.run(['git', 'add', 'transformer.py'], cwd=self.root, check=True)
+        result = invoke('build', '--project', self.root)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('must keep slug and page_css', result.stderr)
+
     def test_title_and_source_links_belong_to_the_consumer(self):
         config = self.root / 'docs/site/site.toml'
         config.write_text(config.read_text().replace('Documentation kit', 'Second project').replace('home_label = "Docs"', 'home_label = "Second"'))
@@ -133,6 +177,22 @@ def verify(root, *, require_all_manifests=False): raise ValueError("project evid
         self.assertIn('<title>Second project</title>', home)
         page = (self.root / '.build/docs/html/guide.html').read_text()
         self.assertIn('data-site-home-label="Second"', page)
+
+    def test_existing_project_can_keep_its_canonical_worklog(self):
+        config = self.root / 'docs/site/site.toml'
+        lines = config.read_text().splitlines(keepends=True)
+        lines.insert(3, 'worklog = "docs/development/worklog.md"\n')
+        config.write_text(''.join(lines))
+        destination = self.root / 'docs/development/worklog.md'
+        destination.parent.mkdir(parents=True)
+        (self.root / 'docs/worklog.md').rename(destination)
+        context = self.root / 'docs/project/PROJECT_CONTEXT.md'
+        context.write_text(context.read_text().replace('../worklog.md', '../development/worklog.md'))
+        self.track()
+        result = invoke('build', '--project', self.root)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        result = invoke('lint', '--project', self.root, '--strict')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_declared_project_assets_are_packaged_without_shared_overwrite(self):
         config = self.root / 'docs/site/site.toml'

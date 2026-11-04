@@ -2,6 +2,19 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-04 — Generated-content compatibility
+
+- Support a tracked project `content_transform` for importing scientific or
+  sealed reader content into the shared presentation. Revalidate derived
+  metadata; preserve source-declared slugs and page CSS. Allow validated scoped
+  `body_class` values and existing canonical worklog paths. The
+  [maintenance contract](../rules/maintenance.md) owns these extension points.
+- Strict starter build/lint, all 31 Python checks, math/source-link JavaScript
+  checks and desktop/phone reader browser checks pass. [Receipts](../verification/content-imports.json)
+  record tested inputs and resources under the shared lock in an owned
+  4 GiB/zero-swap scope. Consumer scientific-preservation checks remain
+  project-owned. This landing supplies the commit identity.
+
 ## 2026-11-04 — Shared reader includes
 
 - Resolve matching shared-template includes from the kit before looking for

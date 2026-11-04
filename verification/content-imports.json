@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-04",
+  "result": "pass",
+  "scope": "Tracked content imports, scoped body classes and a consumer canonical worklog path without changing shared reader behavior",
+  "strict_lint_warnings": 0,
+  "python_tests": 31,
+  "javascript_checks": "Math and source links pass",
+  "browser": "Six guide chapters and home; desktop/phone, paired/all modes and fallback pass",
+  "resources": "Shared flock; owned 4 GiB and zero swap scope; 16 GiB availability floor and sustained PSI thresholds",
+  "inputs": {
+    "tooling/build.py": "8decc7d47df99edea57da4e0536dd68c534136f56293a2b2790202dd5d1339df",
+    "tooling/lint.py": "925201696ef3156afd7386d86f176780241928dad51441937d0a1896920d3b0c",
+    "tests/test_portability.py": "01e687bfb029fc0de671d38799ad5efbaaef8f94aa1a9d1b3527b8d303c608cc",
+    "rules/maintenance.md": "d7cf08c08c293aca066713308972403e9bfc997bf6f97bb07bd9215db1a1d9e8"
+  },
+  "artifacts": {
+    "verification/content-imports/cgroup.json": "f250c24216cb296b9ea33aba23ea4758f4dee412b3c4573352210f09f307d670",
+    "verification/content-imports/checks.log": "ac18fc975e950bde3a404759e9b7c7b7dd7eea50070c04832167ec72eea5d162",
+    "verification/content-imports/resources.json": "bd4e1ef93597d6ad0addd963b9fcdc4e836ebd678ba7a9c33f6a1d0fcd20ff22",
+    "verification/content-imports/time.txt": "297630ce03cd10fbe79bf233288c16643748a45502c717787a93f6d8bed1fd3b"
+  }
+}

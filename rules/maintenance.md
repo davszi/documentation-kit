@@ -98,6 +98,22 @@ returning `(documents, revisions)`, and `verify` with the same arguments; invali
 evidence raises `ValueError`. Projects keep adapter tests and schema policy;
 the kit keeps one build/lint engine and uses the adapters consistently.
 
+For generated or sealed content formats, `content_transform` may name a tracked
+project module exporting `transform(body, *, metadata, source, root)`. The hook
+runs after frontmatter parsing and returns the document body as text, before
+shared rendering. It may derive ordinary metadata such as chapter navigation
+from the owning source; metadata is validated again afterward. The project owns
+source admission, preservation and format-specific tests. This keeps scientific
+generators and their immutable outputs separate from current presentation.
+Keep `slug` and `page_css` in source frontmatter; the hook cannot change those
+structural declarations after page/asset registration.
+Use `body_class` for plain project CSS class names when content needs scoped
+styles. Common shell, typography and reader behavior stay in the kit.
+
+An existing project may set `worklog = "docs/development/worklog.md"` to retain
+its canonical history path. The worklog remains project-owned; the configured
+path must stay inside the repository. New projects use `docs/worklog.md`.
+
 Generated figures retain generator, revision, inputs, date and output hash. Frozen document collections retain original logical paths, revisions, bytes and hashes. Validate those identities separately from link resolution and presentation. Do not rewrite historical originals to make current lint convenient.
 
 ## Shared reading layout

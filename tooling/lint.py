@@ -32,6 +32,7 @@ import os
 import re
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 
 REPO = Path(os.environ.get("DOCSITE_PROJECT_ROOT", Path.cwd())).resolve()
@@ -425,9 +426,19 @@ def check_open() -> None:
 
 
 def check_worklog() -> None:
-    f = DOCS / "worklog.md"
+    config = REPO / 'docs/site/site.toml'
+    site = tomllib.loads(config.read_text()) if config.is_file() else {}
+    relative = site.get('worklog', 'docs/worklog.md')
+    if (not isinstance(relative, str) or Path(relative).is_absolute()
+            or '..' in Path(relative).parts):
+        error('worklog must name a project-relative file')
+        return
+    f = REPO / relative
+    if f.is_symlink() or not f.resolve().is_relative_to(REPO):
+        error('worklog must stay inside the project')
+        return
     if not f.is_file():
-        error("docs/worklog.md missing")
+        error(f'{relative} missing')
         return
     dates = re.findall(r"^## (\d{4}-\d{2}-\d{2})", f.read_text(), re.M)
     starts = [d[:10] for d in dates]
