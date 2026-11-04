@@ -2,6 +2,17 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-04 — Shared reader includes
+
+- Resolve matching shared-template includes from the kit before looking for
+  project fragments. Existing `components/chapter-reader.html` markers keep
+  their behavior without a duplicate consumer toolbar file. Relative/contained
+  include paths remain required.
+- Strict build/lint, all 27 Python checks, JavaScript math/source-link checks
+  and desktop/phone reader browser checks pass under the shared lock and an
+  owned 4 GiB/zero-swap scope. [Receipts](../verification/shared-includes.json)
+  retain tested inputs and output. This landing supplies the commit identity.
+
 ## 2026-11-04 — Consumer compatibility adapters
 
 - Add explicit tracked/contained project path and evidence adapters, keeping

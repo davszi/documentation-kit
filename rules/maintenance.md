@@ -43,7 +43,12 @@ A rendered page body above `<!-- page-end -->` uses the logical public `docs/htm
 
 Prefer `.html` links when the purpose is reading a page and explicit source links when inspecting source is intended. Raw Markdown viewing does not apply generated-origin interpretation. Preserve source path and fragment metadata so local and hosted source links retain identity.
 
-Includes resolve from `docs/site/`. `page_css = ["build-sheet.css"]` selects the kit's shared theme resource. Local stylesheet entries such as `../site/assets/example.css` resolve from the shared `docs/topics/` configuration base. Do not introduce machine-specific absolute paths or remote font/media dependencies.
+Includes select a matching shared theme file first (for example,
+`components/chapter-reader.html`); project fragments otherwise resolve from
+`docs/site/`. Include paths stay relative and contained. `page_css = ["build-sheet.css"]`
+selects the kit's shared theme resource. Local stylesheet entries such as
+`../site/assets/example.css` resolve from the shared `docs/topics/` configuration
+base. Do not introduce machine-specific absolute paths or remote font/media dependencies.
 
 Register project-specific script components with `extra_components = ["viewer"]`;
 each uses a tracked `docs/site/components/<name>.js`. For dynamically loaded

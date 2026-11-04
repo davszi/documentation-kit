@@ -1,0 +1,58 @@
+{
+  "command": [
+    "timeout",
+    "--signal=TERM",
+    "--kill-after=3s",
+    "60s",
+    "/usr/bin/python3",
+    "/tmp/adp-doc-kit-adoption/scope-command.py",
+    "/tmp/adp-doc-kit-adoption/kit-check-03/cgroup.json",
+    "bash",
+    "/tmp/adp-doc-kit-adoption/check-kit.sh"
+  ],
+  "initial_available_bytes": 57154936832,
+  "initial_pressure": {
+    "some": {
+      "avg10": "0.00",
+      "avg60": "0.00",
+      "avg300": "0.00",
+      "total": "665560871"
+    },
+    "full": {
+      "avg10": "0.00",
+      "avg60": "0.00",
+      "avg300": "0.00",
+      "total": "567274106"
+    }
+  },
+  "monitor_thresholds": {
+    "minimum_available_gib": 16,
+    "maximum_available_drop_gib": 16,
+    "full_psi_avg10_percent": 1.0,
+    "some_psi_avg10_percent": 5.0,
+    "consecutive_high_samples": 3,
+    "sample_interval_s": 1
+  },
+  "exit_code": 0,
+  "minimum_available_bytes": 56772526080,
+  "maximum_pressure_avg10": {
+    "some": 0.0,
+    "full": 0.0
+  },
+  "stopped": null,
+  "elapsed_s": 8.002169389976189,
+  "final_pressure": {
+    "some": {
+      "avg10": "0.00",
+      "avg60": "0.00",
+      "avg300": "0.00",
+      "total": "665562438"
+    },
+    "full": {
+      "avg10": "0.00",
+      "avg60": "0.00",
+      "avg300": "0.00",
+      "total": "567275672"
+    }
+  }
+}

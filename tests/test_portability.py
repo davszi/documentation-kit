@@ -100,6 +100,17 @@ def verify(root, *, require_all_manifests=False): raise ValueError("project evid
         self.assertIn('must be tracked', result.stderr)
         self.assertNotIn('RuntimeError: must never execute', result.stderr)
 
+    def test_shared_reader_include_needs_no_local_copy(self):
+        guide = self.root / 'docs/topics/guide/index.md'
+        guide.write_text(guide.read_text().replace('toc = []', 'toc = []\nreader = false').replace('components = ["toc",', 'components = ["chapter-reader", "toc",') + '\n<!-- include: components/chapter-reader.html -->\n')
+        self.track()
+        result = invoke('build', '--project', self.root)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse((self.root / 'docs/site/components/chapter-reader.html').exists())
+        page = (self.root / '.build/docs/html/guide.html').read_text()
+        self.assertIn('id="chapter-reader"', page)
+        self.assertIn('assets/chapter-reader.js', page)
+
     def test_adapter_symlink_is_rejected_before_execution(self):
         config = self.root / 'docs/site/site.toml'
         config.write_text('path_resolver = "adapter.py"\n' + config.read_text())

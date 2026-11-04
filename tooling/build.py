@@ -305,7 +305,14 @@ def site_map_html(site: dict) -> str:
 
 def expand_includes(body: str, name: str) -> str:
     def rep(m: re.Match) -> str:
-        p = local_resource(SRC / m.group(1))
+        relative = Path(m.group(1))
+        if relative.is_absolute() or '..' in relative.parts:
+            raise ValueError('Include paths must stay inside the theme or project')
+        shared = KIT_SITE / relative
+        if shared.is_file() and not shared.is_symlink() and shared.resolve().is_relative_to(KIT_SITE):
+            p = shared
+        else:
+            p = local_resource(SRC / relative)
         if not p.is_file():
             err(f"{name}: include not found: {m.group(1)}")
             return ""
