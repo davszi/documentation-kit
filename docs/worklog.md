@@ -2,6 +2,37 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-05 — Slide faces and extracted decks
+
+- Add optional chapter slide faces: `<!-- slide -->` blocks become a fixed 16:9
+  canvas at the top of a chapter, sized entirely in container units so fit is
+  identical at every width; below 720 px faces stack. The reader adds a bridge
+  (reading time, figure count, Continue/Back control), keeps a duplicated eyebrow
+  for assistive technology only and gives faced chapters sentence-case headings.
+  Canvas declarations are `!important`, because a consumer's id-scoped `p` rule
+  shrank slide titles from 34.6 to 15 px. The narrow layout is a CSS container
+  query, so it needs no JavaScript; print
+  keeps the slide palette. Flat Markdown pages start a chapter at a face written
+  before its heading; code examples of the markers stay literal.
+  The [writing rules](../rules/writing.md#slide-faces) own content guidance; the
+  [maintenance contract](../rules/maintenance.md#slide-faces-and-decks) owns
+  markers, vocabulary and the `slides` command, which writes presentable and
+  printable decks to `.build/slides/` outside the published bundle. Decks prefix
+  slide ids, re-root all relative URLs, link other anchors back to their page,
+  render KaTeX and accept pages without the reader (outermost section cards).
+- Add an `is-alert` tone for failures and warnings, so the accent and warm tones
+  can identify compared methods only (found by the consumer's slide review).
+- Widen One chapter cards from 80% to 88% of the stage. Derived from a reviewed
+  prototype on the adaptation Cursor reader; the starter guide carries two faces.
+- One independent review (Opus, high effort) found placement, scrolling,
+  no-JavaScript, print, URL and keyboard defects; all fourteen are addressed.
+- Checks: starter build, strict lint (0 warnings), Python suite including
+  14 slide tests, math and file-link JavaScript checks. Browser-pane
+  inspection at 1600×1000 and 375×812: faces fit 16:9, compact stacking without
+  horizontal overflow, bridge and Continue/Back scrolling, deck overview and
+  presentation mode. Playwright fixtures were not run (Playwright unavailable).
+  This landing supplies the commit identity.
+
 ## 2026-11-04 — Shared publication and browser checks
 
 - Extract the optional existing-site exporter and common browser checks from

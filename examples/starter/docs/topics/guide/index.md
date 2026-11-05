@@ -12,6 +12,14 @@ math = true
 
 <section class="card" id="pipeline">
 
+<!-- slide -->
+<p class="slide-eyebrow">Ownership</p>
+<p class="slide-title">The project owns its content; the kit is a pinned tool</p>
+<p class="slide-lead">Pages, configuration and evidence stay in the project. One reviewed kit revision supplies rules, theme and reader.</p>
+<div class="slide-main"><div class="slide-row"><div class="slide-tile is-term"><h4>Project owns</h4><p>topic records and pages · navigation and local assets · evidence and review</p></div><div class="slide-tile"><h4>Pinned submodule</h4><p>rules and templates · build-sheet theme · reader and validation</p></div><div class="slide-tile is-held"><span class="slide-tag">generated</span><h4>Ready to read</h4><p>HTML and local resources · rebuilt, never edited</p></div></div><div class="slide-legend"><span><i></i>authored source</span><span><i class="is-held"></i>generated output; changes flow from source only</span></div></div>
+<p class="slide-scope">Illustration of ownership · no measured results</p>
+<!-- /slide -->
+
 ## Pin the tools, own the content
 
 <p class="bs-lead">A project chooses its shared-kit revision while keeping its pages and configuration in its own repository.</p>
@@ -124,6 +132,24 @@ gh_repo = "https://github.com/example/project"
 ```
 
 <!-- /fold -->
+
+</section>
+
+<section class="card" id="slides">
+
+<!-- slide -->
+<p class="slide-eyebrow">Slide faces</p>
+<p class="slide-title">Open a chapter with one slide, then read on</p>
+<p class="slide-lead">A slide states the takeaway with one visual. The full chapter follows below it and must stand on its own.</p>
+<div class="slide-main"><div class="slide-split is-wide-side"><dl class="slide-factors"><dt>Title<small>the finding</small></dt><dd><span class="slide-chip is-key">a sentence, not a topic</span></dd><dt>Visual</dt><dd><span class="slide-chip">tiles</span><span class="slide-chip">factor grid</span><span class="slide-chip">figure and numbers</span><span class="slide-chip">equation terms</span></dd><dt>Scope line</dt><dd><span class="slide-chip is-alt">what the numbers cover</span></dd><dt>Canvas</dt><dd><span class="slide-chip is-mono">16:9</span><span class="slide-chip">stacks below 720 px</span></dd></dl><div class="slide-stats"><div class="slide-stat"><b>1</b><span>slide per chapter, at most</span></div><div class="slide-stat is-alt"><b>0</b><span>facts that exist only on the slide</span></div></div></div></div>
+<p class="slide-scope">Extract any set of slides with docsite.py slides</p>
+<!-- /slide -->
+
+## Open a chapter with one slide, then read on
+
+<p class="bs-lead">A slide face summarises its chapter; the chapter remains the complete, readable source of every claim.</p>
+
+Write the face between `<!-- slide -->` and `<!-- /slide -->` at the start of a chapter. The reader shows it as a 16:9 slide at the top of the card, followed by the full chapter. `python docsite.py slides --project . --select guide --out guide` collects the faces into a deck that can be presented or printed.
 
 </section>
 

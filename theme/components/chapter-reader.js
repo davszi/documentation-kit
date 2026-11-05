@@ -75,7 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const generations = [0, 0], foldCache = [new Map(), new Map()], positions = new Map();
   topics.forEach((topic, index) => {
     const section = topic.section;
-    const heading = section.querySelector('h2, h3');
+    // A slide face's title is not a heading; skip any heading inside one regardless.
+    const heading = [...section.querySelectorAll('h2, h3')].find(node => !node.closest('[data-slide-face]'));
     const header = make('header', 'chapter-header');
     const identity = make('div', 'chapter-identity');
     const number = make('span', 'chapter-number', String(index + 1).padStart(2, '0'));

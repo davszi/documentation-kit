@@ -92,8 +92,11 @@ def adapt_sections(content: str, toc: list, *, group: str | None = None, reserve
             if not text.startswith("-") and href.startswith("#") and href != "#top"}
     has_flat_headings = any(node.tag == "h2" for node in roots)
     boundaries = []
-    for root in roots:
-        nodes = list(root.descendants())
+    for index, root in enumerate(roots):
+        # Headings inside a slide face never name or anchor a chapter.
+        faces = [node for node in root.descendants() if "data-slide-face" in node.attrs]
+        nodes = [node for node in root.descendants()
+                 if not any(face is not node and face.start <= node.start < face.end for face in faces)]
         anchor = next((node for node in nodes if node.attrs.get("id") in main), None)
         is_card = root.tag == "section" and "card" in root.attrs.get("class", "").split()
         if root.tag == "h2" or is_card and (not has_flat_headings or anchor):
@@ -105,7 +108,13 @@ def adapt_sections(content: str, toc: list, *, group: str | None = None, reserve
             title = main.get(identifier)
             if title is None:
                 title = label(content[heading.opening_end:heading.closing_start]) if heading else identifier
-            boundaries.append((root.start, anchor, title))
+            # A slide face written directly before a flat heading opens that chapter.
+            previous = roots[index - 1] if index else None
+            start = root.start
+            if root.tag == "h2" and previous is not None and "data-slide-face" in previous.attrs \
+                    and not content[previous.end:root.start].strip():
+                start = previous.start
+            boundaries.append((start, anchor, title))
 
     title_node = next((node for node in roots if node.tag == "h1"), None)
     page_title = content[title_node.start:title_node.end] if title_node else ""

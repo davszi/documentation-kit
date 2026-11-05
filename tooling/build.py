@@ -51,7 +51,7 @@ KATEX_SRC = KIT_SITE / "assets" / "vendor" / "katex"
 FRONTMATTER_KEYS = {"title", "slug", "brand", "brand_sub", "body_class", "math", "components", "page_css", "toc", "raw", "ongoing", "reader"}
 KNOWN_COMPONENTS = ("toc", "nav", "tabs", "diagram", "code", "filelinks",
                     "lightbox", "plot-toggles", "carousel", "panel-switcher",
-                    "fold-controls", "chapter-reader", "page-redirect")  # emission order
+                    "fold-controls", "chapter-reader", "slide-face", "page-redirect")  # emission order
 # Vendored font folders under assets/vendor/, published to assets/fonts/<family>/.
 FONT_FAMILIES = ("atkinson-hyperlegible", "saira-condensed", "ibm-plex-sans", "ibm-plex-mono")
 # NOTE: "plot-toggles" must precede "carousel" — it wraps each inline SVG in
@@ -84,6 +84,28 @@ def folds_to_html(chunk: str, name: str) -> str:
 
     chunk = _FOLD_OPEN_RE.sub(open_sub, chunk)
     return _FOLD_CLOSE_RE.sub("</details>", chunk)
+
+
+# Slide faces: one 16:9 summary slide at the top of a chapter.
+#   <!-- slide -->
+#   <p class="slide-eyebrow">…</p><p class="slide-title">…</p> … <p class="slide-scope">…</p>
+#   <!-- /slide -->
+# The title is deliberately not an h2/h3: the reader names chapters by their
+# first heading, and that heading opens the full chapter below the slide.
+_SLIDE_OPEN_RE = re.compile(r"^[ \t]*<!--\s*slide\s*-->[ \t]*$", re.M)
+_SLIDE_CLOSE_RE = re.compile(r"^[ \t]*<!--\s*/slide\s*-->[ \t]*$", re.M)
+
+
+def slides_to_html(chunk: str, name: str) -> str:
+    opens = [m.start() for m in _SLIDE_OPEN_RE.finditer(chunk)]
+    closes = [m.start() for m in _SLIDE_CLOSE_RE.finditer(chunk)]
+    if len(opens) != len(closes) or any(c < o for o, c in zip(opens, closes)) or any(
+            n < c for c, n in zip(closes, opens[1:])):
+        err(f"{name}: unbalanced or nested slide markers ({len(opens)} open, {len(closes)} close)")
+        return chunk
+    # The outer element is the size container; the canvas inside carries the 16:9 layout.
+    chunk = _SLIDE_OPEN_RE.sub('<div class="slide-face" data-slide-face><div class="slide-canvas">\n', chunk)
+    return _SLIDE_CLOSE_RE.sub("</div></div>\n", chunk)
 
 
 def inline_svg_figures(content: str, name: str, *, namespace_ids: bool = False) -> str:
@@ -412,10 +434,12 @@ def build_page(md_path: Path, site: dict, shell: str) -> tuple[str, str] | None:
             # converted pages whose content is still hand-built HTML skip
             # markdown entirely, so blank lines / indentation inside big
             # markup can't re-enter the markdown parser.
-            return chunk
+            return slides_to_html(chunk, name)
         renderer = DocsRenderer(math_enabled=bool(meta.get("math")))
         md = mistune.create_markdown(renderer=renderer, plugins=["table", "math"])
-        return md(folds_to_html(markers_to_callouts(chunk), name))
+        # Slide markers are matched after rendering: Markdown passes standalone
+        # comments through unchanged, while code blocks escape example markers.
+        return slides_to_html(md(folds_to_html(markers_to_callouts(chunk), name)), name)
 
     id_to_panel: dict[str, int] = {}
     parts = TAB_RE.split(body)
@@ -474,6 +498,8 @@ def build_page(md_path: Path, site: dict, shell: str) -> tuple[str, str] | None:
     # Inspect rendered content so folds from included fragments count too.
     if '<details class="fold ' in content and "fold-controls" not in comps:
         comps.append("fold-controls")
+    if "data-slide-face" in content and "slide-face" not in comps:
+        comps.append("slide-face")
     for c in comps:
         if c not in KNOWN_COMPONENTS:
             err(f"{name}: unknown component {c!r} (known: {KNOWN_COMPONENTS})")
@@ -513,6 +539,8 @@ def build_page(md_path: Path, site: dict, shell: str) -> tuple[str, str] | None:
         head_extra += '<link rel="stylesheet" href="assets/width-lessons.css">\n'
     if "panel-switcher" in comps:
         head_extra += '<link rel="stylesheet" href="assets/panel-switcher.css">\n'
+    if "slide-face" in comps:
+        head_extra += '<link rel="stylesheet" href="assets/slide-face.css">\n'
     for css in meta.get("page_css", []):
         if not page_stylesheet(css).is_file():
             err(f"{name}: page_css not found: {css}")
@@ -572,6 +600,7 @@ def gather_assets(site: dict) -> dict[str, bytes]:
     assets["assets/base.css"] = (COMPONENTS / "base.css").read_bytes()
     assets["assets/chapter-reader.css"] = (COMPONENTS / "chapter-reader.css").read_bytes()
     assets["assets/panel-switcher.css"] = (COMPONENTS / "panel-switcher.css").read_bytes()
+    assets["assets/slide-face.css"] = (COMPONENTS / "slide-face.css").read_bytes()
     for c in KNOWN_COMPONENTS:
         text = component_script(c).read_text()
         if c == "filelinks":

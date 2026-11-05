@@ -96,6 +96,7 @@ avoid editing a consumer's detached submodule checkout as its only live copy.
 python .docs-kit/docsite.py build --project . --page guide
 python .docs-kit/docsite.py build --project . --check
 python .docs-kit/docsite.py lint --project . --registry
+python .docs-kit/docsite.py slides --project . --select guide --select other#intro,result --out review --title "Review"
 ```
 
 Python 3.12 is the validated runtime; the entrypoint requires at least 3.12.
@@ -107,6 +108,10 @@ escapes, checks resource closure and detects stray generated files. Local-only
 captures require explicit configuration. Optional `evidence_manifests` enable
 exact-byte verification without requiring any platform-specific collection.
 See [maintenance](rules/maintenance.md) for source paths and extension points.
+
+Chapters can open with a 16:9 [slide face](rules/maintenance.md#slide-faces-and-decks);
+the `slides` command collects faces from any reader or card-structured pages into a presentable, printable deck
+under `.build/slides/`.
 
 Existing sites can use the shared [publication exporter](rules/maintenance.md#exporting-into-an-existing-publication)
 to preserve their public routes and selected evidence. The

@@ -207,5 +207,19 @@ async function readerChecks(page, {url, expectedChapters, check = async (_label,
   return scope;
 }
 
-module.exports = {settle, visibleMedia, measureOverflow, assertHorizontalContainment,
+// Slide faces: every face at or above the compact width must fit its 16:9 canvas.
+// Returns one row per face; callers assert on `fits` for rendered (non-compact) faces.
+async function slideFaces(page) {
+  return page.evaluate(() => [...document.querySelectorAll('[data-slide-face]')].map(face => {
+    const canvas = face.querySelector(':scope > .slide-canvas') || face;
+    const main = canvas.querySelector('.slide-main');
+    const compact = getComputedStyle(canvas).aspectRatio === 'auto';
+    const overflow = !compact && (canvas.scrollHeight > canvas.clientHeight + 1 || (!!main && main.scrollHeight > main.clientHeight + 1));
+    const chapter = face.closest('[data-reader-chapter]')?.id || face.closest('section')?.id || '';
+    return {chapter, width: canvas.clientWidth, height: canvas.clientHeight, compact, fits: !overflow,
+            bridge: !!face.parentElement.querySelector(':scope > .slide-bridge, .slide-bridge')};
+  }));
+}
+
+module.exports = {slideFaces, settle, visibleMedia, measureOverflow, assertHorizontalContainment,
   checkLayout, setView, activeChapter, waitActive, goHash, readerChecks};

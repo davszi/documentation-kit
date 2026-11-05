@@ -66,6 +66,24 @@ Wrap a wide comparison table in `.scroll` with `role="region"`, a useful
 `aria-label`, `tabindex="0"` and `data-reader-horizontal`. This keeps scrolling
 and keyboard arrows inside the table instead of changing chapters.
 
+### Slide faces and decks
+
+Write a chapter's slide face between standalone `<!-- slide -->` and `<!-- /slide -->` lines at the start of the chapter: inside its `section.card`, or directly before its `##` heading on a flat Markdown page. The build converts it into `<div class="slide-face" data-slide-face><div class="slide-canvas">…</div></div>` and loads the shared `slide-face` component automatically. Markdown pages match markers after rendering, so examples inside code blocks stay literal. Unbalanced or nested markers fail the build. Use `p.slide-eyebrow` and `p.slide-title`, not headings: the reader names a chapter by its first heading, which opens the full chapter below the slide.
+
+| Class | Use |
+|---|---|
+| `slide-lead`, `slide-main`, `slide-scope` | Lead sentence, the flexible visual area, closing scope line |
+| `slide-tile` (`is-term`, `is-accent`, `is-warm`, `is-alert`, `is-held`), `slide-tag` | Labelled boxes; emphasised term; dashed held-out or generated item |
+| `slide-row`, `slide-steps` | Equal tiles in one row; numbered argument steps |
+| `slide-equation`, `slide-column`, `slide-op`, `slide-note` | Terms of a formula with variants listed under each term |
+| `slide-factors`, `slide-chip` (`is-key`, `is-alt`, `is-warm`, `is-alert`, `is-held`, `is-mono`) | Labelled rows of options |
+| `slide-split` (`is-wide-side`), `slide-figure`, `slide-stats`, `slide-stat` (`is-alt`, `is-warm`, `is-alert`, `is-plain`), `slide-big` | Figure or grid beside headline numbers |
+| `slide-legend` | Line and border keys |
+
+The outer face is the size container and every size inside the canvas is a container unit of it, so a face fits identically at every width or not at all. Below 720 px a CSS container query stacks the canvas into a readable column, without JavaScript. Canvas declarations are marked `!important` so page-wide element rules (for example an id-scoped `p` style) cannot change the fixed layout; local slide classes must do the same. Open a page with `?slide-check` to outline faces that do not fit; the deck always shows the outline. Projects add local classes for domain diagrams under the same rule. In the reader, the first heading after the face becomes the chapter's bridge title; an eyebrow immediately before it stays only for assistive technology. A Continue/Back control moves between the slide and the full chapter.
+
+Extract a deck with `python .docs-kit/docsite.py slides --project . --select <slug>[#chapter,…] --out <name> [--title …]`. Repeat `--select` to combine pages; listed chapters keep the given order, a bare slug takes every face in reading order. Chapters are the reader's chapter sections, or the outermost `section.card` elements on pages without the reader. Slide ids are prefixed per slide so pages can share one deck; relative URLs (including `srcset`, `xlink:href` and CSS `url()`) point back into the built site, and links to the rest of a page open that page. Faces from math pages render with the vendored KaTeX. The command builds the site first and writes `.build/slides/<name>.html`, which reuses the built site's assets and stays outside the published bundle. The deck offers an overview, a presentation mode (`P`, arrow keys, `F`, `Esc`) and one-slide-per-page printing for PDF export. Serve `.build/` on loopback to open it.
+
 ## Validation and review
 
 Run checks from the consuming project root using the pinned kit. A complete validation must cover:
@@ -150,6 +168,8 @@ build, not an arbitrary repository directory.
 a browser, server or experiment. Projects own those lifetimes, page routes,
 expected counts, screenshots and domain assertions. The shared module provides:
 
+- `slideFaces` lists every slide face with its chapter, size, compact state and
+  whether it fits its 16:9 canvas.
 - `settle`, `visibleMedia`, `measureOverflow`, `assertHorizontalContainment` and
   `checkLayout` for fonts, actually visible images and viewport containment.
   Image visibility includes ancestor clipping; hidden/inert and offscreen lazy
@@ -172,7 +192,7 @@ permission to start another heavy job.
 
 Keep fonts and browser/math dependencies vendored with licenses and source/version notices. The shared build-sheet theme uses its bundled font families; pages load no external fonts. Local page CSS adds only page-specific needs.
 
-`chapter_reader = true` in site configuration enables the common reader. Reuse its header, tree navigation, One chapter / Two chapters / All chapters arrangements, pinning, positions and layer choices. Chapters retain their full headline in the body; the toolbar uses a short label. Flat second-level sections and existing cards are adapted by the shared engine. Do not duplicate the reader on individual pages.
+`chapter_reader = true` in site configuration enables the common reader. Reuse its header, tree navigation, One chapter / Two chapters / All chapters arrangements, pinning, positions and layer choices. Chapters retain their full headline in the body; the toolbar uses a short label. Flat second-level sections and existing cards are adapted by the shared engine. In One chapter view a card takes 88% of the stage, so neighbouring chapters stay visible at the edges. Do not duplicate the reader on individual pages.
 
 The tree contains home, ordered groups/pages and the current page's chapters. Wide screens use a docked sidebar by default; narrow screens start closed and open it over content. Preserve the shared breakpoint behavior and remembered choices. Adjacent chapters and keyboard navigation remain discoverable; pinned columns remain fixed while the other navigates. Controls adapt to actual column width.
 
