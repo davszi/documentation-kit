@@ -2,6 +2,17 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-06 — Task-triggered agent reading
+
+- Define one [repository router](../rules/documentation.md#agent-entrypoints-import-versus-point)
+  for orientation, prerequisites and action-specific reads. Update the starter
+  so Codex and Claude use the same task routes and apply every matching rule
+  before its action.
+- Starter build, strict lint, 52 Python tests and both Node 22 checks passed.
+  A fresh initializer smoke check verified the generated router, its three
+  shared policy paths and Claude's single import. This landing supplies the
+  commit identity.
+
 ## 2026-11-06 — Visual ordering and evidence presentation
 
 - Clarify the [page lead](../rules/writing.md#page-design),

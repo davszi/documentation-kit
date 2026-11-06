@@ -87,12 +87,24 @@ Builds on feature branches must not publish production documentation. Publishing
 
 ## Agent entrypoints: import versus point
 
-`AGENTS.md` and `CLAUDE.md` are thin routers. Do not restate the rules they route to.
+Keep one thin repository router in `AGENTS.md`. Name the project context and
+prerequisites there. Read the orientation and rules that apply to every task
+at the start of work, unless they are already loaded.
 
-- Codex: name `docs/project/PROJECT_CONTEXT.md` and all required rule paths explicitly in `AGENTS.md`, and instruct the agent to read them. Every necessary rule must be reachable by a named path; a Claude import alone is insufficient.
-- Claude: use bare, standalone `@path` imports in `CLAUDE.md` for orientation and shared rules. Paths are relative to the importing file. Keep the chain short and within the supported import depth. Backticks and fences make an import literal rather than active.
-- Import orientation and cross-cutting rules only. Link task-specific plans, topic records, experiments and worklog for on-demand reading.
-- Submodule consumers must initialize `.docs-kit` before relying on its rules. Never silently continue with missing shared policy.
+Route the remaining rules by action. For each trigger, name the required files
+or sections and say when to read them. Apply every matching route before its
+action. Recheck the routes when the task expands. Find task-specific plans,
+topics and evidence through named links in the project context or applicable
+rule. Reading a route grants no execution or publication permission.
+
+Codex uses the named paths and triggers in `AGENTS.md`. For Claude Code, use a
+bare, standalone `@AGENTS.md` import in `CLAUDE.md` so both clients use the same
+router. Import paths are relative to the importing file. Keep the import chain
+short. Backticks and fences make an import literal.
+
+Submodule consumers must initialize `.docs-kit` before relying on its rules.
+If a required policy is missing, report it and resolve the prerequisite before
+proceeding with the work it governs.
 
 ## README is the bounded exception
 

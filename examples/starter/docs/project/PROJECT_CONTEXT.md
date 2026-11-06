@@ -4,7 +4,7 @@ This starter demonstrates a project-owned documentation site built by a version-
 
 ## Read first
 
-Shared policy lives at `.docs-kit/rules/documentation.md`, `.docs-kit/rules/writing.md` and `.docs-kit/rules/maintenance.md`. Read those files before editing documentation. Do not copy their rules into this project.
+Follow the [task routes](../../AGENTS.md#read-before-the-relevant-action) before the action they govern.
 
 ## Repository map
 

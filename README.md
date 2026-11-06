@@ -62,10 +62,10 @@ page is `html/index.html`. The server exposes generated output only.
 | `tooling/` and `docsite.py`: renderer, packaging and checks | `docs/site/site.toml`, local CSS/components/fragments, `docs/figures/` |
 | `examples/starter/`: authoring reference and initial project skeleton | `docs/open/OPEN.md`, plans, immutable evidence and append-only worklog |
 
-Agents read `.docs-kit/rules/documentation.md`, `writing.md` and `maintenance.md`
-through their project entrypoints. The starter demonstrates both Codex's named
-paths and Claude's imports. Keep project exceptions in project-owned records;
-change common rules in this repository.
+The starter uses one [task router](examples/starter/AGENTS.md) with named paths
+for Codex and a [Claude import](examples/starter/CLAUDE.md) of that same router.
+Read the shared rules before the actions named by the router. Keep project
+exceptions in project-owned records. Change common rules in this repository.
 
 ## Pin and upgrade
 
