@@ -13,7 +13,9 @@ The shared kit owns the engine, theme and reader. A consuming repository owns it
 | `docs/figures/` | Shared project figures with declared provenance |
 | `.build/docs/` | Reproducible generated output, ignored by Git |
 
-Initialize the submodule before building. Upgrade the pin as a reviewed deliverable, run the shared and consumer checks, and record the adopted revision and compatibility evidence. Do not edit a detached submodule as a substitute for a shared-kit change. Engine and shared-theme changes belong upstream; project content and optional extensions stay local.
+Initialize the submodule before building. The kit is versioned in `VERSION` and
+tagged `v<version>`; [release notes](../docs/topics/releases/releases.md) list each
+version's changes and its migration steps. Upgrade the pin as a reviewed deliverable, run the shared and consumer checks, and record the adopted revision and compatibility evidence. Do not edit a detached submodule as a substitute for a shared-kit change. Engine and shared-theme changes belong upstream; project content and optional extensions stay local.
 
 From the consuming project root, use the pinned kit directly:
 
@@ -49,6 +51,32 @@ Includes select a matching shared theme file first (for example,
 selects the kit's shared theme resource. Local stylesheet entries such as
 `../site/assets/example.css` resolve from the shared `docs/topics/` configuration
 base. Do not introduce machine-specific absolute paths or remote font/media dependencies.
+
+An included fragment may include further fragments, up to eight levels; a cycle
+fails the build. A `[[nav]]` table accepts only `label`, `file`, `group`, `short`
+and `hidden`. TOML assigns every key written after a table header to that table,
+so keep top-level settings such as `extra_components` above the first `[[nav]]`;
+the build rejects any other key inside a nav entry.
+
+### Generated figures
+
+A figure generator reads tracked data, asserts the values its page states and
+writes fragments the page includes; a `--check` mode compares without writing and
+runs in the project's checks. `tooling/svg_figures.py` supplies the shared markup:
+`figure` (numbered caption and a labelled, keyboard-scrollable region), `slide_svg`
+(a face without ids), `standalone` (a file usable as `<img>`, such as a slide
+shown as an image) and drawing helpers with a literal colour palette. Generated
+SVG uses literal colours: surrounding cards may redefine page variables, and an
+SVG loaded as an image cannot read them.
+
+`tooling/number_ledger.py` checks that every distinct number a redesigned section
+shows has a declared source: a configuration value, project evidence expression,
+arithmetic, saved record, quoted text or an explained illustrative value. Values
+are unsigned as written. Projects pass their own evidence namespace and keep the
+ledgers beside the page. Ledger expressions are executable project code: review
+them as code; they are not evaluated in a sandbox. `tooling/verbatim_blocks.py`
+hash-locks the blocks a redesign keeps unchanged, so kept evidence wording cannot
+change silently; locked blocks and fragments are the only text a ledger may set aside.
 
 Register project-specific script components with `extra_components = ["viewer"]`;
 each uses a tracked `docs/site/components/<name>.js`. For dynamically loaded
@@ -175,6 +203,9 @@ expected counts, screenshots and domain assertions. The shared module provides:
   Image visibility includes ancestor clipping; hidden/inert and offscreen lazy
   images do not become broken-image failures merely because they are mounted.
 - `setView`, `activeChapter`, `waitActive` and `goHash` for shared reader control.
+- `captureElement(page, selector, file, {unclip?, hide?})` captures one figure,
+  face or chapter; `unclip` removes height limits and clipping on the element and
+  its ancestors so a reader chapter is captured whole.
 - `readerChecks(page, {url, expectedChapters, check?, onPair?})` for real
   navigation/history and comparison pinning. It returns
   `{chapterIds, checked, skipped}`; short readers report impossible interactions
@@ -196,7 +227,7 @@ Keep fonts and browser/math dependencies vendored with licenses and source/versi
 
 The tree contains home, ordered groups/pages and the current page's chapters. Wide screens use a docked sidebar by default; narrow screens start closed and open it over content. Preserve the shared breakpoint behavior and remembered choices. Adjacent chapters and keyboard navigation remain discoverable; pinned columns remain fixed while the other navigates. Controls adapt to actual column width.
 
-A reader-free home uses `reader = false`. The optional `<!-- site-map -->` marker derives cards from visible registered pages, their title/description and available first-figure thumbnail. Projects may instead compose their own homepage. Handwritten status summaries are dated and updated when their underlying state changes; they must not become another status owner.
+A reader-free home uses `reader = false`. The optional `<!-- site-map -->` marker derives one card per visible, grouped `[[nav]]` page: its nav label, its frontmatter `description` (else `brand_sub`) and its frontmatter `thumbnail` (else the first `<img>` or Markdown image in its body; inline SVG figures are not detected). Local SVG thumbnails are inlined like other local figures and hidden from assistive technology, since the card names the page; a thumbnail must be a local, tracked image. Projects may instead compose their own homepage. When the other pages use the chapter reader, give the home page `toc = []` so its sidebar shows the same site tree as every reader page instead of its own section list; moving between pages then keeps the navigation in place. Handwritten status summaries are dated and updated when their underlying state changes; they must not become another status owner.
 
 Each column independently selects Math, Experiments, Code and Alternatives; Story stays visible. Preserve layer preferences, individual fold states and reading positions across revisits. Changing a layer preserves the visible anchor or its closed summary. A deep link opens its containing fold. History restores arrangements without undoing current reading preferences. Without JavaScript, content and native folds remain usable; print includes every layer; transitions respect reduced motion.
 

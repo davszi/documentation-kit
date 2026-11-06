@@ -328,9 +328,11 @@ def check_figures() -> None:
         # Included galleries are live figures on the built page too. Resolve
         # their markup in the containing page's emitted link context.
         if _paths.is_topic_page(f, REPO):
-            def include_fragment(match):
+            def include_fragment(match, depth=0):
                 fragment = DOCS / "site" / match.group(1)
-                return fragment.read_text() if fragment.is_file() else match.group(0)
+                if not fragment.is_file() or depth >= 8:  # the builder reports cycles and depth
+                    return match.group(0)
+                return re.sub(r"<!--\s*include:\s*(\S+)\s*-->", lambda m: include_fragment(m, depth + 1), fragment.read_text())
             text = re.sub(r"<!--\s*include:\s*(\S+)\s*-->", include_fragment, text)
         # Linked retained figures have a canonical doc reference too, even
         # when the page no longer embeds the full comparison.

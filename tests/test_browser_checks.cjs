@@ -6,7 +6,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const {chromium} = require(process.env.DOCS_PLAYWRIGHT || 'playwright');
-const {visibleMedia, measureOverflow, assertHorizontalContainment, checkLayout, readerChecks} =
+const {visibleMedia, measureOverflow, assertHorizontalContainment, checkLayout, readerChecks, captureElement} =
   require('../tooling/browser_checks.cjs');
 
 const image = 'data:image/svg+xml,' + encodeURIComponent(
@@ -103,8 +103,16 @@ async function reviewSmallReaders(browser) {
     assert.equal(overflow.rootOverflow, true);
     assert.ok(overflow.offenders.some(item => item.id === 'escape'));
     await assert.rejects(() => assertHorizontalContainment(page), /Root overflow/);
+    await page.setContent(`<!doctype html><style>body{margin:0}#stage{height:120px;overflow:hidden}
+      #chapter{height:100px;overflow:hidden}#chapter p{height:300px;margin:0}</style>
+      <div id="stage"><section id="chapter"><div class="slide-face">face</div><p>long chapter</p></section></div>`);
+    const shot = path.join(require('node:os').tmpdir(), `kit-capture-${process.pid}.png`);
+    assert.equal((await captureElement(page, '#chapter', shot)).height, 100);
+    const whole = await captureElement(page, '#chapter', shot, {unclip:true, hide:['.slide-face']});
+    assert.equal(whole.height, 300, 'An unclipped capture shows the whole chapter without its hidden face');
+    await fs.rm(shot, {force:true});
     await page.close();
     await reviewSmallReaders(browser);
-    console.log('Verified shared browser helpers: one/two/three-chapter scope, clipped/inactive lazy media, visible broken media, contained scrolling, root overflow.');
+    console.log('Verified shared browser helpers: one/two/three-chapter scope, clipped/inactive lazy media, visible broken media, contained scrolling, root overflow, element capture.');
   } finally {await browser.close();}
 })().catch(error => {console.error(error);process.exitCode = 1;});

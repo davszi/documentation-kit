@@ -23,6 +23,9 @@ each consuming project's own documentation.
 The [local comparison contract](../topics/panel-switcher/panel-switcher.md)
 owns the shared panel switcher's authoring, behavior and extraction checks.
 
+[Releases and upgrades](../topics/releases/releases.md) owns version notes and
+consumer migration steps; `VERSION` holds the current version.
+
 Development checks use Python 3.12, the pinned root `requirements.txt` and Node
 22. Run `bash tests/run_checks.sh` with `DOCS_PYTHON` selecting that interpreter.
 Browser review additionally uses Playwright/Chromium as documented in README.

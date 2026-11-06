@@ -48,7 +48,12 @@ from site_bundle import SiteBundle, validate_resources
 COMPONENTS = KIT_SITE / "components"
 KATEX_SRC = KIT_SITE / "assets" / "vendor" / "katex"
 
-FRONTMATTER_KEYS = {"title", "slug", "brand", "brand_sub", "body_class", "math", "components", "page_css", "toc", "raw", "ongoing", "reader"}
+FRONTMATTER_KEYS = {"title", "slug", "brand", "brand_sub", "body_class", "math", "components", "page_css", "toc", "raw", "ongoing", "reader",
+                    "description", "thumbnail"}
+# A [[nav]] table accepts only these keys. TOML assigns every key written after a table header to that
+# table, so a top-level setting placed below the first [[nav]] silently becomes part of a nav entry.
+NAV_KEYS = {"label", "file", "group", "short", "hidden"}
+INCLUDE_DEPTH = 8
 KNOWN_COMPONENTS = ("toc", "nav", "tabs", "diagram", "code", "filelinks",
                     "lightbox", "plot-toggles", "carousel", "panel-switcher",
                     "fold-controls", "chapter-reader", "slide-face", "page-redirect")  # emission order
@@ -150,7 +155,10 @@ def inline_svg_figures(content: str, name: str, *, namespace_ids: bool = False) 
         root_end = svg.find(">")
         root = svg[:root_end]
         root = re.sub(r'\s(?:width|height)="[^"]*"', "", root)
-        root += f' class="inline-fig" role="img" aria-label="{alt}"'
+        if "data-decorative" in m.group(1) + " " + m.group(3):
+            root += ' class="inline-fig" aria-hidden="true" focusable="false"'  # e.g. a site-map card thumbnail
+        else:
+            root += f' class="inline-fig" role="img" aria-label="{alt}"'
         return root + svg[root_end:]
 
     return _SVG_IMG_RE.sub(sub, content)
@@ -276,6 +284,11 @@ def validate_frontmatter(meta: dict, name: str) -> None:
         err(f"{name}: frontmatter needs title")
     if "toc" not in meta:
         err(f"{name}: frontmatter needs toc (the sidebar is generated)")
+    for key in ("description", "thumbnail"):
+        if key in meta and (not isinstance(meta[key], str) or not meta[key].strip()):
+            err(f"{name}: {key} must be a non-empty string")
+    if isinstance(meta.get("thumbnail"), str) and re.match(r"[a-z][a-z0-9+.-]*:|//", meta["thumbnail"], re.I):
+        err(f"{name}: thumbnail must be a local, tracked image (no remote media)")
     if "slug" in meta and (not isinstance(meta["slug"], str) or not re.fullmatch(r"[a-z0-9][a-z0-9-]*", meta["slug"])):
         err(f"{name}: slug must be a lowercase filename stem without directories")
     if "body_class" in meta and (not isinstance(meta["body_class"], str)
@@ -320,12 +333,12 @@ def site_map_html(site: dict) -> str:
             continue
         meta, body = sources[entry["file"]]
         found = _IMAGE_RE.search(body)
-        image = (found.group(1) or found.group(2)) if found else None
-        thumb = (f'<span class="map-thumb"><img src="{html.escape(image)}" alt="" loading="lazy"></span>'
+        image = meta.get("thumbnail") or ((found.group(1) or found.group(2)) if found else None)
+        thumb = (f'<span class="map-thumb"><img src="{html.escape(image)}" alt="" data-decorative loading="lazy"></span>'
                  if image else '<span class="map-thumb map-thumb-empty" aria-hidden="true">∿</span>')
         card = (f'<a class="map-card" href="{entry["file"]}">{thumb}<span class="map-text">'
                 f'<strong>{html.escape(entry["label"])}</strong>'
-                f'<span>{html.escape(meta.get("brand_sub", ""))}</span></span></a>')
+                f'<span>{html.escape(meta.get("description") or meta.get("brand_sub", ""))}</span></span></a>')
         if not groups or groups[-1][0] != entry["group"]:
             groups.append((entry["group"], []))
         groups[-1][1].append(card)
@@ -333,23 +346,36 @@ def site_map_html(site: dict) -> str:
                      f'<div class="map-grid">{"".join(cards)}</div></section>' for g, cards in groups)
 
 
-def expand_includes(body: str, name: str) -> str:
+def expand_includes(body: str, name: str, _stack: tuple[Path, ...] = ()) -> str:
+    """Replace include markers; included fragments may include others (depth-limited, no cycles)."""
     def rep(m: re.Match) -> str:
         relative = Path(m.group(1))
         if relative.is_absolute() or '..' in relative.parts:
             raise ValueError('Include paths must stay inside the theme or project')
+        chain = " -> ".join([*(item.name for item in _stack), m.group(1)])
         shared = KIT_SITE / relative
         if shared.is_file() and not shared.is_symlink() and shared.resolve().is_relative_to(KIT_SITE):
             p = shared
         else:
-            p = local_resource(SRC / relative)
+            try:
+                p = local_resource(SRC / relative)
+            except ValueError as error:  # missing or untracked fragment: name the include chain, not a traceback
+                err(f"{name}: include not found or not tracked: {chain} ({error})")
+                return ""
         if not p.is_file():
-            err(f"{name}: include not found: {m.group(1)}")
+            err(f"{name}: include not found: {chain}")
             return ""
         text = p.read_text()
         if not text.strip():
             err(f"{name}: include is empty: {m.group(1)}")
-        return text
+        resolved = p.resolve()
+        if resolved in _stack:
+            err(f"{name}: include cycle: {chain}")
+            return ""
+        if len(_stack) >= INCLUDE_DEPTH:
+            err(f"{name}: includes nest deeper than {INCLUDE_DEPTH} levels: {chain}")
+            return ""
+        return expand_includes(text, name, (*_stack, resolved))
 
     return INCLUDE_RE.sub(rep, body)
 
@@ -650,6 +676,20 @@ def main() -> int:
     args = ap.parse_args()
 
     site = tomllib.loads(local_resource(SRC / "site.toml").read_text())
+    if not isinstance(site.get("nav", []), list):
+        ap.error("site.toml: nav must be a list of [[nav]] tables")
+    for entry in site.get("nav", []):
+        if not isinstance(entry, dict):
+            ap.error("site.toml: every nav entry must be a [[nav]] table")
+        unknown = sorted(set(entry) - NAV_KEYS)
+        if unknown or not {"label", "file"} <= set(entry):
+            ap.error(f"site.toml [[nav]] entry {entry.get('file', '?')}: unknown keys {unknown} or missing label/file. "
+                     "Top-level settings must appear above the first [[nav]] table.")
+        types = {"label": str, "file": str, "group": str, "short": str, "hidden": bool}
+        wrong = sorted(key for key, value in entry.items() if not isinstance(value, types[key]))
+        if wrong:
+            ap.error(f"site.toml [[nav]] entry {entry['file']}: wrong value types for {wrong} "
+                     "(text for label, file, group and short; true or false for hidden)")
     global KNOWN_COMPONENTS
     extra = site.get("extra_components", [])
     if not isinstance(extra, list) or any(not isinstance(c, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", c) or c in KNOWN_COMPONENTS for c in extra) or len(set(extra)) != len(extra):

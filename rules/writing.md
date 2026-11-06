@@ -25,6 +25,11 @@ component does not transfer ownership of the surrounding page. Keep project
 illustrations, scientific figures, domain widgets and distinctive compositions
 local. The starter homepage is an example, not a required project template.
 
+Navigation is shared, not owned by one page. When readers expand their chapters
+under the site tree, a homepage that lists its own sections instead makes every
+move to a reader feel like a different site; keep the same tree on every page and
+let the homepage present the pages through cards or its own composition.
+
 ## Build-sheet pages
 
 Opt in with `page_css = ["build-sheet.css"]`. Keep page-specific extras in a separate local stylesheet. The shared theme supplies vendored Saira Condensed headings, IBM Plex Sans body text and IBM Plex Mono labels/units; do not fetch remote fonts.
@@ -92,6 +97,8 @@ Separate claims requiring different evidence: visual fidelity, smoothness, input
 A current measured claim requires a source commit, exact reproduction command, runtime/environment, workload, units, baseline, method and scope. Link its raw result and limitations. Config values, derivations and design arithmetic are not measurements; cite their source and label them accordingly.
 
 When code, input data, method, workload or runtime conditions affecting a claim change, rerun before quoting it as current qualification. Keep the old record's date, runtime, inputs and scope; a historical label does not qualify changed inputs. Presentation-only edits may reuse captured results only after checking identities, numbers and treatments remain intact.
+
+When a redesign restates numbers in new prose, figures or slides, record each number's source in a ledger and lock the evidence blocks kept verbatim (see [generated figures](maintenance.md#generated-figures)). A slide face may show only numbers that its chapter also shows; every distinct number a redesigned chapter shows, figure labels included, has a ledger source.
 
 Keep full result tables, failures, protocols, snapshots and reviews with the experiment. The page explains what they establish. The worklog records the landing and hashes without duplicating tables. Retained measured content remains subject to the deletion gate.
 

@@ -2,6 +2,42 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-06 — Version 1.0.0
+
+- Declare the first stable version: `VERSION` 1.0.0 and a
+  [releases record](topics/releases/releases.md) with the 1.0.0 contents and the
+  consumer migration steps. Knowledge gathered while redesigning the adaptation
+  readers moves upstream.
+- Fix: included fragments may include others (eight levels; cycles fail). The
+  figure-reference lint resolves nested includes the same way.
+- Fix: a `[[nav]]` entry with keys other than `label`, `file`, `group`, `short`
+  and `hidden` fails the build with a hint. A top-level `extra_components` written
+  below a nav table had silently become a nav key and surfaced only as an
+  "unknown component" error.
+- Fix: site-map cards take frontmatter `description` and `thumbnail` when present
+  (the maintenance rule claimed a description and a first-figure thumbnail, while
+  the code read `brand_sub` and found only `<img>`, never inline SVG figures).
+- Add `tooling/svg_figures.py` (figure, slide and standalone SVG markup with a
+  literal palette; the region label no longer double-escapes apostrophes),
+  `tooling/number_ledger.py` (every shown number has a checked source),
+  `tooling/verbatim_blocks.py` (hash locks for kept blocks) and the browser helper
+  `captureElement`. Rules add the shared-navigation homepage pattern, literal
+  colours for generated SVG and ledger use for redesigns.
+- Compatibility: both known consumers build with this tree without source
+  changes. Against their current pins, every page is byte-identical except each
+  home page, whose site-map thumbnails are now marked decorative (ADP 87 of 88,
+  adaptation 7 of 8; [receipt](../verification/v1.0.0-consumers.json)).
+- One independent review (Opus, high effort) found no blocking defect; fixes
+  landed here: ledger semantics and trust boundary stated (distinct unsigned
+  values, expressions are reviewed code, not a sandbox), kept-block edges reported
+  instead of raised, an explicit stable/provisional surface in the release notes,
+  decorative and local-only thumbnails, typed `[[nav]]` validation, include errors
+  that name the chain (a missing fragment no longer ends in a traceback),
+  `standalone`/`slide_svg` edge cases, and release-note accuracy.
+- Checks: starter build, strict lint, the Python suite (new site-contract and
+  figure-tooling tests), math and file-link JavaScript checks, browser-helper
+  regression. The landing commit supplies the revision.
+
 ## 2026-11-05 — Slide faces and extracted decks
 
 - Add optional chapter slide faces: `<!-- slide -->` blocks become a fixed 16:9
