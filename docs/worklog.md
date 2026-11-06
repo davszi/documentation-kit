@@ -2,6 +2,18 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-06 — Visual ordering and evidence presentation
+
+- Clarify the [page lead](../rules/writing.md#page-design),
+  [scope notes](../rules/writing.md#story-and-reading-layers) and
+  [choice of representation](../rules/writing.md#figures-and-comparisons).
+  Put the figure early in mechanism and geometry explanations. Keep brief
+  qualifications beside the relevant evidence and the full rationale in its
+  record. Use diagrams for relationships and tables for precise comparisons.
+- The starter build, strict lint, 52 Python tests and both Node 22 checks
+  passed. Checked the final policy text for preserved headings, its new
+  internal link and whitespace. This landing supplies the commit identity.
+
 ## 2026-11-04 — Shared publication and browser checks
 
 - Extract the optional existing-site exporter and common browser checks from

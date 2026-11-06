@@ -8,6 +8,12 @@ Give each section one coherent purpose: answer a question, show a construction o
 
 Titles state the takeaway. A one-sentence `bs-lead` states the claim before the evidence. When reporting on the reader's questions, use each question as a heading, answer directly, then show evidence. Define jargon before use and keep a formal, plain human voice. Internal registry tags, bug-hunt narratives, file-routing tables and debugging chronology stay off rendered surfaces.
 
+When the purpose of a section is to explain a mechanism or spatial
+relationship, place the figure after the heading or a one-sentence takeaway. Follow it with the
+prose needed to interpret it. A table or equation may lead when exact values
+or a derivation carry the explanation. Apply the
+[visual completion gate](#figures-and-comparisons) to the claims in the section.
+
 Navigation follows prerequisite order. Important comparisons have direct entries opening onto controls and plots. Use the shared reader; do not maintain per-page reader copies or page-wide audience tabs. Local method, scenario and diagram-mode tabs are useful within a comparison.
 
 Use available width. Text, figures and tables share a left edge. Avoid narrow centered text columns and half-empty rows. Expressive details may include short transitions, rich syntax colors, gradient hairlines and hover emphasis; they must respect reduced motion and accessibility.
@@ -51,7 +57,7 @@ One `bs-board` holds current status: Done, Decided, Passed, Open or Parked. Use 
 
 ## Story and reading layers
 
-Order by understanding: purpose, prerequisites, ingredients, mechanism, examples, evidence and limits. Introduce the instrument before its numbers and evidence before a shipping consequence. Define terms before using them. Explain each concept or formula in one canonical place; elsewhere bridge to it. An essential repeated equation needs a back-reference.
+Order by understanding: purpose, prerequisites, ingredients, mechanism, examples, evidence and limits. Introduce the instrument before its numbers and evidence before a shipping consequence. Define terms before using them. Explain each concept or formula in one canonical place and link to it elsewhere. Keep a brief result label or scope condition beside the evidence whenever it affects how the reader should interpret that evidence. Link to the owning record for the full scope and rationale. An essential repeated equation needs a back-reference.
 
 Keep one visible Story. Optional depth uses typed folds:
 
@@ -85,7 +91,14 @@ Keep full result tables, failures, protocols, snapshots and reviews with the exp
 
 ## Figures and comparisons
 
-A visual must answer an actual understanding or evidence need. Prefer a worked construction, comparison or counterexample; do not add a decorative plot because a formula exists. Use a small table when it communicates sparse data better.
+A visual must answer an actual understanding or evidence need. Prefer a worked construction, comparison or counterexample; do not add a decorative plot because a formula exists.
+
+Use diagrams for structure, ownership, flow or sequence. Label the relevant
+objects and transitions in place. Use tables for exact lookup and comparison of
+values, conditions or criteria. Use plots for patterns, variation or trade-offs.
+Pair formats when they answer different questions. Show the details the reader
+needs to understand or check the claim. Keep complete field mappings and
+implementation inventories in linked records.
 
 Every mechanism needs a diagram; every geometric/spatial claim needs a picture; every measured claim needs a plot or table. This is a completion gate. Budget visual production before declaring a section done. Figures, tables and headings alone should convey the story.
 
