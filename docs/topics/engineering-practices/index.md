@@ -2,10 +2,10 @@
 title = "Engineering practices"
 brand = "Documentation kit"
 brand_sub = "code · execution · delivery · Git"
-description = "What the kit's six engineering guides require and which action each one governs."
+description = "Why the kit's six engineering guides exist, what each requires, and what following them looks like."
 components = ["toc", "nav", "code", "filelinks"]
 page_css = ["build-sheet.css"]
-toc = [["Routes", "#routes"], ["Code", "#code"], ["Efficiency", "#performance"], ["Execution", "#execution"], ["Delivery", "#delivery"], ["Handoffs", "#handoffs"], ["Git", "#git"]]
+toc = [["Routes", "#routes"], ["Code", "#code"], ["Efficiency", "#performance"], ["Claims", "#performance-claims"], ["Execution", "#execution"], ["Cleanup", "#supervision"], ["Delivery", "#delivery"], ["Decisions", "#decisions"], ["Handoffs", "#handoffs"], ["Git", "#git"], ["Shared checkout", "#shared-checkout"]]
 +++
 
 # Engineering practices
@@ -14,22 +14,22 @@ toc = [["Routes", "#routes"], ["Code", "#code"], ["Efficiency", "#performance"],
 
 ## Each engineering guide governs one kind of action
 
-<p class="bs-lead">Find the action you are about to take; its row names the guide that governs it.</p>
+<p class="bs-lead">Find the action you are about to take; its row names the guide that governs it and the chapters here that explain it.</p>
 
 <div class="scroll" role="region" tabindex="0" data-reader-horizontal aria-label="Engineering guides by action">
 
-| Before… | Read… | It covers |
-|---|---|---|
-| Changing program output or a generated file | [Code and repository practices](code-practices.html) | Diagnostics and consumed output; changing generated files at their source |
-| Writing code on a hot path or claiming a speed-up | [Efficient implementation](performance.html) | Routine efficiency; measuring the declared workload and path |
-| Running an expensive job on shared resources | [Execution and shared resources](execution.html) | Execution route, coordination, budgets, usage records, failure attribution, cleanup |
-| Delegating work or editing in parallel | [Ownership and delivery](delivery.html) | Assignments, owner responsibility, integration, parallel work, escalation |
-| Reporting completion or a blocker, or receiving a handoff | [Handoffs and progress reports](handoffs.html) | Report contents, return channel, durable records, checking received claims |
-| Staging, committing or rewriting history | [Git changes and shared checkouts](git.html) | Commit scope and messages, staging, shared checkouts, recovery |
+| Before… | Read… | It covers | Explained in |
+|---|---|---|---|
+| Changing program output or a generated file | [Code and repository practices](code-practices.html) | Diagnostics and consumed output; changing generated files at their source | [Code](#code) |
+| Writing code on a hot path or claiming a speed-up | [Efficient implementation](performance.html) | Routine efficiency; measuring the declared workload and path | [Efficiency](#performance), [Claims](#performance-claims) |
+| Running an expensive job on shared resources | [Execution and shared resources](execution.html) | Execution route, coordination, budgets, usage records, failure attribution, cleanup | [Execution](#execution), [Cleanup](#supervision) |
+| Delegating work or editing in parallel | [Ownership and delivery](delivery.html) | Assignments, owner responsibility, integration, parallel work, escalation | [Delivery](#delivery), [Decisions](#decisions) |
+| Reporting completion or a blocker, or receiving a handoff | [Handoffs and progress reports](handoffs.html) | Report contents, return channel, durable records, checking received claims | [Handoffs](#handoffs) |
+| Staging, committing or rewriting history | [Git changes and shared checkouts](git.html) | Commit scope and messages, staging, shared checkouts, recovery | [Git](#git), [Shared checkout](#shared-checkout) |
 
 </div>
 
-The guides state shared principles. Each project adds its own concrete controls, workloads, thresholds and required records.
+The guides state shared principles. Each project adds its own concrete controls, workloads, thresholds and required records. Each chapter below says why a guide asks for something, shows the mechanism and gives an illustrative example; folds hold the remaining detail, and the linked guide keeps the exact wording.
 
 </section>
 
@@ -37,7 +37,7 @@ The guides state shared principles. Each project adds its own concrete controls,
 
 ## Consumed output is an interface, and a generated file changes at its source
 
-<p class="bs-lead">Keep diagnostics out of streams other programs read, and make changes in the source or generator, then regenerate.</p>
+<p class="bs-lead">Keep diagnostics out of streams other programs read, and change a generated file in its source or generator, then regenerate.</p>
 
 <div class="bs-grid g2">
 <div class="bs-part bs-teal"><span class="bs-label">stdout · stderr</span><h3>Output another program reads</h3><ul>
@@ -50,9 +50,24 @@ The guides state shared principles. Each project adds its own concrete controls,
 <li>Identify the source or generator first.</li>
 <li>Make the change there.</li>
 <li>Regenerate the affected outputs.</li>
-<li>Keep the project's rules for which outputs are tracked or ignored.</li>
+<li>Follow the project's toolchain, reproducibility and validation requirements, and its rules for which outputs are tracked or ignored.</li>
 </ul></div>
 </div>
+
+When another program reads stdout or stderr, every line in that stream is input to it. A diagnostic written there corrupts that input, so the guide treats consumed output as an interface and preserves its format unless an interface change is agreed. A generated file has the opposite problem: its content comes from somewhere else. Without changing it at the source or generator, the next regeneration can undo a hand edit and leave the source and its output disagreeing.
+
+An illustrative example, not taken from a real project:
+
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>Patch the generated file</h3><p>A wrong default appears in a generated configuration file. The fix is typed into that file directly. The generator's input still holds the old value.</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>Fix the source, then regenerate</h3><p>The same wrong default is traced to the generator's input. The fix goes there, the affected outputs are regenerated, and the project's rules decide which of them are tracked.</p></div>
+</div>
+
+<!-- fold: dead-end Printing diagnostics on the consumed stream -->
+
+Progress lines or warnings on stdout look harmless while developing, but a program that parses that stream reads them as data. The guide routes diagnostics through the project's logging conventions instead and changes the consumed format only through an agreed interface change.
+
+<!-- /fold -->
 
 Full guide: [Code and repository practices](code-practices.html) · [Logging and program output](code-practices.html#logging-and-program-output) · [Generated files](code-practices.html#generated-files)
 
@@ -60,82 +75,274 @@ Full guide: [Code and repository practices](code-practices.html) · [Logging and
 
 <section class="card" id="performance">
 
-## Efficient code is the default, and a performance claim measures the path it names
+## Efficient code is the default, and waste found within scope is fixed where it is
 
-<p class="bs-lead">Avoid routine waste as you write; before you claim performance, measure the declared workload and execution path.</p>
+<p class="bs-lead">Write invariant data once, batch related calls, keep evidence work opt-in and fix waste you find within your assigned scope.</p>
 
-<div class="bs-grid g2">
-<div class="bs-part bs-teal"><span class="bs-label">Every implementation</span><h3>Avoid routine waste</h3><ul>
-<li>Write invariant data, such as headers and manifests, once and reference it.</li>
-<li>Batch related reads and writes where the API allows.</li>
-<li>Keep checkers, observers and full per-step records opt-in, outside the normal path.</li>
-<li>Avoid repeated allocation and copying of large structures in hot paths.</li>
-<li>Fix waste you find within your assigned scope.</li>
-</ul></div>
-<div class="bs-part bs-violet"><span class="bs-label">Every performance claim</span><h3>Measure what the claim covers</h3><ul>
-<li>Shipped-performance claims use the shipped path with its required work.</li>
-<li>Label diagnostic and ablation timings by the paths they measure.</li>
-<li>Verify the baseline before changing measured behavior.</li>
-<li>Compare against the strongest relevant cheap baseline.</li>
-<li>A quick mode labels its coverage and does not replace the full workload.</li>
-</ul></div>
+<div class="bs-checks r32">
+<div class="bs-check"><span class="bs-badge bs-ok">default</span><h3>Write invariant data once</h3><p>Headers, manifests, source hashes and recipes are written once and referenced, not repeated per step or call.</p></div>
+<div class="bs-check"><span class="bs-badge bs-ok">default</span><h3>Batch related calls</h3><p>Use batch operations where the API allows. Read and write related state together instead of calling per item.</p></div>
+<div class="bs-check"><span class="bs-badge bs-ok">default</span><h3>Keep evidence work opt-in</h3><p>Checkers, observers and full per-step records stay outside the normal path.</p></div>
+<div class="bs-check"><span class="bs-badge bs-ok">default</span><h3>Avoid copies in hot paths</h3><p>Avoid repeated allocation and copying of large structures in hot paths.</p></div>
+<div class="bs-check"><span class="bs-badge bs-ok">default</span><h3>Fix waste in scope</h3><p>Fix waste in the current implementation when you find it within the assigned scope.</p></div>
 </div>
 
-Moving code to another language requires an explicit decision with the project owner. It is never the default response to waste.
+Waste that repeats per step or per call grows with every step and every run. Debug and evidence work left in the normal path makes every normal run pay for it, which is why the guide says such work must not set normal-run cost. These are habits applied while writing, not a separate optimization project: waste found within the assigned scope is fixed in the current implementation.
 
-Full guide: [Efficient implementation](performance.html) · [Efficient by default](performance.html#efficient-by-default) · [Workload and evidence](performance.html#workload-and-evidence)
+An illustrative example, not taken from a real project:
+
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>Every step pays for everything</h3><p>Each step's record repeats the run's manifest and source hash, and a consistency checker runs inside every step of every normal run.</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>Written once, checked on request</h3><p>The manifest and source hash are written once at the start and each step references them. The checker is an opt-in mode that a normal run does not pay for.</p></div>
+</div>
+
+<!-- fold: dead-end Moving the code to another language -->
+
+Rewriting a slow component in another language can look like the quickest answer to waste. The guide says moving code to another language requires an explicit decision with the project owner and is never the default response to waste; the default is to fix the waste in the current implementation. Scope and architecture decisions that arise from performance work follow the [delivery rules for decisions and blockers](delivery.html#decisions-and-blockers).
+
+<!-- /fold -->
+
+Full guide: [Efficient implementation](performance.html) · [Efficient by default](performance.html#efficient-by-default)
+
+</section>
+
+<section class="card" id="performance-claims">
+
+## A performance claim measures the workload and path it names
+
+<p class="bs-lead">Declare the workload and execution path, verify the baseline, and label every timing by the path it actually measured.</p>
+
+<figure id="fig-claims">
+<div class="bs-flow" role="img" aria-label="Declare the workload and execution path the claim covers. Compare against a verified baseline, the strongest relevant cheap one. Report timings labelled by the path they measured; shipped claims use the shipped path with its required work. A quick mode labels its coverage and does not replace the full workload, its acceptance criteria or an experiment's agreed protocol.">
+<div class="bs-node bs-teal"><span class="bs-label">Declare</span><b>Workload and execution path</b><ul><li>The workload the claim covers</li><li>The path: shipped, diagnostic or ablation</li></ul></div>
+<div class="bs-arrow"><span>baseline</span></div>
+<div class="bs-node bs-violet"><span class="bs-label">Compare</span><b>A verified, strong baseline</b><ul><li>Verify it before changing measured behavior</li><li>Use the strongest relevant cheap baseline</li></ul></div>
+<div class="bs-arrow"><span>measure</span></div>
+<div class="bs-node bs-orange"><span class="bs-label">Report</span><b>Timings labelled by path</b><ul><li>Shipped claims use the shipped path with its required work</li><li>Diagnostic and ablation timings name their paths</li></ul></div>
+<div class="bs-back"><span>×</span> A quick mode labels its coverage. It does not replace the full workload, its acceptance criteria or an experiment's agreed protocol.</div>
+</div>
+<figcaption><b>Figure 1.</b> The guide's sequence for one performance claim. This diagram illustrates the rules; it contains no measured results.</figcaption>
+</figure>
+
+A timing is evidence only for the path that produced it. A diagnostic run or an ablation that skips required work can differ from what ships, so a claim about shipped performance uses the shipped path with its required work. A comparison also inherits its baseline's weaknesses: the guide asks you to verify the baseline before changing measured behavior and to compare against the strongest relevant cheap baseline.
+
+[Figure 1](#fig-claims) fixes the claim's scope before anything is timed; the dashed line marks what a quick run cannot stand in for.
+
+An illustrative example, not taken from a real project; ‹result› stands for a measured value:
+
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>An unscoped speed-up</h3><p>“The new loader is faster.” The claim names no workload, path or baseline, and the timing came from a run with validation turned off.</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>A claim with its scope</h3><p>“On the declared workload, through the shipped load path with validation included, against the verified current baseline: ‹result›.” A separate timing without validation is labelled as a diagnostic path.</p></div>
+</div>
+
+<!-- fold: experiment Production benchmarks and quick modes -->
+
+A production benchmark drives shipped paths end to end. Around it, the guide asks for honestly labelled ablations, reusable case generation and metrics, runtime reporting and provenanced figures.
+
+Give a benchmark or validation tool a quick mode when its full run exceeds about one minute. The quick mode labels its coverage; it does not replace the full workload, its acceptance criteria or an experiment's agreed protocol.
+
+<!-- /fold -->
+
+<!-- fold: experiment Where the measurement rules live -->
+
+Follow the [measurement rules](evidence.html#numbers-and-staleness) when claiming a speed-up. The [evidence guide](evidence.html) owns measurement identity, baselines, reruns, historical results and reporting. Numerical correctness and regression gates use [proportionate verification](experiment-verification.html). Each project keeps its own concrete workloads, thresholds and performance contracts.
+
+<!-- /fold -->
+
+Full guide: [Efficient implementation](performance.html) · [Workload and evidence](performance.html#workload-and-evidence)
 
 </section>
 
 <section class="card" id="execution">
 
-## An expensive job runs on the project's route, under a stated budget, with an owner through cleanup
+## An expensive job runs on the project's route under an adequate, stated budget
 
-<p class="bs-lead">Read the project's execution instructions first, reserve resources on evidence, and keep ownership until children and temporary resources are cleaned up.</p>
+<p class="bs-lead">Read the project's execution instructions first, coordinate shared resources, and reserve from a comparable measurement or generously, saying which.</p>
 
 <figure id="fig-execution">
-<div class="bs-flow" role="img" aria-label="Before launch, use the project's execution route and verify the executable, source, inputs and environment. Then coordinate an adequate, stated reservation. The owner supervises the job and confirms cleanup before releasing the reservation. Estimates and failed bounds never count as successful measurements.">
-<div class="bs-node bs-teal"><span class="bs-label">Before launch</span><b>The project's execution route</b><ul><li>Verify executable, loaded source, inputs and environment</li><li>Use the supported entrypoint and resource controls</li><li>Meet admission, review and attendance requirements</li></ul></div>
+<div class="bs-flow" role="img" aria-label="Before launch, read the project's execution and environment instructions, verify the executable, loaded source, inputs and environment, and use the supported entrypoint and resource controls. Then coordinate admission and adequate reservations, respecting host headroom and existing reservations. Then reserve from a comparable successful measurement or a deliberately generous initial reservation, and state the basis. Do not lower an adequate budget to force admission or bypass controls with local overrides.">
+<div class="bs-node bs-teal"><span class="bs-label">Before launch</span><b>The project's execution route</b><ul><li>Read its execution and environment instructions</li><li>Verify executable, loaded source, inputs and environment</li><li>Use the supported entrypoint and resource controls, with admission, review and attendance requirements</li></ul></div>
+<div class="bs-arrow"><span>coordinate</span></div>
+<div class="bs-node bs-violet"><span class="bs-label">Shared resources</span><b>Admission without squeezing</b><ul><li>Coordinate admission and adequate reservations</li><li>Respect host headroom and existing reservations</li><li>An idle host does not remove required containment</li></ul></div>
 <div class="bs-arrow"><span>reserve</span></div>
-<div class="bs-node bs-violet"><span class="bs-label">Shared resources</span><b>An adequate, stated budget</b><ul><li>Coordinate admission; respect headroom and existing reservations</li><li>Use a comparable successful measurement, or reserve generously</li><li>State the basis; reserved is not measured</li></ul></div>
-<div class="bs-arrow"><span>run</span></div>
-<div class="bs-node bs-orange"><span class="bs-label">Owned job</span><b>Supervision through cleanup</b><ul><li>Record command and resource outcomes separately</li><li>Stop only owned jobs and services</li><li>Confirm cleanup before releasing the reservation</li></ul></div>
-<div class="bs-back"><span>×</span> Estimates and failed bounds are not successful measurements. Timeouts and missing peaks do not measure memory needs.</div>
+<div class="bs-node bs-orange"><span class="bs-label">Budget</span><b>An adequate, stated budget</b><ul><li>A sufficiently comparable successful measurement, or</li><li>A deliberately generous initial reservation covering startup, compilation, children and cleanup</li><li>State the basis; reserved is not measured</li></ul></div>
+<div class="bs-back"><span>×</span> Do not lower an adequate budget to force admission or bypass controls with local overrides. Avoid repeated small increases after preventable memory failures.</div>
 </div>
-<figcaption><b>Figure 1.</b> The guide's sequence for one expensive job. This diagram illustrates the rules; it contains no measured results.</figcaption>
+<figcaption><b>Figure 2.</b> The guide's steps before one expensive job starts. This diagram illustrates the rules; it contains no measured results.</figcaption>
 </figure>
 
-Do not lower an adequate budget to force admission or bypass controls with local overrides. Reuse a successful reservation only when the workload, command, source state, executable, environment and inputs match.
+A job that skips the project's route can spend its resources on the wrong executable, source, inputs or environment; the guide asks you to verify these before launch. On shared resources, lowering an adequate budget to force admission, or bypassing controls with local overrides, does not make the job need less, and the guide says to do neither. A reservation also says nothing about what the job consumed, so state its basis and keep reserved capacity distinct from measured consumption.
 
-Full guide: [Execution and shared resources](execution.html) · [Select a resource budget](execution.html#select-a-resource-budget) · [Own supervision and cleanup](execution.html#own-supervision-and-cleanup)
+[Figure 2](#fig-execution) covers everything before launch: the route, coordination, then the budget and its stated basis. The project supplies the concrete controls; reservation, usage-cache and receipt rules apply when the project uses those mechanisms.
+
+An illustrative example, not taken from a real project; ‹amount› stands for a reservation size:
+
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>A guess, then small raises</h3><p>“Reserved plenty; it should be fine.” After a preventable memory failure the reservation is raised a little, then a little again.</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>A budget with its basis</h3><p>“No sufficiently comparable successful run exists, so this is a deliberately generous initial reservation covering startup, compilation, children and cleanup. ‹amount› is reserved capacity, not measured consumption.”</p></div>
+</div>
+
+<!-- fold: experiment Reusing an earlier reservation -->
+
+Reuse a successful reservation only when all of these match:
+
+- workload and command;
+- checkout or source state;
+- executable;
+- relevant environment and environment metadata;
+- input identity.
+
+Explicitly identify external or dynamic inputs and import roots. Changed identity requires an explicit adequate reservation again. Estimates and failed bounds cannot serve as successful measurements.
+
+A temporary cache supports budget selection and confers no execution authority. For immutable run requests, bind limits before freezing the request and validate those pinned limits at launch instead of selecting replacements from mutable cache. Retain evidential measurements under the [evidence rules](evidence.html#numbers-and-staleness).
+
+<!-- /fold -->
+
+<!-- fold: experiment Deadlines and cleanup reserves -->
+
+Choose deadlines and cleanup reserves appropriate to the operation. Apply the project's separate timing rules for bounded jobs and attended sessions.
+
+<!-- /fold -->
+
+<!-- fold: dead-end Relying on an idle host instead of containment or exclusive execution -->
+
+An idle host can make containment look unnecessary; the guide says it does not remove required containment. Protect active inputs and outputs under the [parallel-work rules](delivery.html#parallel-work). Use exclusive execution when interference would invalidate timing, or when lifecycle, runaway, signal or resource-stress work requires it.
+
+<!-- /fold -->
+
+Full guide: [Execution and shared resources](execution.html) · [Choose the project's execution route](execution.html#choose-the-projects-execution-route) · [Coordinate conflicting work](execution.html#coordinate-conflicting-work) · [Select a resource budget](execution.html#select-a-resource-budget) · [Reuse successful usage records conservatively](execution.html#reuse-successful-usage-records-conservatively)
+
+</section>
+
+<section class="card" id="supervision">
+
+## A job's owner reads failures from evidence and keeps ownership through cleanup
+
+<p class="bs-lead">Record command and resource outcomes separately, stop only what you own, and confirm cleanup before releasing the reservation.</p>
+
+<figure id="fig-supervision">
+<div class="bs-flow" role="img" aria-label="Name one owner for admission, launch, supervision, results and cleanup. Record command and resource outcomes separately, with process and source identity, actual limits, exit outcome and observed cleanup. Resolve uncertain ownership and confirm cleanup of children and temporary resources before releasing the reservation. Stop only owned jobs and services; treat failed or incomplete cleanup as a handoff blocker.">
+<div class="bs-node bs-teal"><span class="bs-label">Name</span><b>One owner for the job</b><ul><li>Admission and launch</li><li>Supervision and results</li><li>Cleanup of children and temporary resources</li></ul></div>
+<div class="bs-arrow"><span>record</span></div>
+<div class="bs-node bs-violet"><span class="bs-label">Record</span><b>Outcomes kept apart</b><ul><li>Command outcome and resource outcome, separately</li><li>Process and source identity, actual limits, exit outcome, observed cleanup</li></ul></div>
+<div class="bs-arrow"><span>release</span></div>
+<div class="bs-node bs-orange"><span class="bs-label">Release</span><b>Cleanup confirmed first</b><ul><li>Resolve uncertain ownership</li><li>Confirm cleanup</li><li>Then release the reservation</li></ul></div>
+<div class="bs-back"><span>×</span> Stop only owned jobs and services. Treat failed or incomplete cleanup as a handoff blocker.</div>
+</div>
+<figcaption><b>Figure 3.</b> The guide's ownership of one job from launch to release. This diagram illustrates the rules; it contains no measured results.</figcaption>
+</figure>
+
+When a job fails, "it ran out of memory" is a tempting explanation. The guide does not accept the guess: test failures alone do not establish exhaustion, and missing peaks, timeouts and cleanup failures do not measure memory needs. The end of a run has a similar trap. Without a named owner who stays until children and temporary resources are cleaned up, a released reservation can leave work behind that nobody is responsible for.
+
+[Figure 3](#fig-supervision) ends at the release of the reservation, not at the job's exit: ownership lasts through cleanup.
+
+An illustrative example, not taken from a real project:
+
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>A failure read as memory</h3><p>“Tests failed, so the job ran out of memory. Raised the budget and reran.”</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>Two outcomes, each from evidence</h3><p>“Command outcome: tests failed. Resource outcome: no memory-limit evidence; the terminal peak was unavailable, so memory use remains unmeasured. The budget is not changed on this evidence, and the attempt is kept with its original settings.”</p></div>
+</div>
+
+<!-- fold: experiment What counts as memory evidence -->
+
+Use actual memory-limit evidence for an insufficient memory bound. Test failures alone do not establish exhaustion. Missing peaks, timeouts and cleanup failures do not measure memory needs. Do not attribute host free-memory changes to a job. An unavailable terminal peak remains unmeasured.
+
+For unexpected pressure or inadequate budgets, follow the [escalation rules](delivery.html#decisions-and-blockers). Preserve attempts and their original settings under the [evidence rules](evidence.html#numbers-and-staleness).
+
+<!-- /fold -->
+
+<!-- fold: experiment How much a job record holds -->
+
+Scale records to the work. Routine checks need concise command, limits and result records. A [qualification](experiment-workflow.html#choose-the-purpose) follows the project's full evidence chain and the [claim-scope rules](explanations.html#naming-and-honest-claims). Job records follow the [durable-record rules](handoffs.html#evidence-and-durable-records).
+
+<!-- /fold -->
+
+Full guide: [Execution and shared resources](execution.html) · [Attribute failures from evidence](execution.html#attribute-failures-from-evidence) · [Own supervision and cleanup](execution.html#own-supervision-and-cleanup)
 
 </section>
 
 <section class="card" id="delivery">
 
-## The assigned owner finishes routine work and escalates changes to the agreement
+## An assignment fixes the scope, and the owner finishes the routine work inside it
 
-<p class="bs-lead">An assignment sets the scope and completion condition; routine work inside it needs no separate coordinator approval.</p>
+<p class="bs-lead">Define the deliverable, scope, inputs, ownership, completion condition and return channel; the owner then completes routine work without separate coordinator approval.</p>
 
 <div class="bs-grid g2">
-<div class="bs-part bs-teal"><span class="bs-label">Within the agreed scope</span><h3>The owner completes</h3><ul>
+<div class="bs-part bs-teal"><span class="bs-label">The assignment defines</span><h3>What and where</h3><ul>
+<li>The deliverable and its scope</li>
+<li>Required inputs</li>
+<li>File or module ownership</li>
+<li>The completion condition</li>
+<li>The recipient and agreed return channel</li>
+</ul></div>
+<div class="bs-part bs-violet"><span class="bs-label">Within the agreed scope</span><h3>The owner completes</h3><ul>
 <li>Implementation</li>
 <li>Focused checks and routine fixes</li>
 <li>Associated documentation and evidence</li>
 <li>Any review the project requires</li>
 </ul></div>
-<div class="bs-part bs-orange"><span class="bs-label">Beyond the agreement</span><h3>Report it or get a decision</h3><ul>
-<li>Changes to agreed goals, design, scope or acceptance requirements</li>
+</div>
+
+A vague assignment leaves the owner guessing where the work stops and where to send the result, and leaves parallel owners guessing whose files are whose. The guide asks whoever assigns delegated or parallel work to define these up front, scaled to the work: a small, self-contained task can use a short brief. In return, routine work within the agreed scope needs no separate coordinator approval, so the owner carries it through to evidence and any required review.
+
+An illustrative example, not taken from a real project:
+
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>An open-ended request</h3><p>“Have a look at the failing export and fix whatever you find.”</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>A short, complete brief</h3><p>“Deliverable: a fix for the export failure. Scope: the export module, whose files you own. Input: the failing case and its log. Done when a focused check covers the case and passes and the fix is documented. Report back in this thread.”</p></div>
+</div>
+
+<!-- fold: dead-end Routing routine work through a coordinator -->
+
+Sending each routine step to a coordinator for approval adds a wait without adding a decision. The guide says routine work within the agreed scope needs no separate coordinator approval. When a coordinator is needed, it handles overall goals, priorities, dependencies, questions and ownership conflicts.
+
+When changes from several owners need integration, identify who combines them, checks the integration and handles landing, and apply the [shared Git rules](git.html).
+
+<!-- /fold -->
+
+Full guide: [Ownership and delivery](delivery.html) · [Assigning work](delivery.html#assigning-work) · [Owner responsibility](delivery.html#owner-responsibility) · [Coordination and integration](delivery.html#coordination-and-integration)
+
+</section>
+
+<section class="card" id="decisions">
+
+## Changes to the agreement go back for a decision; independent work continues
+
+<p class="bs-lead">Escalate changes to goals, design, scope or acceptance; report limit hits and recurring failures; keep independent authorized work moving.</p>
+
+<div class="bs-grid g3">
+<div class="bs-part bs-orange"><span class="bs-label">Escalate</span><h3>Changes to the agreement</h3><ul>
+<li>Agreed goals, design, scope or acceptance requirements</li>
 <li>Ownership conflicts, resolved with the affected owners</li>
-<li>Resource-limit hits and recurring unexplained failures</li>
+</ul></div>
+<div class="bs-part bs-red"><span class="bs-label">Report</span><h3>Signs the plan may not hold</h3><ul>
+<li>Resource-limit hits</li>
+<li>Recurring unexplained failures</li>
+</ul></div>
+<div class="bs-part bs-blue"><span class="bs-label">Seek a decision</span><h3>Before going further</h3><ul>
 <li>A next approach that exceeds agreed scope or limits</li>
 <li>Reopening deferred work</li>
 </ul></div>
 </div>
 
-An assignment names the deliverable, scope, required inputs, file or module ownership, completion condition, recipient and return channel. In parallel work, preserve others' changes and restrict work only around the actual conflict.
+An owner's autonomy covers routine work inside the agreement, not the agreement itself. Without escalation, an owner who quietly widens scope or relaxes an acceptance requirement leaves others planning against terms that no longer hold. Resource-limit hits and recurring unexplained failures are reported for a related reason: they suggest the agreed approach or limits may not hold, and the next approach may need a decision.
 
-Full guide: [Ownership and delivery](delivery.html) · [Assigning work](delivery.html#assigning-work) · [Decisions and blockers](delivery.html#decisions-and-blockers)
+Respect explicit stops and required approvals. While a decision is pending, continue independent authorized work where possible.
+
+An illustrative example, not taken from a real project:
+
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>Scope widened silently</h3><p>“Hit the memory limit again, so I raised it and also reworked the scheduler, which seemed related.”</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>A decision requested</h3><p>“Blocked: the memory limit was hit again on the same step (evidence linked). The likely fix changes the scheduler, outside the agreed scope, so I need a scope decision. Meanwhile I am continuing the independent documentation work.”</p></div>
+</div>
+
+<!-- fold: dead-end Freezing everything around a conflict -->
+
+When parallel work collides, stopping all nearby work looks safe but also stops unrelated progress. The guide asks for restrictions coordinated around the actual conflict so unrelated work can continue. Preserve other contributors' changes, coordinate overlapping edits, and protect active work from conflicting changes to its source, inputs, dependencies, execution settings and outputs. Use separate worktrees or other suitable isolation when independent work requires it.
+
+<!-- /fold -->
+
+Full guide: [Ownership and delivery](delivery.html) · [Decisions and blockers](delivery.html#decisions-and-blockers) · [Parallel work](delivery.html#parallel-work)
 
 </section>
 
@@ -143,7 +350,7 @@ Full guide: [Ownership and delivery](delivery.html) · [Assigning work](delivery
 
 ## A report leads with the outcome and says how each claim is known
 
-<p class="bs-lead">Distinguish work completed from behavior verified, and send the report through the agreed return channel.</p>
+<p class="bs-lead">Distinguish work completed from behavior verified, send the report through the agreed return channel, and link the records that hold the evidence.</p>
 
 <div class="bs-checks r32">
 <div class="bs-check"><span class="bs-badge bs-ok">include</span><h3>Outcome and changes</h3><p>State the outcome first, then what changed and where.</p></div>
@@ -153,9 +360,39 @@ Full guide: [Ownership and delivery](delivery.html) · [Assigning work](delivery
 <div class="bs-check"><span class="bs-badge bs-ok">include</span><h3>Next owner</h3><p>The next owner and action, when further work remains.</p></div>
 </div>
 
-Say whether each claim comes from an executed check, source inspection or an inference. Chat and temporary files must not be the only copy of evidence later work needs. Before relying on a consequential claim you receive, check its evidence and scope.
+The recipient of a report has to decide what to trust and what to do next, usually without rerunning the work. A report that says "done" without naming what was checked leaves them unable to tell finished work from verified behavior. The guide asks you to say whether each claim comes from an executed check, source inspection or an inference. Chat, temporary coordination state and temporary files must not be the only retained copy of evidence later work needs.
 
-Full guide: [Handoffs and progress reports](handoffs.html) · [Reporting completion](handoffs.html#reporting-completion) · [Receiving a handoff](handoffs.html#receiving-a-handoff)
+On the receiving side, before relying on a consequential claim, check its supporting evidence and whether its source, inputs and scope match the work being integrated.
+
+An illustrative example, not taken from a real project; ‹link› stands for a link to the change:
+
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>Done, with nothing to check</h3><p>“All done, everything works now and the tests should pass.”</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>Outcome, checks, sources of each claim</h3><p>“Outcome: the export fix is delivered in ‹link›. Checks run: the focused export check, passed. Skipped: the full suite, outside this scope. Verified: the failing case now passes. Inferred from source inspection: other formats are unaffected. Next: the integration owner lands it.”</p></div>
+</div>
+
+<!-- fold: experiment What a blocker report contains -->
+
+Send blockers through the agreed return channel. Explain:
+
+- what is blocked;
+- the decisive evidence;
+- what was attempted;
+- the decision or dependency needed to proceed.
+
+Report completion through that channel too. A final message in another chat does not establish that the intended recipient received it. Escalation and independent work that can continue follow the [delivery guide](delivery.html#decisions-and-blockers).
+
+<!-- /fold -->
+
+<!-- fold: experiment Durable records and receiving a handoff -->
+
+Keep detailed results and reproduction information in their owning records, following the [documentation](documentation-system.html) and [evidence rules](evidence.html#numbers-and-staleness), and link those records from the handoff.
+
+When you receive a handoff, acknowledge receipt when the sender needs confirmation to proceed. Make the next owner and action explicit when responsibility changes.
+
+<!-- /fold -->
+
+Full guide: [Handoffs and progress reports](handoffs.html) · [Reporting completion](handoffs.html#reporting-completion) · [Reporting blockers](handoffs.html#reporting-blockers) · [Evidence and durable records](handoffs.html#evidence-and-durable-records) · [Receiving a handoff](handoffs.html#receiving-a-handoff)
 
 </section>
 
@@ -163,7 +400,7 @@ Full guide: [Handoffs and progress reports](handoffs.html) · [Reporting complet
 
 ## Each commit holds one logical deliverable, reviewed as a whole before it is created
 
-<p class="bs-lead">Stage only what belongs, review the complete proposed commit, and preserve everyone else's changes.</p>
+<p class="bs-lead">Stage only what belongs, review the complete proposed commit, and explain what changed and why.</p>
 
 <figure id="fig-git">
 <div class="bs-flow" role="img" aria-label="Inspect the branch, working changes and staging area. Stage explicit paths or selected changes. Review the complete proposed commit, including deletions and earlier staged changes. Creating a commit does not establish that its tests passed.">
@@ -174,11 +411,81 @@ Full guide: [Handoffs and progress reports](handoffs.html) · [Reporting complet
 <div class="bs-node bs-orange"><span class="bs-label">Review</span><b>The complete proposed commit</b><ul><li>Include deletions and changes staged before you started</li><li>Match file versions to the source state the checks covered</li></ul></div>
 <div class="bs-back"><span>×</span> Creating a commit does not establish that its tests passed or that its acceptance requirements were met.</div>
 </div>
-<figcaption><b>Figure 2.</b> The guide's steps for preparing one commit. This diagram illustrates the rules; it contains no measured results.</figcaption>
+<figcaption><b>Figure 4.</b> The guide's steps for preparing one commit. This diagram illustrates the rules; it contains no measured results.</figcaption>
 </figure>
 
-Write a short imperative subject and a body that explains what changed and why, without Conventional Commits prefixes. In a shared checkout, one owner stages and commits; if that interval cannot be protected, prepare the commit in an isolated staging area or worktree.
+Later readers inspect, revert and cite commits one at a time, so a commit that mixes unrelated work, or splits one deliverable into scattered fragments, is harder to use. When other changes are present in the working tree or staging area, staging everything can sweep them in. The guide therefore asks you to stage explicit paths or selected changes and to review the complete proposed commit, including deletions and changes staged before you started.
 
-Full guide: [Git changes and shared checkouts](git.html) · [Commit messages](git.html#commit-messages) · [Sharing a checkout](git.html#sharing-a-checkout)
+[Figure 4](#fig-git) ends with a review of the whole commit, not only the files you remember changing. The message then uses a short imperative subject and an explanatory body, separated by a blank line, that says what changed and why. Include validation results or limitations when they help assess the change. Do not use Conventional Commits prefixes.
+
+An illustrative example, not taken from a real project:
+
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>A prefix and no reason</h3><pre><code>fix: updates</code></pre><p>A Conventional Commits prefix, a subject that does not say what changed, and no body explaining why.</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>Imperative subject, explanatory body</h3><pre><code>Keep progress messages out of the export stream&#10;&#10;The export command printed progress on stdout, which the
+import tool parses. Progress now goes through the project's
+logger, and stdout carries only the export format.&#10;&#10;The export round-trip check passed.</code></pre></div>
+</div>
+
+<!-- fold: dead-end One commit per tweak, or one commit for everything -->
+
+Committing every intermediate file change scatters one deliverable across many commits; bundling unrelated work hides each change inside the others. The guide's unit is one logical deliverable, such as a fix, feature, experiment or coherent refactor stage, with its intermediate file changes and tweaks folded together. Keep separate commits for independently verified stages when their separate verification is meaningful. The code, tests, documentation and chronology belonging to a deliverable follow the [documentation rules](documentation-system.html#rules-for-changes-and-chronology).
+
+<!-- /fold -->
+
+<!-- fold: experiment Validation before landing -->
+
+Follow the repository's validation requirements and publication permissions. Pass the applicable checks before landing implementation, and record actual results, skips and limitations. Investigation or evidence deliverables may retain failed or negative outcomes when accurately documented.
+
+Creating a commit does not establish that its tests passed or that its acceptance requirements were met. Before committing, confirm that the intended file versions match the source state covered by the recorded checks.
+
+<!-- /fold -->
+
+Full guide: [Git changes and shared checkouts](git.html) · [Deliverables and validation](git.html#deliverables-and-validation) · [Commit messages](git.html#commit-messages) · [Preparing a commit](git.html#preparing-a-commit)
+
+</section>
+
+<section class="card" id="shared-checkout">
+
+## In a shared checkout, one owner holds staging from final review to commit
+
+<p class="bs-lead">Protect the interval between reviewing a commit and creating it; when you cannot, prepare the commit in isolation and reconcile afterward.</p>
+
+<div class="bs-grid g2">
+<div class="bs-part bs-teal"><span class="bs-label">Interval protected</span><h3>One owner commits in place</h3><ul>
+<li>One owner for staging and committing during the operation</li>
+<li>No concurrent staging between final review and commit creation</li>
+<li>Overlapping file edits coordinated separately</li>
+</ul></div>
+<div class="bs-part bs-orange"><span class="bs-label">Interval not protected</span><h3>Prepare in isolation, then reconcile</h3><ul>
+<li>Prepare and verify the commit in an isolated staging area or worktree</li>
+<li>Coordinate updates to the shared branch</li>
+<li>Reconcile the shared staging area, preserving others' staged intent and working changes</li>
+<li>Resolve overlapping paths with their owner, then verify the resulting status</li>
+</ul></div>
+</div>
+
+Git's locks around individual commands do not protect the interval between those commands. If another contributor stages a change after your final review but before your commit, that change can enter your commit unreviewed. The guide closes that gap by giving staging and committing one owner for the duration of the operation and by protecting the proposed commit from concurrent staging until it is created.
+
+An illustrative example, not taken from a real project:
+
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>An unprotected gap</h3><p>“Reviewed the staged changes, answered a message, then committed.” Meanwhile another contributor had staged its own files in the same checkout, and they entered the commit.</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>Prepared in isolation</h3><p>Another contributor was active in the checkout, so the commit was prepared and verified in a separate worktree. When it landed, the shared staging area kept the other contributor's staged paths, an overlapping path was settled with its owner, and the resulting status was checked.</p></div>
+</div>
+
+<!-- fold: dead-end Relying on Git's locks or a staging-area lock -->
+
+Git's locks around individual commands do not protect the interval between those commands. A staging-area lock does not protect working files from concurrent edits either, so coordinate overlapping file edits separately.
+
+<!-- /fold -->
+
+<!-- fold: dead-end Rewriting shared history to undo a mistake -->
+
+Rewriting history can look like the quickest way to remove changes that entered a commit by mistake. The guide limits it: consolidate temporary checkpoints only in isolated, unshared history, and preserve history used by another contributor or an active job. If unrelated changes enter a commit, record the affected commit and notify their owner through the agreed channel. Agree on recovery before rewriting history another contributor may be using.
+
+<!-- /fold -->
+
+Full guide: [Git changes and shared checkouts](git.html) · [Sharing a checkout](git.html#sharing-a-checkout) · [History and recovery](git.html#history-and-recovery)
 
 </section>

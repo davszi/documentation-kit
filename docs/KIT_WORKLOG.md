@@ -2,6 +2,22 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-08 — Explain the practice pages instead of listing rules
+
+- deivid found the three practice pages too fast: each card gave one claim,
+  one visual and one paragraph, so it said what a rule is but not why. The
+  rules themselves were not shortened (11,591 words; 9,943 at v1.1.0).
+- Each chapter now adds why the rule exists, a labelled illustrative
+  not-this/this example and typed folds (Experiments, Code, Alternatives)
+  for details the earlier pages omitted. Engineering grows to 11 chapters,
+  Documentation and writing to 13, Experiments to 9. Examples on the
+  experiments page come from several fields; final runs stay scoped to
+  learned or fitted models.
+- The "why" paragraph follows each chapter's visual, so the figure comes
+  right after the heading and lead as `rules/writing/pages.md` requires.
+  Rendered review at 1600 × 1000 and 390 × 844: no page errors or
+  horizontal overflow; cards with folds closed run about 0.9–1.5 screens.
+
 ## 2026-11-08 — Keep kit, starter and project entry files apart
 
 - In a consuming project the kit's own `AGENTS.md`, `CLAUDE.md` and
