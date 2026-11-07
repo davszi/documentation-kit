@@ -22,44 +22,6 @@ short = "Setup and commands"
 file = "readme.html"
 group = "start"
 
-# ── Site toolkit ──────────────────────────────────────────────────────
-[[nav]]
-label = "Site toolkit overview"
-short = "Overview"
-file = "site-toolkit.html"
-group = "site toolkit"
-
-[[nav]]
-label = "Authoring and configuration"
-file = "authoring.html"
-group = "site toolkit"
-
-[[nav]]
-label = "Reader and interactions"
-file = "reader.html"
-group = "site toolkit"
-
-[[nav]]
-label = "Panel switcher"
-file = "panel-switcher.html"
-group = "site toolkit"
-
-[[nav]]
-label = "Resources and evidence"
-file = "resources.html"
-group = "site toolkit"
-
-[[nav]]
-label = "Validation and browser checks"
-short = "Validation"
-file = "validation.html"
-group = "site toolkit"
-
-[[nav]]
-label = "Publication export"
-file = "publication.html"
-group = "site toolkit"
-
 # ── Engineering practices ─────────────────────────────────────────────
 [[nav]]
 label = "Project practices overview"
@@ -140,6 +102,44 @@ group = "documentation & writing"
 label = "Code excerpts and diagrams"
 file = "code-excerpts.html"
 group = "documentation & writing"
+
+# ── Site toolkit ──────────────────────────────────────────────────────
+[[nav]]
+label = "Site toolkit overview"
+short = "Overview"
+file = "site-toolkit.html"
+group = "site toolkit"
+
+[[nav]]
+label = "Authoring and configuration"
+file = "authoring.html"
+group = "site toolkit"
+
+[[nav]]
+label = "Reader and interactions"
+file = "reader.html"
+group = "site toolkit"
+
+[[nav]]
+label = "Panel switcher"
+file = "panel-switcher.html"
+group = "site toolkit"
+
+[[nav]]
+label = "Resources and evidence"
+file = "resources.html"
+group = "site toolkit"
+
+[[nav]]
+label = "Validation and browser checks"
+short = "Validation"
+file = "validation.html"
+group = "site toolkit"
+
+[[nav]]
+label = "Publication export"
+file = "publication.html"
+group = "site toolkit"
 
 # ── Releases ──────────────────────────────────────────────────────────
 [[nav]]

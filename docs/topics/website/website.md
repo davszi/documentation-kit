@@ -13,7 +13,7 @@ Markdown files to routes. Four topic pages add orientation only:
 
 | Page | Source | Role |
 |---|---|---|
-| Home | [`home/index.md`](../home/index.md) | Three paths: build a site, adopt practices, upgrade |
+| Home | [`home/index.md`](../home/index.md) | Three paths: adopt practices, build a site, upgrade |
 | Get started | [`getting-started/index.md`](../getting-started/index.md) | What the kit provides, pinning steps, adoption routes |
 | Site toolkit | [`site-toolkit/index.md`](../site-toolkit/index.md) | Build pipeline figure and a task-to-guide map |
 | Project practices | [`project-practices/index.md`](../project-practices/index.md) | Task routing figure and a guide map |
