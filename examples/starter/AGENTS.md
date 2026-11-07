@@ -13,6 +13,7 @@ inputs. These routes grant no execution or publication permission.
 
 | Before… | Read… |
 |---|---|
+| Staging, committing or rewriting Git history | `.docs-kit/rules/engineering/git.md` and the project's recorded validation requirements |
 | Creating, editing, moving, reviewing, publishing or retiring documentation | `.docs-kit/rules/documentation.md` |
 | Writing human explanations, mathematical content or visual evidence | `.docs-kit/rules/writing.md` |
 | Building, checking, reviewing rendered output, publishing or changing the documentation site | `.docs-kit/rules/maintenance.md` and **Build and review** in `docs/project/PROJECT_CONTEXT.md` |

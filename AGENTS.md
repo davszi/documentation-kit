@@ -3,6 +3,8 @@
 Read `rules/documentation.md`, `rules/writing.md`, `rules/maintenance.md` and
 `README.md` before editing. Policies live in `rules/`; do not duplicate them here.
 Read `docs/project/PROJECT_CONTEXT.md` for repository-specific context and checks.
+Before staging, committing or rewriting Git history, read
+`rules/engineering/git.md`.
 
 `docsite.py` owns the consumer entrypoint, `tooling/` implements rendering and
 validation, `theme/` owns the shared reader, and `examples/starter/` demonstrates

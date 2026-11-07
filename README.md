@@ -1,6 +1,6 @@
 # Documentation kit
 
-Shared documentation rules, a complete HTML reader and a small static-site
+Shared documentation and engineering rules, a complete HTML reader and a small static-site
 toolchain. Projects consume one pinned [Git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) while keeping their own
 topic records, pages, figures, navigation and evidence.
 
@@ -57,7 +57,7 @@ page is `html/index.html`. The server exposes generated output only.
 
 | Shared kit | Each project |
 |---|---|
-| `rules/`: canonical documentation and writing policies | `docs/project/PROJECT_CONTEXT.md`: orientation and project-specific additions |
+| `rules/`: canonical documentation, writing and adopted engineering policies | `docs/project/PROJECT_CONTEXT.md`: orientation and project-specific additions |
 | `theme/`: HTML shell, chapter reader, common CSS/JS, fonts and math assets | `docs/topics/`: records and optional rendered `index.md` pages |
 | `tooling/` and `docsite.py`: renderer, packaging and checks | `docs/site/site.toml`, local CSS/components/fragments, `docs/figures/` |
 | `examples/starter/`: authoring reference and initial project skeleton | `docs/open/OPEN.md`, plans, immutable evidence and append-only worklog |
@@ -66,6 +66,11 @@ The starter uses one [task router](examples/starter/AGENTS.md) with named paths
 for Codex and a [Claude import](examples/starter/CLAUDE.md) of that same router.
 Read the shared rules before the actions named by the router. Keep project
 exceptions in project-owned records. Change common rules in this repository.
+
+The [shared Git guide](rules/engineering/git.md) covers commit scope, required
+explanatory message bodies, validation, shared staging areas and history.
+Projects route contributors to it before Git actions and keep concrete test
+commands and acceptance gates in their own records.
 
 ## Pin and upgrade
 

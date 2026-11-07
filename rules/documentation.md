@@ -13,6 +13,7 @@ These rules are shared policy. A consuming project's `docs/project/PROJECT_CONTE
 | `.docs-kit/rules/documentation.md` | Documentation placement, lifecycle, review and agent routing |
 | `.docs-kit/rules/writing.md` | Human-facing content, evidence, figures and presentation |
 | `.docs-kit/rules/maintenance.md` | Shared authoring paths, reader, packaging and maintenance |
+| `.docs-kit/rules/engineering/git.md` | Commit scope, messages, validation and safety when sharing a Git checkout |
 | `docs/topics/<topic>/<topic>.md` and further descriptively named records | Canonical mechanisms, accepted specifications, methods, scoped results, limits and topic-owned research notes |
 | `docs/topics/<topic>/index.md`, when needed | Human explanation drawn from the topic records: current conclusions, figures, decisions and blockers |
 | `docs/open/OPEN.md` | One-line routes to every owed workstream, each with its owning document; never a duplicate task board |

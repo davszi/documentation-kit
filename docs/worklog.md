@@ -2,6 +2,20 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-07 — Shared Git practices
+
+- Add the [Git guide](../rules/engineering/git.md) for coherent commits,
+  applicable validation, preservation of unrelated changes and staging safety.
+  Require an explanatory body after the short imperative subject. Preserve
+  repository-owned commands, acceptance gates and publication permissions.
+- Route kit contributors and new starter projects to the guide before Git
+  actions. Starter build and strict lint, 52 Python tests, both Node 22 checks,
+  focused policy links and both client routes passed. Correct the route-check
+  harness's initial assumption that the starter Claude file had no heading.
+  Independent Sol High review is clear after fixing Claude's route and
+  clarifying preservation of staged intent during isolated-index landing.
+  This landing supplies the commit identity.
+
 ## 2026-11-06 — Task-triggered agent reading
 
 - Define one [repository router](../rules/documentation.md#agent-entrypoints-import-versus-point)
