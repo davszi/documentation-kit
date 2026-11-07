@@ -95,7 +95,7 @@ On this page $n = 7$, so the fourth chapter fills $4/7$ of the bar.
 
 These lines of the kit site's own configuration enable the reader for every page that does not opt out:
 
-```toml source=docs/site/site.toml#L3-L7
+```toml source=docs/site/site.toml#L4-L8
 title = "Documentation kit"
 home_label = "Kit"
 gh_repo = "https://github.com/davszi/documentation-kit"
@@ -107,7 +107,7 @@ chapter_reader = true
 
 <!-- fold: dead-end Why the rule guides are not laid out like this page -->
 
-The guides under `rules/` are also read as plain Markdown by agents, so they render as they are: one chapter per section, without figures written for the reader. Rewriting them as reader pages would put HTML into agent-facing rules; separate reader summaries would be a second copy that drifts. Only the site's own overview pages are written for the reader.
+The guides under `rules/` are records that agents read as plain Markdown. Putting cards and figures into them would put HTML into agent-facing rules, and showing them as raw sections in the reader made poor cards. So each practice area has a page for people, written in cards like this one, that explains its guides and links to them; the guides render as plain reference pages that keep the exact wording. Projects such as ADP use the same split between records and pages.
 
 <!-- /fold -->
 
@@ -172,13 +172,13 @@ The [panel switcher contract](panel-switcher.html) documents its markup.
 <p class="bs-lead">A status board holds one current state per item; headline numbers carry their scope.</p>
 
 <div class="bs-stats">
-<div><b>36</b><span>pages on this site</span></div>
-<div><b>31</b><span>rendered straight from tracked Markdown</span></div>
+<div><b>39</b><span>pages on this site</span></div>
+<div><b>31</b><span>records rendered from tracked Markdown</span></div>
 <div><b>7</b><span>chapters on this page</span></div>
 </div>
 
 <div class="bs-board">
-<div class="bs-row"><span class="bs-state bs-ok">Done</span><b>Reader on every page but home</b><span>Chapter cards, Two chapters, pinning and layers.</span></div>
+<div class="bs-row"><span class="bs-state bs-ok">Done</span><b>Pages for people use the reader</b><span>Chapter cards, Two chapters, pinning and layers; rule guides stay plain reference pages.</span></div>
 <div class="bs-row"><span class="bs-state bs-ok">Passed</span><b>Local site review</b><span>Chromium at 1600 and 390 px; see the Experiments layer in <a href="#reading-layers">Reading layers</a>.</span></div>
 <div class="bs-row"><span class="bs-state bs-wait">Open</span><b>Hosting and audience</b><span>Not deployed; the destination is undecided. See <a href="website.html#open-decision-hosting-and-audience">the website record</a>.</span></div>
 </div>

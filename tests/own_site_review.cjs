@@ -80,15 +80,19 @@ const SHOTS = ['index', 'getting-started', 'site-toolkit', 'project-practices', 
       assert.ok(reached, 'a home path card is reachable by keyboard');
       assert.ok(reached.outline !== 'none' || reached.shadow !== 'none', 'focused path card is visibly marked');
 
-      // Every page but the home uses the shared chapter reader; a short opening joins chapter 1.
+      // Pages for people use the chapter reader; rendered records are plain reference pages.
+      const peoplePages = ['getting-started', 'reader-tour', 'project-practices', 'engineering-practices',
+                           'writing-practices', 'experiments', 'site-toolkit'];
       for (const slug of pages.filter(slug => slug !== 'index')) {
         await page.goto(`${origin}/html/${slug}.html`, {waitUntil:'networkidle'});
-        assert.ok(await page.locator('section.card[data-reader-chapter]').count() > 0, slug + ' has reader chapters');
+        const chapters = await page.locator('section.card[data-reader-chapter]').count();
+        if (peoplePages.includes(slug)) assert.ok(chapters > 0, slug + ' has reader chapters');
+        else {
+          assert.equal(chapters, 0, slug + ' is a plain reference page');
+          assert.equal(await page.locator('.source-origin').first().isVisible(), true, slug + ' shows its source line');
+        }
       }
-      await page.goto(`${origin}/html/experiment-workflow.html`, {waitUntil:'networkidle'});
-      const firstChapter = await page.$eval('section.card[data-reader-chapter]', node => node.id);
-      assert.equal(firstChapter, 'keep-experiments-small', 'short source opening merges into the first chapter');
-      assert.equal(await page.locator('section.card[data-reader-chapter] .source-origin').first().isVisible(), true);
+      await page.goto(`${origin}/html/site-toolkit.html`, {waitUntil:'networkidle'});
       if (viewport.width >= 900) {
         // The reader stage uses the content width; no line-length cap leaves the right side blank.
         const stage = await page.evaluate(() => ({card: document.querySelector('section.card[data-reader-chapter]').getBoundingClientRect().width,
@@ -125,8 +129,15 @@ const SHOTS = ['index', 'getting-started', 'site-toolkit', 'project-practices', 
 
       if (viewport.width < 900) {
         // The menu opens navigation over content; tables scroll inside their region.
-        await page.goto(`${origin}/html/git.html`, {waitUntil:'networkidle'});
+        // Reader pages open navigation from the reader bar; reference pages from the shell menu.
+        await page.goto(`${origin}/html/site-toolkit.html`, {waitUntil:'networkidle'});
         await page.click('.reader-mobile-menu');
+        await page.waitForFunction(() => {
+          const r = document.getElementById('sidebar').getBoundingClientRect();
+          return r.right > 100 && r.left >= -1;
+        });
+        await page.goto(`${origin}/html/git.html`, {waitUntil:'networkidle'});
+        await page.click('#menu');
         await page.waitForFunction(() => {
           const r = document.getElementById('sidebar').getBoundingClientRect();
           return r.right > 100 && r.left >= -1;

@@ -2,6 +2,23 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-07 — Separate pages for people from rendered records
+
+- The kit site showed its rule guides in the chapter reader, one card per
+  section of agent-facing text. It now follows the split ADP and the starter
+  use: records stay Markdown, pages for people explain them. New reader pages
+  explain the guides: Engineering (7 chapters), Documentation and writing (8)
+  and Experiments (8); Project practices became a short overview of the three
+  areas. Every registered record renders as a plain reference page with its
+  source line (`reader` default `false`); rule guides are hidden from the
+  navigation and reached from the pages.
+- The three pages were drafted from the full rule texts, each section anchor
+  checked against the build's slug rule, then reviewed rendered; claims were
+  spot-checked against the rules.
+- The site review now requires reader chapters on pages for people and plain
+  reference pages, with a visible source line, for every record. It checks
+  both narrow menus: the reader bar and the reference-page shell.
+
 ## 2026-11-07 — Add a reader tour
 
 - The kit site had no page demonstrating the reader. `reader-tour` uses each

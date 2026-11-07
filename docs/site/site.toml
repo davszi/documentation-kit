@@ -1,5 +1,6 @@
-# The kit's own reference website. Overview pages live in docs/topics/*/index.md;
-# detailed guides render directly from their canonical files via [[source_pages]].
+# The kit's own website. Pages for people live in docs/topics/*/index.md and use
+# the chapter reader; the guides they explain are records, rendered from their
+# canonical files via [[source_pages]] as plain reference pages.
 title = "Documentation kit"
 home_label = "Kit"
 gh_repo = "https://github.com/davszi/documentation-kit"
@@ -22,141 +23,39 @@ file = "reader-tour.html"
 group = "start here"
 
 [[nav]]
-label = "Project practices"
-file = "project-practices.html"
-group = "start here"
-
-[[nav]]
-label = "Site toolkit"
-file = "site-toolkit.html"
-group = "start here"
-
-[[nav]]
 label = "Setup, commands and upgrades"
 short = "Setup and commands"
 file = "readme.html"
 group = "start here"
 
-# ── Engineering practices ─────────────────────────────────────────────
+# ── Practices: pages for people; each links its reference guides ───────
 [[nav]]
-label = "Code and repository practices"
-short = "Code and repository"
-file = "code-practices.html"
-group = "engineering"
+label = "Overview"
+file = "project-practices.html"
+group = "practices"
 
 [[nav]]
-label = "Efficient implementation"
-file = "performance.html"
-group = "engineering"
+label = "Engineering"
+file = "engineering-practices.html"
+group = "practices"
 
 [[nav]]
-label = "Execution and shared resources"
-short = "Execution and resources"
-file = "execution.html"
-group = "engineering"
+label = "Documentation and writing"
+file = "writing-practices.html"
+group = "practices"
 
 [[nav]]
-label = "Ownership and delivery"
-file = "delivery.html"
-group = "engineering"
-
-[[nav]]
-label = "Handoffs and progress reports"
-short = "Handoffs"
-file = "handoffs.html"
-group = "engineering"
-
-[[nav]]
-label = "Git changes and shared checkouts"
-short = "Git"
-file = "git.html"
-group = "engineering"
-
-# ── Documentation and writing ─────────────────────────────────────────
-[[nav]]
-label = "Documentation system"
-file = "documentation-system.html"
-group = "documentation & writing"
-
-[[nav]]
-label = "Page design and review"
-file = "page-design.html"
-group = "documentation & writing"
-
-[[nav]]
-label = "Explanations and honest claims"
-short = "Explanations"
-file = "explanations.html"
-group = "documentation & writing"
-
-[[nav]]
-label = "Measurements and experiment evidence"
-short = "Measurements and evidence"
-file = "evidence.html"
-group = "documentation & writing"
-
-[[nav]]
-label = "Figures, comparisons and access"
-short = "Figures and access"
-file = "figures.html"
-group = "documentation & writing"
-
-[[nav]]
-label = "Mathematical explanation"
-short = "Mathematics"
-file = "math.html"
-group = "documentation & writing"
-
-[[nav]]
-label = "Code excerpts and diagrams"
-file = "code-excerpts.html"
-group = "documentation & writing"
-
-# ── Experiments ───────────────────────────────────────────────────────
-[[nav]]
-label = "Experiment workflow"
-file = "experiment-workflow.html"
-group = "experiments"
-
-[[nav]]
-label = "Proportionate experiment verification"
-short = "Verification"
-file = "experiment-verification.html"
-group = "experiments"
+label = "Experiments"
+file = "experiments.html"
+group = "practices"
 
 # ── Site toolkit ──────────────────────────────────────────────────────
 [[nav]]
-label = "Authoring and configuration"
-file = "authoring.html"
+label = "Site toolkit"
+file = "site-toolkit.html"
 group = "site toolkit"
 
-[[nav]]
-label = "Reader and interactions"
-file = "reader.html"
-group = "site toolkit"
-
-[[nav]]
-label = "Panel switcher"
-file = "panel-switcher.html"
-group = "site toolkit"
-
-[[nav]]
-label = "Resources and evidence"
-file = "resources.html"
-group = "site toolkit"
-
-[[nav]]
-label = "Validation and browser checks"
-short = "Validation"
-file = "validation.html"
-group = "site toolkit"
-
-[[nav]]
-label = "Publication export"
-file = "publication.html"
-group = "site toolkit"
-
-# ── Releases ──────────────────────────────────────────────────────────
+# ── Releases and kit development: reference records ───────────────────
 [[nav]]
 label = "Release notes and compatibility"
 short = "Release notes"
@@ -168,7 +67,6 @@ label = "Migrate to 1.1.0"
 file = "migrate-1-1-0.html"
 group = "releases"
 
-# ── Kit development ───────────────────────────────────────────────────
 [[nav]]
 label = "About this website"
 file = "website.html"
@@ -190,7 +88,122 @@ short = "Extraction map"
 file = "extraction-map.html"
 group = "kit development"
 
-# Built and reachable outside navigation: entrypoints that keep existing anchors.
+# ── Reference guides: rendered records, reached from the pages above ──
+[[nav]]
+label = "Code and repository practices"
+short = "Code and repository"
+file = "code-practices.html"
+hidden = true
+
+[[nav]]
+label = "Efficient implementation"
+file = "performance.html"
+hidden = true
+
+[[nav]]
+label = "Execution and shared resources"
+short = "Execution and resources"
+file = "execution.html"
+hidden = true
+
+[[nav]]
+label = "Ownership and delivery"
+file = "delivery.html"
+hidden = true
+
+[[nav]]
+label = "Handoffs and progress reports"
+short = "Handoffs"
+file = "handoffs.html"
+hidden = true
+
+[[nav]]
+label = "Git changes and shared checkouts"
+short = "Git"
+file = "git.html"
+hidden = true
+
+[[nav]]
+label = "Documentation system"
+file = "documentation-system.html"
+hidden = true
+
+[[nav]]
+label = "Page design and review"
+file = "page-design.html"
+hidden = true
+
+[[nav]]
+label = "Explanations and honest claims"
+short = "Explanations"
+file = "explanations.html"
+hidden = true
+
+[[nav]]
+label = "Measurements and experiment evidence"
+short = "Measurements and evidence"
+file = "evidence.html"
+hidden = true
+
+[[nav]]
+label = "Figures, comparisons and access"
+short = "Figures and access"
+file = "figures.html"
+hidden = true
+
+[[nav]]
+label = "Mathematical explanation"
+short = "Mathematics"
+file = "math.html"
+hidden = true
+
+[[nav]]
+label = "Code excerpts and diagrams"
+file = "code-excerpts.html"
+hidden = true
+
+[[nav]]
+label = "Experiment workflow"
+file = "experiment-workflow.html"
+hidden = true
+
+[[nav]]
+label = "Proportionate experiment verification"
+short = "Verification"
+file = "experiment-verification.html"
+hidden = true
+
+[[nav]]
+label = "Authoring and configuration"
+file = "authoring.html"
+hidden = true
+
+[[nav]]
+label = "Reader and interactions"
+file = "reader.html"
+hidden = true
+
+[[nav]]
+label = "Panel switcher"
+file = "panel-switcher.html"
+hidden = true
+
+[[nav]]
+label = "Resources and evidence"
+file = "resources.html"
+hidden = true
+
+[[nav]]
+label = "Validation and browser checks"
+short = "Validation"
+file = "validation.html"
+hidden = true
+
+[[nav]]
+label = "Publication export"
+file = "publication.html"
+hidden = true
+
 [[nav]]
 label = "Contributor reading index"
 file = "reading-index.html"
@@ -209,184 +222,153 @@ hidden = true
 # ── Source registry: canonical Markdown rendered as whole-file pages ───
 [[source_pages]]
 source = "README.md"
-reader = true
 slug = "readme"
 title = "Setup, commands and upgrades"
 description = "Install the pinned submodule, build and lint a site, upgrade the pin and develop the kit."
 
 [[source_pages]]
 source = "rules/site/authoring.md"
-reader = true
 slug = "authoring"
 description = "Commands, site.toml, page sources, includes, components, generated figures and slide decks."
 
 [[source_pages]]
 source = "rules/site/reader.md"
-reader = true
 slug = "reader"
 description = "The shared chapter reader, reading layers, home site map and shared interactions."
 
 [[source_pages]]
 source = "docs/topics/panel-switcher/panel-switcher.md"
-reader = true
 slug = "panel-switcher"
 description = "Authoring contract and behavior of the shared local comparison component."
 
 [[source_pages]]
 source = "rules/site/resources.md"
-reader = true
 slug = "resources"
 description = "Resource closure, local evidence, inventories and project adapters."
 
 [[source_pages]]
 source = "rules/site/validation.md"
-reader = true
 slug = "validation"
 description = "What a complete validation covers and the reusable browser-check helpers."
 
 [[source_pages]]
 source = "rules/site/publication.md"
-reader = true
 slug = "publication"
 description = "Export a generated bundle into an existing project publication."
 
 [[source_pages]]
 source = "rules/engineering/code.md"
-reader = true
 slug = "code-practices"
 description = "Program output, diagnostics and generated files."
 
 [[source_pages]]
 source = "rules/engineering/performance.md"
-reader = true
 slug = "performance"
 description = "Routine efficiency and workload-scoped performance claims."
 
 [[source_pages]]
 source = "rules/engineering/execution.md"
-reader = true
 slug = "execution"
 description = "Execution routes, resource budgets, failure attribution, supervision and cleanup."
 
 [[source_pages]]
 source = "rules/engineering/delivery.md"
-reader = true
 slug = "delivery"
 description = "Assignment scope, owner responsibility, coordination and parallel work."
 
 [[source_pages]]
 source = "rules/engineering/handoffs.md"
-reader = true
 slug = "handoffs"
 description = "Reporting completion and blockers, durable evidence and receiving work."
 
 [[source_pages]]
 source = "rules/engineering/git.md"
-reader = true
 slug = "git"
 description = "Deliverables, validation, commit messages, shared checkouts and history."
 
 [[source_pages]]
 source = "rules/documentation.md"
-reader = true
 slug = "documentation-system"
 description = "Canonical homes, lifecycle, evidence identity, publishing and agent entrypoints."
 
 [[source_pages]]
 source = "rules/writing/pages.md"
-reader = true
 slug = "page-design"
 description = "Section purpose, figure placement, homepages, build-sheet pages, slides and review."
 
 [[source_pages]]
 source = "rules/writing/explanations.md"
-reader = true
 slug = "explanations"
 description = "Reading order, optional depth layers, naming and honest claims."
 
 [[source_pages]]
 source = "rules/writing/evidence.md"
-reader = true
 slug = "evidence"
 description = "Measured claims, staleness, number ledgers and experiment records."
 
 [[source_pages]]
 source = "rules/writing/figures.md"
-reader = true
 slug = "figures"
 description = "Choosing a representation, comparisons, interaction and accessibility."
 
 [[source_pages]]
 source = "rules/writing/math.md"
-reader = true
 slug = "math"
 description = "Building formulas from known constructions, notation and rendering."
 
 [[source_pages]]
 source = "rules/writing/code.md"
-reader = true
 slug = "code-excerpts"
 description = "Verified code excerpts and data-backed diagrams."
 
 [[source_pages]]
 source = "rules/experiments/workflow.md"
-reader = true
 slug = "experiment-workflow"
 description = "Keeping experiments small, investigations and qualifications, baselines, stopping and required content."
 
 [[source_pages]]
 source = "rules/experiments/verification.md"
-reader = true
 slug = "experiment-verification"
 description = "Choosing checks for a claim, application logic, numerical correctness, regression gates and changed inputs."
 
 [[source_pages]]
 source = "docs/topics/releases/releases.md"
-reader = true
 slug = "releases"
 description = "What each version changes for consumers and the 1.x compatibility contract."
 
 [[source_pages]]
 source = "docs/topics/releases/migrations/1.1.0.md"
-reader = true
 slug = "migrate-1-1-0"
 description = "Move an existing consumer from 1.0.0 to 1.1.0."
 
 [[source_pages]]
 source = "docs/topics/website/website.md"
-reader = true
 slug = "website"
 description = "How this site is organized, built and previewed, and its open hosting decision."
 
 [[source_pages]]
 source = "docs/PROJECT_CONTEXT.md"
-reader = true
 slug = "kit-context"
 description = "Where each part of this repository lives and how to check it."
 
 [[source_pages]]
 source = "docs/topics/extraction/extraction.md"
-reader = true
 slug = "extraction"
 description = "Initial extraction scope, verification evidence and limits."
 
 [[source_pages]]
 source = "rules/extraction-map.md"
-reader = true
 slug = "extraction-map"
 description = "How each source policy section was transferred, genericized or left project-owned."
 
 [[source_pages]]
 source = "docs/index.md"
-reader = true
 slug = "reading-index"
 
 [[source_pages]]
 source = "rules/maintenance.md"
-reader = true
 slug = "maintenance"
 
 [[source_pages]]
 source = "rules/writing.md"
-reader = true
 slug = "writing"

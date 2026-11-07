@@ -7,33 +7,38 @@ Every detailed guide keeps one editable Markdown source.
 
 ## Structure and sources
 
-[`docs/site/site.toml`](../../site/site.toml) is the registry: its `[[nav]]`
-tables give the navigation and its `[[source_pages]]` tables map canonical
-Markdown files to routes. Five topic pages add orientation and a reader demonstration:
+The site follows the kit's own split between records and pages. Guides in
+`rules/`, the README, release notes and the kit's records are **records**: agents
+read them as Markdown, and the site renders each whole from its canonical file
+through a `[[source_pages]]` entry as a plain reference page with a source line.
+**Pages for people** are hand-written topic pages in the chapter reader that
+explain those records and link into them. A record is never rewritten for the
+reader; when a page and its record disagree, the record wins and the page is
+corrected.
 
-| Page | Source | Role |
+[`docs/site/site.toml`](../../site/site.toml) is the registry: `[[nav]]`
+tables give the navigation and `[[source_pages]]` tables map records to routes.
+
+| Page for people | Source | Explains |
 |---|---|---|
 | Home | [`home/index.md`](../home/index.md) | Three paths, the three adoption steps and a router snippet |
-| Get started | [`getting-started/index.md`](../getting-started/index.md) | Reader chapters: what the kit provides, setup steps, site and upgrades, adoption routes |
-| Site toolkit | [`site-toolkit/index.md`](../site-toolkit/index.md) | Reader chapters: build pipeline, task-to-guide map, source pages, build checks |
-| Project practices | [`project-practices/index.md`](../project-practices/index.md) | Reader chapters: task routing and one guide table per area |
-| Reader tour | [`reader-tour/index.md`](../reader-tour/index.md) | Live demonstration of chapters, docking, pinning, layers, figures, comparisons, status blocks and slides |
+| Get started | [`getting-started/index.md`](../getting-started/index.md) | What the kit provides, setup steps, site and upgrades, adoption routes |
+| Reader tour | [`reader-tour/index.md`](../reader-tour/index.md) | Chapters, docking, pinning, layers, figures, comparisons, status blocks and slides |
+| Practices overview | [`project-practices/index.md`](../project-practices/index.md) | Task routing, the three practice areas and project specifics |
+| Engineering | [`engineering-practices/index.md`](../engineering-practices/index.md) | The six engineering guides |
+| Documentation and writing | [`writing-practices/index.md`](../writing-practices/index.md) | The documentation system and the writing guides |
+| Experiments | [`experiments/index.md`](../experiments/index.md) | The experiment workflow and verification guides |
+| Site toolkit | [`site-toolkit/index.md`](../site-toolkit/index.md) | Build pipeline, task-to-guide map, source pages and build checks |
 
-Everything else renders whole from its canonical file: `README.md`, the guides
-in `rules/`, the release notes and migration guides, the panel-switcher
-contract and the kit's own context, index and extraction records.
+Rule guides are hidden from the navigation and reached from these pages; release
+notes, migration guides and the kit-development records stay listed. The
+writing and maintenance routers remain hidden pages so existing links to their
+section anchors keep working.
 
-Material is grouped by purpose, not by folder. For example,
-`rules/site/authoring.md` explains toolkit operation and sits under Site
-toolkit although it lives in `rules/`. The writing and maintenance routers are
-built as hidden pages so existing links to their section anchors keep working.
-Overview pages link to commands and contracts instead of restating them.
-
-The site uses the kit's own presentation: `chapter_reader = true`, every
-registered page sets `reader = true`, and the topic pages are Markdown with the
-shared `home.css` and `build-sheet.css` blocks and no site-local stylesheet.
-Only the home page is reader-free, with `toc = []` so its sidebar shows the
-same tree as the reader pages.
+The site sets `chapter_reader = true`; records keep the registry default
+`reader = false`. Topic pages use only the shared `home.css` and
+`build-sheet.css` blocks, with no site-local stylesheet. The home page is
+reader-free, with `toc = []`.
 
 ## Build and preview
 
