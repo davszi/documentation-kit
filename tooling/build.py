@@ -327,6 +327,9 @@ def site_map_html(site: dict) -> str:
     for path in topic_pages():
         meta, body = parse_frontmatter(path.read_text(), path.relative_to(PAGES).as_posix())
         sources[meta.get("slug", path.parent.name) + ".html"] = (meta, body.split(PAGE_END, 1)[0])
+    from source_pages import load_registry
+    for page in load_registry(site, REPO, consumer_tracked_paths())[0]:  # problems are reported by main
+        sources.setdefault(page.route, ({"description": page.description} if page.description else {}, ""))
     groups: list[tuple[str, list[str]]] = []
     for entry in site.get("nav", []):
         if entry.get("hidden") or not entry.get("group") or entry["file"] not in sources:
@@ -512,6 +515,53 @@ def build_page(md_path: Path, site: dict, shell: str) -> tuple[str, str] | None:
             + "\n\n".join(panels_html)
         )
 
+    return finish_page(meta, slug, name, content, comps, site, shell, id_to_panel)
+
+
+def build_source_page(page, routes: dict[str, str], site: dict, shell: str) -> tuple[str, str] | None:
+    """Render one registered Markdown file as a whole-file page.
+
+    The source keeps its own folder as link origin; no topic-page markers
+    (includes, folds, registry callouts or the notes tail) are interpreted, so
+    examples of those markers inside the record stay literal.
+    """
+    from source_pages import exists_in, first_heading, origin_banner, rewrite_links, table_of_contents, wrap_tables
+    from site_paths import resolve_legacy_path
+
+    name = page.source
+    text = local_resource(REPO / page.source).read_text()
+    title = page.title or first_heading(text)
+    if not title:
+        err(f"{name}: a source page needs a level-one heading or a registered title")
+        return None
+    group = next((entry.get("group", "") for entry in site.get("nav", []) if entry.get("file") == page.route), "")
+    meta = {"title": title, "slug": page.slug, "toc": [], "math": page.math, "body_class": "source-page reference-page",
+            "brand": site.get("title", "Documentation"), "brand_sub": group, "page_css": ["build-sheet.css"]}
+    renderer = DocsRenderer(math_enabled=page.math)
+    content = mistune.create_markdown(renderer=renderer, plugins=["table", "math"])(text)
+    content, problems = rewrite_links(wrap_tables(content), page, routes, REPO, exists_in(REPO, resolve_legacy_path))
+    for problem in problems:
+        err(problem)
+    banner = origin_banner(page, site.get("gh_repo", ""), site.get("_edit_ref", site.get("gh_ref", "main")))
+    content = banner + content
+    comps = ["toc", "nav", "code", "filelinks"]
+    if page.reader and site.get("chapter_reader"):
+        from chapter_layout import reader_page
+        try:
+            content, meta["toc"] = reader_page([(None, content)], [], title,
+                                               (COMPONENTS / "chapter-reader.html").read_text())
+        except ValueError as error:
+            err(f"{name}: chapter layout: {error}")
+            return None
+        comps = ["nav", "code", "filelinks", "chapter-reader"]
+    else:
+        meta["toc"] = table_of_contents(content)
+    return finish_page(meta, page.slug, name, content, comps, site, shell, {})
+
+
+def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, site: dict,
+                shell: str, id_to_panel: dict) -> tuple[str, str]:
+    """Inline figures, select components and fill the shared shell."""
     content = inline_svg_figures(content, name, namespace_ids="chapter-reader" in comps)
 
     if meta.get("ongoing"):
@@ -700,6 +750,8 @@ def main() -> int:
             ap.error(f"local component missing: {name}.js")
     shell = (COMPONENTS / "shell.html").read_text()
 
+    # Edit links need a branch; source links may pin the exact built commit.
+    site["_edit_ref"] = site.get("gh_ref", "main")
     if os.environ.get("GITHUB_SHA"):
         site["gh_ref"] = os.environ["GITHUB_SHA"]
     bundle = SiteBundle(site)
@@ -725,6 +777,31 @@ def main() -> int:
                 outputs["html/" + built[0]] = bundle.rewrite_page(built[1]).encode()
             except (ValueError, OSError) as problem:
                 err(str(problem))
+    from source_pages import fragment_problems, load_registry
+    source_pages, problems = load_registry(site, REPO, consumer_tracked_paths())
+    for problem in problems:
+        err(problem)
+    routes = {page.source: page.route for page in source_pages}
+    for page in source_pages:
+        if page.slug in seen_slugs:
+            err(f"route collision: {page.route} is produced by more than one page ({page.source})")
+            continue
+        seen_slugs.add(page.slug)
+        built = build_source_page(page, routes, site, shell)
+        if built:
+            pages_meta.append({"page_css": ["build-sheet.css"]})
+            try:
+                outputs["html/" + built[0]] = bundle.rewrite_page(built[1]).encode()
+            except (ValueError, OSError) as problem:
+                err(str(problem))
+    rendered = {name[5:]: data.decode() for name, data in outputs.items()
+                if name.startswith("html/") and name.endswith(".html") and "/" not in name[5:]}
+    # Source pages check every fragment they link. Other pages check fragments
+    # pointing into source pages, whose anchors come from Markdown headings.
+    source_routes = {page.route for page in source_pages}
+    for problem in [*fragment_problems(rendered, source_routes, set(rendered)),
+                    *fragment_problems(rendered, set(rendered) - source_routes, source_routes)]:
+        err(problem)
     if args.page and args.page not in seen_slugs:
         err("unknown page slug: " + args.page)
     for name, data in gather_page_css(pages_meta).items():
@@ -744,6 +821,7 @@ def main() -> int:
                              "<a href=\"html/index.html\">Open the documentation</a></html>\n").encode()
     outputs["site-build.json"] = (json.dumps({"schema_version": 1, "source": "docs/topics",
         "public_pages": sorted(name for name in outputs if name.startswith("html/") and name.endswith(".html")),
+        "source_pages": {page.route: page.source for page in source_pages},
         "local_media": sorted(bundle.local_media), "large_captures_packaged": False,
         "kit": {"version": (KIT_SITE.parent / "VERSION").read_text().strip(),
                 "asset_sha256": hashlib.sha256(b"".join(key.encode() + outputs[key] for key in sorted(outputs) if key.startswith("html/assets/"))).hexdigest()},

@@ -18,6 +18,12 @@ commands. [README](../README.md) owns consumer setup and upgrades.
 lifecycle. The [writing router](../rules/writing.md) links to page design,
 explanations, measurements, figures, mathematics and code guides.
 
+## Reference website
+
+The [website record](topics/website/website.md) owns the kit's own site: its
+structure, source registry, build command and open hosting decision.
+[Open work](open/OPEN.md) routes owed workstreams to their owners.
+
 ## Site development
 
 The [site router](../rules/maintenance.md) links to authoring, validation,

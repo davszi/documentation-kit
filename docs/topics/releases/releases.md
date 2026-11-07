@@ -6,6 +6,25 @@ A consuming project pins an exact commit or tag and upgrades deliberately, follo
 release changes for consumers and how to move to it. Chronology stays in the
 [worklog](../../worklog.md); consumer adoption status stays in each consuming project.
 
+## Unreleased — registered source pages and the kit website
+
+These changes are on `main` after 1.1.0 and are not yet tagged. They add to the
+1.x surface without changing existing commands, keys, markers or page output,
+so they fit a minor release. No consumer migration is required.
+
+| Area | Consumer change | Owning contract |
+|---|---|---|
+| Configuration | Optional `[[source_pages]]` tables render an existing tracked Markdown file as a whole-file page at a chosen route; links and media resolve from the file's own folder | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
+| Build checks | Fragments into a registered page, and every fragment a registered page links, must match a rendered anchor; registry, containment and route-collision errors fail the build | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
+| Lint | Registered files' Markdown links are checked as ordinary records | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
+| Theme | Additive `base.css` rules for the source line (`.source-origin`) and the opt-in `reference-page` body class; existing pages render unchanged | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
+| Build manifest | `site-build.json` gains a `source_pages` map from route to source file | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
+| Kit website | The kit builds its own reference site from the repository root | [Website record](../website/website.md) |
+
+The starter's generated pages are byte-identical to 1.1.0 output; only
+`assets/base.css` and `site-build.json` differ. Validation is recorded in the
+[worklog](../../worklog.md#2026-11-07--build-the-kits-reference-website).
+
 ## 1.1.0 — focused engineering and documentation guides
 
 1.1.0 adds compatible policy routes and optional evidence configuration to the

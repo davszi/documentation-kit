@@ -144,6 +144,14 @@ def md_files() -> list[Path]:
     for extra in (REPO / "AGENTS.md", REPO / "CLAUDE.md", REPO / "README.md"):
         if extra.is_file():
             files.add(extra)
+    # Registered source pages render from their own folder, so their Markdown
+    # links are checked as ordinary records wherever they live.
+    config = DOCS / "site" / "site.toml"
+    site = tomllib.loads(config.read_text()) if config.is_file() else {}
+    for entry in site.get("source_pages", []) if isinstance(site.get("source_pages"), list) else []:
+        source = entry.get("source") if isinstance(entry, dict) else None
+        if isinstance(source, str) and (REPO / source).is_file():
+            files.add(REPO / source)
     return sorted(files)
 
 

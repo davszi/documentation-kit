@@ -2,6 +2,40 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-07 — Build the kit's reference website
+
+- Add registered source pages: `[[source_pages]]` in `site.toml` renders an
+  existing tracked Markdown file whole at a chosen route. Links and media
+  resolve from the file's folder; registered targets become routes, other
+  files become source links and tracked media are packaged. The page names its
+  canonical source with an edit link, which keeps the configured branch when
+  `GITHUB_SHA` pins source links. Registry, containment, route-collision,
+  missing-target and fragment errors fail the build; lint checks registered
+  files' Markdown links. Implementation: `tooling/source_pages.py`, with
+  `build.py` sharing its page assembly through `finish_page`.
+- Build the kit's own site from the repository root: 33 pages, four of them new
+  orientation pages (home, get started, site toolkit, project practices); the
+  rest render the README, `rules/`, release notes, the 1.1.0 migration guide,
+  the panel-switcher contract and the kit's context, index and extraction
+  records in place. The writing and maintenance routers are hidden pages that
+  keep their anchors. The [website record](topics/website/website.md) owns the
+  structure and the open hosting decision; nothing is deployed.
+- Checks, run with Python 3.12.3 and Node 22.23.3: `tests/run_checks.sh`
+  passes, including 99 Python tests (86 existing, 13 new registration tests),
+  strict lint with zero warnings for both the starter and the kit site, and
+  both Node checks. Real Chromium (Playwright 1.62.1, browser build 1234) passes the existing
+  visual review, browser-helper and panel-switcher fixtures, and the new
+  `tests/own_site_review.cjs`: all 33 pages contained with visible media at
+  1600 × 1000 and 390 × 844, deep links, panel hash reveal, keyboard path
+  focus, narrow menu and table scrolling, print and no-JavaScript reading.
+  Saved wide and narrow screenshots were inspected; path text inside condensed
+  capitals and figure margins were corrected after the first inspection.
+- Compatibility: a starter copy built with v1.1.0 and with this revision
+  differs only in `assets/base.css` (additive rules) and `site-build.json`
+  (new `source_pages` key and asset hash); every HTML page is byte-identical.
+  The consuming ADP checkout's non-writing `build --check` reports no errors
+  with either kit; the new kit adds only `assets/base.css` to its stale list.
+
 ## 2026-11-07 — Integrate upstream releases and slide support
 
 - Merge origin `072b063e6dbb` into local kit `4ab0bd10ce82`. Preserve focused

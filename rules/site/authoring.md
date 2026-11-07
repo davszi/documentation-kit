@@ -28,7 +28,7 @@ Use `--page <slug>` with build for targeted iteration. Lint supports `--strict` 
 
 ## Authoring paths
 
-Only registered `docs/topics/*/index.md` entry pages render. Every new entry page needs frontmatter with `title` and `toc` (an empty list is valid with automatic chapters), plus a corresponding `[[nav]]` entry in `docs/site/site.toml`. The folder supplies its public slug; set `slug = "index"` on the home page. Slugs are lowercase filename stems without directories. Use `hidden = true` for a built, directly reachable page outside navigation, subject to the documentation deletion policy.
+Two kinds of page render: topic entry pages at `docs/topics/*/index.md` and [registered source pages](#registered-source-pages). Every new entry page needs frontmatter with `title` and `toc` (an empty list is valid with automatic chapters), plus a corresponding `[[nav]]` entry in `docs/site/site.toml`. The folder supplies its public slug; set `slug = "index"` on the home page. Slugs are lowercase filename stems without directories. Use `hidden = true` for a built, directly reachable page outside navigation, subject to the documentation deletion policy.
 
 A rendered page body above `<!-- page-end -->` uses the logical public `docs/html/` URL origin, mapped to `.build/docs/html/`. Its source-only notes tail resolves from the actual source folder. Normal Markdown records resolve links from their own folder.
 
@@ -72,6 +72,44 @@ projects may author their own homepage and local styles. Follow
 Wrap a wide comparison table in `.scroll` with `role="region"`, a useful
 `aria-label`, `tabindex="0"` and `data-reader-horizontal`. This keeps scrolling
 and keyboard arrows inside the table instead of changing chapters.
+
+### Registered source pages
+
+A `[[source_pages]]` table renders an existing, tracked Markdown file as one
+whole-file page without moving or copying it. Use it for records and guides
+whose Markdown must stay the canonical source:
+
+```toml
+[[source_pages]]
+source = "rules/engineering/git.md"  # contained, tracked .md file without +++ frontmatter
+slug = "git"                         # public route: git.html
+description = "Commits, shared checkouts and history."  # optional
+```
+
+`title` defaults to the file's first level-one heading. `description` supplies
+the site-map card text and sidebar subtitle. `math = true` enables formulas.
+`reader = true` uses the chapter reader when the site enables it; otherwise the
+page scrolls and its sidebar lists the second- and third-level headings. Each
+route still needs a `[[nav]]` entry, where `hidden = true` keeps it out of
+navigation. One slug belongs to one page. Topic entry pages keep their own
+frontmatter path and cannot be registered.
+
+Links and media resolve from the file's own folder, exactly as when reading the
+Markdown. A link to another registered file becomes that page's route. Other
+repository files become source links, and tracked media are packaged. Absolute
+paths, links that leave the project and missing targets fail the build. Every
+fragment that points into a registered page, from any page, must match an
+anchor of the rendered target. The page opens with its source path and an edit
+link built from `gh_repo` and the configured `gh_ref`; `site-build.json` maps
+each such route to its source file. Wide tables scroll inside
+labelled regions. The page body carries the classes `source-page` and
+`reference-page`; another scrolling page can opt into the same reading layout
+with `body_class = "reference-page"`.
+
+Topic-page markers are not interpreted in a registered file: includes, typed
+folds, registry callouts and `<!-- page-end -->` stay literal, so a record can
+show them as examples. Lint checks a registered file's Markdown links as an
+ordinary record.
 
 ### Generated figures
 

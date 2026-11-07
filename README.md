@@ -158,11 +158,15 @@ optional.
 python -m pip install -r requirements.txt
 python docsite.py build --project examples/starter
 python docsite.py lint --project examples/starter --strict
+python docsite.py build --project .
+python docsite.py lint --project . --strict
 DOCSITE_PROJECT_ROOT="$PWD/examples/starter" PYTHONPATH=tooling python -m unittest discover -s tests -p 'test_*.py'
 node tests/test_math_runtime.cjs
 node tests/test_site_filelinks.cjs
 ```
 
+The second pair builds and checks the kit's own [reference website](docs/topics/website/website.md),
+which renders this README and the guides in `rules/` in place.
 The independent-consumer tests create disposable Git repositories. Build output
 stays under each consumer's `.build/docs/`; tools never infer the consumer from
 where the kit happens to be installed.
@@ -174,6 +178,7 @@ development environment:
 DOCS_PLAYWRIGHT=/path/to/playwright DOCS_CHROMIUM=/path/to/chromium node tests/visual_review.cjs
 DOCS_PLAYWRIGHT=/path/to/playwright DOCS_CHROMIUM=/path/to/chromium node tests/test_browser_checks.cjs
 DOCS_PLAYWRIGHT=/path/to/playwright DOCS_CHROMIUM=/path/to/chromium node tests/test_panel_switcher.cjs
+DOCS_PLAYWRIGHT=/path/to/playwright DOCS_CHROMIUM=/path/to/chromium node tests/own_site_review.cjs
 ```
 
 It starts an owned loopback server, checks desktop/phone and paired layouts,

@@ -46,6 +46,8 @@ Start a topic as `docs/topics/<topic>/<topic>.md`; split growing records into de
 
 A rendered page explains current conclusions, accepted specifications, demonstrated behavior with its evidence scope, useful figures and the decisions needed next. Contracts, handoff/resume state, readiness boards, bookkeeping and long run chronology stay in records. Link to those records instead of reproducing them.
 
+A site may also render a whole record as a [registered source page](site/authoring.md#registered-source-pages). The Markdown file stays the record and its only editable copy; the page adds no content of its own.
+
 Records use plain Markdown headings, tables, lists, exact file references and evidence links. Keep layout HTML out of agent records. Store a needed diagram in a separate file and link it. Preserve anchors referenced by other documents.
 
 When a page becomes predominantly agent-facing, move that material into records and retain its human-facing core in a page. Removing it from navigation or publication follows the deletion gate. Preserve a hidden stub and former anchors while dated or frozen links still depend on them.
