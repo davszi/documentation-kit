@@ -84,6 +84,7 @@ links to the kit's contracts, evidence and chronology.
 | Area | Guides |
 |---|---|
 | Engineering | [Code and generated files](rules/engineering/code.md), [performance](rules/engineering/performance.md), [execution and resources](rules/engineering/execution.md) |
+| Experiments | [Workflow](rules/experiments/workflow.md), [proportionate verification](rules/experiments/verification.md) |
 | Delivery | [Ownership](rules/engineering/delivery.md), [handoffs](rules/engineering/handoffs.md), [Git](rules/engineering/git.md) |
 | Documentation | [Canonical homes and lifecycle](rules/documentation.md) |
 | Writing | [Pages and review](rules/writing/pages.md), [explanations](rules/writing/explanations.md), [measurements](rules/writing/evidence.md), [figures and access](rules/writing/figures.md), [math](rules/writing/math.md), [code and diagrams](rules/writing/code.md) |
@@ -93,6 +94,10 @@ The original [writing](rules/writing.md) and [maintenance](rules/maintenance.md)
 entrypoints remain short routers with their existing section anchors. Projects
 keep concrete tools, workloads, resource profiles, acceptance thresholds and
 runtime requirements in their own records.
+
+The experiment guides define shared purposes and verification choices once.
+Projects link to them and retain local questions, selected recipes, decisions
+and accepted execution contracts.
 
 ## Pin and upgrade
 

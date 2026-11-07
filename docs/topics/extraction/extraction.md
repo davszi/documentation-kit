@@ -12,6 +12,20 @@ policy sections and project-owned exclusions. [Provenance](../../../provenance.j
 pins source and extracted bytes from the inspected source revision `9930b919`.
 The source project was not migrated, deleted or retired during extraction.
 
+## Current experiment-policy ownership
+
+The [workflow](../../../rules/experiments/workflow.md) and
+[verification](../../../rules/experiments/verification.md) guides now own shared
+experiment design and check selection. Numerical derivation, reference
+comparison and regression guidance address numerical implementation
+correctness. [Production benchmarks](../../../rules/engineering/performance.md)
+remain engineering guidance; [evidence reporting](../../../rules/writing/evidence.md)
+retains provenance, results, visuals and actual reviews. Consumer study
+decisions and accepted execution contracts stay project-owned.
+
+The extraction identities and dated verification below describe the original
+extraction, not verification of these later policy changes.
+
 ## Implemented boundary
 
 - An explicit consumer root separates project content from the kit installation.

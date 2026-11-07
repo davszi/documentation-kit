@@ -24,6 +24,11 @@ each consuming project's own documentation.
 The [documentation index](index.md) routes readers to focused engineering,
 writing and site guides. Read each guide before the action it governs.
 
+The [experiment workflow](../rules/experiments/workflow.md) and
+[verification guide](../rules/experiments/verification.md) own shared experiment
+design and check selection. Project-specific study decisions, recipes, results
+and execution contracts remain with consumers.
+
 The [local comparison contract](topics/panel-switcher/panel-switcher.md)
 owns the shared panel switcher's authoring, behavior and extraction checks.
 

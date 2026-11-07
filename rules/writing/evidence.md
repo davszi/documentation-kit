@@ -8,7 +8,7 @@ When code, input data, method, workload or runtime conditions affecting a claim 
 
 When a redesign restates numbers in new prose, figures or slides, record each number's source in a ledger and lock the evidence blocks kept verbatim (see [generated figures](../site/authoring.md#generated-figures)). A slide face may show only numbers that its chapter also shows; every distinct number a redesigned chapter shows, figure labels included, has a ledger source.
 
-Keep protocols, outputs, snapshots, failed attempts, changed settings, actual outcomes, reviews and relevant uncertainty with the work that produced them. For experiments, also retain producing code, inputs, full result tables, source pins and independent reviews in the experiment directory. The page explains what they establish. The worklog records the landing and hashes without duplicating tables. Retained measured content remains subject to the [deletion gate](../documentation.md#rules-for-changes-and-chronology).
+Keep protocols, outputs, snapshots, failed attempts, changed settings, actual outcomes, reviews actually performed and relevant uncertainty with the work that produced them. For experiments, also retain producing code, inputs, full result tables, source pins and any independent reviews performed in the experiment directory. The page explains what they establish. The worklog records the landing and hashes without duplicating tables. Retained measured content remains subject to the [deletion gate](../documentation.md#rules-for-changes-and-chronology).
 
 Historical records preserve their original source pins, inputs, runtime, settings, resource limits, deadlines and verdicts where those fields apply.
 
@@ -18,12 +18,16 @@ Prefer scripted captures with the same provenance as other figures. An inherentl
 
 A live public experiment report uses `ongoing = true`; remove it only when findings and limits are settled. Apply the [experiment retention rules](#numbers-and-staleness). The owning topic explains scope and links to evidence.
 
-Every complete experiment includes:
+An experiment report includes:
 
-- Reproduction command and runtime; provide a quick mode when the full run exceeds about one minute.
-- Measured motivation, strongest cheap baseline and acceptance bar stated before results.
-- Results with units, verdict against the bar (including failure), caveats and path forward.
+- Reproduction command, runtime and the question or intended artifact.
+- Motivation, relevant baseline or comparison, and the interpretation basis, including retained changes and their reasons.
+- Results with units, findings and any applicable verdict against agreed criteria (including failure or inconclusive evidence), caveats and path forward.
 
-Verify the baseline before changing measured behavior. A production benchmark drives shipped paths end to end with honestly labelled ablations, reusable case generation/metrics, runtime reporting and provenanced figures. A method experiment adds an independent derivation from published formulas rather than copying implementation, a guarded optional native comparison and an exit self-check. State observed agreement, not presumed parity.
+The [experiment workflow](../experiments/workflow.md) owns purposes, question
+selection, baselines, evaluation and stopping conditions.
+[Proportionate verification](../experiments/verification.md) owns check selection
+and numerical implementation correctness. [Performance guidance](../engineering/performance.md)
+owns production benchmarks and engineering quick modes.
 
-Use a thin regression gate covering historically difficult regimes, documented band tolerances and a known-bad failure when available. Keep fast gates short (target under five seconds). Suitable experiment visuals include actual-geometry quality overlays, convergence, reference parity, timing/scaling and trade-off plots; omit inapplicable views explicitly. Update topic, worklog and open routing in the same deliverable.
+Suitable experiment visuals include actual-geometry quality overlays, convergence, reference parity, timing/scaling and trade-off plots; omit inapplicable views explicitly. Update topic, worklog and open routing in the same deliverable.

@@ -2,6 +2,16 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-07 — Merge experiment guides and publish them on the site
+
+- Merge `experiment-workflow-guides-20261107` (`d072852`) into `main` beside
+  the website commits. Git merges README, project context, reading index and
+  documentation policy automatically; the worklog conflict keeps both entries
+  unchanged.
+- Register `rules/experiments/workflow.md` and `verification.md` as source
+  pages in a new Experiments navigation group (35 pages), add them to the
+  practices overview and home path, and list them in the unreleased notes.
+
 ## 2026-11-07 — Build the kit's reference website
 
 - Add registered source pages: `[[source_pages]]` in `site.toml` renders an
@@ -35,6 +45,31 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   (new `source_pages` key and asset hash); every HTML page is byte-identical.
   The consuming ADP checkout's non-writing `build --check` reports no errors
   with either kit; the new kit adds only `assets/base.css` to its stale list.
+
+## 2026-11-07 — Scope shared experiment workflow and verification
+
+- Add shared experiment workflow and proportionate verification guides.
+  Distinguish investigations from final artifact/model runs and exploration from
+  confirmation. Keep local decisions and existing execution contracts with
+  consumers; add no automatic audit tier or approval framework.
+- Move production benchmark and engineering quick-mode guidance to performance.
+  Preserve independent numerical reference/derivation, production comparison,
+  self-check, optional native comparison and fast regression guidance under
+  numerical implementation correctness. Retain evidence provenance, actual
+  reviews, failed outcomes, visuals and existing public anchors.
+- Route root/starter agents and reading indexes to the canonical guides. Update
+  current extraction ownership without changing frozen provenance, historical
+  release records or `VERSION`. This remains unreleased local work; the landing
+  commit supplies its identity.
+- Address policy review by scoping fixed pre-results criteria to confirmation
+  and agreed acceptance checks. Allow labelled exploratory interpretation with
+  retained changes and reasons. Keep the selected recipe fixed during a final
+  run; record a recipe change as a distinct attempt. Independent re-review
+  found no remaining findings in that scope.
+- With `/home/deivid/dev/.venvs/adaptation-slide-faces-docs/bin/python`, starter
+  build, freshness and strict lint pass with zero warnings. Focused Markdown
+  link/fragment and existing-anchor checks pass. No rendered source, theme or
+  tooling changed; no browser or application-runtime checks were run.
 
 ## 2026-11-07 — Integrate upstream releases and slide support
 

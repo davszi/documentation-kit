@@ -16,6 +16,8 @@ inputs. These routes grant no execution or publication permission.
 |---|---|
 | Changing source, tests or repository configuration | `.docs-kit/rules/engineering/code.md` and the owning project topic or development guide |
 | Changing runtime cost or making performance claims | `.docs-kit/rules/engineering/performance.md` and the project's workload/acceptance contract |
+| Designing an investigation or final run | `.docs-kit/rules/experiments/workflow.md` and the project's owning experiment records |
+| Choosing or changing experiment checks or interpreting their failures | `.docs-kit/rules/experiments/verification.md` and the project's accepted verification contract |
 | Running tests, builds, benchmarks or other expensive jobs | `.docs-kit/rules/engineering/execution.md` and the project's recorded environment and execution requirements |
 | Assigning work, coordinating contributors or editing in parallel | `.docs-kit/rules/engineering/delivery.md` |
 | Reporting completion or blockers, handing off work or integrating a handoff | `.docs-kit/rules/engineering/handoffs.md` |

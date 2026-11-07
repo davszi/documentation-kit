@@ -88,5 +88,6 @@
 .map-group[data-group="site toolkit"]{--tone:var(--adp)}
 .map-group[data-group="engineering"]{--tone:var(--secondary)}
 .map-group[data-group="documentation & writing"]{--tone:var(--secondary)}
+.map-group[data-group="experiments"]{--tone:var(--secondary)}
 .map-group[data-group="releases"]{--tone:var(--orange)}
 .map-group[data-group="kit development"]{--tone:var(--muted)}

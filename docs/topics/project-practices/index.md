@@ -1,13 +1,13 @@
 +++
 title = "Project practices"
 brand = "Documentation kit"
-brand_sub = "engineering · documentation · writing"
+brand_sub = "engineering · writing · experiments"
 description = "How a project routes contributors to the shared rules, and what each guide covers."
 reader = false
 body_class = "reference-page"
 components = ["toc", "nav", "filelinks"]
 page_css = ["build-sheet.css", "../site/assets/kit-site.css"]
-toc = [["How contributors find a rule", "#how-contributors-find-a-rule"], ["Engineering", "#engineering"], ["Documentation and writing", "#documentation-and-writing"], ["What stays with the project", "#what-stays-with-the-project"]]
+toc = [["How contributors find a rule", "#how-contributors-find-a-rule"], ["Engineering", "#engineering"], ["Documentation and writing", "#documentation-and-writing"], ["Experiments", "#experiments"], ["What stays with the project", "#what-stays-with-the-project"]]
 +++
 
 # Shared practices, read before the action they govern
@@ -48,6 +48,13 @@ toc = [["How contributors find a rule", "#how-contributors-find-a-rule"], ["Engi
 <a class="kit-card" href="figures.html"><span class="kit-tag">before drawing</span><strong>Figures and access</strong><span>Choosing a representation, comparisons, interaction and accessibility.</span></a>
 <a class="kit-card" href="math.html"><span class="kit-tag">before deriving</span><strong>Mathematics</strong><span>Building from known constructions, notation, worked examples and rendering.</span></a>
 <a class="kit-card" href="code-excerpts.html"><span class="kit-tag">before excerpting code</span><strong>Code excerpts and diagrams</strong><span>Verified excerpts with real line numbers and data-backed diagrams.</span></a>
+</div>
+
+## Experiments
+
+<div class="kit-cards kit-cards-3">
+<a class="kit-card" href="experiment-workflow.html"><span class="kit-tag">before designing a run</span><strong>Experiment workflow</strong><span>Investigation or final run, a bounded question, evaluation kept apart from tuning, and stopping conditions.</span></a>
+<a class="kit-card" href="experiment-verification.html"><span class="kit-tag">before choosing checks</span><strong>Proportionate verification</strong><span>Checks chosen for the claim: evidence gaps, application logic, numerical correctness and responses to failures.</span></a>
 </div>
 
 The original [writing](writing.html) and [site maintenance](maintenance.html)

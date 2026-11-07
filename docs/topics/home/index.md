@@ -38,8 +38,8 @@ toc = []
 <a class="kit-path kit-path-practices" href="project-practices.html">
 <span class="kit-path-step">Path 1</span>
 <strong>Adopt project practices</strong>
-<span>Route contributors to shared rules for code, execution, delivery, Git, documentation and writing.</span>
-<span class="kit-path-links">Engineering · documentation · writing</span>
+<span>Route contributors to shared rules for code, execution, delivery, Git, documentation, writing and experiments.</span>
+<span class="kit-path-links">Engineering · writing · experiments</span>
 </a>
 <a class="kit-path kit-path-build" href="site-toolkit.html">
 <span class="kit-path-step">Path 2</span>

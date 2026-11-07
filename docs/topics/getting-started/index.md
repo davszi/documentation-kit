@@ -20,7 +20,7 @@ so each instruction has one place to change.
 ## What the kit provides
 
 <div class="kit-cards kit-cards-4">
-<a class="kit-card" href="project-practices.html"><span class="kit-tag">rules/</span><strong>Shared practices</strong><span>Engineering, documentation and writing rules that a project's task router points contributors to.</span></a>
+<a class="kit-card" href="project-practices.html"><span class="kit-tag">rules/</span><strong>Shared practices</strong><span>Engineering, documentation, writing and experiment rules that a project's task router points contributors to.</span></a>
 <a class="kit-card" href="reader.html"><span class="kit-tag">theme/</span><strong>Reader and theme</strong><span>The chapter reader, build-sheet layout, components, fonts and local math rendering.</span></a>
 <a class="kit-card" href="authoring.html"><span class="kit-tag">docsite.py · tooling/</span><strong>Site toolchain</strong><span>Build, freshness check, lint, slide decks and publication export, with no JavaScript install.</span></a>
 <a class="kit-card" href="readme.html#start-a-project"><span class="kit-tag">examples/starter/</span><strong>Starter project</strong><span>A neutral consumer that <code>init</code> copies into a new project without overwriting files.</span></a>

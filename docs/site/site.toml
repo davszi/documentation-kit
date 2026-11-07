@@ -103,6 +103,18 @@ label = "Code excerpts and diagrams"
 file = "code-excerpts.html"
 group = "documentation & writing"
 
+# ── Experiments ───────────────────────────────────────────────────────
+[[nav]]
+label = "Experiment workflow"
+file = "experiment-workflow.html"
+group = "experiments"
+
+[[nav]]
+label = "Proportionate experiment verification"
+short = "Verification"
+file = "experiment-verification.html"
+group = "experiments"
+
 # ── Site toolkit ──────────────────────────────────────────────────────
 [[nav]]
 label = "Site toolkit overview"
@@ -292,6 +304,16 @@ description = "Building formulas from known constructions, notation and renderin
 source = "rules/writing/code.md"
 slug = "code-excerpts"
 description = "Verified code excerpts and data-backed diagrams."
+
+[[source_pages]]
+source = "rules/experiments/workflow.md"
+slug = "experiment-workflow"
+description = "Investigations and final runs, question design, evaluation and stopping conditions."
+
+[[source_pages]]
+source = "rules/experiments/verification.md"
+slug = "experiment-verification"
+description = "Choosing checks for a claim, application logic, numerical correctness and changed inputs."
 
 [[source_pages]]
 source = "docs/topics/releases/releases.md"

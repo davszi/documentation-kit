@@ -6,11 +6,12 @@ A consuming project pins an exact commit or tag and upgrades deliberately, follo
 release changes for consumers and how to move to it. Chronology stays in the
 [worklog](../../worklog.md); consumer adoption status stays in each consuming project.
 
-## Unreleased — registered source pages and the kit website
+## Unreleased — source pages, kit website and experiment guides
 
 These changes are on `main` after 1.1.0 and are not yet tagged. They add to the
 1.x surface without changing existing commands, keys, markers or page output,
-so they fit a minor release. No consumer migration is required.
+so they fit a minor release. No consumer migration is required; consumers may
+add routes to the new experiment guides.
 
 | Area | Consumer change | Owning contract |
 |---|---|---|
@@ -20,6 +21,7 @@ so they fit a minor release. No consumer migration is required.
 | Theme | Additive `base.css` rules for the source line (`.source-origin`) and the opt-in `reference-page` body class; existing pages render unchanged | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
 | Build manifest | `site-build.json` gains a `source_pages` map from route to source file | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
 | Kit website | The kit builds its own reference site from the repository root | [Website record](../website/website.md) |
+| Experiment guides | New shared guides for experiment purposes and design, and for claim-scoped verification; routes added to the starter's `AGENTS.md` | [Workflow](../../../rules/experiments/workflow.md), [verification](../../../rules/experiments/verification.md) |
 
 The starter's generated pages are byte-identical to 1.1.0 output; only
 `assets/base.css` and `site-build.json` differ. Validation is recorded in the
