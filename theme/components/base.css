@@ -334,7 +334,8 @@ body:not(.reader-enabled) .toc a.xpage.current{color:#fff;font-weight:700;backgr
 @media print{.source-origin-edit{display:none}}
 /* Scrolling reference pages (body_class "reference-page"; every registered source page)
    keep a readable measure and the build-sheet heading voice. */
-body.reference-page .content>*{max-width:1040px}
+/* Cap line length on scrolling pages only; the chapter reader sizes its own stage. */
+body.reference-page .content:not(:has([data-reader-adapted]))>*{max-width:1040px}
 body.reference-page .content>.topbar{max-width:none}
 body.reference-page .content h1{font:700 clamp(30px,3.4vw,44px)/1.04 var(--display,var(--sans));text-transform:uppercase;letter-spacing:.005em;margin:4px 0 14px;text-wrap:balance}
 body.reference-page .content h2{font:700 clamp(22px,2.2vw,28px)/1.1 var(--display,var(--sans));text-transform:uppercase;letter-spacing:.01em;margin:46px 0 10px}

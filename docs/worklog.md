@@ -17,6 +17,10 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
 - The site review now checks reader chapters on every page, the merged
   opening, the two-chapter view and the reader's narrow menu, replacing the
   folded-navigation browser check (the unit tests still cover `nested_nav`).
+- The `reference-page` line-length cap (`.content>*{max-width:1040px}`) also
+  capped the reader stage, leaving the right third of a 1600 px screen blank.
+  The cap now applies only to pages without the reader; the site review fails
+  if the active chapter card is narrower than 80% of the content area.
 
 ## 2026-11-07 — Build the kit site's own pages from kit components
 

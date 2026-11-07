@@ -90,6 +90,10 @@ const SHOTS = ['index', 'getting-started', 'site-toolkit', 'project-practices', 
       assert.equal(firstChapter, 'keep-experiments-small', 'short source opening merges into the first chapter');
       assert.equal(await page.locator('section.card[data-reader-chapter] .source-origin').first().isVisible(), true);
       if (viewport.width >= 900) {
+        // The reader stage uses the content width; no line-length cap leaves the right side blank.
+        const stage = await page.evaluate(() => ({card: document.querySelector('section.card[data-reader-chapter]').getBoundingClientRect().width,
+                                                  main: document.querySelector('main.content').getBoundingClientRect().width}));
+        assert.ok(stage.card > 0.8 * stage.main, 'reader card fills the stage: ' + JSON.stringify(stage));
         await page.click('button[data-reader-view="pair"]');
         assert.equal(await page.getAttribute('button[data-reader-view="pair"]', 'aria-pressed'), 'true', 'two-chapter view selectable');
         await page.click('button[data-reader-view="single"]');
