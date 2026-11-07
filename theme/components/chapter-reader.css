@@ -57,7 +57,7 @@ body.topic-deck {overflow:hidden;}
 .topic-stage {--topic-gap:16px;position:relative;flex:1;min-height:0;width:calc(100% - 24px);margin:12px;overflow:clip;}
 .topic-strip {position:relative;display:flex;gap:var(--topic-gap);width:100%;height:100%;will-change:transform;}
 .topic-strip.topic-animate {transition:transform .46s cubic-bezier(.22,.72,.18,1);}
-.topic-strip > .topic-card {flex:0 0 80%;min-width:0;height:100%;display:flex;flex-direction:column;overflow:hidden;margin:0;padding:0;border:1px solid var(--border);border-radius:12px;container-type:inline-size;container-name:chapter;opacity:.45;transition:opacity .35s,border-color .35s;box-shadow:0 8px 28px rgba(0,0,0,.1);}
+.topic-strip > .topic-card {flex:0 0 88%;min-width:0;height:100%;display:flex;flex-direction:column;overflow:hidden;margin:0;padding:0;border:1px solid var(--border);border-radius:12px;container-type:inline-size;container-name:chapter;opacity:.45;transition:opacity .35s,border-color .35s;box-shadow:0 8px 28px rgba(0,0,0,.1);}
 .topic-strip > .topic-visible {opacity:1;}
 .topic-strip > .topic-active {border-color:rgba(57,210,192,.36);}
 .topic-card:focus {outline:none;}
@@ -388,4 +388,4 @@ body.topic-deck {overflow:hidden;}
 /* One shared column: text, figures, code and callouts share the left edge and
    the card's full width. Images narrower than the column are centred.
    One-chapter view caps the card width; cards keep the full stage height. */
-.content[data-topic-layout="deck"]:not([data-topic-view="pair"]) .topic-strip > .topic-card {flex-basis:min(80%,1400px);}
+.content[data-topic-layout="deck"]:not([data-topic-view="pair"]) .topic-strip > .topic-card {flex-basis:min(88%,1500px);}

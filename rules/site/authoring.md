@@ -11,7 +11,9 @@
 | `docs/figures/` | Shared project figures with declared provenance |
 | `.build/docs/` | Reproducible generated output, ignored by Git |
 
-Initialize the submodule before building. Upgrade the pin as a reviewed deliverable, run the shared and consumer checks, and record the adopted revision and compatibility evidence. Do not edit a detached submodule as a substitute for a shared-kit change. Engine and shared-theme changes belong upstream; project content and optional extensions stay local.
+Initialize the submodule before building. The kit is versioned in `VERSION` and
+tagged `v<version>`; [release notes](../../docs/topics/releases/releases.md) list each
+version's changes and its migration steps. Upgrade the pin as a reviewed deliverable, run the shared and consumer checks, and record the adopted revision and compatibility evidence. Do not edit a detached submodule as a substitute for a shared-kit change. Engine and shared-theme changes belong upstream; project content and optional extensions stay local.
 
 From the consuming project root, use the pinned kit directly:
 
@@ -49,6 +51,12 @@ selects the kit's shared theme resource. Local stylesheet entries such as
 base. Do not introduce machine-specific absolute paths or remote media dependencies.
 Fonts follow the [shared dependency rules](reader.md#shared-reading-layout).
 
+An included fragment may include further fragments, up to eight levels; a cycle
+fails the build. A `[[nav]]` table accepts only `label`, `file`, `group`, `short`
+and `hidden`. TOML assigns every key written after a table header to that table,
+so keep top-level settings such as `extra_components` above the first `[[nav]]`;
+the build rejects any other key inside a nav entry.
+
 Register project-specific script components with `extra_components = ["viewer"]`;
 each uses a tracked `docs/site/components/<name>.js`. For dynamically loaded
 dependencies, `[extra_assets]` maps output names below `html/assets/` to tracked
@@ -64,3 +72,41 @@ projects may author their own homepage and local styles. Follow
 Wrap a wide comparison table in `.scroll` with `role="region"`, a useful
 `aria-label`, `tabindex="0"` and `data-reader-horizontal`. This keeps scrolling
 and keyboard arrows inside the table instead of changing chapters.
+
+### Generated figures
+
+A figure generator reads tracked data, asserts the values its page states and
+writes fragments the page includes; a `--check` mode compares without writing and
+runs in the project's checks. `tooling/svg_figures.py` supplies the shared markup:
+`figure` (numbered caption and a labelled, keyboard-scrollable region), `slide_svg`
+(a face without ids), `standalone` (a file usable as `<img>`, such as a slide
+shown as an image) and drawing helpers with a literal colour palette. Generated
+SVG uses literal colours: surrounding cards may redefine page variables, and an
+SVG loaded as an image cannot read them.
+
+`tooling/number_ledger.py` checks that every distinct number a redesigned section
+shows has a declared source: a configuration value, project evidence expression,
+arithmetic, saved record, quoted text or an explained illustrative value. Values
+are unsigned as written. Projects pass their own evidence namespace and keep the
+ledgers beside the page. Ledger expressions are executable project code: review
+them as code; they are not evaluated in a sandbox. `tooling/verbatim_blocks.py`
+hash-locks the blocks a redesign keeps unchanged, so kept evidence wording cannot
+change silently; locked blocks and fragments are the only text a ledger may set aside.
+
+### Slide faces and decks
+
+Write a chapter's slide face between standalone `<!-- slide -->` and `<!-- /slide -->` lines at the start of the chapter: inside its `section.card`, or directly before its `##` heading on a flat Markdown page. The build converts it into `<div class="slide-face" data-slide-face><div class="slide-canvas">…</div></div>` and loads the shared `slide-face` component automatically. Markdown pages match markers after rendering, so examples inside code blocks stay literal. Unbalanced or nested markers fail the build. Use `p.slide-eyebrow` and `p.slide-title`, not headings: the reader names a chapter by its first heading, which opens the full chapter below the slide.
+
+| Class | Use |
+|---|---|
+| `slide-lead`, `slide-main`, `slide-scope` | Lead sentence, the flexible visual area, closing scope line |
+| `slide-tile` (`is-term`, `is-accent`, `is-warm`, `is-alert`, `is-held`), `slide-tag` | Labelled boxes; emphasised term; dashed held-out or generated item |
+| `slide-row`, `slide-steps` | Equal tiles in one row; numbered argument steps |
+| `slide-equation`, `slide-column`, `slide-op`, `slide-note` | Terms of a formula with variants listed under each term |
+| `slide-factors`, `slide-chip` (`is-key`, `is-alt`, `is-warm`, `is-alert`, `is-held`, `is-mono`) | Labelled rows of options |
+| `slide-split` (`is-wide-side`), `slide-figure`, `slide-stats`, `slide-stat` (`is-alt`, `is-warm`, `is-alert`, `is-plain`), `slide-big` | Figure or grid beside headline numbers |
+| `slide-legend` | Line and border keys |
+
+The outer face is the size container and every size inside the canvas is a container unit of it, so a face fits identically at every width or not at all. Below 720 px a CSS container query stacks the canvas into a readable column, without JavaScript. Canvas declarations are marked `!important` so page-wide element rules (for example an id-scoped `p` style) cannot change the fixed layout; local slide classes must do the same. Open a page with `?slide-check` to outline faces that do not fit; the deck always shows the outline. Projects add local classes for domain diagrams under the same rule. In the reader, the first heading after the face becomes the chapter's bridge title; an eyebrow immediately before it stays only for assistive technology. A Continue/Back control moves between the slide and the full chapter.
+
+Extract a deck with `python .docs-kit/docsite.py slides --project . --select <slug>[#chapter,…] --out <name> [--title …]`. Repeat `--select` to combine pages; listed chapters keep the given order, a bare slug takes every face in reading order. Chapters are the reader's chapter sections, or the outermost `section.card` elements on pages without the reader. Slide ids are prefixed per slide so pages can share one deck; relative URLs (including `srcset`, `xlink:href` and CSS `url()`) point back into the built site, and links to the rest of a page open that page. Faces from math pages render with the vendored KaTeX. The command builds the site first and writes `.build/slides/<name>.html`, which reuses the built site's assets and stays outside the published bundle. The deck offers an overview, a presentation mode (`P`, arrow keys, `F`, `Esc`) and one-slide-per-page printing for PDF export. Serve `.build/` on loopback to open it.

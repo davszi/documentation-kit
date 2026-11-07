@@ -35,7 +35,7 @@ const server = http.createServer(async (req,res) => {
       page.on('response',response=>{if(response.status()>=400) failures.push(response.url()+': '+response.status());});
       await page.goto(origin+'/html/guide.html',{waitUntil:'networkidle'});
       await settle(page);
-      const readerScope = await readerChecks(page, {url:origin+'/html/guide.html', expectedChapters:6,
+      const readerScope = await readerChecks(page, {url:origin+'/html/guide.html', expectedChapters:7,
         onPair:async () => {
           await checkLayout(page);
           await page.screenshot({path:path.join(output,`${viewport.width}-comparison-pinned.png`)});

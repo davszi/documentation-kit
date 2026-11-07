@@ -17,6 +17,10 @@ Read [project-owned homepage composition](writing/pages.md#project-owned-homepag
 
 Read [build-sheet pages](writing/pages.md#build-sheet-pages).
 
+## Slide faces
+
+Read [slide faces](writing/pages.md#slide-faces).
+
 ## Story and reading layers
 
 Read [story and reading layers](writing/explanations.md#story-and-reading-layers).

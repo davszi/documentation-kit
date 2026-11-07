@@ -22,11 +22,16 @@ For local review, follow the [owned-server and browser rules](../documentation.m
 a browser, server or experiment. Projects own those lifetimes, page routes,
 expected counts, screenshots and domain assertions. The shared module provides:
 
+- `slideFaces` lists every slide face with its chapter, size, compact state and
+  whether it fits its 16:9 canvas.
 - `settle`, `visibleMedia`, `measureOverflow`, `assertHorizontalContainment` and
   `checkLayout` for fonts, actually visible images and viewport containment.
   Image visibility includes ancestor clipping; hidden/inert and offscreen lazy
   images do not become broken-image failures merely because they are mounted.
 - `setView`, `activeChapter`, `waitActive` and `goHash` for shared reader control.
+- `captureElement(page, selector, file, {unclip?, hide?})` captures one figure,
+  face or chapter; `unclip` removes height limits and clipping on the element and
+  its ancestors so a reader chapter is captured whole.
 - `readerChecks(page, {url, expectedChapters, check?, onPair?})` for real
   navigation/history and comparison pinning. It returns
   `{chapterIds, checked, skipped}`; short readers report impossible interactions

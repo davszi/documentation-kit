@@ -207,5 +207,43 @@ async function readerChecks(page, {url, expectedChapters, check = async (_label,
   return scope;
 }
 
-module.exports = {settle, visibleMedia, measureOverflow, assertHorizontalContainment,
-  checkLayout, setView, activeChapter, waitActive, goHash, readerChecks};
+// Slide faces: every face at or above the compact width must fit its 16:9 canvas.
+// Returns one row per face; callers assert on `fits` for rendered (non-compact) faces.
+async function slideFaces(page) {
+  return page.evaluate(() => [...document.querySelectorAll('[data-slide-face]')].map(face => {
+    const canvas = face.querySelector(':scope > .slide-canvas') || face;
+    const main = canvas.querySelector('.slide-main');
+    const compact = getComputedStyle(canvas).aspectRatio === 'auto';
+    const overflow = !compact && (canvas.scrollHeight > canvas.clientHeight + 1 || (!!main && main.scrollHeight > main.clientHeight + 1));
+    const chapter = face.closest('[data-reader-chapter]')?.id || face.closest('section')?.id || '';
+    return {chapter, width: canvas.clientWidth, height: canvas.clientHeight, compact, fits: !overflow,
+            bridge: !!face.parentElement.querySelector(':scope > .slide-bridge, .slide-bridge')};
+  }));
+}
+
+// Capture one element (a figure, a slide face, a chapter) for review. With `unclip`, the element and its
+// ancestors lose height limits and clipping first, so a reader chapter is captured whole rather than at
+// its stage height; `hide` selectors inside the element (for example '.slide-face') are hidden.
+// The page is not restored: capture on a page or context opened for review.
+async function captureElement(page, selector, file, {unclip = false, hide = []} = {}) {
+  const element = page.locator(selector).first();
+  await element.waitFor({state: 'attached'});
+  if (unclip || hide.length) {
+    await element.evaluate((node, {unclip, hide}) => {
+      for (let current = unclip ? node : null; current; current = current.parentElement) {
+        for (const [name, value] of [['height', 'auto'], ['max-height', 'none'], ['overflow', 'visible']])
+          current.style.setProperty(name, value, 'important');
+      }
+      for (const inner of hide.flatMap(query => [...node.querySelectorAll(query)]))
+        inner.style.setProperty('display', 'none', 'important');
+    }, {unclip, hide});
+  }
+  await element.scrollIntoViewIfNeeded();
+  await settle(page);
+  const box = await element.boundingBox();
+  await element.screenshot({path: file});
+  return {width: Math.round(box?.width || 0), height: Math.round(box?.height || 0)};
+}
+
+module.exports = {slideFaces, settle, visibleMedia, measureOverflow, assertHorizontalContainment,
+  checkLayout, setView, activeChapter, waitActive, goHash, readerChecks, captureElement};

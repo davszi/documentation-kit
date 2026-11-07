@@ -113,6 +113,11 @@ git -C .docs-kit checkout <reviewed-kit-commit-or-tag>
 git add .docs-kit
 ```
 
+The kit is versioned in `VERSION` and tagged `v<version>`. [Releases and
+upgrades](docs/topics/releases/releases.md) lists what each version changes for
+consumers and the migration steps; 1.0.0 is the first stable version.
+The current 1.1.0 release has a focused [consumer migration guide](docs/topics/releases/migrations/1.1.0.md).
+
 Review changed human pages at wide and narrow widths before committing the
 pointer and any consumer adaptations together. Share common changes upstream;
 avoid editing a consumer's detached submodule checkout as its only live copy.
@@ -123,6 +128,7 @@ avoid editing a consumer's detached submodule checkout as its only live copy.
 python .docs-kit/docsite.py build --project . --page guide
 python .docs-kit/docsite.py build --project . --check
 python .docs-kit/docsite.py lint --project . --registry
+python .docs-kit/docsite.py slides --project . --select guide --select other#intro,result --out review --title "Review"
 ```
 
 Python 3.12 is the validated runtime; the entrypoint requires at least 3.12.
@@ -134,6 +140,10 @@ escapes, checks resource closure and detects stray generated files. Local-only
 captures require explicit configuration. Optional `evidence_manifests` enable
 exact-byte verification without requiring any platform-specific collection.
 See [maintenance](rules/maintenance.md) for source paths and extension points.
+
+Chapters can open with a 16:9 [slide face](rules/site/authoring.md#slide-faces-and-decks);
+the `slides` command collects faces from any reader or card-structured pages into a presentable, printable deck
+under `.build/slides/`.
 
 Existing sites can use the shared [publication exporter](rules/site/publication.md#exporting-into-an-existing-publication)
 to preserve their public routes and selected evidence. The

@@ -1,0 +1,137 @@
+/* Slide faces: one fixed 16:9 canvas at the top of a chapter, followed by a
+   bridge into the full chapter. The outer .slide-face is the size container;
+   every size inside .slide-canvas is a container unit of it, so the layout is
+   identical at any width and in an extracted deck. Below 720px a pure-CSS
+   container query stacks the canvas, so narrow reading needs no JavaScript. */
+.slide-face {--sf-ink:#e6edf3!important;--sf-sub:#a9b4c2!important;--sf-dim:#7d8896!important;--sf-line:#2f3b4a!important;--sf-tile:#121a24!important;--sf-tile2:#162130!important;--sf-accent:var(--accent,#39d2c0)!important;--sf-alt:var(--secondary,#bc8cff)!important;--sf-warm:var(--orange,#ffa657)!important;--sf-held:#5b6b80!important;--sf-alert:var(--red,#f47067)!important;position:relative!important;container-type:inline-size!important;margin:0 0 4px!important;}
+.slide-canvas {display:flex!important;flex-direction:column!important;gap:.65cqi!important;aspect-ratio:16/9!important;min-height:0!important;overflow:hidden!important;padding:2.4cqi 3.4cqi 1.8cqi!important;border:1px solid var(--sf-line)!important;border-radius:14px!important;background:radial-gradient(ellipse at 85% 0%,color-mix(in srgb,var(--sf-accent) 7%,transparent),transparent 55%),linear-gradient(180deg,#0f1620,#0d1117)!important;font-family:"IBM Plex Sans",system-ui,sans-serif!important;color:var(--sf-ink)!important;}
+.chapter-body > .slide-face:first-child,.chapter-body > :first-child > .slide-face:first-child {margin:-16px -22px 0!important;}
+.chapter-body > .slide-face:first-child > .slide-canvas,.chapter-body > :first-child > .slide-face:first-child > .slide-canvas {border-width:0 0 1px!important;border-radius:0 0 14px 14px!important;}
+/* Authoring aid: the deck, and pages opened with ?slide-check, outline faces that do not fit. */
+:is(.slide-deck-page,[data-slide-check]) .slide-face[data-slide-overflow] > .slide-canvas {outline:3px solid var(--red,#f47067);outline-offset:-3px;}
+.slide-face :is(p,h4,dl,dd,figure) {margin:0!important;}
+.slide-eyebrow {font:600 1cqi/1.2 "IBM Plex Mono",monospace!important;letter-spacing:.14em!important;text-transform:uppercase!important;color:var(--sf-accent)!important;}
+.slide-title {font:600 3.1cqi/1.1 "IBM Plex Sans",system-ui,sans-serif!important;letter-spacing:-.015em!important;color:var(--sf-ink)!important;margin-top:.2cqi!important;}
+.slide-lead {font-size:1.65cqi!important;line-height:1.45!important;color:var(--sf-sub)!important;max-width:70ch!important;}
+.slide-main {flex:1!important;display:flex!important;flex-direction:column!important;justify-content:center!important;gap:1.1cqi!important;min-height:0!important;}
+.slide-scope {font:1.05cqi/1.4 "IBM Plex Mono",monospace!important;color:var(--sf-dim)!important;}
+
+/* Tiles */
+.slide-tile {background:var(--sf-tile)!important;border:1px solid var(--sf-line)!important;border-radius:12px!important;padding:.6cqi 1cqi!important;transition:border-color .2s,box-shadow .2s!important;}
+.slide-tile:hover {border-color:color-mix(in srgb,var(--sf-accent) 45%,transparent)!important;box-shadow:0 0 22px color-mix(in srgb,var(--sf-accent) 8%,transparent)!important;}
+.slide-tile h4 {margin:0 0 .15cqi!important;font:600 1.75cqi/1.2 "IBM Plex Sans",sans-serif!important;color:var(--sf-ink)!important;text-transform:none!important;letter-spacing:0!important;}
+.slide-tile p {font-size:1.35cqi!important;line-height:1.3!important;color:var(--sf-sub)!important;}
+.slide-tile b {font:600 1.6cqi "IBM Plex Sans",sans-serif!important;color:var(--sf-ink)!important;}
+.slide-tile > b {display:block!important;}
+.slide-tile code {font:1.2cqi "IBM Plex Mono",monospace!important;color:var(--sf-accent)!important;background:none!important;padding:0!important;}
+.slide-tile.is-term {background:var(--sf-tile2)!important;border:2px solid color-mix(in srgb,var(--sf-accent) 35%,var(--sf-line))!important;}
+.slide-tile.is-held {border-style:dashed!important;border-color:var(--sf-held)!important;background:transparent!important;}
+.slide-tile.is-warm {border:2px solid color-mix(in srgb,var(--sf-warm) 55%,var(--sf-line))!important;}
+.slide-tile.is-accent {border:2px solid color-mix(in srgb,var(--sf-accent) 55%,var(--sf-line))!important;}
+.slide-tile.is-alert {border:2px solid color-mix(in srgb,var(--sf-alert) 60%,var(--sf-line))!important;background:color-mix(in srgb,var(--sf-alert) 6%,var(--sf-tile))!important;}
+.slide-tile.is-alert .slide-tag {color:var(--sf-alert)!important;}
+.slide-tile.is-held:hover {border-color:var(--sf-alt)!important;box-shadow:0 0 22px color-mix(in srgb,var(--sf-alt) 10%,transparent)!important;}
+.slide-tag {display:inline-block!important;margin-bottom:.4cqi!important;font:600 .85cqi "IBM Plex Mono",monospace!important;letter-spacing:.08em!important;text-transform:uppercase!important;color:var(--sf-alt)!important;}
+.slide-row {display:grid!important;grid-template-columns:repeat(auto-fit,minmax(0,1fr))!important;grid-auto-flow:column!important;gap:.8cqi!important;}
+
+/* Equation decomposition: term columns separated by operators, variants below */
+.slide-equation {display:grid!important;grid-auto-flow:column!important;gap:1cqi!important;align-items:start!important;}
+.slide-equation > .slide-op {align-self:start!important;margin-top:1.4cqi!important;font:2.6cqi "IBM Plex Mono",monospace!important;color:var(--sf-dim)!important;}
+.slide-equation > .slide-column {display:flex!important;flex-direction:column!important;gap:.6cqi!important;}
+.slide-note {font-size:1.3cqi!important;color:var(--sf-dim)!important;padding:.6cqi .2cqi!important;}
+
+/* Factor grid: labelled rows of option chips */
+.slide-factors {display:grid!important;grid-template-columns:17cqi 1fr!important;gap:.45cqi 1.6cqi!important;align-items:center!important;}
+.slide-factors dt {font:600 1.5cqi/1.2 "IBM Plex Sans",sans-serif!important;color:var(--sf-ink)!important;}
+.slide-factors dt small {display:block!important;line-height:1.15!important;font-weight:400!important;font-size:.95cqi!important;color:var(--sf-dim)!important;}
+.slide-factors dd {display:flex!important;flex-wrap:wrap!important;gap:.6cqi!important;align-items:center!important;}
+.slide-chip {display:inline-flex!important;align-items:center!important;min-height:2.6cqi!important;padding:.2cqi .9cqi!important;border-radius:999px!important;background:var(--sf-tile2)!important;border:1px solid var(--sf-line)!important;font:1.35cqi "IBM Plex Sans",sans-serif!important;color:var(--sf-ink)!important;transition:border-color .2s!important;}
+.slide-chip:hover {border-color:color-mix(in srgb,var(--sf-accent) 50%,transparent)!important;}
+.slide-chip.is-mono {font-family:"IBM Plex Mono",monospace!important;}
+.slide-chip.is-key {border:2px solid var(--sf-accent)!important;box-shadow:0 0 16px color-mix(in srgb,var(--sf-accent) 12%,transparent)!important;font-weight:600!important;}
+.slide-chip.is-alt {border:2px solid var(--sf-alt)!important;box-shadow:0 0 16px color-mix(in srgb,var(--sf-alt) 12%,transparent)!important;font-weight:600!important;}
+.slide-chip.is-held {border:2px dashed var(--sf-held)!important;background:transparent!important;}
+.slide-chip.is-warm {border:2px solid var(--sf-warm)!important;box-shadow:0 0 16px color-mix(in srgb,var(--sf-warm) 12%,transparent)!important;font-weight:600!important;}
+.slide-chip.is-alert {border:2px solid var(--sf-alert)!important;font-weight:600!important;}
+
+/* Figure beside headline numbers */
+.slide-split {display:grid!important;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr)!important;gap:2.4cqi!important;align-items:center!important;}
+.slide-split.is-wide-side {grid-template-columns:minmax(0,1fr) 22cqi!important;}
+.slide-figure {background:#0b1016!important;border:1px solid var(--sf-line)!important;border-radius:12px!important;padding:1cqi!important;}
+.slide-figure img,.slide-figure svg {width:100%!important;height:auto!important;display:block!important;}
+.slide-figure figcaption {margin-top:.6cqi!important;font-size:.9cqi!important;color:var(--sf-dim)!important;}
+.slide-stats {display:flex!important;flex-direction:column!important;gap:1cqi!important;}
+.slide-stat {display:flex!important;flex-direction:column!important;gap:.2cqi!important;}
+.slide-stat b {font:600 3.9cqi/1 "IBM Plex Sans",sans-serif!important;letter-spacing:-.02em!important;color:var(--sf-accent)!important;}
+.slide-stat.is-alt b {color:var(--sf-alt)!important;} .slide-stat.is-warm b {color:var(--sf-warm)!important;} .slide-stat.is-plain b {color:var(--sf-ink)!important;}
+.slide-stat.is-alert b {color:var(--sf-alert)!important;}
+.slide-stat span {font-size:1.35cqi!important;line-height:1.3!important;color:var(--sf-sub)!important;}
+.slide-big {display:block!important;font:600 5cqi/1 "IBM Plex Sans",sans-serif!important;color:var(--sf-accent)!important;margin:.4cqi 0!important;}
+.slide-legend {display:flex!important;gap:2cqi!important;flex-wrap:wrap!important;font-size:1.25cqi!important;color:var(--sf-sub)!important;}
+.slide-legend i {display:inline-block!important;width:2.2cqi!important;height:1.2cqi!important;margin-right:.7cqi!important;vertical-align:-.15cqi!important;border:2px solid color-mix(in srgb,var(--sf-accent) 35%,var(--sf-line))!important;border-radius:4px!important;background:var(--sf-tile2)!important;}
+.slide-legend i.is-held {border:2px dashed var(--sf-held)!important;background:transparent!important;}
+
+/* Numbered argument cards */
+.slide-steps {display:grid!important;grid-auto-flow:column!important;grid-auto-columns:minmax(0,1fr)!important;gap:1cqi!important;counter-reset:slide-step!important;}
+.slide-steps > .slide-tile {counter-increment:slide-step!important;border-left:3px solid var(--sf-accent)!important;}
+.slide-steps > .slide-tile::before {content:counter(slide-step)!important;display:block!important;font:600 1cqi "IBM Plex Mono",monospace!important;color:var(--sf-accent)!important;margin-bottom:.3cqi!important;}
+
+/* Compact (narrow) fallback: stack and switch to readable fixed sizes */
+@container (max-width: 719.98px) {
+  .slide-canvas {aspect-ratio:auto!important;overflow:visible!important;gap:16px!important;padding:20px 18px 18px!important;}
+  .topic-card .slide-face .slide-canvas {animation:none!important;}
+  .slide-canvas :is(.slide-equation,.slide-steps) {grid-auto-flow:row!important;grid-template-columns:1fr!important;}
+  .slide-canvas :is(.slide-split,.slide-split.is-wide-side,.slide-factors) {grid-template-columns:1fr!important;}
+  .slide-canvas .slide-row {grid-auto-flow:row!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  .slide-canvas .slide-equation > .slide-op {margin:0!important;text-align:center!important;font-size:22px!important;}
+  .slide-canvas .slide-title {font-size:24px!important;}
+  .slide-canvas :is(.slide-eyebrow,.slide-tag) {font-size:11px!important;}
+  .slide-canvas .slide-lead {font-size:15px!important;}
+  .slide-canvas .slide-tile {padding:10px 12px!important;}
+  .slide-canvas .slide-tile h4 {font-size:16px!important;}
+  .slide-canvas :is(.slide-tile p,.slide-tile code,.slide-tile b,.slide-chip,.slide-factors dt) {font-size:14px!important;}
+  .slide-canvas :is(.slide-factors dt small,.slide-figure figcaption,.slide-scope,.slide-stat span,.slide-legend,.slide-note) {font-size:13px!important;}
+  .slide-canvas .slide-stat b {font-size:30px!important;} .slide-canvas .slide-big {font-size:34px!important;}
+  .slide-canvas :is(.slide-main,.slide-stats,.slide-equation > .slide-column) {gap:10px!important;}
+  .slide-canvas .slide-chip {min-height:28px!important;padding:3px 10px!important;}
+  .slide-canvas .slide-legend i {width:22px!important;height:12px!important;margin-right:6px!important;vertical-align:-1px!important;}
+  .slide-canvas .slide-legend {gap:10px 16px!important;}
+  .slide-canvas .slide-figure {padding:8px!important;}
+}
+
+/* Bridge from the slide into the full chapter */
+.slide-bridge {position:relative;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:2px 0 10px;padding-top:22px;}
+.slide-bridge::before {content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,var(--accent,#39d2c0),color-mix(in srgb,var(--secondary,#bc8cff) 60%,transparent) 40%,transparent);}
+.slide-bridge-pill {font:600 11px "IBM Plex Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#39d2c0);padding:4px 10px;border:1px solid color-mix(in srgb,var(--accent,#39d2c0) 35%,transparent);border-radius:999px;background:color-mix(in srgb,var(--accent,#39d2c0) 6%,transparent);}
+.slide-bridge-meta {font:12px "IBM Plex Mono",monospace;color:var(--muted,#8b949e);}
+.slide-bridge-button {margin-left:auto;display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 16px;border:1px solid color-mix(in srgb,var(--accent,#39d2c0) 35%,transparent);border-radius:999px;background:color-mix(in srgb,var(--accent,#39d2c0) 7%,transparent);color:var(--accent,#39d2c0);font:600 13px "IBM Plex Sans",sans-serif;cursor:pointer;transition:background .2s,box-shadow .2s;}
+.slide-bridge-button:hover {background:color-mix(in srgb,var(--accent,#39d2c0) 14%,transparent);box-shadow:0 0 18px color-mix(in srgb,var(--accent,#39d2c0) 18%,transparent);}
+.slide-bridge-button span {display:inline-block;transition:transform .2s;}
+.slide-bridge-button:hover span {transform:translateY(3px);}
+.slide-bridge-button.is-back {color:var(--secondary,#bc8cff);border-color:color-mix(in srgb,var(--secondary,#bc8cff) 40%,transparent);background:color-mix(in srgb,var(--secondary,#bc8cff) 7%,transparent);}
+.slide-bridge-button.is-back:hover {background:color-mix(in srgb,var(--secondary,#bc8cff) 14%,transparent);box-shadow:0 0 18px color-mix(in srgb,var(--secondary,#bc8cff) 18%,transparent);}
+.slide-bridge-button.is-back:hover span {transform:translateY(-3px);}
+.slide-bridged-eyebrow {position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
+
+/* The full chapter follows the slide's calmer sentence-case headings */
+:is(.chapter-body,.slide-chapter).has-slide-face .slide-bridge-title,
+.reader-enabled :is(.chapter-body,.slide-chapter).has-slide-face .slide-bridge-title {
+  font:600 30px/1.2 "IBM Plex Sans",system-ui,sans-serif!important;text-transform:none!important;letter-spacing:-.012em!important;
+  background:none!important;-webkit-text-fill-color:var(--bright,#e6edf3)!important;color:var(--bright,#e6edf3)!important;margin:2px 0 12px!important;}
+:is(.chapter-body,.slide-chapter).has-slide-face .slide-bridge-title * {color:inherit!important;-webkit-text-fill-color:inherit!important;background:none!important;}
+.reader-enabled :is(.chapter-body,.slide-chapter).has-slide-face h3:not(.slide-face *) {font-family:"IBM Plex Sans",system-ui,sans-serif!important;
+  text-transform:none!important;letter-spacing:-.005em!important;font-weight:600!important;font-size:20px!important;line-height:1.3!important;}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .topic-card .slide-canvas {animation:slide-recede linear both!important;animation-timeline:view()!important;animation-range:exit 0% exit 100%!important;}
+    @keyframes slide-recede {to {opacity:.25;transform:scale(.97) translateY(-8px);filter:saturate(.6);}}
+  }
+}
+@media (prefers-reduced-motion: reduce) {.slide-face *,.slide-bridge-button,.slide-bridge-button span {transition:none!important;}}
+/* Print keeps the slide's own dark palette, independent of the page's print ink. */
+@media print {
+  .slide-face {break-inside:avoid;}
+  .slide-canvas {-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;animation:none!important;opacity:1!important;transform:none!important;filter:none!important;}
+  .slide-bridge-button {display:none;}
+}

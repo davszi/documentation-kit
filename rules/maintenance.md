@@ -13,6 +13,14 @@ Read [tooling and ownership](site/authoring.md#tooling-and-ownership).
 
 Read [authoring paths](site/authoring.md#authoring-paths).
 
+### Generated figures
+
+Read [generated figures](site/authoring.md#generated-figures).
+
+### Slide faces and decks
+
+Read [slide faces and decks](site/authoring.md#slide-faces-and-decks).
+
 ## Validation and review
 
 Read [validation and review](site/validation.md#validation-and-review).

@@ -2,6 +2,52 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-07 — Integrate upstream releases and slide support
+
+- Merge origin `072b063e6dbb` into local kit `4ab0bd10ce82`. Preserve focused
+  engineering, writing and site guides and the strict QA snapshot-origin hook.
+  Move upstream release, include, navigation, figure and slide contracts into
+  their focused owners; retain both old and new router anchors and original
+  dated worklog entries. Correct the moved context's release-record link.
+- Package the compatible local changes as 1.1.0 with release notes and a focused
+  consumer migration guide. Cover all four local policy/adapter commits absent
+  origin, preserve the original 1.0.0 notes and receipt, and leave consumer
+  adoption evidence with its owner. Version tagging remains a separate step.
+- The integrated implementation passes strict starter lint with zero warnings,
+  all 86 Python tests, reader preservation and both Node checks. Browser checks
+  pass at 1600 × 1000 and 390 × 844, including seven guide chapters, navigation,
+  paired columns, helpers, panel switching and no-JavaScript reading. Update the
+  browser fixture's exact chapter count from six to seven for the upstream-added
+  slide chapter. Focused slide/deck checks cover fit, Continue/Back, presentation
+  keys, print and narrow no-JavaScript stacking. Inspect saved wide, narrow,
+  paired and deck screenshots; no overflow or collision issue remains.
+- Preserve all attempts under the consuming ADP checkout's ignored
+  `.build/coordination/docs-final-20261107/kit-origin/`. Attempt 01 passes the
+  suite in 6.830 s with a terminal owned peak of 75,419,648 bytes. Attempt 02
+  stops Chromium after it leaves the capped scope; its peak is unmeasured.
+  Attempt 03 keeps headless Chromium contained by setting a per-job D-Bus
+  address to a nonexistent socket; the guard remains unchanged. Its checked-in
+  fixtures and wide/narrow slide/deck phases pass, but the supplementary
+  no-JavaScript phase incorrectly calls an animation-frame settle helper and
+  fails. Attempt 04 runs only that corrected phase and passes. Attempts 03/04
+  record peaks of 577,044,480 / 356,950,016 bytes. Every attempt retains the
+  command, source identity and cleanup receipt; owned-process absence is
+  verified under a 4 GiB/zero-swap scope, 180 s worker deadline and 10 s cleanup
+  reserve, with a 220 s outside deadline. No simulator or deployment is checked.
+- Final document checks pass on 14 changed kit Markdown files, 185 local links
+  and 87 Markdown fragments. Both parents' router anchors, all 21 checked
+  historical worklog entries and the original 1.0.0 notes/receipt are preserved.
+  Hash comparisons confirm 124 tested implementation/fixture inputs remain
+  unchanged. Attempt 05 identifies only stale generated version metadata;
+  attempt 06 selects the system Python by resolving the virtualenv symlink and
+  fails before building because Mistune is absent there. Attempt 07 uses the
+  requested virtualenv path, refreshes `site-build.json` and passes freshness;
+  every rendered page and asset remains byte-identical to browser-reviewed
+  output. All seven attempts verify owned-process absence. No unchanged suite
+  or browser phase is repeated for release prose/version-only edits. The
+  landing supplies the merge commit identity; consumer adoption and tagging
+  remain separate.
+
 ## 2026-11-07 — Final local kit suite after QA-provenance changes
 
 - Rerun the complete `tests/run_checks.sh` on the QA-provenance hook and its
@@ -84,6 +130,42 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   clarifying preservation of staged intent during isolated-index landing.
   This landing supplies the commit identity.
 
+## 2026-11-06 — Version 1.0.0
+
+- Declare the first stable version: `VERSION` 1.0.0 and a
+  [releases record](topics/releases/releases.md) with the 1.0.0 contents and the
+  consumer migration steps. Knowledge gathered while redesigning the adaptation
+  readers moves upstream.
+- Fix: included fragments may include others (eight levels; cycles fail). The
+  figure-reference lint resolves nested includes the same way.
+- Fix: a `[[nav]]` entry with keys other than `label`, `file`, `group`, `short`
+  and `hidden` fails the build with a hint. A top-level `extra_components` written
+  below a nav table had silently become a nav key and surfaced only as an
+  "unknown component" error.
+- Fix: site-map cards take frontmatter `description` and `thumbnail` when present
+  (the maintenance rule claimed a description and a first-figure thumbnail, while
+  the code read `brand_sub` and found only `<img>`, never inline SVG figures).
+- Add `tooling/svg_figures.py` (figure, slide and standalone SVG markup with a
+  literal palette; the region label no longer double-escapes apostrophes),
+  `tooling/number_ledger.py` (every shown number has a checked source),
+  `tooling/verbatim_blocks.py` (hash locks for kept blocks) and the browser helper
+  `captureElement`. Rules add the shared-navigation homepage pattern, literal
+  colours for generated SVG and ledger use for redesigns.
+- Compatibility: both known consumers build with this tree without source
+  changes. Against their current pins, every page is byte-identical except each
+  home page, whose site-map thumbnails are now marked decorative (ADP 87 of 88,
+  adaptation 7 of 8; [receipt](../verification/v1.0.0-consumers.json)).
+- One independent review (Opus, high effort) found no blocking defect; fixes
+  landed here: ledger semantics and trust boundary stated (distinct unsigned
+  values, expressions are reviewed code, not a sandbox), kept-block edges reported
+  instead of raised, an explicit stable/provisional surface in the release notes,
+  decorative and local-only thumbnails, typed `[[nav]]` validation, include errors
+  that name the chain (a missing fragment no longer ends in a traceback),
+  `standalone`/`slide_svg` edge cases, and release-note accuracy.
+- Checks: starter build, strict lint, the Python suite (new site-contract and
+  figure-tooling tests), math and file-link JavaScript checks, browser-helper
+  regression. The landing commit supplies the revision.
+
 ## 2026-11-06 — Task-triggered agent reading
 
 - Define one [repository router](../rules/documentation.md#agent-entrypoints-import-versus-point)
@@ -106,6 +188,37 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
 - The starter build, strict lint, 52 Python tests and both Node 22 checks
   passed. Checked the final policy text for preserved headings, its new
   internal link and whitespace. This landing supplies the commit identity.
+
+## 2026-11-05 — Slide faces and extracted decks
+
+- Add optional chapter slide faces: `<!-- slide -->` blocks become a fixed 16:9
+  canvas at the top of a chapter, sized entirely in container units so fit is
+  identical at every width; below 720 px faces stack. The reader adds a bridge
+  (reading time, figure count, Continue/Back control), keeps a duplicated eyebrow
+  for assistive technology only and gives faced chapters sentence-case headings.
+  Canvas declarations are `!important`, because a consumer's id-scoped `p` rule
+  shrank slide titles from 34.6 to 15 px. The narrow layout is a CSS container
+  query, so it needs no JavaScript; print
+  keeps the slide palette. Flat Markdown pages start a chapter at a face written
+  before its heading; code examples of the markers stay literal.
+  The [writing rules](../rules/writing.md#slide-faces) own content guidance; the
+  [maintenance contract](../rules/maintenance.md#slide-faces-and-decks) owns
+  markers, vocabulary and the `slides` command, which writes presentable and
+  printable decks to `.build/slides/` outside the published bundle. Decks prefix
+  slide ids, re-root all relative URLs, link other anchors back to their page,
+  render KaTeX and accept pages without the reader (outermost section cards).
+- Add an `is-alert` tone for failures and warnings, so the accent and warm tones
+  can identify compared methods only (found by the consumer's slide review).
+- Widen One chapter cards from 80% to 88% of the stage. Derived from a reviewed
+  prototype on the adaptation Cursor reader; the starter guide carries two faces.
+- One independent review (Opus, high effort) found placement, scrolling,
+  no-JavaScript, print, URL and keyboard defects; all fourteen are addressed.
+- Checks: starter build, strict lint (0 warnings), Python suite including
+  14 slide tests, math and file-link JavaScript checks. Browser-pane
+  inspection at 1600×1000 and 375×812: faces fit 16:9, compact stacking without
+  horizontal overflow, bridge and Continue/Back scrolling, deck overview and
+  presentation mode. Playwright fixtures were not run (Playwright unavailable).
+  This landing supplies the commit identity.
 
 ## 2026-11-04 — Shared publication and browser checks
 

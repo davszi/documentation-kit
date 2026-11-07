@@ -6,6 +6,14 @@ Package only allowlisted tracked inputs actually needed by pages. Do not mirror 
 
 Register intentionally retained local media in the project's supported local-artifact manifest or `local_media` configuration. Do not mask a typo or genuinely missing required resource as local evidence. Preserve large recordings and hashes with the producing experiment; publish a tracked poster/keyframe and visible local-capture notice. A deliberately tracked, approved small clip may be packaged. File-mode access to a local recording is not proof that a hosted reader can open it.
 
+`local_artifacts_manifest` in `site.toml` selects a contained, relative regular
+file without symlink components. Its default is
+`docs/evidence/local-artifacts.json`. If the setting is omitted and that default
+is absent, `docs/project/local-artifacts.json` remains the legacy fallback;
+absence of both means no manifest. An explicitly configured missing file fails
+instead of falling back. This setting changes the inventory location, not its
+schema or the project's evidence requirements.
+
 Projects with existing historical-path or evidence schemas can register local
 Python adapters using `path_resolver = "tools/docs/site_paths.py"` and
 `evidence_validator = "tools/docs/evidence_documents.py"` in `site.toml`.

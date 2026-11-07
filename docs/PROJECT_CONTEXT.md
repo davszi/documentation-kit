@@ -26,6 +26,11 @@ writing and site guides. Read each guide before the action it governs.
 The [local comparison contract](topics/panel-switcher/panel-switcher.md)
 owns the shared panel switcher's authoring, behavior and extraction checks.
 
+[Releases and upgrades](topics/releases/releases.md) owns version notes and
+consumer migration steps; `VERSION` holds the current version.
+The [1.1.0 migration guide](topics/releases/migrations/1.1.0.md) covers focused
+policy owners, optional project layout changes and compatibility adapters.
+
 Development checks use Python 3.12, the pinned root `requirements.txt` and Node
 22. Run `bash tests/run_checks.sh` with `DOCS_PYTHON` selecting that interpreter.
 Browser review additionally uses Playwright/Chromium as documented in README.

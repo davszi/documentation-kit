@@ -27,6 +27,10 @@ shared independent-comparison component.
 
 ## Evidence and chronology
 
+[Releases and upgrades](topics/releases/releases.md) owns version changes and
+stable interfaces. The [1.1.0 migration guide](topics/releases/migrations/1.1.0.md)
+routes existing consumers through policy, layout and adapter changes.
+
 [Extraction record](topics/extraction/extraction.md) owns initial scope,
 evidence and limits. [Extraction map](../rules/extraction-map.md) accounts for
 policy source sections; [provenance](../provenance.json) records source
