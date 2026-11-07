@@ -9,7 +9,7 @@ Every detailed guide keeps one editable Markdown source.
 
 [`docs/site/site.toml`](../../site/site.toml) is the registry: its `[[nav]]`
 tables give the navigation and its `[[source_pages]]` tables map canonical
-Markdown files to routes. Four topic pages add orientation only:
+Markdown files to routes. Five topic pages add orientation and a reader demonstration:
 
 | Page | Source | Role |
 |---|---|---|
@@ -17,6 +17,7 @@ Markdown files to routes. Four topic pages add orientation only:
 | Get started | [`getting-started/index.md`](../getting-started/index.md) | Reader chapters: what the kit provides, setup steps, site and upgrades, adoption routes |
 | Site toolkit | [`site-toolkit/index.md`](../site-toolkit/index.md) | Reader chapters: build pipeline, task-to-guide map, source pages, build checks |
 | Project practices | [`project-practices/index.md`](../project-practices/index.md) | Reader chapters: task routing and one guide table per area |
+| Reader tour | [`reader-tour/index.md`](../reader-tour/index.md) | Live demonstration of chapters, docking, pinning, layers, figures, comparisons, status blocks and slides |
 
 Everything else renders whole from its canonical file: `README.md`, the guides
 in `rules/`, the release notes and migration guides, the panel-switcher

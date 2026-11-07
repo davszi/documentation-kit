@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ['Compare two chapters', 'Two chapters shows two equal columns. Arrows move both until you pin one. Select an unpinned column before choosing its chapter from the navigation drawer.'],
     ['Choose how much to read', 'Story is always visible. The layer buttons under each chapter heading combine Math, Experiments, Code and Alternatives independently for each column. On narrow columns, scroll the row sideways. You can still open individual folds.'],
     ['Hold a reference', 'Pin the button on a column header to hold that chapter while the other moves. Purple marks the pinned column; its own scrolling and layer buttons still work.'],
-    ['Keep navigation handy', 'Pin Explore to dock the sidebar on wide screens. Reading stays interactive and chapter links keep the sidebar open. On narrow screens, navigation opens over the page and closes after choosing a chapter.']
+    ['Keep navigation handy', 'On wide screens the navigation docks beside the page. Hide it with « and bring it back with ☰; each page remembers the choice. Reading stays interactive and chapter links keep the sidebar open. On narrow screens, navigation opens over the page and closes after choosing a chapter.']
   ];
   const readerWords = text => text.replace(/chapters/g, plural).replace(/chapter/g, unit);
   helpItems.forEach(([title, text]) => { const card = make('div', 'reader-help-card'); card.appendChild(make('h4', '', readerWords(title))); card.appendChild(make('p', '', readerWords(text))); help.appendChild(card); });

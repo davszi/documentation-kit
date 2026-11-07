@@ -97,6 +97,30 @@ const SHOTS = ['index', 'getting-started', 'site-toolkit', 'project-practices', 
         await page.click('button[data-reader-view="pair"]');
         assert.equal(await page.getAttribute('button[data-reader-view="pair"]', 'aria-pressed'), 'true', 'two-chapter view selectable');
         await page.click('button[data-reader-view="single"]');
+
+        // Reader tour: docking, pinning and the carousel work as the tour describes.
+        await page.goto(`${origin}/html/reader-tour.html#move-through-chapters`, {waitUntil:'networkidle'});
+        const docked = () => page.evaluate(() => document.body.classList.contains('reader-nav-docked'));
+        assert.equal(await docked(), true, 'navigation starts docked on wide screens');
+        await page.click('.reader-drawer-close');
+        assert.equal(await docked(), false, 'hiding undocks the navigation');
+        await page.click('.reader-mobile-menu');
+        assert.equal(await docked(), true, 'reopening docks it again');
+        await page.click('button[data-reader-view="pair"]');
+        await page.locator('section.card[data-reader-chapter] .chapter-pin').first().click();
+        const inView = () => page.$$eval('section.card[data-reader-chapter]', cards => cards.filter(card => {
+          const r = card.getBoundingClientRect(); return r.width > 0 && r.left >= 0 && r.right <= innerWidth + 1; }).map(card => card.id));
+        await page.keyboard.press('ArrowRight');
+        await page.keyboard.press('ArrowRight');
+        await page.waitForFunction(() => document.getElementById('reading-layers')?.getBoundingClientRect().right > innerWidth
+          || document.getElementById('figures')?.getBoundingClientRect().left >= 0, null, {timeout: 3000}).catch(() => {});
+        await page.waitForTimeout(400);
+        const shown = await inView();
+        assert.ok(shown.includes('move-through-chapters') && !shown.includes('dock-and-pin'), 'pinned chapter holds while the other column moves: ' + shown);
+        await page.click('button[data-reader-view="single"]');
+        await page.goto(`${origin}/html/reader-tour.html#figures`, {waitUntil:'networkidle'});
+        const slides = await page.$$eval('#figures .fig-carousel > img', imgs => imgs.filter(img => getComputedStyle(img).display !== 'none').length);
+        assert.equal(slides, 1, 'carousel shows one capture at a time');
       }
 
       if (viewport.width < 900) {
@@ -147,5 +171,5 @@ const SHOTS = ['index', 'getting-started', 'site-toolkit', 'project-practices', 
     server.close();
   }
   await fs.writeFile(path.join(output, 'results.json'), JSON.stringify(results, null, 2) + '\n');
-  console.log(`Own site: ${results.pages} pages contained with visible media at 1600 and 390; deep links, panel hash, keyboard paths, reader chapters and views, narrow menu/table scrolling, print and no-JavaScript reading pass.`);
+  console.log(`Own site: ${results.pages} pages contained with visible media at 1600 and 390; deep links, panel hash, keyboard paths, reader chapters, views, docking, pinning and carousel, narrow menu/table scrolling, print and no-JavaScript reading pass.`);
 })().catch(error => { console.error(error); process.exitCode = 1; server.close(); });

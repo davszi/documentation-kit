@@ -17,6 +17,11 @@ file = "getting-started.html"
 group = "start here"
 
 [[nav]]
+label = "Reader tour"
+file = "reader-tour.html"
+group = "start here"
+
+[[nav]]
 label = "Project practices"
 file = "project-practices.html"
 group = "start here"

@@ -16,6 +16,7 @@ toc = []
 <p>Add the kit to your repository as one Git submodule. Then add rows to your <code>AGENTS.md</code>: each row names an action and the kit guide to read before it. Contributors and agents follow those rows. Building a documentation site with the kit is optional.</p>
 <div class="home-cta">
 <a href="getting-started.html">Get started</a>
+<a class="alt" href="reader-tour.html">Reader tour</a>
 <a class="alt" href="readme.html#start-a-project">Setup commands</a>
 </div>
 </div>

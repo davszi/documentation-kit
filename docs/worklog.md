@@ -2,6 +2,22 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-07 — Add a reader tour
+
+- The kit site had no page demonstrating the reader. `reader-tour` uses each
+  feature once with steps to try: a slide face, chapter movement, docked
+  navigation, a pinned column in Two chapters, the four reading layers,
+  a carousel with the lightbox, the panel switcher, status and stat blocks and
+  deck extraction. It is linked from the home page and the Start here group.
+- Two kit defects found while testing it: the carousel showed every slide when
+  placed in a `.bs-grid` figure, because `.bs-grid figure img` outranked its
+  hide rule; and the reader help told readers to "Pin Explore", a button that
+  is created but never shown. The carousel rule now uses a doubled class, and
+  the help describes the actual `«` and `☰` docking behavior. The unused pin
+  button code remains.
+- The site review now walks the tour at 1600 px: docking, undocking, pinning
+  while the other column moves, and one visible carousel slide.
+
 ## 2026-11-07 — Write the overview pages as reader chapters
 
 - Get started, Project practices and Site toolkit were scrolling pages

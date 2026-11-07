@@ -7,10 +7,11 @@
   const style = document.createElement("style");
   style.textContent = `
     .fig-carousel { position: relative; margin: 1em 0; }
-    .fig-carousel > img, .fig-carousel > .fig-unit { display: none;
-      width: 100%; margin: 0 auto; }
-    .fig-carousel > img.fc-active, .fig-carousel > .fig-unit.fc-active {
-      display: block; }
+    /* Doubled class: outranks layout rules such as .bs-grid figure img. */
+    .fig-carousel.fig-carousel > img, .fig-carousel.fig-carousel > .fig-unit {
+      display: none; width: 100%; margin: 0 auto; }
+    .fig-carousel.fig-carousel > img.fc-active,
+    .fig-carousel.fig-carousel > .fig-unit.fc-active { display: block; }
     .fc-btn { position: absolute; top: 50%; transform: translateY(-50%);
       z-index: 5; background: rgba(20, 24, 32, 0.75); color: #dfe6ef;
       border: 1px solid rgba(255,255,255,.15); border-radius: 999px;
