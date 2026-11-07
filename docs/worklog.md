@@ -2,6 +2,16 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-07 — Write the overview pages as reader chapters
+
+- Get started, Project practices and Site toolkit were scrolling pages
+  dropped into the chapter reader. Each chapter is now an explicit
+  `section.card` with a claim heading, a `bs-lead` sentence and one visual
+  block (flow, contrasting parts, checks or a scrollable table), with short
+  toolbar labels in `toc`. New chapters: site build and upgrades (Get started)
+  and the checks that fail a build (Site toolkit). The registered guides keep
+  their plain Markdown; only these site-only pages changed.
+
 ## 2026-11-07 — Read the kit site in the shared chapter reader
 
 - The kit site had `chapter_reader = false` and `reader = false` on every page,

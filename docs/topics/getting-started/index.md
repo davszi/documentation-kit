@@ -1,70 +1,97 @@
 +++
 title = "Get started"
 brand = "Documentation kit"
-brand_sub = "what it provides · install · adopt"
+brand_sub = "what it provides · set up · adopt"
 description = "What the kit provides, how a project pins it and which adoption route fits."
-body_class = "reference-page"
-components = ["toc", "nav", "filelinks", "panel-switcher"]
+components = ["toc", "nav", "code", "filelinks", "panel-switcher"]
 page_css = ["build-sheet.css"]
-toc = [["What the kit provides", "#what-the-kit-provides"], ["Set it up", "#set-it-up"], ["Choose how to adopt it", "#choose-how-to-adopt-it"]]
+toc = [["What it provides", "#what-the-kit-provides"], ["Set it up", "#set-it-up"], ["Site and upgrades", "#site-and-upgrades"], ["Adoption route", "#choose-how-to-adopt-it"]]
 +++
 
 # Get started with the documentation kit
 
-## What the kit provides
+<section class="card" id="what-the-kit-provides">
 
-<p class="bs-lead">A project adds the kit as one pinned Git submodule. The kit supplies shared practices and tools; the project keeps its content and decides when to upgrade.</p>
+## One pinned submodule gives a project shared rules and tools
 
-This page orients you. Commands and exact contracts stay in the guides it links,
-so each instruction has one place to change.
+<p class="bs-lead">The kit supplies rules, a reader and a site toolchain. Your project keeps its content and decides when to upgrade.</p>
 
-| Folder | What it is | Guide |
-|---|---|---|
-| `rules/` | Engineering, documentation, writing and experiment rules your router points to | [Project practices](project-practices.html) |
-| `theme/` | Chapter reader, build-sheet layout, components, fonts and local math | [Reader](reader.html) |
-| `docsite.py`, `tooling/` | Build, freshness check, lint, slide decks and publication export; no JavaScript install | [Authoring](authoring.html) |
-| `examples/starter/` | A neutral project that `init` copies in without overwriting files | [Start a project](readme.html#start-a-project) |
+<div class="bs-grid g2">
+<div class="bs-part bs-violet"><span class="bs-label">The kit supplies · <code>.docs-kit/</code></span><h3>Shared and pinned</h3><ul>
+<li><code>rules/</code>: practices your router points to (<a href="project-practices.html">overview</a>)</li>
+<li><code>theme/</code>: chapter reader, build-sheet layout, fonts and math (<a href="reader.html">reader</a>)</li>
+<li><code>docsite.py</code>, <code>tooling/</code>: build, lint, slides and export (<a href="site-toolkit.html">toolkit</a>)</li>
+<li><code>examples/starter/</code>: a project that <code>init</code> copies in without overwriting</li>
+</ul></div>
+<div class="bs-part bs-teal"><span class="bs-label">Your project keeps</span><h3>Owned and local</h3><ul>
+<li>orientation and the task router in <code>AGENTS.md</code></li>
+<li>topic records, pages, navigation and local assets</li>
+<li>evidence, figures and their provenance</li>
+<li>when to adopt a reviewed kit revision</li>
+</ul></div>
+</div>
 
-Your project keeps its orientation, task routes, topic records, pages,
-navigation, figures, evidence and upgrade timing.
-[Ownership](readme.html#ownership) lists the paths on each side.
+<div class="bs-specs"><div><span class="bs-label">Install</span><b>One submodule</b></div><div><span class="bs-label">Needed to use the rules</span><b>Router rows</b></div><div><span class="bs-label">Site build</span><b>Optional</b></div></div>
 
-## Set it up
+[Ownership](readme.html#ownership) lists every path on each side.
 
-1. **Pin the kit.** From your repository root:
+</section>
 
-   ```bash
-   git submodule add <kit-url> .docs-kit
-   git submodule update --init --recursive
-   ```
+<section class="card" id="set-it-up">
 
-   The submodule commit is the version you use. Nothing changes until you move it.
+## Three steps make the rules part of everyday work
 
-2. **Route actions to guides.** Add a table to your `AGENTS.md` with one row per
-   action. Each row names the kit guide, plus the project record that holds your
-   specifics:
+<p class="bs-lead">Pin the kit once, add one router row per action, and read the named guide before acting.</p>
 
-   ```markdown
-   | Before…                   | Read…                                                          |
-   |---------------------------|----------------------------------------------------------------|
-   | Quoting a measured number | `.docs-kit/rules/writing/evidence.md` and our benchmark records |
-   ```
+<figure id="fig-setup">
+<div class="bs-flow" role="img" aria-label="Step 1: pin the kit at .docs-kit with git submodule add. Step 2: in AGENTS.md, add a row that names an action and the kit guide for it, for example quoting a measured number and rules/writing/evidence.md. Step 3: before that action, a contributor or agent reads the guide together with the project's own record.">
+<div class="bs-node bs-teal"><span class="bs-label">Step 1 · once</span><b>Pin the kit</b><ul><li><code>git submodule add &lt;kit-url&gt; .docs-kit</code></li><li>the submodule commit is your version</li></ul></div>
+<div class="bs-arrow"><span>then</span></div>
+<div class="bs-node bs-violet"><span class="bs-label">Step 2 · AGENTS.md</span><b>Route each action</b><ul><li>one row per action</li><li>names the kit guide and your record</li></ul></div>
+<div class="bs-arrow"><span>then</span></div>
+<div class="bs-node bs-orange"><span class="bs-label">Step 3 · every time</span><b>Read before acting</b><ul><li>the contributor or agent opens both</li><li>nothing is copied into the project</li></ul></div>
+</div>
+<figcaption><b>Figure 1.</b> Adoption is a pointer, not a copy. The row below is step 2 for one action.</figcaption>
+</figure>
 
-   The [starter's router](../../examples/starter/AGENTS.md) has every row; keep
-   the ones you need. [Project practices](project-practices.html) explains each guide.
+```markdown
+| Before…                   | Read…                                                           |
+|---------------------------|-----------------------------------------------------------------|
+| Quoting a measured number | `.docs-kit/rules/writing/evidence.md` and our benchmark records |
+```
 
-3. **Optional: build a site.** Create the documentation environment, run
-   `docsite.py init .`, set `docs/site/site.toml`, then build and lint. The
-   [README commands](readme.html#start-a-project) list each step;
-   [validation](validation.html#validation-and-review) says what the checks cover.
+The [starter's router](../../examples/starter/AGENTS.md) has every row; keep the ones you need.
 
-4. **Upgrade deliberately.** Read the [release notes](releases.html), move the
-   submodule to the new commit and apply any consumer changes in the same commit.
-   See [pin and upgrade](readme.html#pin-and-upgrade).
+</section>
 
-## Choose how to adopt it
+<section class="card" id="site-and-upgrades">
 
-<p class="bs-lead">Pick the route that matches what the project already has.</p>
+## A site build and an upgrade are separate, deliberate choices
+
+<p class="bs-lead">The rules work without a site. A kit upgrade moves the pinned commit only after you read what changed.</p>
+
+<div class="bs-grid g2">
+<div class="bs-part bs-teal"><span class="bs-label">Optional</span><h3>Build a site</h3><ol>
+<li>Create the documentation environment and run <code>docsite.py init .</code></li>
+<li>Set the title, source repository and navigation in <code>docs/site/site.toml</code></li>
+<li>Track the sources, then <code>build</code> and <code>lint --strict</code></li>
+<li>Serve <code>.build/docs/</code> on loopback and review it</li>
+</ol><p><a href="readme.html#start-a-project">Commands</a> · <a href="validation.html#validation-and-review">what the checks cover</a></p></div>
+<div class="bs-part bs-orange"><span class="bs-label">When you choose</span><h3>Upgrade the pin</h3><ol>
+<li>Read the release notes between your pin and the target</li>
+<li>Move the submodule to the reviewed commit</li>
+<li>Apply any consumer changes in the same commit</li>
+<li>Rerun your checks before relying on the new rules</li>
+</ol><p><a href="releases.html">Release notes</a> · <a href="readme.html#pin-and-upgrade">pin and upgrade</a></p></div>
+</div>
+
+</section>
+
+<section class="card" id="choose-how-to-adopt-it">
+
+## Pick the adoption route that matches what you already have
+
+<p class="bs-lead">A new project starts from the starter; existing documentation stays where it is; a project can also adopt the rules alone.</p>
 
 <div class="panel-switcher" data-panel-switcher data-panel-default="new">
 <div class="panel-switcher-controls" role="group" aria-label="Adoption route">
@@ -94,9 +121,11 @@ navigation, figures, evidence and upgrade timing.
 <h3 id="route-practices-only">Practices only</h3>
 <p>The rules are plain Markdown. A project can route contributors to them without building a site.</p>
 <ul>
-<li>Add one task-triggered router that names the guide to read before each action; see <a href="documentation-system.html#agent-entrypoints-import-versus-point">agent entrypoints</a>.</li>
-<li>Start from the <a href="project-practices.html">practices overview</a>.</li>
+<li>Add the router rows from <a href="#set-it-up">step 2</a>; see <a href="documentation-system.html#agent-entrypoints-import-versus-point">agent entrypoints</a>.</li>
+<li>Choose rows from the <a href="project-practices.html">practices overview</a>.</li>
 <li>Keep concrete commands, thresholds and resource profiles in the project's own records.</li>
 </ul>
 </div>
 </div>
+
+</section>

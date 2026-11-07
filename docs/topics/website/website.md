@@ -14,9 +14,9 @@ Markdown files to routes. Four topic pages add orientation only:
 | Page | Source | Role |
 |---|---|---|
 | Home | [`home/index.md`](../home/index.md) | Three paths, the three adoption steps and a router snippet |
-| Get started | [`getting-started/index.md`](../getting-started/index.md) | What the kit provides, pinning steps, adoption routes |
-| Site toolkit | [`site-toolkit/index.md`](../site-toolkit/index.md) | Build pipeline figure and a task-to-guide map |
-| Project practices | [`project-practices/index.md`](../project-practices/index.md) | Task routing figure and a guide map |
+| Get started | [`getting-started/index.md`](../getting-started/index.md) | Reader chapters: what the kit provides, setup steps, site and upgrades, adoption routes |
+| Site toolkit | [`site-toolkit/index.md`](../site-toolkit/index.md) | Reader chapters: build pipeline, task-to-guide map, source pages, build checks |
+| Project practices | [`project-practices/index.md`](../project-practices/index.md) | Reader chapters: task routing and one guide table per area |
 
 Everything else renders whole from its canonical file: `README.md`, the guides
 in `rules/`, the release notes and migration guides, the panel-switcher
