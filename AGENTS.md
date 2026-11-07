@@ -25,7 +25,7 @@ expands. These routes grant no execution or publication permission.
 
 `docsite.py` owns the consumer entrypoint, `tooling/` implements rendering and
 validation, `theme/` owns the shared reader, and `examples/starter/` demonstrates
-the supported authoring contract. `provenance.json` records extraction inputs.
+the supported authoring contract.
 
 Preserve reader behavior, source/public anchors, local assets and evidence
 boundaries when changing the shared implementation. Run the README checks and

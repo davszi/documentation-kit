@@ -77,17 +77,6 @@ label = "Kit repository map"
 file = "kit-context.html"
 group = "kit development"
 
-[[nav]]
-label = "Extraction record"
-file = "extraction.html"
-group = "kit development"
-
-[[nav]]
-label = "Policy extraction map"
-short = "Extraction map"
-file = "extraction-map.html"
-group = "kit development"
-
 # ── Reference guides: rendered records, reached from the pages above ──
 [[nav]]
 label = "Code and repository practices"
@@ -350,16 +339,6 @@ description = "How this site is organized, built and previewed, and its open hos
 source = "docs/PROJECT_CONTEXT.md"
 slug = "kit-context"
 description = "Where each part of this repository lives and how to check it."
-
-[[source_pages]]
-source = "docs/topics/extraction/extraction.md"
-slug = "extraction"
-description = "Initial extraction scope, verification evidence and limits."
-
-[[source_pages]]
-source = "rules/extraction-map.md"
-slug = "extraction-map"
-description = "How each source policy section was transferred, genericized or left project-owned."
 
 [[source_pages]]
 source = "docs/index.md"

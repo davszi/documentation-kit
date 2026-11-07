@@ -46,7 +46,6 @@ shared independent-comparison component.
 stable interfaces. The [1.1.0 migration guide](topics/releases/migrations/1.1.0.md)
 routes existing consumers through policy, layout and adapter changes.
 
-[Extraction record](topics/extraction/extraction.md) owns initial scope,
-evidence and limits. [Extraction map](../rules/extraction-map.md) accounts for
-policy source sections; [provenance](../provenance.json) records source
-identities. [Worklog](worklog.md) is append-only chronology.
+The extraction record, policy map, source hashes and initial receipts remain at
+the [`v1.1.0` tag](https://github.com/davszi/documentation-kit/tree/v1.1.0).
+[Worklog](worklog.md) is append-only chronology.

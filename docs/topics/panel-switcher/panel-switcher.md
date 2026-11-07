@@ -38,7 +38,7 @@ styling. Projects own option labels, explanatory content, figures, data,
 generators and specialized layouts/legends.
 
 This implementation is extracted from ADP's `width-lessons.js` with neutral
-attribute names. The [origin receipt](../../../verification/panel-switcher-origin.json)
+attribute names. The [origin receipt](https://github.com/davszi/documentation-kit/blob/v1.1.0/verification/panel-switcher-origin.json)
 records source and extracted identities. At ADP adoption, rename the component
 and `data-width-*` switching attributes to this contract; retain its track
 figures and specialized CSS locally. The consuming project's documentation
@@ -53,6 +53,6 @@ groups, defaults, buttons and keyboard, hash reveal, printing, invalid input,
 wide/narrow containment and no-JavaScript reading. Use the Playwright/Chromium
 environment variables documented in the README.
 
-The [verification record](../../../verification/panel-switcher-checks.json)
+The [verification record](https://github.com/davszi/documentation-kit/blob/v1.1.0/verification/panel-switcher-checks.json)
 records the checks actually run for this extraction; the original kit's initial
 receipts retain their original scope.

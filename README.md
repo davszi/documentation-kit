@@ -4,10 +4,7 @@ Reusable engineering and documentation policy, a complete HTML reader and a
 small static-site toolchain. Projects consume one pinned [Git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) while keeping their own
 topic records, pages, figures, navigation and evidence.
 
-![The shared chapter reader](preview/desktop.png)
-
-[Phone view](preview/mobile.png) · [Home page](preview/home.png) ·
-[Extraction and validation](docs/topics/extraction/extraction.md)
+![The shared chapter reader](docs/topics/reader-tour/media/reader.png)
 
 The kit carries the existing chapter reader and build-sheet layout: full-width
 cards, docked navigation, one/two/all-chapter views, pinned comparisons, optional
@@ -193,10 +190,11 @@ Screenshots stay under `.build/visual-review/`.
 ## Provenance
 
 Extracted from the Autonomous Driving Platform documentation system on
-2026-11-04. [Source hashes](provenance.json) identify the original files and
-inspected revision; [policy coverage](rules/extraction-map.md) accounts for the
-source sections. This repository contains shared rules and presentation code,
-not simulator code, research results or historical evidence collections.
+2026-11-04. The extraction record, source hashes, policy coverage map and
+initial check receipts were removed after 1.1.0; they remain at the
+[`v1.1.0` tag](https://github.com/davszi/documentation-kit/tree/v1.1.0). This
+repository contains shared rules and presentation code, not simulator code,
+research results or historical evidence collections.
 
 Vendor licenses and source notes are retained beside their assets; see
 [third-party notices](THIRD_PARTY.md). A first-party license has not been

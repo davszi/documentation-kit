@@ -122,10 +122,10 @@ The guides under `rules/` are records that agents read as plain Markdown. Puttin
 <div class="bs-grid g2">
 <figure id="fig-captures">
 <div class="fig-carousel">
-<img src="../../preview/desktop.png" alt="The starter guide's first chapter in the reader at 1600 by 1000 pixels: chapter tree on the left, the ownership flow in the active card, the next chapter at the right edge.">
-<img src="../../preview/home.png" alt="The starter home page at 1600 by 1000 pixels with its hero and topic cards.">
+<img src="../topics/reader-tour/media/reader.png" alt="This site's Experiments page in the reader at 1600 by 1000 pixels: chapter tree on the left, the keep-experiments-small chapter in the active card, the next chapter at the right edge.">
+<img src="../topics/reader-tour/media/home.png" alt="This site's home page at 1600 by 1000 pixels with its hero, the three paths and the adoption steps.">
 </div>
-<figcaption><b>Figure 2.</b> A carousel of the starter captures in <code>preview/</code> (2026-11-04). It advances by itself, pauses on hover and opens the visible capture in the lightbox.</figcaption>
+<figcaption><b>Figure 2.</b> A carousel of two captures of this site (2026-11-08, commit 83e5a59). It advances by itself, pauses on hover and opens the visible capture in the lightbox.</figcaption>
 </figure>
 <div>
 <div class="bs-part bs-orange"><span class="bs-label">Try</span><h3>Zoom and pan</h3><p>Click the visible capture. Scroll to zoom, drag to pan, double-click to reset, <kbd>Esc</kbd> to close. HTML diagrams such as <a href="#fig-pinning">Figure 1</a> stay in the page.</p></div>
@@ -172,8 +172,8 @@ The [panel switcher contract](panel-switcher.html) documents its markup.
 <p class="bs-lead">A status board holds one current state per item; headline numbers carry their scope.</p>
 
 <div class="bs-stats">
-<div><b>39</b><span>pages on this site</span></div>
-<div><b>31</b><span>records rendered from tracked Markdown</span></div>
+<div><b>37</b><span>pages on this site</span></div>
+<div><b>29</b><span>records rendered from tracked Markdown</span></div>
 <div><b>7</b><span>chapters on this page</span></div>
 </div>
 
@@ -183,7 +183,7 @@ The [panel switcher contract](panel-switcher.html) documents its markup.
 <div class="bs-row"><span class="bs-state bs-wait">Open</span><b>Hosting and audience</b><span>Not deployed; the destination is undecided. See <a href="website.html#open-decision-hosting-and-audience">the website record</a>.</span></div>
 </div>
 
-Counts are from this kit revision's build on 2026-11-07; the board is the [website record](website.html)'s state, not a second status owner.
+Counts are from this kit revision's build on 2026-11-08; the board is the [website record](website.html)'s state, not a second status owner.
 
 </section>
 

@@ -2,6 +2,16 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-08 — Remove the extraction history
+
+- Removed `provenance.json`, `verification/`, `preview/`,
+  `docs/topics/extraction/` and `rules/extraction-map.md` on deivid's request.
+  No code, test or consumer route used them; they remain at the `v1.1.0` tag.
+  Links to them in the README, indexes, panel-switcher record, release notes
+  and earlier worklog entries now point to that tag; worklog text is
+  unchanged. The README and Reader tour use two new captures of this site
+  (`docs/topics/reader-tour/media/`, 2026-11-08, commit 83e5a59).
+
 ## 2026-11-07 — Separate pages for people from rendered records
 
 - The kit site showed its rule guides in the chapter reader, one card per
@@ -348,7 +358,7 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
 - Compatibility: both known consumers build with this tree without source
   changes. Against their current pins, every page is byte-identical except each
   home page, whose site-map thumbnails are now marked decorative (ADP 87 of 88,
-  adaptation 7 of 8; [receipt](../verification/v1.0.0-consumers.json)).
+  adaptation 7 of 8; [receipt](https://github.com/davszi/documentation-kit/blob/v1.1.0/verification/v1.0.0-consumers.json)).
 - One independent review (Opus, high effort) found no blocking defect; fixes
   landed here: ledger semantics and trust boundary stated (distinct unsigned
   values, expressions are reviewed code, not a sandbox), kept-block edges reported
@@ -428,7 +438,7 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   clipping/visibility rules and report impossible short-reader cases as skipped.
 - Strict starter lint has zero warnings; all 52 Python checks, JavaScript checks,
   real browser failure fixtures and desktop/phone reader checks pass. Independent
-  source review findings are resolved. [Receipts](../verification/publication-browser.json)
+  source review findings are resolved. [Receipts](https://github.com/davszi/documentation-kit/blob/v1.1.0/verification/publication-browser.json)
   retain tested inputs and bounded resources under the shared lock. Consumer
   adoption and public-bundle comparison remain project-owned. This landing
   supplies the commit identity.
@@ -441,7 +451,7 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   `body_class` values and existing canonical worklog paths. The
   [maintenance contract](../rules/maintenance.md) owns these extension points.
 - Strict starter build/lint, all 31 Python checks, math/source-link JavaScript
-  checks and desktop/phone reader browser checks pass. [Receipts](../verification/content-imports.json)
+  checks and desktop/phone reader browser checks pass. [Receipts](https://github.com/davszi/documentation-kit/blob/v1.1.0/verification/content-imports.json)
   record tested inputs and resources under the shared lock in an owned
   4 GiB/zero-swap scope. Consumer scientific-preservation checks remain
   project-owned. This landing supplies the commit identity.
@@ -454,7 +464,7 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   include paths remain required.
 - Strict build/lint, all 27 Python checks, JavaScript math/source-link checks
   and desktop/phone reader browser checks pass under the shared lock and an
-  owned 4 GiB/zero-swap scope. [Receipts](../verification/shared-includes.json)
+  owned 4 GiB/zero-swap scope. [Receipts](https://github.com/davszi/documentation-kit/blob/v1.1.0/verification/shared-includes.json)
   retain tested inputs and output. This landing supplies the commit identity.
 
 ## 2026-11-04 — Consumer compatibility adapters
@@ -465,7 +475,7 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   shared-asset collisions and noncanonical/escaping target paths. The
   [maintenance contract](../rules/maintenance.md) owns configuration and API.
 - Strict starter build/lint, all 26 Python checks, math/source-link JavaScript
-  checks and existing desktop/phone reader browser checks pass. [Receipts](../verification/project-extensions.json)
+  checks and existing desktop/phone reader browser checks pass. [Receipts](https://github.com/davszi/documentation-kit/blob/v1.1.0/verification/project-extensions.json)
   retain inputs, output and the owned 4 GiB/zero-swap scope under the shared
   lock. No application runtime was launched. This landing supplies the commit
   identity; consumer adoption and its content validation remain project-owned.
@@ -476,13 +486,13 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   authoring attributes and shared control CSS. Track scenarios, figures, legends
   and specialized layouts stay project-owned; ADP's original compatibility copy
   remains until its kit adoption. The [component contract](topics/panel-switcher/panel-switcher.md)
-  owns usage and behavior; [origin identities](../verification/panel-switcher-origin.json)
+  owns usage and behavior; [origin identities](https://github.com/davszi/documentation-kit/blob/v1.1.0/verification/panel-switcher-origin.json)
   preserve the exact producing source. After attribute renaming, executable
   behavior matches the original source.
 - Verify original/shared defaults, independent groups, buttons/keyboard, deep
   links, print restoration and fallback reading at desktop/phone widths. Strict
   build/lint reports zero warnings, all 22 Python tests pass, both JavaScript
-  checks and the existing reader browser regression pass. [Receipts](../verification/panel-switcher-checks.json)
+  checks and the existing reader browser regression pass. [Receipts](https://github.com/davszi/documentation-kit/blob/v1.1.0/verification/panel-switcher-checks.json)
   retain the complete run and screenshots. Checks held the shared lock in an
   owned 4 GiB/zero-swap scope; no simulator was launched. The first invocation
   timed out, its owned scope was stopped, and the corrected browser harness
@@ -493,7 +503,7 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
 - Extract the reusable documentation kit from inspected source `9930b919`:
   portable policies, shared chapter/home layouts, generic toolchain and a neutral
   starter. The user selected a pinned dependency suitable for a Git submodule.
-  [Extraction evidence](topics/extraction/extraction.md) records source hashes,
+  [Extraction evidence](https://github.com/davszi/documentation-kit/blob/v1.1.0/docs/topics/extraction/extraction.md) records source hashes,
   independent review and the passing build/lint, 21 Python tests, JavaScript
   checks and desktop/phone browser review. No simulator or source-project
   migration was performed. This initial commit owns the coherent deliverable.
