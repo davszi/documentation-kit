@@ -4,77 +4,51 @@ slug = "index"
 brand = "Documentation kit"
 brand_sub = "shared practices · reader · site toolchain"
 reader = false
-raw = true
 components = ["nav", "filelinks"]
-page_css = ["build-sheet.css", "home.css", "../site/assets/kit-site.css"]
-body_class = "kit-home"
+page_css = ["build-sheet.css", "home.css"]
 toc = []
 +++
 
 <div class="home">
-<header class="home-hero kit-hero">
+<header class="home-hero">
 <div>
-<p class="kit-eyebrow">Engineering and documentation kit</p>
-<h1>One pinned kit for how a project builds, records and explains its work</h1>
-<p>Shared engineering and documentation practices, a chapter reader and a small static-site toolchain. A project pins one reviewed revision as a Git submodule and keeps its own pages, navigation and evidence.</p>
+<h1>Shared working rules, pinned into each project</h1>
+<p>Add the kit to your repository as one Git submodule. Then add rows to your <code>AGENTS.md</code>: each row names an action and the kit guide to read before it. Contributors and agents follow those rows. Building a documentation site with the kit is optional.</p>
 <div class="home-cta">
 <a href="getting-started.html">Get started</a>
 <a class="alt" href="readme.html#start-a-project">Setup commands</a>
 </div>
 </div>
-<figure class="kit-sources" aria-labelledby="kit-sources-caption">
-<div class="kit-sources-diagram" role="img" aria-label="Every guide is one Markdown file, for example rules/engineering/git.md. Contributors and agents read that file as Markdown through the project's task router. The site build renders the same file as a page, for example git.html. Edits go to the Markdown file only.">
-<div class="kit-src"><span class="kit-tag">every guide · one editable file</span><code>rules/&lt;area&gt;/&lt;guide&gt;.md</code><small>Markdown in the kit repository</small><span class="kit-example">e.g. <code>rules/engineering/git.md</code></span></div>
-<div class="kit-fork">
-<div class="kit-branch kit-branch-agent"><span class="kit-arrow" aria-hidden="true"></span><div><b>Read as Markdown</b><small>contributors and agents open the file itself, routed by the project's <code>AGENTS.md</code></small></div></div>
-<div class="kit-branch kit-branch-site"><span class="kit-arrow" aria-hidden="true"></span><div><b>Rendered as a page</b><small><code>&lt;guide&gt;.html</code> on this site, with source and edit links</small><span class="kit-example">e.g. <code>git.html</code></span></div></div>
+<div class="bs-grid g1" role="navigation" aria-label="Choose a path">
+<a class="now-card" href="project-practices.html"><strong>1 · Adopt the practices</strong><span>Which kit guide to read before which action: code, execution, delivery, Git, documentation, writing and experiments.</span></a>
+<a class="now-card" href="site-toolkit.html"><strong>2 · Build a site (optional)</strong><span>Turn tracked Markdown, figures and configuration into a checked static site with the shared reader.</span></a>
+<a class="now-card" href="releases.html"><strong>3 · Upgrade a pinned kit</strong><span>What each version changes for consumers, what stays stable in 1.x and how to migrate.</span></a>
 </div>
-</div>
-<figcaption id="kit-sources-caption"><b>Every guide on this site works this way.</b> Each page is rendered from its Markdown file, never copied, so a correction lands once and both readers see it. The README and release notes are rendered the same way; the Git guide is just one example.</figcaption>
-</figure>
 </header>
 
-<section class="kit-paths" aria-label="Choose a path">
-<a class="kit-path kit-path-practices" href="project-practices.html">
-<span class="kit-path-step">Path 1</span>
-<strong>Adopt project practices</strong>
-<span>Route contributors to shared rules for code, execution, delivery, Git, documentation, writing and experiments.</span>
-<span class="kit-path-links">Engineering · writing · experiments</span>
-</a>
-<a class="kit-path kit-path-build" href="site-toolkit.html">
-<span class="kit-path-step">Path 2</span>
-<strong>Build a site</strong>
-<span>Turn tracked Markdown, figures and configuration into a checked static site with the shared reader.</span>
-<span class="kit-path-links">Toolkit overview · authoring · validation</span>
-</a>
-<a class="kit-path kit-path-upgrade" href="releases.html">
-<span class="kit-path-step">Path 3</span>
-<strong>Upgrade a pinned kit</strong>
-<span>See what each version changes for consumers, what stays stable in 1.x and how to migrate.</span>
-<span class="kit-path-links">Release notes · migration guides</span>
-</a>
+<section class="home-now" aria-label="How a project uses the kit">
+<h2>How a project uses the kit</h2>
+<div class="bs-flow" role="img" aria-label="Step 1: pin the kit at .docs-kit with git submodule add. Step 2: in AGENTS.md, add a row that names an action, for example quoting a measured number, and the kit guide for it, rules/writing/evidence.md. Step 3: before quoting a number, a contributor or agent opens that guide and follows it, together with the project's own records.">
+<div class="bs-node bs-teal"><span class="bs-label">Step 1 · once</span><b>Pin the kit</b><ul><li><code>git submodule add &lt;kit-url&gt; .docs-kit</code></li><li>the submodule commit is the pinned version</li></ul></div>
+<div class="bs-arrow"><span>then</span></div>
+<div class="bs-node bs-violet"><span class="bs-label">Step 2 · in AGENTS.md</span><b>Route each action</b><ul><li>one row per action: <em>before quoting a number</em></li><li>names the guide: <code>rules/writing/evidence.md</code></li></ul></div>
+<div class="bs-arrow"><span>then</span></div>
+<div class="bs-node bs-orange"><span class="bs-label">Step 3 · every time</span><b>Read before acting</b><ul><li>the contributor or agent opens that guide</li><li>project specifics stay in project records</li></ul></div>
+</div>
 </section>
 
-<section class="kit-split" aria-label="Ownership">
-<div class="kit-own kit-own-kit">
-<span class="kit-tag">the kit owns</span>
-<ul>
-<li>Shared rules in <code>rules/</code></li>
-<li>Theme, reader, fonts and math assets in <code>theme/</code></li>
-<li>Renderer, packaging and checks in <code>tooling/</code></li>
-<li>The neutral starter in <code>examples/starter/</code></li>
-</ul>
-</div>
-<div class="kit-own kit-own-project">
-<span class="kit-tag">each project owns</span>
-<ul>
-<li>Orientation, task routes and project-specific choices</li>
-<li>Topic records, pages, navigation and local assets</li>
-<li>Evidence, figures and their provenance</li>
-<li>When to adopt a reviewed kit revision</li>
-</ul>
-</div>
-<p class="kit-own-note">The full split, with paths, is in <a href="readme.html#ownership">Ownership</a>.</p>
+<section class="home-now" aria-label="What step 2 looks like">
+<h2>What step 2 looks like in your AGENTS.md</h2>
+
+```markdown
+| Before…                   | Read…                                                                |
+|---------------------------|----------------------------------------------------------------------|
+| Quoting a measured number | `.docs-kit/rules/writing/evidence.md` and our benchmark records      |
+| Designing an experiment   | `.docs-kit/rules/experiments/workflow.md` and our experiment records |
+| Handing off work          | `.docs-kit/rules/engineering/handoffs.md`                            |
+```
+
+<p class="home-foot">Each row pairs a kit guide with the project record that holds your specifics. The <a href="../../examples/starter/AGENTS.md">starter's router</a> has every row; keep the ones you need. Full commands: <a href="readme.html#start-a-project">Start a project</a>.</p>
 </section>
 
 <section class="home-now" aria-label="Every page">

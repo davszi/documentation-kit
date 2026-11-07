@@ -2,6 +2,21 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-07 — Build the kit site's own pages from kit components
+
+- The home, getting-started, practices and site-toolkit pages used a private
+  component set (`kit-site.css`: path cards, guide cards, numbered steps and a
+  hand-drawn source diagram) instead of the kit's own Markdown and shared
+  `home.css`/`build-sheet.css` blocks. The pages are now Markdown with shared
+  blocks only: `home-hero`, `now-card`, `bs-flow`, `bs-grid` and Markdown
+  tables in the router's `Before… | Read…` shape. `kit-site.css` is removed and
+  the home page is no longer `raw`.
+- The home page now shows how a project uses the kit in three steps (pin, add
+  `AGENTS.md` rows, read before acting) and a literal router snippet. Examples
+  use the evidence, experiment and handoff guides instead of the Git guide.
+- Markdown tables on `reference-page` entry pages get the same narrow-screen
+  scroll region as registered source pages.
+
 ## 2026-11-07 — Make folded navigation keep its state
 
 - Opening a group and then following a link in another group closed the

@@ -79,7 +79,9 @@ projects may author their own homepage and local styles. Follow
 
 Wrap a wide comparison table in `.scroll` with `role="region"`, a useful
 `aria-label`, `tabindex="0"` and `data-reader-horizontal`. This keeps scrolling
-and keyboard arrows inside the table instead of changing chapters.
+and keyboard arrows inside the table instead of changing chapters. Pages with
+`body_class = "reference-page"` get this region on every Markdown table
+automatically.
 
 ### Registered source pages
 

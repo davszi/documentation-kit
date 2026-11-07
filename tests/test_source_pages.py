@@ -229,6 +229,18 @@ class SourcePages(unittest.TestCase):
         self.assertNotIn('nav-fold', page)
         self.assertIn('<span class="nav-group" data-group="rules">rules</span>', page)
 
+    def test_reference_entry_page_tables_scroll_in_place(self):
+        table = '| Before… | Read… |\n|---|---|\n| Quoting | evidence |\n'
+        self.write('docs/topics/ref/index.md', '+++\ntitle = "Ref"\nbody_class = "reference-page"\ntoc = []\n+++\n\n# Ref\n\n' + table)
+        self.write('docs/topics/plain/index.md', '+++\ntitle = "Plain"\ntoc = []\n+++\n\n# Plain\n\n' + table)
+        config = self.root / 'docs/site/site.toml'
+        config.write_text(config.read_text() + ''.join(
+            f'\n[[nav]]\nlabel = "{slug}"\nfile = "{slug}.html"\n' for slug in ('ref', 'plain')))
+        self.assertEqual(self.build().returncode, 0)
+        self.assertIn('<div class="scroll" role="region" tabindex="0" data-reader-horizontal aria-label="Table: Before…, Read…"><table>',
+                      self.page('ref'))
+        self.assertNotIn('class="scroll"', self.page('plain'))
+
     def test_nested_navigation_must_be_boolean(self):
         config = self.root / 'docs/site/site.toml'
         config.write_text('nested_nav = "yes"\n' + config.read_text())

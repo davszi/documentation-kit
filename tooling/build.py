@@ -468,7 +468,12 @@ def build_page(md_path: Path, site: dict, shell: str) -> tuple[str, str] | None:
         md = mistune.create_markdown(renderer=renderer, plugins=["table", "math"])
         # Slide markers are matched after rendering: Markdown passes standalone
         # comments through unchanged, while code blocks escape example markers.
-        return slides_to_html(md(folds_to_html(markers_to_callouts(chunk), name)), name)
+        rendered = slides_to_html(md(folds_to_html(markers_to_callouts(chunk), name)), name)
+        if "reference-page" in str(meta.get("body_class", "")).split():
+            # Reference pages share the source pages' narrow-screen table regions.
+            from source_pages import wrap_tables
+            rendered = wrap_tables(rendered)
+        return rendered
 
     id_to_panel: dict[str, int] = {}
     parts = TAB_RE.split(body)

@@ -6,7 +6,7 @@ description = "How a build turns tracked sources into a checked site, and which 
 reader = false
 body_class = "reference-page"
 components = ["toc", "nav", "filelinks"]
-page_css = ["build-sheet.css", "../site/assets/kit-site.css"]
+page_css = ["build-sheet.css"]
 toc = [["How a build works", "#how-a-build-works"], ["Find the guide for a task", "#find-the-guide-for-a-task"], ["Render existing Markdown in place", "#render-existing-markdown-in-place"]]
 +++
 
@@ -28,7 +28,7 @@ toc = [["How a build works", "#how-a-build-works"], ["Find the guide for a task"
 <figcaption><b>Figure 1.</b> Follow the arrows from tracked inputs to generated output. Untracked files, symlink escapes and missing media fail the build instead of being published.</figcaption>
 </figure>
 
-Pages link to each other by their generated names, such as `git.html#commit-messages`.
+Pages link to each other by their generated names, such as `evidence.html#numbers-and-staleness`.
 Links to other repository files become source links: GitHub on a served site,
 and the local checkout when the generated pages are opened directly as files.
 [Authoring paths](authoring.html#authoring-paths)
@@ -36,14 +36,14 @@ gives the exact rules.
 
 ## Find the guide for a task
 
-<div class="kit-cards kit-cards-3">
-<a class="kit-card" href="readme.html#commands"><span class="kit-tag">commands · configuration</span><strong>Run and configure</strong><span><code>init</code>, <code>build</code>, <code>lint</code> and <code>slides</code>; <code>site.toml</code> keys, navigation and adapters.</span><span class="kit-card-more">README commands · <em>tooling and ownership</em></span></a>
-<a class="kit-card" href="authoring.html#authoring-paths"><span class="kit-tag">pages · navigation</span><strong>Author pages</strong><span>Entry pages and frontmatter, link origins, includes, local components and registered source pages.</span><span class="kit-card-more">Authoring paths</span></a>
-<a class="kit-card" href="reader.html"><span class="kit-tag">reader · components</span><strong>Use the reader and components</strong><span>Chapter views, reading layers, the home site map and the shared panel switcher.</span><span class="kit-card-more">Reader · panel switcher</span></a>
-<a class="kit-card" href="authoring.html#generated-figures"><span class="kit-tag">figures · math · slides</span><strong>Draw, derive and present</strong><span>Generated figures and number ledgers, KaTeX math, chapter slide faces and decks.</span><span class="kit-card-more">Generated figures · slide faces · mathematics</span></a>
-<a class="kit-card" href="resources.html"><span class="kit-tag">assets · evidence</span><strong>Package resources</strong><span>Resource closure, local-only captures, inventories and project path or evidence adapters.</span><span class="kit-card-more">Resources and evidence</span></a>
-<a class="kit-card" href="validation.html"><span class="kit-tag">checks · publishing</span><strong>Validate and publish</strong><span>Complete validation, reusable browser checks and export into an existing publication.</span><span class="kit-card-more">Validation · publication export</span></a>
-</div>
+| To… | Read… | It covers |
+|---|---|---|
+| Run commands and configure the site | [README commands](readme.html#commands), [tooling and ownership](authoring.html#tooling-and-ownership) | `init`, `build`, `lint` and `slides`; `site.toml` keys, navigation and adapters |
+| Write pages | [Authoring paths](authoring.html#authoring-paths) | Entry pages and frontmatter, link origins, includes, local components, registered source pages |
+| Use the reader and components | [Reader](reader.html), [panel switcher](panel-switcher.html) | Chapter views, reading layers, the home site map and the shared panel switcher |
+| Draw, derive and present | [Generated figures](authoring.html#generated-figures), [slide faces](authoring.html#slide-faces-and-decks) | Generated figures and number ledgers, KaTeX math, slide faces and decks |
+| Package images, media and evidence | [Resources and evidence](resources.html) | Resource closure, local-only captures, inventories, path and evidence adapters |
+| Check and publish | [Validation](validation.html), [publication export](publication.html) | Complete validation, browser checks, export into an existing publication |
 
 Related writing rules: [slide faces](page-design.html#slide-faces),
 [mathematical explanation](math.html) and [figures and access](figures.html).
