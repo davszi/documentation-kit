@@ -16,10 +16,12 @@ The source project was not migrated, deleted or retired during extraction.
 
 The [workflow](../../../rules/experiments/workflow.md) and
 [verification](../../../rules/experiments/verification.md) guides now own shared
-experiment design and check selection. Numerical derivation, reference
-comparison and regression guidance address numerical implementation
-correctness. [Production benchmarks](../../../rules/engineering/performance.md)
-remain engineering guidance; [evidence reporting](../../../rules/writing/evidence.md)
+experiment design and check selection. Experiments are investigations or
+qualifications; terms that apply only to learned or fitted models, such as
+final runs, sit in one clearly scoped section. Numerical derivation and
+reference comparison apply whenever results depend on custom numerical code.
+[Production benchmarks](../../../rules/engineering/performance.md) remain
+engineering guidance; [evidence reporting](../../../rules/writing/evidence.md)
 retains provenance, results, visuals and actual reviews. Consumer study
 decisions and accepted execution contracts stay project-owned.
 

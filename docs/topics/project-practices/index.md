@@ -53,8 +53,8 @@ toc = [["How contributors find a rule", "#how-contributors-find-a-rule"], ["Engi
 ## Experiments
 
 <div class="kit-cards kit-cards-3">
-<a class="kit-card" href="experiment-workflow.html"><span class="kit-tag">before designing a run</span><strong>Experiment workflow</strong><span>Investigation or final run, a bounded question, evaluation kept apart from tuning, and stopping conditions.</span></a>
-<a class="kit-card" href="experiment-verification.html"><span class="kit-tag">before choosing checks</span><strong>Proportionate verification</strong><span>Checks chosen for the claim: evidence gaps, application logic, numerical correctness and responses to failures.</span></a>
+<a class="kit-card" href="experiment-workflow.html"><span class="kit-tag">before designing a run</span><strong>Experiment workflow</strong><span>Keep experiments small; investigation or qualification; baselines, stopping and required content. Final runs only for learned models.</span></a>
+<a class="kit-card" href="experiment-verification.html"><span class="kit-tag">before choosing checks</span><strong>Proportionate verification</strong><span>Checks chosen for the claim: evidence gaps, application logic, numerical correctness, regression gates and failures.</span></a>
 </div>
 
 The original [writing](writing.html) and [site maintenance](maintenance.html)

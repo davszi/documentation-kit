@@ -22,6 +22,6 @@ When moving detail into a record, keep the former page anchor on the summary tha
 
 Use one term per object across prose, controls, legends, tables, figures and output. Name a mechanism the reader sees; use formulation internals only when explaining that formulation. A rename sweeps all surfaces. State what a function receives, returns and optimizes/interpolates, and which inputs vary or stay fixed.
 
-Decision rationale belongs beside the decision, including why an instrument/default was chosen and why alternatives lost. Current baselines measure what ships; label retired baselines historical. An experimental verdict and deployment measurements are distinct content kinds.
+Decision rationale belongs beside the decision, including why an instrument/default was chosen and why alternatives lost. A baseline cited for current shipped behavior measures what ships; label retired baselines historical. An experimental verdict and deployment measurements are distinct content kinds.
 
 Separate claims requiring different evidence: visual fidelity, smoothness, input preservation, correspondence with a source and physical accuracy. A local check or smoother drawing proves only its tested property. Label accepted future behavior, implemented behavior, CPU checks and native/runtime observations separately. Say "not measured" plainly and provide a supported bound where available. Never manufacture an estimate to fill an empty metric.

@@ -14,8 +14,8 @@ commands. [README](../README.md) owns consumer setup and upgrades.
 
 ## Experiments
 
-- [Experiment workflow](../rules/experiments/workflow.md): investigations, final runs, question design, evaluation and stopping conditions.
-- [Proportionate verification](../rules/experiments/verification.md): evidence gaps, application errors and scoped numerical correctness.
+- [Experiment workflow](../rules/experiments/workflow.md): keeping experiments small, investigations and qualifications, baselines, stopping and required content; final runs only for learned or fitted models.
+- [Proportionate verification](../rules/experiments/verification.md): evidence gaps, application logic, numerical correctness and regression gates.
 
 Projects keep concrete questions, recipes, decisions and accepted execution
 contracts in their owning records. [Evidence reporting](../rules/writing/evidence.md)

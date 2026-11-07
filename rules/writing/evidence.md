@@ -4,7 +4,7 @@
 
 A current measured claim requires a source commit, exact reproduction command, runtime/environment, workload, units, baseline, method and scope. Link its raw result and limitations. Config values, derivations and design arithmetic are not measurements; cite their source and label them accordingly.
 
-When code, input data, method, workload or runtime conditions affecting a claim change, rerun before quoting it as current qualification. Keep the old record's date, runtime, inputs and scope; a historical label does not qualify changed inputs. Presentation-only edits may reuse captured results only after checking identities, numbers and treatments remain intact.
+When code, input data, method, workload or runtime conditions affecting a claim change, rerun before quoting it as current evidence. Keep the old record's date, runtime, inputs and scope; a historical label does not qualify changed inputs. Presentation-only edits may reuse captured results only after checking identities, numbers and treatments remain intact.
 
 When a redesign restates numbers in new prose, figures or slides, record each number's source in a ledger and lock the evidence blocks kept verbatim (see [generated figures](../site/authoring.md#generated-figures)). A slide face may show only numbers that its chapter also shows; every distinct number a redesigned chapter shows, figure labels included, has a ledger source.
 
@@ -18,16 +18,11 @@ Prefer scripted captures with the same provenance as other figures. An inherentl
 
 A live public experiment report uses `ongoing = true`; remove it only when findings and limits are settled. Apply the [experiment retention rules](#numbers-and-staleness). The owning topic explains scope and links to evidence.
 
-An experiment report includes:
-
-- Reproduction command, runtime and the question or intended artifact.
-- Motivation, relevant baseline or comparison, and the interpretation basis, including retained changes and their reasons.
-- Results with units, findings and any applicable verdict against agreed criteria (including failure or inconclusive evidence), caveats and path forward.
-
-The [experiment workflow](../experiments/workflow.md) owns purposes, question
-selection, baselines, evaluation and stopping conditions.
-[Proportionate verification](../experiments/verification.md) owns check selection
-and numerical implementation correctness. [Performance guidance](../engineering/performance.md)
-owns production benchmarks and engineering quick modes.
+The [experiment workflow](../experiments/workflow.md) owns experiment kinds,
+baselines, stopping conditions and the [required content](../experiments/workflow.md#required-content)
+of every experiment, including its verdict. [Proportionate verification](../experiments/verification.md)
+owns check selection and numerical implementation correctness.
+[Performance guidance](../engineering/performance.md) owns production benchmarks
+and engineering quick modes.
 
 Suitable experiment visuals include actual-geometry quality overlays, convergence, reference parity, timing/scaling and trade-off plots; omit inapplicable views explicitly. Update topic, worklog and open routing in the same deliverable.

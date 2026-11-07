@@ -308,12 +308,12 @@ description = "Verified code excerpts and data-backed diagrams."
 [[source_pages]]
 source = "rules/experiments/workflow.md"
 slug = "experiment-workflow"
-description = "Investigations and final runs, question design, evaluation and stopping conditions."
+description = "Keeping experiments small, investigations and qualifications, baselines, stopping and required content."
 
 [[source_pages]]
 source = "rules/experiments/verification.md"
 slug = "experiment-verification"
-description = "Choosing checks for a claim, application logic, numerical correctness and changed inputs."
+description = "Choosing checks for a claim, application logic, numerical correctness, regression gates and changed inputs."
 
 [[source_pages]]
 source = "docs/topics/releases/releases.md"

@@ -56,7 +56,7 @@ Cards keep the reader stage height. Each chapter carries its claim and a meaning
 
 A flow may use `n2` for two boxes. Keep arrow labels near 12 characters and box titles near 30; put identifiers and field details in small diagram labels, with full mappings in the topic record.
 
-One `bs-board` holds current status: Done, Decided, Passed, Open or Parked. Use `bs-ok`, `bs-wait`, `bs-bad` and `bs-off` as appropriate. Parked includes a reopening condition. An Open row owns remaining work; do not repeat it in limits prose. Scope qualifications stay beside their evidence. Status does not substitute for evidence: Decided is not implemented; a local/CPU test is not a native runtime check.
+One `bs-board` holds current status: Done, Decided, Passed, Open or Parked. Use `bs-ok`, `bs-wait`, `bs-bad` and `bs-off` as appropriate. Parked includes a reopening condition. An Open row owns remaining work; do not repeat it in limits prose. Scope caveats stay beside their evidence. Status does not substitute for evidence: Decided is not implemented; a local/CPU test is not a native runtime check.
 
 ## Slide faces
 
@@ -64,7 +64,7 @@ A chapter may open with one slide face: a 16:9 summary that states the chapter's
 
 - The title states the finding as a sentence, not a topic. The eyebrow names the subject without a chapter number; the reader card and extracted deck supply numbers.
 - Use one visual built from the shared slide vocabulary (tiles, factor grids, equation terms, numbered steps, a figure beside headline numbers) or a project-local diagram. Reuse the chapter's own figure assets rather than drawing a second version of the same data.
-- End with a scope line saying what the numbers cover and what remains unmeasured. Qualifications that change a claim's meaning belong on the slide, not only in the chapter.
+- End with a scope line saying what the numbers cover and what remains unmeasured. Caveats that change a claim's meaning belong on the slide, not only in the chapter.
 - No fact exists only on a slide. Every number and claim on it is stated, with its evidence, in the chapter below; update both in the same edit. This is the one sanctioned repetition of a fact: the slide is a view of the chapter, never its owner.
 - Keep the canvas uncrowded. A face that does not fit 16:9 has too much content for one slide; move detail into the chapter instead of shrinking type. Below 720 px the face stacks into a readable column.
 - Slide figures are views of numbered chapter figures; they carry a short caption without a new number.

@@ -2,6 +2,29 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-07 — Classify experiments by what they decide
+
+- Replace the field-based reading of the experiment guides with two kinds,
+  decided by the result: investigation (exploratory or confirmatory) and
+  qualification (verdict on a named system against a bar fixed before the run).
+  A first section, "Keep experiments small", limits scope and process before
+  any other rule. Final runs and other learned-model practices stay in the kit
+  in one section scoped to learned or fitted models.
+- Restore the mandatory required content softened in `d072852`: every
+  experiment states question, measured motivation, kind, decision, baseline,
+  budget and stopping condition; confirmatory investigations and
+  qualifications fix their bar first and report a verdict. The strongest
+  relevant baseline applies to all kinds. Numerical verification applies
+  whenever results depend on custom numerical code; regression gates and quick
+  modes are no longer tied to one field. "Qualification" in other senses is
+  reworded (`evidence.md`, `pages.md`, `site/validation.md`).
+- An independent review found eleven issues in the first rewrite (dropped
+  rules, model-only narrowing of data checks, a floor that read as optional,
+  length) and a re-check found three more; all are fixed. The two guides total
+  1125 words against 1126 before, and the required-content list left
+  `writing/evidence.md`. `tests/run_checks.sh` passes (99 tests, strict lint
+  clean for starter and kit site).
+
 ## 2026-11-07 — Merge experiment guides and publish them on the site
 
 - Merge `experiment-workflow-guides-20261107` (`d072852`) into `main` beside

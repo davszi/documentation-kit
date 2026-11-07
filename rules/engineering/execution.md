@@ -70,5 +70,5 @@ cleanup before releasing a reservation. Treat failed or incomplete cleanup as
 a [handoff blocker](handoffs.md#reporting-blockers).
 
 Scale records to the work. Routine checks need concise command, limits and
-result records. Qualification follows the project's full evidence chain and
+result records. A [qualification](../experiments/workflow.md#choose-the-purpose) follows the project's full evidence chain and
 the [claim-scope rules](../writing/explanations.md#naming-and-honest-claims).

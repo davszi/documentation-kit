@@ -41,6 +41,6 @@ expected counts, screenshots and domain assertions. The shared module provides:
 Kit fixtures verify both failures and valid contained layouts, including readers
 with one to three chapters. The kit's visual review and consuming-project
 harnesses use the same functions. Domain numbers, recordings, task controls and
-scientific qualification remain project assertions. Run browser jobs under the [execution rules](../engineering/execution.md)
+qualification verdicts remain project assertions. Run browser jobs under the [execution rules](../engineering/execution.md)
 and the consumer's concrete controls; importing these helpers grants no
 permission to start another heavy job.

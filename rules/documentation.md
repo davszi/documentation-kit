@@ -20,8 +20,8 @@ These rules are shared policy. A consuming project's `docs/PROJECT_CONTEXT.md` o
 | `.docs-kit/rules/engineering/git.md` | Commit scope, messages, validation and safety when sharing a Git checkout |
 | `.docs-kit/rules/engineering/delivery.md` | Assignment scope, delivery ownership, parallel work and escalation |
 | `.docs-kit/rules/engineering/handoffs.md` | Completion and blocker reports, durable evidence and handoff receipt |
-| `.docs-kit/rules/experiments/workflow.md` | Shared experiment purposes, question design, evaluation and stopping conditions |
-| `.docs-kit/rules/experiments/verification.md` | Claim-scoped check selection, numerical correctness and changed-input verification |
+| `.docs-kit/rules/experiments/workflow.md` | Shared experiment kinds (investigation, qualification), scope limits, baselines, evaluation, stopping and required content |
+| `.docs-kit/rules/experiments/verification.md` | Claim-scoped check selection, numerical correctness, regression gates and changed-input verification |
 | `docs/topics/<topic>/<topic>.md` and further descriptively named records | Canonical mechanisms, accepted specifications, methods, scoped results, limits and topic-owned research notes |
 | `docs/topics/<topic>/index.md`, when needed | Human explanation drawn from the topic records: current conclusions, figures, decisions and blockers |
 | `docs/open/OPEN.md` | One-line routes to every owed workstream, each with its owning document; never a duplicate task board |

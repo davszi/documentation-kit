@@ -13,7 +13,7 @@ expands. These routes grant no execution or publication permission.
 |---|---|
 | Changing source, tests or repository configuration | `rules/engineering/code.md` and the owning topic or implementation contract |
 | Changing runtime cost or making performance claims | `rules/engineering/performance.md` |
-| Designing an investigation or final run | `rules/experiments/workflow.md` and the project's owning experiment records |
+| Designing or running an experiment, qualification or benchmark | `rules/experiments/workflow.md` and the project's owning experiment records |
 | Choosing or changing experiment checks or interpreting their failures | `rules/experiments/verification.md` and the project's accepted verification contract |
 | Running tests, builds, benchmarks or other expensive jobs | `rules/engineering/execution.md` and the environment/check commands in `docs/PROJECT_CONTEXT.md` |
 | Assigning work, coordinating contributors or editing in parallel | `rules/engineering/delivery.md` |
