@@ -99,7 +99,10 @@ description = "Commits, shared checkouts and history."  # optional
 `title` defaults to the file's first level-one heading. `description` supplies
 the site-map card text and sidebar subtitle. `math = true` enables formulas.
 `reader = true` uses the chapter reader when the site enables it; otherwise the
-page scrolls and its sidebar lists the second- and third-level headings. Each
+page scrolls and its sidebar lists the second- and third-level headings. In the
+reader, a short opening (under 600 characters, without subheadings, figures or
+tables) joins the first chapter with the source line instead of becoming a
+nearly empty Introduction chapter; a longer opening stays its own chapter. Each
 route still needs a `[[nav]]` entry, where `hidden = true` keeps it out of
 navigation. One slug belongs to one page. Topic entry pages keep their own
 frontmatter path and cannot be registered.

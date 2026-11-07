@@ -3,7 +3,6 @@ title = "Site toolkit"
 brand = "Documentation kit"
 brand_sub = "sources · build · checks"
 description = "How a build turns tracked sources into a checked site, and which guide covers each task."
-reader = false
 body_class = "reference-page"
 components = ["toc", "nav", "filelinks"]
 page_css = ["build-sheet.css"]
@@ -12,9 +11,9 @@ toc = [["How a build works", "#how-a-build-works"], ["Find the guide for a task"
 
 # The site toolkit turns tracked sources into a checked static site
 
-<p class="bs-lead">One command reads the project's tracked sources through the pinned kit and writes a self-contained site under <code>.build/docs/</code>; lint and the freshness check then verify it.</p>
-
 ## How a build works
+
+<p class="bs-lead">One command reads the project's tracked sources through the pinned kit and writes a self-contained site under <code>.build/docs/</code>; lint and the freshness check then verify it.</p>
 
 <figure id="fig-build">
 <div class="bs-flow" role="img" aria-label="Tracked project sources and the pinned kit enter docsite.py build. The build writes generated HTML, assets and a build manifest. Lint and the freshness check read that output. Generated output never flows back into source.">

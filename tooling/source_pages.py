@@ -176,6 +176,31 @@ def origin_banner(page: SourcePage, repository: str, edit_ref: str) -> str:
             '<span class="source-origin-label">Canonical source</span> ' + " · ".join(links) + "</p>\n")
 
 
+_H1 = re.compile(r"<h1\b[^>]*>.*?</h1>\s*", re.S)
+_H2 = re.compile(r"<h2\b[^>]*>.*?</h2>\s*", re.S)
+SHORT_INTRODUCTION = 600
+
+
+def merge_short_introduction(markup: str) -> str:
+    """Move a short opening (source line plus a few sentences) into the first chapter.
+
+    The chapter reader keeps text before the first second-level heading as its
+    own chapter. A registered file usually opens with one or two sentences, which
+    would leave a nearly empty card, so a short opening joins the first chapter.
+    A longer opening, or one with its own figures or subheadings, stays separate.
+    """
+    first = _H2.search(markup)
+    if not first:
+        return markup
+    title = _H1.search(markup, 0, first.start())
+    heading = markup[title.start():title.end()] if title else ""
+    opening = (markup[:title.start()] + markup[title.end():first.start()]) if title else markup[:first.start()]
+    text = html.unescape(re.sub(r"<[^>]+>", "", opening)).strip()
+    if not text or len(text) > SHORT_INTRODUCTION or re.search(r"<(h3|figure|img|table|svg)\b", opening):
+        return markup
+    return heading + markup[first.start():first.end()] + opening + markup[first.end():]
+
+
 _TABLE = re.compile(r"<table>(.*?)</table>", re.S)
 
 

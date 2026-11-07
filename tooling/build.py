@@ -592,6 +592,8 @@ def build_source_page(page, routes: dict[str, str], site: dict, shell: str) -> t
     comps = ["toc", "nav", "code", "filelinks"]
     if page.reader and site.get("chapter_reader"):
         from chapter_layout import reader_page
+        from source_pages import merge_short_introduction
+        content = merge_short_introduction(content)
         try:
             content, meta["toc"] = reader_page([(None, content)], [], title,
                                                (COMPONENTS / "chapter-reader.html").read_text())

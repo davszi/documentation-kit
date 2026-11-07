@@ -241,6 +241,21 @@ class SourcePages(unittest.TestCase):
                       self.page('ref'))
         self.assertNotIn('class="scroll"', self.page('plain'))
 
+    def test_reader_merges_a_short_opening_into_the_first_chapter(self):
+        config = self.root / 'docs/site/site.toml'
+        config.write_text(config.read_text().replace(
+            'slug = "shared-rule"\n', 'slug = "shared-rule"\nreader = true\n'))
+        self.write('policy/rule.md', '# Shared rule\n\nA short opening.\n\n## First part\n\nBody.\n')
+        self.assertEqual(self.build().returncode, 0)
+        page = self.page('shared-rule')
+        self.assertNotIn('reader-introduction', page)
+        chapter = page.index('id="first-part"')
+        self.assertLess(chapter, page.index('class="source-origin"'))
+        self.assertLess(chapter, page.index('A short opening.'))
+        self.write('policy/rule.md', '# Shared rule\n\n' + 'A long opening sentence. ' * 40 + '\n\n## First part\n\nBody.\n')
+        self.assertEqual(self.build().returncode, 0)
+        self.assertIn('id="reader-introduction"', self.page('shared-rule'))
+
     def test_nested_navigation_must_be_boolean(self):
         config = self.root / 'docs/site/site.toml'
         config.write_text('nested_nav = "yes"\n' + config.read_text())

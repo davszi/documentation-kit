@@ -3,7 +3,6 @@ title = "Project practices"
 brand = "Documentation kit"
 brand_sub = "engineering · writing · experiments"
 description = "How a project routes contributors to the shared rules, and what each guide covers."
-reader = false
 body_class = "reference-page"
 components = ["toc", "nav", "filelinks"]
 page_css = ["build-sheet.css"]
@@ -12,9 +11,9 @@ toc = [["How contributors find a rule", "#how-contributors-find-a-rule"], ["Engi
 
 # Shared practices, read before the action they govern
 
-<p class="bs-lead">Each shared rule lives in one focused guide. A project's task router names the guide to read before each kind of action, so contributors load only what applies.</p>
-
 ## How contributors find a rule
+
+<p class="bs-lead">Each shared rule lives in one focused guide. A project's task router names the guide to read before each kind of action, so contributors load only what applies.</p>
 
 <figure id="fig-routing">
 <div class="bs-flow" role="img" aria-label="A contributor is about to quote a measured number. The project's AGENTS.md has a row for quoting numbers that names the shared evidence guide and the project's own measurement records. The contributor reads both, then writes the claim.">

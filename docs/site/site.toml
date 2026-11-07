@@ -4,9 +4,7 @@ title = "Documentation kit"
 home_label = "Kit"
 gh_repo = "https://github.com/davszi/documentation-kit"
 gh_ref = "main"
-chapter_reader = false
-# Fold navigation groups and nest the current page's sections under its entry.
-nested_nav = true
+chapter_reader = true
 
 [[nav]]
 label = "Home"
@@ -206,153 +204,184 @@ hidden = true
 # ── Source registry: canonical Markdown rendered as whole-file pages ───
 [[source_pages]]
 source = "README.md"
+reader = true
 slug = "readme"
 title = "Setup, commands and upgrades"
 description = "Install the pinned submodule, build and lint a site, upgrade the pin and develop the kit."
 
 [[source_pages]]
 source = "rules/site/authoring.md"
+reader = true
 slug = "authoring"
 description = "Commands, site.toml, page sources, includes, components, generated figures and slide decks."
 
 [[source_pages]]
 source = "rules/site/reader.md"
+reader = true
 slug = "reader"
 description = "The shared chapter reader, reading layers, home site map and shared interactions."
 
 [[source_pages]]
 source = "docs/topics/panel-switcher/panel-switcher.md"
+reader = true
 slug = "panel-switcher"
 description = "Authoring contract and behavior of the shared local comparison component."
 
 [[source_pages]]
 source = "rules/site/resources.md"
+reader = true
 slug = "resources"
 description = "Resource closure, local evidence, inventories and project adapters."
 
 [[source_pages]]
 source = "rules/site/validation.md"
+reader = true
 slug = "validation"
 description = "What a complete validation covers and the reusable browser-check helpers."
 
 [[source_pages]]
 source = "rules/site/publication.md"
+reader = true
 slug = "publication"
 description = "Export a generated bundle into an existing project publication."
 
 [[source_pages]]
 source = "rules/engineering/code.md"
+reader = true
 slug = "code-practices"
 description = "Program output, diagnostics and generated files."
 
 [[source_pages]]
 source = "rules/engineering/performance.md"
+reader = true
 slug = "performance"
 description = "Routine efficiency and workload-scoped performance claims."
 
 [[source_pages]]
 source = "rules/engineering/execution.md"
+reader = true
 slug = "execution"
 description = "Execution routes, resource budgets, failure attribution, supervision and cleanup."
 
 [[source_pages]]
 source = "rules/engineering/delivery.md"
+reader = true
 slug = "delivery"
 description = "Assignment scope, owner responsibility, coordination and parallel work."
 
 [[source_pages]]
 source = "rules/engineering/handoffs.md"
+reader = true
 slug = "handoffs"
 description = "Reporting completion and blockers, durable evidence and receiving work."
 
 [[source_pages]]
 source = "rules/engineering/git.md"
+reader = true
 slug = "git"
 description = "Deliverables, validation, commit messages, shared checkouts and history."
 
 [[source_pages]]
 source = "rules/documentation.md"
+reader = true
 slug = "documentation-system"
 description = "Canonical homes, lifecycle, evidence identity, publishing and agent entrypoints."
 
 [[source_pages]]
 source = "rules/writing/pages.md"
+reader = true
 slug = "page-design"
 description = "Section purpose, figure placement, homepages, build-sheet pages, slides and review."
 
 [[source_pages]]
 source = "rules/writing/explanations.md"
+reader = true
 slug = "explanations"
 description = "Reading order, optional depth layers, naming and honest claims."
 
 [[source_pages]]
 source = "rules/writing/evidence.md"
+reader = true
 slug = "evidence"
 description = "Measured claims, staleness, number ledgers and experiment records."
 
 [[source_pages]]
 source = "rules/writing/figures.md"
+reader = true
 slug = "figures"
 description = "Choosing a representation, comparisons, interaction and accessibility."
 
 [[source_pages]]
 source = "rules/writing/math.md"
+reader = true
 slug = "math"
 description = "Building formulas from known constructions, notation and rendering."
 
 [[source_pages]]
 source = "rules/writing/code.md"
+reader = true
 slug = "code-excerpts"
 description = "Verified code excerpts and data-backed diagrams."
 
 [[source_pages]]
 source = "rules/experiments/workflow.md"
+reader = true
 slug = "experiment-workflow"
 description = "Keeping experiments small, investigations and qualifications, baselines, stopping and required content."
 
 [[source_pages]]
 source = "rules/experiments/verification.md"
+reader = true
 slug = "experiment-verification"
 description = "Choosing checks for a claim, application logic, numerical correctness, regression gates and changed inputs."
 
 [[source_pages]]
 source = "docs/topics/releases/releases.md"
+reader = true
 slug = "releases"
 description = "What each version changes for consumers and the 1.x compatibility contract."
 
 [[source_pages]]
 source = "docs/topics/releases/migrations/1.1.0.md"
+reader = true
 slug = "migrate-1-1-0"
 description = "Move an existing consumer from 1.0.0 to 1.1.0."
 
 [[source_pages]]
 source = "docs/topics/website/website.md"
+reader = true
 slug = "website"
 description = "How this site is organized, built and previewed, and its open hosting decision."
 
 [[source_pages]]
 source = "docs/PROJECT_CONTEXT.md"
+reader = true
 slug = "kit-context"
 description = "Where each part of this repository lives and how to check it."
 
 [[source_pages]]
 source = "docs/topics/extraction/extraction.md"
+reader = true
 slug = "extraction"
 description = "Initial extraction scope, verification evidence and limits."
 
 [[source_pages]]
 source = "rules/extraction-map.md"
+reader = true
 slug = "extraction-map"
 description = "How each source policy section was transferred, genericized or left project-owned."
 
 [[source_pages]]
 source = "docs/index.md"
+reader = true
 slug = "reading-index"
 
 [[source_pages]]
 source = "rules/maintenance.md"
+reader = true
 slug = "maintenance"
 
 [[source_pages]]
 source = "rules/writing.md"
+reader = true
 slug = "writing"

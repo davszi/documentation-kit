@@ -2,6 +2,22 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-07 — Read the kit site in the shared chapter reader
+
+- The kit site had `chapter_reader = false` and `reader = false` on every page,
+  so it showed none of the kit's reader: chapter cards, One / Two / All
+  chapters, pinning and reading layers. The site now enables the reader, every
+  registered page sets `reader = true`, and only the home page stays
+  reader-free. `nested_nav` is off so the home sidebar shows the same tree as
+  the reader pages.
+- The reader keeps text before the first `##` as its own chapter, which left a
+  nearly empty Introduction card on every guide. Registered pages now merge a
+  short opening and the source line into the first chapter; the three
+  overview pages moved their lead sentence under their first heading.
+- The site review now checks reader chapters on every page, the merged
+  opening, the two-chapter view and the reader's narrow menu, replacing the
+  folded-navigation browser check (the unit tests still cover `nested_nav`).
+
 ## 2026-11-07 — Build the kit site's own pages from kit components
 
 - The home, getting-started, practices and site-toolkit pages used a private

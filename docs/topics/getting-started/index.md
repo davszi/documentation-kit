@@ -3,7 +3,6 @@ title = "Get started"
 brand = "Documentation kit"
 brand_sub = "what it provides · install · adopt"
 description = "What the kit provides, how a project pins it and which adoption route fits."
-reader = false
 body_class = "reference-page"
 components = ["toc", "nav", "filelinks", "panel-switcher"]
 page_css = ["build-sheet.css"]
@@ -12,12 +11,12 @@ toc = [["What the kit provides", "#what-the-kit-provides"], ["Set it up", "#set-
 
 # Get started with the documentation kit
 
+## What the kit provides
+
 <p class="bs-lead">A project adds the kit as one pinned Git submodule. The kit supplies shared practices and tools; the project keeps its content and decides when to upgrade.</p>
 
 This page orients you. Commands and exact contracts stay in the guides it links,
 so each instruction has one place to change.
-
-## What the kit provides
 
 | Folder | What it is | Guide |
 |---|---|---|
