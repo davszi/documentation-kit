@@ -123,12 +123,11 @@ A resource used in both sets appears once. This is set notation for packaging, n
 
 <!-- fold: code Configure the project identity once -->
 
-The first three lines of the starter configuration are a real source excerpt. Replace the example repository before publishing source links; the title and home label are project choices.
+`init` writes the title and source repository into the first lines of `docs/site/site.toml` (`--title`, `--repository`); the home label is a project choice. The two lines after them are a real source excerpt: the revision that source links use, and the switch that turns on the chapter reader.
 
-```toml source=docs/site/site.toml#L1-L3
-title = "Documentation kit"
-home_label = "Docs"
-gh_repo = "https://github.com/example/project"
+```toml source=docs/site/site.toml#L4-L5
+gh_ref = "main"
+chapter_reader = true
 ```
 
 <!-- /fold -->

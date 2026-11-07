@@ -60,7 +60,7 @@ toc = [["What it provides", "#what-the-kit-provides"], ["Set it up", "#set-it-up
 | Quoting a measured number | `.docs-kit/rules/writing/evidence.md` and our benchmark records |
 ```
 
-The [starter's router](../../examples/starter/AGENTS.md) has every row; keep the ones you need.
+The [starter's router](../../examples/starter/AGENTS.md.tmpl) has every row; keep the ones you need.
 
 </section>
 

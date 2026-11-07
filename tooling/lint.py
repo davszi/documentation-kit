@@ -112,7 +112,7 @@ def recorded_source_roots(source: Path | None = None) -> tuple[str, ...]:
         origin = manifest["source_root"]
         # Validate even if there is no rebasing to perform for this source.
         resolve_path(REPO, recorded_roots=(origin,))
-        if (source is None or source == DOCS / "worklog.md"
+        if (source is None or is_entry(source, "worklog")
                 or any(REPO / row["path"] == source for row in manifest["documents"])):
             roots.append(origin)
     return tuple(dict.fromkeys(roots))
@@ -219,10 +219,44 @@ def check_md_links() -> None:
             _check_chunk_links(f, chunk, base)
 
 
+_ENTRY_DEFAULTS = {"worklog": "docs/worklog.md", "open_work": "docs/open/OPEN.md"}
+_entry_cache: dict = {}
+
+
+def entry_path(key: str) -> Path | None:
+    """The project's configured chronology or open-work file, validated once.
+
+    Projects keep docs/worklog.md and docs/open/OPEN.md; a project with
+    established names may set `worklog` or `open_work` in docs/site/site.toml.
+    """
+    if key in _entry_cache:
+        return _entry_cache[key]
+    config = REPO / 'docs/site/site.toml'
+    site = tomllib.loads(config.read_text()) if config.is_file() else {}
+    relative = site.get(key, _ENTRY_DEFAULTS[key])
+    path = None
+    if (not isinstance(relative, str) or Path(relative).is_absolute()
+            or '..' in Path(relative).parts):
+        error(f'{key} must name a project-relative file')
+    else:
+        candidate = REPO / relative
+        if candidate.is_symlink() or not candidate.resolve().is_relative_to(REPO):
+            error(f'{key} must stay inside the project')
+        else:
+            path = candidate
+    _entry_cache[key] = path
+    return path
+
+
+def is_entry(f: Path, key: str) -> bool:
+    path = entry_path(key)
+    return path is not None and f.resolve() == path.resolve()
+
+
 def _check_chunk_links(f: Path, text: str, base: Path) -> None:
         locations = evidence_document_locations()
         frozen_source = f in locations.values()
-        origins = recorded_source_roots(f) if frozen_source or f == DOCS / "worklog.md" else ()
+        origins = recorded_source_roots(f) if frozen_source or is_entry(f, "worklog") else ()
         for target in LINK_RE.findall(strip_code(text)):
             if target.startswith(("http://", "https://", "mailto:")):
                 continue
@@ -233,7 +267,7 @@ def _check_chunk_links(f: Path, text: str, base: Path) -> None:
                     error(f"{rel}: dead same-file anchor #{frag}")
                 continue
             dest = resolve_path(base / path_part, recorded_roots=origins)
-            if ((frozen_source or f == DOCS / "worklog.md") and Path(path_part).is_absolute()
+            if ((frozen_source or is_entry(f, "worklog")) and Path(path_part).is_absolute()
                     and not dest.is_relative_to(REPO)):
                 error(f"{rel}: unknown historical checkout root in {target}")
                 continue
@@ -242,7 +276,7 @@ def _check_chunk_links(f: Path, text: str, base: Path) -> None:
                 # Frozen source links resolve in their recorded historical layout,
                 # including other frozen originals that now also have a live plan.
                 # Live sources validate a surviving reduced plan's actual contents.
-                historical_log = f == DOCS / "worklog.md"
+                historical_log = is_entry(f, "worklog")
                 # Keep dated worklog entries append-only. A reduced surviving
                 # original can lose an old anchor; consult its exact record only
                 # when that specific historical anchor exists there. Current
@@ -345,7 +379,7 @@ def check_figures() -> None:
         error(f"manifest entry without figure file: {name}")
     referenced = set()
     for f in md_files():
-        if f.name == "worklog.md":
+        if is_entry(f, "worklog"):
             continue  # chronology names retired figures — not a live reference
         text = f.read_text()
         # Included galleries are live figures on the built page too. Resolve
@@ -419,7 +453,7 @@ def check_markers(dump: bool = False) -> None:
         for i, line in enumerate(f.read_text().splitlines(), 1):
             if not MARKER_RE.search(line):
                 continue
-            if f.name in ("worklog.md", "OPEN.md"):
+            if is_entry(f, "worklog") or is_entry(f, "open_work"):
                 # declarations are banned here; prose MENTIONS of markers are fine
                 if MARKER_OK_RE.search(line):
                     error(f"{rel}:{i}: INVARIANT/DON'T-REDO declarations belong on pages or class docs, not {f.name}")
@@ -434,9 +468,11 @@ def check_markers(dump: bool = False) -> None:
 
 
 def check_open() -> None:
-    f = DOCS / "open" / "OPEN.md"
+    f = entry_path("open_work")
+    if f is None:
+        return
     if not f.is_file():
-        error("docs/OPEN.md missing")
+        error(f"{f.relative_to(REPO)} missing")
         return
     text = f.read_text()
     if "~~" in text:
@@ -451,19 +487,11 @@ def check_open() -> None:
 
 
 def check_worklog() -> None:
-    config = REPO / 'docs/site/site.toml'
-    site = tomllib.loads(config.read_text()) if config.is_file() else {}
-    relative = site.get('worklog', 'docs/worklog.md')
-    if (not isinstance(relative, str) or Path(relative).is_absolute()
-            or '..' in Path(relative).parts):
-        error('worklog must name a project-relative file')
-        return
-    f = REPO / relative
-    if f.is_symlink() or not f.resolve().is_relative_to(REPO):
-        error('worklog must stay inside the project')
+    f = entry_path("worklog")
+    if f is None:
         return
     if not f.is_file():
-        error(f'{relative} missing')
+        error(f'{f.relative_to(REPO)} missing')
         return
     dates = re.findall(r"^## (\d{4}-\d{2}-\d{2})", f.read_text(), re.M)
     starts = [d[:10] for d in dates]
@@ -488,8 +516,8 @@ def check_worklog() -> None:
 def check_tails() -> None:
     """A working-notes tail (below <!-- page-end -->) must be reachable:
     OPEN.md links into it, else it silently rots off the hosted page."""
-    open_md = DOCS / "open" / "OPEN.md"
-    open_text = open_md.read_text() if open_md.is_file() else ""
+    open_md = entry_path("open_work")
+    open_text = open_md.read_text() if open_md is not None and open_md.is_file() else ""
     for f in _paths.topic_pages(REPO):
         if "<!-- page-end -->" not in f.read_text():
             continue

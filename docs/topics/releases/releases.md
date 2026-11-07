@@ -4,7 +4,7 @@ The kit's version is in [`VERSION`](../../../VERSION); each release is tagged `v
 A consuming project pins an exact commit or tag and upgrades deliberately, following
 [Pin and upgrade](../../../README.md#pin-and-upgrade). This record lists what each
 release changes for consumers and how to move to it. Chronology stays in the
-[worklog](../../worklog.md); consumer adoption status stays in each consuming project.
+[worklog](../../KIT_WORKLOG.md); consumer adoption status stays in each consuming project.
 
 ## Unreleased — source pages, kit website and experiment guides
 
@@ -23,13 +23,16 @@ add routes to the new experiment guides.
 | Navigation | Optional `nested_nav = true` folds navigation groups and nests the current page's sections under its entry; the flat tree remains the default | [Authoring paths](../../../rules/site/authoring.md#authoring-paths) |
 | Reader | A registered page with `reader = true` merges a short opening and its source line into the first chapter; longer openings stay a separate chapter | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
 | Theme fixes | A carousel inside a build-sheet grid figure now shows one slide at a time (its rule outranks `.bs-grid figure img`); the reader help describes docking with `«` and `☰` instead of a pin button that is not shown | [Reader](../../../rules/site/reader.md#shared-reading-layout) |
-| Repository | Extraction history is removed: `provenance.json`, `verification/`, `preview/`, the extraction record and `rules/extraction-map.md`. Nothing consumers run or route to used them; they remain at the `v1.1.0` tag | [Project context](../../PROJECT_CONTEXT.md) |
+| Repository | Extraction history is removed: `provenance.json`, `verification/`, `preview/`, the extraction record and `rules/extraction-map.md`. Nothing consumers run or route to used them; they remain at the `v1.1.0` tag | [Kit context](../../KIT_CONTEXT.md) |
+| Starter | Entry files are stored as `*.tmpl` and written under their real names by `init`, which gains `--title` and `--repository` for `site.toml`; generated projects are unchanged apart from those values | [Start a project](../../../README.md#start-a-project) |
+| Lint | Optional `open_work` setting names the open-work file (default `docs/open/OPEN.md`); every worklog check now honours the existing `worklog` setting | [Resources and evidence](../../../rules/site/resources.md) |
+| Repository | The kit's own entry files are `docs/KIT_CONTEXT.md`, `docs/KIT_INDEX.md`, `docs/KIT_WORKLOG.md` and `docs/open/KIT_OPEN.md`; its `AGENTS.md` and `CLAUDE.md` state they apply only to the kit repository | [Kit context](../../KIT_CONTEXT.md) |
 | Kit website | The kit builds its own reference site from the repository root | [Website record](../website/website.md) |
 | Experiment guides | New shared guides: experiments are investigations or qualifications, start small and state a budget; a pre-stated bar and verdict are required for confirmatory investigations and qualifications; terms for learned or fitted models, such as final runs, are scoped to their own section; claim-scoped verification and regression gates; routes added to the starter's `AGENTS.md` | [Workflow](../../../rules/experiments/workflow.md), [verification](../../../rules/experiments/verification.md) |
 
 The starter's generated pages are byte-identical to 1.1.0 output; only
 `assets/base.css` and `site-build.json` differ. Validation is recorded in the
-[worklog](../../worklog.md#2026-11-07--build-the-kits-reference-website).
+[worklog](../../KIT_WORKLOG.md#2026-11-07--build-the-kits-reference-website).
 
 ## 1.1.0 — focused engineering and documentation guides
 
@@ -55,7 +58,7 @@ tests, reader-content preservation and both Node checks. Real Chromium checks
 covered 1600 × 1000 and 390 × 844 reader/home layouts, paired navigation,
 browser-helper and panel-switcher fixtures, slide fit and Continue/Back, deck
 presentation/print and narrow no-JavaScript reading. Saved wide, narrow, paired
-and deck screenshots were inspected. The [worklog](../../worklog.md#2026-11-07--integrate-upstream-releases-and-slide-support)
+and deck screenshots were inspected. The [worklog](../../KIT_WORKLOG.md#2026-11-07--integrate-upstream-releases-and-slide-support)
 records failed browser attempts, corrected harness settings and cleanup scope.
 
 These are kit/starter checks. Each consumer still owns its exact-pin adoption,

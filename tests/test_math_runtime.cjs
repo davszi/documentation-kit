@@ -25,7 +25,7 @@ const document={createDocumentFragment:()=>new DomNode(11),createTextNode:text,c
 const adapter={ParseError:katex.ParseError,render(formula,node,options) {node.rendered=katex.renderToString(formula,{...options,throwOnError:true});calls.push({formula,display:options.displayMode});}};
 const moduleObject={exports:{}};
 vm.runInNewContext(fs.readFileSync(path.join(root,'theme/assets/vendor/katex/contrib/auto-render.min.js'),'utf8'),{module:moduleObject,exports:moduleObject.exports,require:name=>{assert.equal(name,'katex');return adapter;},document,Node:{TEXT_NODE:3},console});
-const page=fs.readFileSync(path.join(root,'examples/starter/.build/docs/html/guide.html'),'utf8');
+const page=fs.readFileSync(path.join(root,'.build/starter/.build/docs/html/guide.html'),'utf8');
 const script=[...page.matchAll(/<script>([\s\S]*?)<\/script>/g)].find(m=>m[1].includes('renderMathInElement(document.querySelector'))[1];
 vm.runInNewContext(script,{document,renderMathInElement:moduleObject.exports});
 assert.deepEqual(calls.map(c=>c.display),[false,true]);
@@ -34,8 +34,8 @@ assert.equal(currency.textContent,'Costs $10 and $20.');
 ignored.forEach(n=>assert.equal(n.textContent,String.raw`$$do_not_render$$ \(also_literal\)`));
 const decode=s=>s.replace(/&(?:amp|lt|gt|quot|#x27|#39);/g,e=>({'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#x27;':"'",'&#39;':"'"}[e]));
 let inlineCount=0,displayCount=0;
-for (const file of fs.readdirSync(path.join(root,'examples/starter/.build/docs/html')).filter(n=>n.endsWith('.html'))) {
-  const html=fs.readFileSync(path.join(root,'examples/starter/.build/docs/html',file),'utf8');
+for (const file of fs.readdirSync(path.join(root,'.build/starter/.build/docs/html')).filter(n=>n.endsWith('.html'))) {
+  const html=fs.readFileSync(path.join(root,'.build/starter/.build/docs/html',file),'utf8');
   for(const m of html.matchAll(/<span class="math-inline">\\\(([\s\S]*?)\\\)<\/span>/g)) {
     assert.ok(!m[1].includes('<'),`${file}: formula split by Markdown`);
     katex.renderToString(decode(m[1]),{throwOnError:true,displayMode:false});inlineCount++;

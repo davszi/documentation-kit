@@ -2,6 +2,22 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-08 — Keep kit, starter and project entry files apart
+
+- In a consuming project the kit's own `AGENTS.md`, `CLAUDE.md` and
+  `docs/PROJECT_CONTEXT.md`, the starter's copies and the project's own files
+  shared names, and Claude Code can load a nested `CLAUDE.md` when reading
+  files under `.docs-kit/`. The kit's entry files are now
+  `docs/KIT_CONTEXT.md`, `docs/KIT_INDEX.md`, `docs/KIT_WORKLOG.md` and
+  `docs/open/KIT_OPEN.md`; its `AGENTS.md` and `CLAUDE.md` say they apply
+  only to the kit repository. Lint gains an `open_work` setting, and every
+  worklog check honours `worklog`.
+- The starter's entry files are `*.tmpl` templates; `init` writes them under
+  their real names and fills `--title` and `--repository` into `site.toml`.
+  `tests/run_checks.sh` generates the starter under `.build/starter/` and
+  builds, lints and unit-tests that output; the starter guide's config excerpt
+  now shows lines that do not vary per project.
+
 ## 2026-11-08 — Remove the extraction history
 
 - Removed `provenance.json`, `verification/`, `preview/`,

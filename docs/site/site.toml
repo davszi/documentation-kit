@@ -6,6 +6,10 @@ home_label = "Kit"
 gh_repo = "https://github.com/davszi/documentation-kit"
 gh_ref = "main"
 chapter_reader = true
+# The kit's own chronology and open work use KIT_ names so they are never
+# mistaken for a consuming project's docs/worklog.md or docs/open/OPEN.md.
+worklog = "docs/KIT_WORKLOG.md"
+open_work = "docs/open/KIT_OPEN.md"
 
 [[nav]]
 label = "Home"
@@ -336,12 +340,12 @@ slug = "website"
 description = "How this site is organized, built and previewed, and its open hosting decision."
 
 [[source_pages]]
-source = "docs/PROJECT_CONTEXT.md"
+source = "docs/KIT_CONTEXT.md"
 slug = "kit-context"
 description = "Where each part of this repository lives and how to check it."
 
 [[source_pages]]
-source = "docs/index.md"
+source = "docs/KIT_INDEX.md"
 slug = "reading-index"
 
 [[source_pages]]

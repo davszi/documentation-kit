@@ -27,7 +27,7 @@ toc = [["Routing", "#how-contributors-find-a-rule"], ["Practice areas", "#areas"
 <figcaption><b>Figure 1.</b> One router row joins a shared rule with the project's own specifics. It points to both and copies neither. See <a href="documentation-system.html#agent-entrypoints-import-versus-point">agent entrypoints</a>.</figcaption>
 </figure>
 
-To adopt a guide, copy its row from the [starter's router](../../examples/starter/AGENTS.md) into your `AGENTS.md` and name the project record it pairs with. Each practice page lists the rows for its guides.
+To adopt a guide, copy its row from the [starter's router](../../examples/starter/AGENTS.md.tmpl) into your `AGENTS.md` and name the project record it pairs with. Each practice page lists the rows for its guides.
 
 </section>
 

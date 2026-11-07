@@ -24,19 +24,19 @@ git submodule add <shared-repository-url> .docs-kit
 git submodule update --init --recursive
 python3.12 -m venv .build/docs-env
 .build/docs-env/bin/python -m pip install -r .docs-kit/requirements.txt
-.build/docs-env/bin/python .docs-kit/docsite.py init .
+.build/docs-env/bin/python .docs-kit/docsite.py init . --title "My project" --repository https://github.com/owner/repo
 ```
 
 `init` adds the starter only after checking every destination. It refuses to
-overwrite existing files. For an existing documentation system, keep its
+overwrite existing files. It writes the title (default: the folder name) and the
+source repository into `docs/site/site.toml`. For an existing documentation system, keep its
 content, add the configuration deliberately and follow [adoption](rules/maintenance.md).
 
 For local-only use, add the kit with
 `git -c protocol.file.allow=always submodule add /path/to/documentation-kit .docs-kit`.
 Use a shared remote URL when distributing consuming repositories to others.
 
-Edit `docs/site/site.toml`: set the project title, sidebar home label, source
-repository/ref and navigation. Set `page_css = ["build-sheet.css"]` on pages
+Review `docs/site/site.toml`: the sidebar home label, source ref and navigation. Set `page_css = ["build-sheet.css"]` on pages
 that use the shared layout. Add `.build/` to the project's `.gitignore`, then
 track the authored sources before building:
 
@@ -59,8 +59,13 @@ page is `html/index.html`. The server exposes generated output only.
 | `tooling/` and `docsite.py`: renderer, packaging and checks | `docs/site/site.toml`, local CSS/components/fragments, `docs/figures/` |
 | `examples/starter/`: authoring reference and initial project skeleton | `docs/development/` when needed, open plans, evidence, dated sessions and `docs/worklog.md` |
 
-The starter uses one [task router](examples/starter/AGENTS.md) with named paths
-for Codex and a [Claude import](examples/starter/CLAUDE.md) of that same router.
+The starter uses one [task router](examples/starter/AGENTS.md.tmpl) with named paths
+for Codex and a [Claude import](examples/starter/CLAUDE.md.tmpl) of that same router.
+The starter's entry files (`AGENTS.md`, `CLAUDE.md`, `docs/PROJECT_CONTEXT.md`,
+`docs/index.md`, `docs/worklog.md`, `docs/open/OPEN.md` and `docs/site/site.toml`)
+are stored as `*.tmpl`, so none is live inside `.docs-kit/`; `init` writes them
+under their real names, with `--title` and `--repository` filled into
+`site.toml`.
 Read the shared rules before the actions named by the router. Keep project
 exceptions in project-owned records. Change common rules in this repository.
 
@@ -75,7 +80,7 @@ supporting records and receipt of work.
 
 ## Focused guides
 
-Read only the guides matching the action. [Documentation reading index](docs/index.md)
+Read only the guides matching the action. [Documentation reading index](docs/KIT_INDEX.md)
 links to the kit's contracts, evidence and chronology.
 
 | Area | Guides |
@@ -158,17 +163,16 @@ optional.
 
 ```bash
 python -m pip install -r requirements.txt
-python docsite.py build --project examples/starter
-python docsite.py lint --project examples/starter --strict
-python docsite.py build --project .
-python docsite.py lint --project . --strict
-DOCSITE_PROJECT_ROOT="$PWD/examples/starter" PYTHONPATH=tooling python -m unittest discover -s tests -p 'test_*.py'
-node tests/test_math_runtime.cjs
-node tests/test_site_filelinks.cjs
+bash tests/run_checks.sh
 ```
 
-The second pair builds and checks the kit's own [reference website](docs/topics/website/website.md),
-which renders this README and the guides in `rules/` in place.
+`tests/run_checks.sh` generates the starter with `init` under `.build/starter/`,
+builds and lints it, runs the unit tests against it, then builds and checks the
+kit's own [reference website](docs/topics/website/website.md) and the Node checks.
+The kit's own entry files use `KIT_` names (`docs/KIT_CONTEXT.md`,
+`docs/KIT_INDEX.md`, `docs/KIT_WORKLOG.md`, `docs/open/KIT_OPEN.md`) so they are
+never mistaken for a consuming project's files. The kit site renders this README
+and the guides in `rules/` as reference pages.
 The independent-consumer tests create disposable Git repositories. Build output
 stays under each consumer's `.build/docs/`; tools never infer the consumer from
 where the kit happens to be installed.

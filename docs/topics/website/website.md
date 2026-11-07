@@ -43,7 +43,7 @@ reader-free, with `toc = []`.
 ## Build and preview
 
 Build from the kit root with `python docsite.py build --project .`; the output
-is `.build/docs/`. [Project context](../../PROJECT_CONTEXT.md) lists the full
+is `.build/docs/`. [Project context](../../KIT_CONTEXT.md) lists the full
 check sequence, which builds and lints this site beside the starter.
 
 ## Open decision: hosting and audience

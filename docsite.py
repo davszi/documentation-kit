@@ -15,6 +15,9 @@ def main():
     commands = parser.add_subparsers(dest='command', required=True)
     init = commands.add_parser('init', help='add starter sources without overwriting existing files')
     init.add_argument('project', type=Path)
+    init.add_argument('--title', help='site title (default: the project folder name)')
+    init.add_argument('--repository', default='https://github.com/example/project',
+                      help='source repository URL for source and edit links')
     for name in ('build', 'lint'):
         command = commands.add_parser(name)
         command.add_argument('--project', type=Path, default=Path.cwd())
@@ -34,19 +37,36 @@ def main():
         parser.error('Python 3.12 or newer is required; validation uses Python 3.12.')
     project = args.project.resolve()
     if args.command == 'init':
+        # Entry files (AGENTS.md, CLAUDE.md, docs/PROJECT_CONTEXT.md, …) are stored
+        # as *.tmpl so that no live agent or project file exists inside the kit;
+        # init writes them under their real names.
         starter = KIT / 'examples/starter'
         sources = [p for p in starter.rglob('*') if p.is_file() and '.build' not in p.relative_to(starter).parts]
-        if any(not (project / p.relative_to(starter)).resolve().is_relative_to(project) for p in sources):
+
+        def target(source):
+            relative = source.relative_to(starter)
+            return project / (relative.with_suffix('') if relative.suffix == '.tmpl' else relative)
+
+        if any(not target(p).resolve().is_relative_to(project) for p in sources):
             parser.error('No files written; a starter destination escapes the project through a symlink.')
-        conflicts = [str(p.relative_to(starter)) for p in sources
-                     if (project / p.relative_to(starter)).exists() or (project / p.relative_to(starter)).is_symlink()]
+        conflicts = [str(target(p).relative_to(project)) for p in sources
+                     if target(p).exists() or target(p).is_symlink()]
         if conflicts:
             parser.error('No files written; existing starter destinations: ' + ', '.join(conflicts))
+        toml_text = lambda value: value.replace('\\', '\\\\').replace('"', '\\"')
+        values = {'{{project_title}}': toml_text(args.title or project.name),
+                  '{{repository_url}}': toml_text(args.repository)}
         for source in sources:
-            destination = project / source.relative_to(starter)
+            destination = target(source)
             destination.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(source, destination)
-        print(f'Starter added to {project}. Configure docs/site/site.toml, then track the sources in Git before building.')
+            if source.suffix == '.tmpl':
+                text = source.read_text()
+                for placeholder, value in values.items():
+                    text = text.replace(placeholder, value)
+                destination.write_text(text)
+            else:
+                shutil.copyfile(source, destination)
+        print(f'Starter added to {project}. Review docs/site/site.toml, then track the sources in Git before building.')
         return 0
     if not (project / 'docs/site/site.toml').is_file():
         parser.error(f'No docs/site/site.toml under {project}; use init for a new project.')

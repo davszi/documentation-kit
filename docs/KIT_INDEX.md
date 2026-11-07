@@ -1,6 +1,6 @@
 # Documentation reading index
 
-[Project context](PROJECT_CONTEXT.md) owns the repository map and development
+[Project context](KIT_CONTEXT.md) owns the repository map and development
 commands. [README](../README.md) owns consumer setup and upgrades.
 
 ## Engineering practices
@@ -31,7 +31,7 @@ explanations, measurements, figures, mathematics and code guides.
 
 The [website record](topics/website/website.md) owns the kit's own site: its
 structure, source registry, build command and open hosting decision.
-[Open work](open/OPEN.md) routes owed workstreams to their owners.
+[Open work](open/KIT_OPEN.md) routes owed workstreams to their owners.
 
 ## Site development
 
@@ -48,4 +48,4 @@ routes existing consumers through policy, layout and adapter changes.
 
 The extraction record, policy map, source hashes and initial receipts remain at
 the [`v1.1.0` tag](https://github.com/davszi/documentation-kit/tree/v1.1.0).
-[Worklog](worklog.md) is append-only chronology.
+[Worklog](KIT_WORKLOG.md) is append-only chronology.

@@ -48,7 +48,8 @@ Use `body_class` for plain project CSS class names when content needs scoped
 styles. Common shell, typography and reader behavior stay in the kit.
 
 An existing project may set `worklog = "docs/development/worklog.md"` to retain
-its canonical history path. The worklog remains project-owned; the configured
-path must stay inside the repository. New projects use `docs/worklog.md`.
+its canonical history path, and `open_work` to name its open-work file. Both
+remain project-owned; configured paths must stay inside the repository. New
+projects use `docs/worklog.md` and `docs/open/OPEN.md`.
 
 Validate [generated-figure provenance](../writing/figures.md#figures-and-comparisons) and [frozen-document identities](../documentation.md#evidence-identity-and-frozen-records) separately from link resolution and presentation. Follow the frozen-record preservation rules when resolving lint failures.

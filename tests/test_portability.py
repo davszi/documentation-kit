@@ -1,4 +1,5 @@
 """Exercise real Git consumer roots, source boundaries and portable commands."""
+import re
 import hashlib
 import json
 import os
@@ -42,6 +43,25 @@ class Consumers(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         result = invoke('lint', '--project', self.root, '--strict')
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_init_writes_entry_templates_under_their_real_names(self):
+        # Entry files live in the kit only as *.tmpl, so none is active inside .docs-kit/.
+        starter = KIT / 'examples/starter'
+        for name in ('AGENTS.md', 'CLAUDE.md', 'docs/PROJECT_CONTEXT.md', 'docs/index.md',
+                     'docs/worklog.md', 'docs/open/OPEN.md', 'docs/site/site.toml'):
+            self.assertFalse((starter / name).exists(), name + ' is live inside the kit')
+            self.assertTrue((self.root / name).is_file(), name + ' was not written')
+        self.assertEqual(list(self.root.rglob('*.tmpl')), [])
+        config = (self.root / 'docs/site/site.toml').read_text()
+        self.assertIn(f'title = "{self.root.name}"', config)
+        self.assertNotIn('{{', config)
+        other = Path(tempfile.mkdtemp(prefix='docs-kit-titled-'))
+        self.addCleanup(shutil.rmtree, other)
+        result = invoke('init', other, '--title', 'Say "hi"', '--repository', 'https://example.org/team/repo')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        config = (other / 'docs/site/site.toml').read_text()
+        self.assertIn('title = "Say \\"hi\\""', config)
+        self.assertIn('gh_repo = "https://example.org/team/repo"', config)
 
     def test_init_refuses_existing_files_before_writing_anything(self):
         source = self.root / 'docs/site/site.toml'
@@ -169,7 +189,7 @@ def verify(root, *, require_all_manifests=False): raise ValueError("project evid
 
     def test_title_and_source_links_belong_to_the_consumer(self):
         config = self.root / 'docs/site/site.toml'
-        config.write_text(config.read_text().replace('Documentation kit', 'Second project').replace('home_label = "Docs"', 'home_label = "Second"'))
+        config.write_text(re.sub(r'^title = ".*"$', 'title = "Second project"', config.read_text(), flags=re.M).replace('home_label = "Docs"', 'home_label = "Second"'))
         self.track()
         result = invoke('build', '--project', self.root)
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -181,7 +201,7 @@ def verify(root, *, require_all_manifests=False): raise ValueError("project evid
     def test_existing_project_can_keep_its_canonical_worklog(self):
         config = self.root / 'docs/site/site.toml'
         lines = config.read_text().splitlines(keepends=True)
-        lines.insert(3, 'worklog = "docs/development/worklog.md"\n')
+        lines.insert(5, 'worklog = "docs/development/worklog.md"\n')
         config.write_text(''.join(lines))
         destination = self.root / 'docs/development/worklog.md'
         destination.parent.mkdir(parents=True)

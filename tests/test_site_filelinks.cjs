@@ -5,7 +5,7 @@ const path=require('node:path');
 const vm=require('node:vm');
 const assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
-const script=fs.readFileSync(path.join(root,'examples/starter/.build/docs/html/assets/filelinks.js'),'utf8');
+const script=fs.readFileSync(path.join(root,'.build/starter/.build/docs/html/assets/filelinks.js'),'utf8');
 class Link {
   constructor(attrs,text=''){this.attrs={...attrs};this.textContent=text;}
   getAttribute(name){return this.attrs[name]??null;}

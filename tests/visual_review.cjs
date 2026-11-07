@@ -6,7 +6,7 @@ const path = require('node:path');
 const assert = require('node:assert/strict');
 const {settle, checkLayout, setView, goHash, readerChecks} = require('../tooling/browser_checks.cjs');
 const kit = path.resolve(__dirname, '..');
-const root = path.join(kit, 'examples/starter/.build/docs');
+const root = path.join(kit, '.build/starter/.build/docs');
 const output = path.join(kit, '.build/visual-review');
 const mime = {'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml','.woff2':'font/woff2'};
 const server = http.createServer(async (req,res) => {

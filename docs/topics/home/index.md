@@ -49,7 +49,7 @@ toc = []
 | Handing off work          | `.docs-kit/rules/engineering/handoffs.md`                            |
 ```
 
-<p class="home-foot">Each row pairs a kit guide with the project record that holds your specifics. The <a href="../../examples/starter/AGENTS.md">starter's router</a> has every row; keep the ones you need. Full commands: <a href="readme.html#start-a-project">Start a project</a>.</p>
+<p class="home-foot">Each row pairs a kit guide with the project record that holds your specifics. The <a href="../../examples/starter/AGENTS.md.tmpl">starter's router</a> has every row; keep the ones you need. Full commands: <a href="readme.html#start-a-project">Start a project</a>.</p>
 </section>
 
 <section class="home-now" aria-label="Every page">
