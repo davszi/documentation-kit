@@ -4,7 +4,7 @@ This starter demonstrates a project-owned documentation site built by a version-
 
 ## Read first
 
-Follow the [task routes](../../AGENTS.md#read-before-the-relevant-action) before the action they govern.
+Follow the [task routes](../AGENTS.md#read-before-the-relevant-action) before the action they govern.
 
 ## Repository map
 
@@ -42,4 +42,4 @@ Replace `https://github.com/example/project` in site configuration. Choose the s
 
 ## Documentation index
 
-[Starter topic record](../topics/guide/guide.md) · [Open work](../open/OPEN.md) · [Worklog](../worklog.md).
+[Documentation reading index](index.md) · [Starter topic record](topics/guide/guide.md) · [Open work](open/OPEN.md) · [Worklog](worklog.md).

@@ -2,6 +2,74 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-07 — Final local kit suite after QA-provenance changes
+
+- Rerun the complete `tests/run_checks.sh` on the QA-provenance hook and its
+  regression tests with Python 3.12.3 and Node 22.22.3. Starter build is current;
+  strict lint has zero warnings; all 54 Python tests pass in 2.961 s. Reader
+  preservation and both Node math/source-link checks pass.
+- Attempt 04 retains its exact command, changed-source hashes, environment and
+  diff under the consuming ADP checkout's ignored
+  `.build/coordination/docs-final-20261107/kit-local/attempt-04/`. The 4 GiB
+  zero-swap scope uses a 180 s worker deadline, 10 s cleanup reserve and 220 s
+  outside deadline. Terminal owned peak is 72,253,440 bytes; elapsed time is
+  5.742 s; owned-process absence is verified. Earlier attempts remain retained.
+- No intentional rendered layout changed, and browser pixel inspection was not
+  run. This validates the recorded local source, not deployment or later origin
+  integration. The landing commit supplies its identity.
+
+## 2026-11-07 — Local restructure regression validation
+
+- Run the complete `tests/run_checks.sh` suite with Python 3.12.3 and Node
+  22.22.3. Starter build is current; strict lint has zero warnings; all 52 Python
+  tests pass in 2.999 s. Reader preservation, vendored math integration and
+  source-file links pass, including text/code/media/anchor/figure identities.
+- Fix the existing alternate-worklog fixture to update both project context and
+  the new reading index after explicitly moving its worklog. Keep strict
+  dead-link detection and the original acceptance requirement unchanged.
+- Preserve the first attempt's systemd setup failure (suite not started) and
+  the second attempt's stale fixture-link failure. The third attempt passes
+  under a 4 GiB zero-swap scope, 180 s worker deadline and 10 s cleanup reserve;
+  its outside deadline is 220 s. Terminal owned peak is 68,677,632 bytes, elapsed
+  time is 5.703 s, and owned-process absence is verified.
+- Exact commands, source/environment identities, diffs, failed attempts and
+  receipts remain in the consuming ADP checkout's ignored
+  `.build/coordination/docs-final-20261107/kit-local/`. No intentional rendered
+  layout changed; browser pixel inspection was not run. This is a local suite
+  result, not a hosted deployment check. The landing commit assigns identity.
+
+## 2026-11-07 — Focused engineering and documentation guides
+
+- Add portable [code practices](../rules/engineering/code.md),
+  [efficiency rules](../rules/engineering/performance.md) and
+  [execution/resource guidance](../rules/engineering/execution.md). Keep
+  project-specific tools, workloads, profiles and acceptance requirements local.
+- Move the existing writing and site contracts into focused `rules/writing/`
+  and `rules/site/` guides. Keep the original entrypoints and section anchors as
+  short routers; preserve their clauses and rebase moved relative links.
+- Move kit and starter orientation to `docs/PROJECT_CONTEXT.md`, add
+  `docs/index.md` reading indexes, update canonical destinations and action
+  routes, and keep both worklogs at `docs/worklog.md`. Claude entrypoints import
+  only `AGENTS.md`. README now routes engineering, writing and site work.
+- Consolidate repeated execution, performance, evidence, figure-provenance,
+  review and local-media rules into their owning guides, with links from
+  callers. Preserve unique context and the figure output-hash requirement.
+- Focused checks passed on 31 changed kit and 38 ADP Markdown files with no
+  errors or warnings. Old anchors, moved manifest bytes and the ADP worklog
+  were preserved. The earlier 17 path-compatibility tests passed in 0.545 s.
+  Independent source review found no consequential requirement lost in the
+  overlap consolidation. Full site and rendered checks remain deferred.
+  Changes are uncommitted; the landing commit will assign their identity.
+
+## 2026-11-07 — Shared delivery and handoff policy
+
+- Add the [approved delivery guide](../rules/engineering/delivery.md) for
+  assignment scope, owner responsibility, coordination, parallel work and
+  escalation, and the [handoff guide](../rules/engineering/handoffs.md) for
+  completion, blockers, durable evidence and receiving work. Add action routes
+  for kit contributors and starter projects.
+  Validation is deferred to the agreed documentation batch.
+
 ## 2026-11-07 — Shared Git practices
 
 - Add the [Git guide](../rules/engineering/git.md) for coherent commits,

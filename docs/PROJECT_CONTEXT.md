@@ -1,12 +1,12 @@
-# Documentation kit context
+# Engineering and documentation kit context
 
-This repository owns reusable documentation policy and the shared site engine.
-The [README](../../README.md) owns consumer setup and update commands;
-[shared maintenance](../../rules/maintenance.md) owns the authoring contract.
+This repository owns reusable engineering and documentation policy and the shared site engine.
+The [README](../README.md) owns consumer setup and update commands;
+[shared maintenance](../rules/maintenance.md) owns the authoring contract.
 
 | Location | Responsibility |
 |---|---|
-| `rules/` | Canonical policy, writing/layout rules and source coverage |
+| `rules/` | Canonical engineering/documentation policy, writing/layout rules and source coverage |
 | `theme/` | Shared shell, reader, CSS/JS, fonts and local math assets |
 | `tooling/`, `docsite.py` | Consumer-root-independent build/lint and safe initialization |
 | `examples/starter/` | Neutral consuming project and visual guide |
@@ -14,13 +14,16 @@ The [README](../../README.md) owns consumer setup and update commands;
 | `provenance.json` | Extraction origins and source/extracted byte hashes |
 | `verification/`, `preview/` | Initial check receipts and illustration captures |
 
-The [extraction record](../topics/extraction/extraction.md) owns initial scope,
-evidence and limits. [Worklog](../worklog.md) owns chronology. Source files in
+The [extraction record](topics/extraction/extraction.md) owns initial scope,
+evidence and limits. [Worklog](worklog.md) owns chronology. Source files in
 `rules/` remain canonical for transferable rules; consumer exceptions stay in
 the consuming repository. Consumer adoption and compatibility status belong in
 each consuming project's own documentation.
 
-The [local comparison contract](../topics/panel-switcher/panel-switcher.md)
+The [documentation index](index.md) routes readers to focused engineering,
+writing and site guides. Read each guide before the action it governs.
+
+The [local comparison contract](topics/panel-switcher/panel-switcher.md)
 owns the shared panel switcher's authoring, behavior and extraction checks.
 
 Development checks use Python 3.12, the pinned root `requirements.txt` and Node

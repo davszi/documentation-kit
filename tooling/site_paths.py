@@ -36,6 +36,35 @@ def is_topic_page(path, root=REPO):
     return len(relative.parts) == 2 and relative.name == "index.md"
 
 
+def local_artifacts_manifest(root=REPO, *, site=None):
+    """Locate an optional local-artifact inventory without hiding config typos."""
+    root = Path(root).resolve()
+    if site is None:
+        config = root / "docs/site/site.toml"
+        site = tomllib.loads(config.read_text()) if config.is_file() else {}
+    configured = "local_artifacts_manifest" in site
+    value = site.get("local_artifacts_manifest", "docs/evidence/local-artifacts.json")
+    if (not isinstance(value, str) or not value or "\\" in value
+            or Path(value).is_absolute() or ".." in Path(value).parts
+            or Path(value).as_posix() != value):
+        raise ValueError("local_artifacts_manifest must name a contained relative file")
+    source = root / value
+    if not configured and not source.exists() and not source.is_symlink():
+        # Consumers predating the evidence directory keep their exact default.
+        legacy = root / "docs/project/local-artifacts.json"
+        if legacy.exists() or legacy.is_symlink():
+            source = legacy
+    if (not source.resolve().is_relative_to(root)
+            or any(parent.is_symlink() for parent in (source, *source.parents)
+                   if parent.is_relative_to(root))):
+        raise ValueError("local_artifacts_manifest must stay inside the project without symlinks")
+    if not source.exists() and not configured:
+        return None
+    if not source.is_file():
+        raise ValueError("local_artifacts_manifest must name an existing file: " + value)
+    return source
+
+
 def resolve_legacy_path(path, root=REPO, *, recorded_roots=()):
     if _project_paths is not None:
         return _project_paths.resolve_legacy_path(path, root=root, recorded_roots=recorded_roots)

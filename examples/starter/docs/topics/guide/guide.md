@@ -8,7 +8,7 @@ This topic owns the starter's illustrative documentation architecture and accept
 
 | Item | Canonical owner |
 |---|---|
-| Project orientation and commands | `docs/project/PROJECT_CONTEXT.md` |
+| Project orientation and commands | `docs/PROJECT_CONTEXT.md` |
 | Site title, source repository/ref and navigation | `docs/site/site.toml` |
 | Shared rules, reader and theme | Pinned `.docs-kit` submodule |
 | Subject facts and future accepted requirements | The relevant named topic record |

@@ -13,7 +13,7 @@ import re
 import subprocess
 from urllib.parse import quote, unquote, urlsplit
 
-from site_paths import REPO, DOCS, resolve_legacy_path
+from site_paths import REPO, DOCS, resolve_legacy_path, local_artifacts_manifest
 
 ATTR = re.compile(r'(?<![\w-])(href|src|poster)="([^"]*)"')
 TAG = re.compile(r'<(a|img|video|audio|source|iframe)\b[^>]*>', re.I)
@@ -32,8 +32,8 @@ class SiteBundle:
         self.local_media: set[str] = set()
         self.declared_local = set(site.get('local_media', []))
         import json
-        local_manifest = root / 'docs/project/local-artifacts.json'
-        if local_manifest.is_file():
+        local_manifest = local_artifacts_manifest(root, site=site)
+        if local_manifest is not None:
             self.declared_local.update(json.loads(local_manifest.read_text())['omitted_files'])
 
     def _copy(self, source: Path, name: str):

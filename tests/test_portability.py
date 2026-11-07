@@ -186,8 +186,9 @@ def verify(root, *, require_all_manifests=False): raise ValueError("project evid
         destination = self.root / 'docs/development/worklog.md'
         destination.parent.mkdir(parents=True)
         (self.root / 'docs/worklog.md').rename(destination)
-        context = self.root / 'docs/project/PROJECT_CONTEXT.md'
-        context.write_text(context.read_text().replace('../worklog.md', '../development/worklog.md'))
+        for relative in ('docs/PROJECT_CONTEXT.md', 'docs/index.md'):
+            index = self.root / relative
+            index.write_text(index.read_text().replace('(worklog.md)', '(development/worklog.md)'))
         self.track()
         result = invoke('build', '--project', self.root)
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -235,7 +236,7 @@ def verify(root, *, require_all_manifests=False): raise ValueError("project evid
 
     def test_declared_evidence_mismatch_fails_lint(self):
         config = self.root / 'docs/site/site.toml'
-        config.write_text('evidence_manifests = ["docs/project/evidence-locations.json"]\n' + config.read_text())
+        config.write_text('evidence_manifests = ["docs/evidence/locations.json"]\n' + config.read_text())
         frozen = self.root / 'docs/topics/example/evidence/original.md'
         frozen.parent.mkdir(parents=True)
         frozen.write_text('immutable\n')
@@ -243,7 +244,9 @@ def verify(root, *, require_all_manifests=False): raise ValueError("project evid
                     'documents': [{'original_path': 'docs/open/original.md',
                                    'path': str(frozen.relative_to(self.root)), 'bytes': 10,
                                    'sha256': hashlib.sha256(b'immutable\n').hexdigest()}]}
-        (self.root / 'docs/project/evidence-locations.json').write_text(json.dumps(manifest))
+        manifest_path = self.root / 'docs/evidence/locations.json'
+        manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_text(json.dumps(manifest))
         frozen.write_text('changed\n')
         self.track()
         result = invoke('lint', '--project', self.root)

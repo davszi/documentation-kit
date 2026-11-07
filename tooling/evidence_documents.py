@@ -1,6 +1,6 @@
 """Optional exact-byte evidence collections declared by a consumer project.
 
-Site configuration may name evidence_manifests = ["docs/project/evidence-locations.json"].
+Site configuration may name evidence_manifests = ["docs/evidence/locations.json"].
 No platform-specific collection is required by the shared kit.
 """
 import hashlib

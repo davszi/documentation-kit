@@ -4,6 +4,15 @@ This map accounts for the headings in the source documents used to extract this 
 
 **Transferred** means retained as shared policy. **Genericized** means the mechanism/rule remains, with project names, exact local commands or source-specific paths removed. **Project-owned** means the content remains outside the kit because it describes that project's facts, history, environment or implementation.
 
+## Current guide locations
+
+The source-heading tables retain their extraction-time entrypoint names.
+[Writing](writing.md) now routes to focused guides in `writing/`;
+[maintenance](maintenance.md) routes to focused site guides in `site/`.
+Their original headings remain linkable. The [engineering guides](../docs/index.md#engineering-practices)
+record later portable code, performance, execution, Git, delivery and handoff
+policy; source-specific tools, limits and project facts stay with consumers.
+
 ## Source: `docs/project/documentation.md`
 
 | Source heading | Disposition and kit home |

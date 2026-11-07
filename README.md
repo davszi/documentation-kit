@@ -1,7 +1,7 @@
-# Documentation kit
+# Engineering and documentation kit
 
-Shared documentation and engineering rules, a complete HTML reader and a small static-site
-toolchain. Projects consume one pinned [Git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) while keeping their own
+Reusable engineering and documentation policy, a complete HTML reader and a
+small static-site toolchain. Projects consume one pinned [Git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) while keeping their own
 topic records, pages, figures, navigation and evidence.
 
 ![The shared chapter reader](preview/desktop.png)
@@ -57,10 +57,10 @@ page is `html/index.html`. The server exposes generated output only.
 
 | Shared kit | Each project |
 |---|---|
-| `rules/`: canonical documentation, writing and adopted engineering policies | `docs/project/PROJECT_CONTEXT.md`: orientation and project-specific additions |
+| `rules/`: canonical engineering, documentation, writing and site practices | `docs/PROJECT_CONTEXT.md` and `docs/index.md`: orientation, reading routes and project-specific additions |
 | `theme/`: HTML shell, chapter reader, common CSS/JS, fonts and math assets | `docs/topics/`: records and optional rendered `index.md` pages |
 | `tooling/` and `docsite.py`: renderer, packaging and checks | `docs/site/site.toml`, local CSS/components/fragments, `docs/figures/` |
-| `examples/starter/`: authoring reference and initial project skeleton | `docs/open/OPEN.md`, plans, immutable evidence and append-only worklog |
+| `examples/starter/`: authoring reference and initial project skeleton | `docs/development/` when needed, open plans, evidence, dated sessions and `docs/worklog.md` |
 
 The starter uses one [task router](examples/starter/AGENTS.md) with named paths
 for Codex and a [Claude import](examples/starter/CLAUDE.md) of that same router.
@@ -71,6 +71,28 @@ The [shared Git guide](rules/engineering/git.md) covers commit scope, required
 explanatory message bodies, validation, shared staging areas and history.
 Projects route contributors to it before Git actions and keep concrete test
 commands and acceptance gates in their own records.
+The [delivery guide](rules/engineering/delivery.md) covers assignment scope,
+owner responsibility, coordination, parallel work and escalation.
+The [handoff guide](rules/engineering/handoffs.md) covers completion, blockers,
+supporting records and receipt of work.
+
+## Focused guides
+
+Read only the guides matching the action. [Documentation reading index](docs/index.md)
+links to the kit's contracts, evidence and chronology.
+
+| Area | Guides |
+|---|---|
+| Engineering | [Code and generated files](rules/engineering/code.md), [performance](rules/engineering/performance.md), [execution and resources](rules/engineering/execution.md) |
+| Delivery | [Ownership](rules/engineering/delivery.md), [handoffs](rules/engineering/handoffs.md), [Git](rules/engineering/git.md) |
+| Documentation | [Canonical homes and lifecycle](rules/documentation.md) |
+| Writing | [Pages and review](rules/writing/pages.md), [explanations](rules/writing/explanations.md), [measurements](rules/writing/evidence.md), [figures and access](rules/writing/figures.md), [math](rules/writing/math.md), [code and diagrams](rules/writing/code.md) |
+| Site | [Authoring](rules/site/authoring.md), [validation](rules/site/validation.md), [resources](rules/site/resources.md), [publication](rules/site/publication.md), [reader](rules/site/reader.md) |
+
+The original [writing](rules/writing.md) and [maintenance](rules/maintenance.md)
+entrypoints remain short routers with their existing section anchors. Projects
+keep concrete tools, workloads, resource profiles, acceptance thresholds and
+runtime requirements in their own records.
 
 ## Pin and upgrade
 
@@ -113,11 +135,11 @@ captures require explicit configuration. Optional `evidence_manifests` enable
 exact-byte verification without requiring any platform-specific collection.
 See [maintenance](rules/maintenance.md) for source paths and extension points.
 
-Existing sites can use the shared [publication exporter](rules/maintenance.md#exporting-into-an-existing-publication)
+Existing sites can use the shared [publication exporter](rules/site/publication.md#exporting-into-an-existing-publication)
 to preserve their public routes and selected evidence. The
-[browser-check helpers](rules/maintenance.md#reusable-browser-checks) support
+[browser-check helpers](rules/site/validation.md#reusable-browser-checks) support
 project harnesses without moving their domain assertions. Homepage composition
-stays [project-owned](rules/writing.md#project-owned-homepages); the starter is
+stays [project-owned](rules/writing/pages.md#project-owned-homepages); the starter is
 optional.
 
 ## Develop the kit

@@ -9,8 +9,8 @@ repository's validation requirements and publication permissions.
   refactor stage. Fold its intermediate file changes and tweaks together.
 - Keep separate commits for independently verified stages when their separate
   verification is meaningful.
-- Keep related code, tests, owning documentation and chronology in the same
-  deliverable, following the [documentation rules](../documentation.md#rules-for-changes-and-chronology).
+- Follow the [documentation rules](../documentation.md#rules-for-changes-and-chronology)
+  for the code, tests, documentation and chronology belonging to a deliverable.
 - Pass the applicable checks before landing implementation. Record actual
   results, skips and limitations. Investigation or evidence deliverables may
   retain failed or negative outcomes when accurately documented.
@@ -30,8 +30,8 @@ when they help assess the change. Do not use Conventional Commits prefixes.
 - Stage explicit paths or selected changes. Stage everything only when every
   affected change belongs to the intended commit.
 - Review the complete proposed commit, including deletions and changes staged
-  before you started. Confirm that it contains the intended versions of the
-  files and has passed the applicable checks.
+  before you started. Confirm that the intended file versions match the source
+  state covered by the recorded checks.
 - Preserve unrelated working and staged changes.
 
 ## Sharing a checkout
