@@ -5,6 +5,8 @@ home_label = "Kit"
 gh_repo = "https://github.com/davszi/documentation-kit"
 gh_ref = "main"
 chapter_reader = false
+# Fold navigation groups and nest the current page's sections under its entry.
+nested_nav = true
 
 [[nav]]
 label = "Home"
@@ -14,21 +16,25 @@ file = "index.html"
 [[nav]]
 label = "Get started"
 file = "getting-started.html"
-group = "start"
+group = "start here"
+
+[[nav]]
+label = "Project practices"
+file = "project-practices.html"
+group = "start here"
+
+[[nav]]
+label = "Site toolkit"
+file = "site-toolkit.html"
+group = "start here"
 
 [[nav]]
 label = "Setup, commands and upgrades"
 short = "Setup and commands"
 file = "readme.html"
-group = "start"
+group = "start here"
 
 # ── Engineering practices ─────────────────────────────────────────────
-[[nav]]
-label = "Project practices overview"
-short = "Overview"
-file = "project-practices.html"
-group = "engineering"
-
 [[nav]]
 label = "Code and repository practices"
 short = "Code and repository"
@@ -116,12 +122,6 @@ file = "experiment-verification.html"
 group = "experiments"
 
 # ── Site toolkit ──────────────────────────────────────────────────────
-[[nav]]
-label = "Site toolkit overview"
-short = "Overview"
-file = "site-toolkit.html"
-group = "site toolkit"
-
 [[nav]]
 label = "Authoring and configuration"
 file = "authoring.html"

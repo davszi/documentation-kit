@@ -518,6 +518,47 @@ def build_page(md_path: Path, site: dict, shell: str) -> tuple[str, str] | None:
     return finish_page(meta, slug, name, content, comps, site, shell, id_to_panel)
 
 
+def nested_nav_html(nav_entries: list, fname: str, toc: str) -> str:
+    """Site tree for `nested_nav = true`: groups fold, the current page's group
+    is open and the current page's own sections sit directly under its entry.
+    Native <details> keep it usable without JavaScript."""
+    groups: list[tuple[str | None, list[dict]]] = []
+    for entry in nav_entries:
+        if entry.get("hidden", False) or entry["file"] == "index.html":
+            continue
+        group = entry.get("group")
+        if not groups or groups[-1][0] != group:
+            groups.append((group, []))
+        groups[-1][1].append(entry)
+    lines = []
+    # Open the current page's group; where no group holds it (the home page), open the first.
+    open_group = next((group for group, entries in groups if any(e["file"] == fname for e in entries)),
+                      next((group for group, _ in groups if group is not None), None))
+    for group, entries in groups:
+        links = []
+        for entry in entries:
+            current = entry["file"] == fname
+            attrs = ' class="xpage current" aria-current="page"' if current else ' class="xpage"'
+            if group:
+                attrs += f' data-group="{html.escape(group)}"'
+            short = entry.get("short", entry["label"])
+            if short != entry["label"]:
+                attrs += f' title="{html.escape(entry["label"], quote=True)}"'
+            links.append(f'    <a{attrs} href="{entry["file"]}">{html.escape(short)}</a>')
+            if current and toc.strip():
+                links.append(f'    <div class="nav-sections" aria-label="On this page">\n{toc}\n    </div>')
+        if group is None:
+            lines.extend(links)
+            continue
+        is_open = group == open_group
+        lines.append(f'    <details class="nav-fold" data-group="{html.escape(group)}"{" open" if is_open else ""}>'
+                     f'<summary class="nav-group" data-group="{html.escape(group)}">{html.escape(group)}'
+                     f'<span class="nav-count">{len(entries)}</span></summary>')
+        lines.extend(links)
+        lines.append('    </details>')
+    return "\n".join(lines)
+
+
 def build_source_page(page, routes: dict[str, str], site: dict, shell: str) -> tuple[str, str] | None:
     """Render one registered Markdown file as a whole-file page.
 
@@ -534,9 +575,8 @@ def build_source_page(page, routes: dict[str, str], site: dict, shell: str) -> t
     if not title:
         err(f"{name}: a source page needs a level-one heading or a registered title")
         return None
-    group = next((entry.get("group", "") for entry in site.get("nav", []) if entry.get("file") == page.route), "")
     meta = {"title": title, "slug": page.slug, "toc": [], "math": page.math, "body_class": "source-page reference-page",
-            "brand": site.get("title", "Documentation"), "brand_sub": group, "page_css": ["build-sheet.css"]}
+            "brand": site.get("title", "Documentation"), "page_css": ["build-sheet.css"]}
     renderer = DocsRenderer(math_enabled=page.math)
     content = mistune.create_markdown(renderer=renderer, plugins=["table", "math"])(text)
     content, problems = rewrite_links(wrap_tables(content), page, routes, REPO, exists_in(REPO, resolve_legacy_path))
@@ -603,6 +643,9 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
             attrs += f' title="{html.escape(n_entry["label"], quote=True)}"'
         crossnav_lines.append(f'    <a{attrs} href="{n_entry["file"]}">{html.escape(short)}</a>')
     crossnav = "\n".join(crossnav_lines)
+    toc = toc_html(meta.get("toc", []), name, id_to_panel)
+    if site.get("nested_nav") and "chapter-reader" not in comps:
+        crossnav, toc = nested_nav_html(nav_entries, fname, toc), ""
 
     head_extra = ""
     if meta.get("math"):
@@ -634,7 +677,7 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
         "{{TITLE}}": html.escape(meta.get("title", "")),
         "{{BRAND}}": html.escape(meta.get("brand", slug)),
         "{{BRAND_SUB}}": html.escape(meta.get("brand_sub", "")),
-        "{{TOC}}": toc_html(meta.get("toc", []), name, id_to_panel),
+        "{{TOC}}": toc,
         "{{CROSSNAV}}": crossnav,
         "{{HEAD_EXTRA}}": head_extra,
         "{{CONTENT}}": content.rstrip() + "\n",
@@ -740,6 +783,8 @@ def main() -> int:
         if wrong:
             ap.error(f"site.toml [[nav]] entry {entry['file']}: wrong value types for {wrong} "
                      "(text for label, file, group and short; true or false for hidden)")
+    if not isinstance(site.get("nested_nav", False), bool):
+        ap.error("site.toml: nested_nav must be true or false")
     global KNOWN_COMPONENTS
     extra = site.get("extra_components", [])
     if not isinstance(extra, list) or any(not isinstance(c, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", c) or c in KNOWN_COMPONENTS for c in extra) or len(set(extra)) != len(extra):

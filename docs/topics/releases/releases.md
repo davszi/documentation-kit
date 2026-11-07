@@ -20,6 +20,7 @@ add routes to the new experiment guides.
 | Lint | Registered files' Markdown links are checked as ordinary records | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
 | Theme | Additive `base.css` rules for the source line (`.source-origin`) and the opt-in `reference-page` body class; existing pages render unchanged | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
 | Build manifest | `site-build.json` gains a `source_pages` map from route to source file | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
+| Navigation | Optional `nested_nav = true` folds navigation groups and nests the current page's sections under its entry; the flat tree remains the default | [Authoring paths](../../../rules/site/authoring.md#authoring-paths) |
 | Kit website | The kit builds its own reference site from the repository root | [Website record](../website/website.md) |
 | Experiment guides | New shared guides: experiments are investigations or qualifications, start small and state a budget; a pre-stated bar and verdict are required for confirmatory investigations and qualifications; terms for learned or fitted models, such as final runs, are scoped to their own section; claim-scoped verification and regression gates; routes added to the starter's `AGENTS.md` | [Workflow](../../../rules/experiments/workflow.md), [verification](../../../rules/experiments/verification.md) |
 

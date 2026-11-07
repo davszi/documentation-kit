@@ -84,7 +84,7 @@
 .bs-node b code,.bs-label code,.kit-path strong code{text-transform:none;font-size:.8em}
 /* Site-map cards carry their navigation group's tone. */
 .map-group .map-card{border-top:2px solid var(--tone,var(--border))}
-.map-group[data-group="start"]{--tone:var(--adp)}
+.map-group[data-group="start here"]{--tone:var(--adp)}
 .map-group[data-group="site toolkit"]{--tone:var(--adp)}
 .map-group[data-group="engineering"]{--tone:var(--secondary)}
 .map-group[data-group="documentation & writing"]{--tone:var(--secondary)}

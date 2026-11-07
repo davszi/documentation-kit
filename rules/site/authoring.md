@@ -57,6 +57,12 @@ and `hidden`. TOML assigns every key written after a table header to that table,
 so keep top-level settings such as `extra_components` above the first `[[nav]]`;
 the build rejects any other key inside a nav entry.
 
+`nested_nav = true` folds each navigation group into a native disclosure,
+opens the current page's group (the first group on a page outside every
+group) and places the current page's sections directly under its entry. It
+applies to pages without the chapter reader, which nests chapters itself, and
+keeps working without JavaScript. The default is the flat site tree.
+
 Register project-specific script components with `extra_components = ["viewer"]`;
 each uses a tracked `docs/site/components/<name>.js`. For dynamically loaded
 dependencies, `[extra_assets]` maps output names below `html/assets/` to tracked

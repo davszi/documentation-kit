@@ -2,6 +2,17 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-07 — Fold the kit site's navigation
+
+- The kit site's flat sidebar listed about 37 entries, put the current page's
+  sections at the top far from its entry and repeated "Overview" twice. Add the
+  optional `nested_nav = true`: navigation groups fold into native disclosures
+  with page counts, the current page's group opens and its sections sit under
+  its entry. Pages with the chapter reader and sites without the key keep the
+  flat tree. The four orientation pages now share a "start here" group.
+- Three new tests cover nesting, the flat default and key validation (102
+  Python tests). Wide and narrow sidebar captures were inspected.
+
 ## 2026-11-07 — Classify experiments by what they decide
 
 - Replace the field-based reading of the experiment guides with two kinds,
