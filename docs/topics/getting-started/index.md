@@ -76,13 +76,13 @@ The [starter's router](../../examples/starter/AGENTS.md.tmpl) has every row; kee
 <li>Set the title, source repository and navigation in <code>docs/site/site.toml</code></li>
 <li>Track the sources, then <code>build</code> and <code>lint --strict</code></li>
 <li>Serve <code>.build/docs/</code> on loopback and review it</li>
-</ol><p><a href="readme.html#start-a-project">Commands</a> · <a href="validation.html#validation-and-review">what the checks cover</a></p></div>
+</ol><p><a href="commands.html#start-a-project">Commands</a> · <a href="validation.html#validation-and-review">what the checks cover</a></p></div>
 <div class="bs-part bs-orange"><span class="bs-label">When you choose</span><h3>Upgrade the pin</h3><ol>
 <li>Read the release notes between your pin and the target</li>
 <li>Move the submodule to the reviewed commit</li>
 <li>Apply any consumer changes in the same commit</li>
 <li>Rerun your checks before relying on the new rules</li>
-</ol><p><a href="releases.html">Release notes</a> · <a href="readme.html#pin-and-upgrade">pin and upgrade</a></p></div>
+</ol><p><a href="releases.html">Release notes</a> · <a href="commands.html#upgrade">upgrade commands</a></p></div>
 </div>
 
 </section>
@@ -103,7 +103,7 @@ The [starter's router](../../examples/starter/AGENTS.md.tmpl) has every row; kee
 <h3 id="route-new-project">New project</h3>
 <p>Start from the starter. <code>docsite.py init</code> checks every destination first and refuses to overwrite existing files.</p>
 <ul>
-<li>Run the steps in <a href="readme.html#start-a-project">Start a project</a>.</li>
+<li>Run the steps in <a href="commands.html#start-a-project">Start a project</a>.</li>
 <li>Replace the starter's guide with your topics, following <a href="authoring.html#authoring-paths">authoring paths</a>.</li>
 <li>Keep the single task router the starter adds; see <a href="documentation-system.html#agent-entrypoints-import-versus-point">agent entrypoints</a>.</li>
 </ul>

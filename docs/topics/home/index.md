@@ -17,7 +17,7 @@ toc = []
 <div class="home-cta">
 <a href="getting-started.html">Get started</a>
 <a class="alt" href="reader-tour.html">Reader tour</a>
-<a class="alt" href="readme.html#start-a-project">Setup commands</a>
+<a class="alt" href="commands.html#start-a-project">Setup commands</a>
 </div>
 </div>
 <div class="bs-grid g1" role="navigation" aria-label="Choose a path">
@@ -49,7 +49,7 @@ toc = []
 | Handing off work          | `.docs-kit/rules/engineering/handoffs.md`                            |
 ```
 
-<p class="home-foot">Each row pairs a kit guide with the project record that holds your specifics. The <a href="../../examples/starter/AGENTS.md.tmpl">starter's router</a> has every row; keep the ones you need. Full commands: <a href="readme.html#start-a-project">Start a project</a>.</p>
+<p class="home-foot">Each row pairs a kit guide with the project record that holds your specifics. The <a href="../../examples/starter/AGENTS.md.tmpl">starter's router</a> has every row; keep the ones you need. Full commands: <a href="commands.html#start-a-project">Start a project</a>.</p>
 </section>
 
 <section class="home-now" aria-label="Every page">

@@ -2,6 +2,16 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-08 — Give setup and commands their own page
+
+- "Setup and commands" opened the README as a plain reference page in the
+  middle of the reader pages: its sidebar changed shape, its title and hero
+  screenshot did not match the menu label, and it ended in kit-development
+  sections. A new reader page, `commands`, explains setup, build,
+  `build --check`, lint, loopback preview, slides and upgrades, each with the
+  exact command and what it checks or writes. The README moves to Kit
+  development; home, Get started and Site toolkit link to the new page.
+
 ## 2026-11-08 — Explain the practice pages instead of listing rules
 
 - deivid found the three practice pages too fast: each card gave one claim,

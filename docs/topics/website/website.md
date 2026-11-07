@@ -23,6 +23,7 @@ tables give the navigation and `[[source_pages]]` tables map records to routes.
 |---|---|---|
 | Home | [`home/index.md`](../home/index.md) | Three paths, the three adoption steps and a router snippet |
 | Get started | [`getting-started/index.md`](../getting-started/index.md) | What the kit provides, setup steps, site and upgrades, adoption routes |
+| Setup and commands | [`commands/index.md`](../commands/index.md) | Setup, build, lint, preview, slides and upgrade commands, with what each checks or writes |
 | Reader tour | [`reader-tour/index.md`](../reader-tour/index.md) | Chapters, docking, pinning, layers, figures, comparisons, status blocks and slides |
 | Practices overview | [`project-practices/index.md`](../project-practices/index.md) | Task routing, the three practice areas and project specifics |
 | Engineering | [`engineering-practices/index.md`](../engineering-practices/index.md) | The six engineering guides |
@@ -31,7 +32,7 @@ tables give the navigation and `[[source_pages]]` tables map records to routes.
 | Site toolkit | [`site-toolkit/index.md`](../site-toolkit/index.md) | Build pipeline, task-to-guide map, source pages and build checks |
 
 Rule guides are hidden from the navigation and reached from these pages; release
-notes, migration guides and the kit-development records stay listed. The
+notes, migration guides, the README and the kit-development records stay listed. The
 writing and maintenance routers remain hidden pages so existing links to their
 section anchors keep working.
 

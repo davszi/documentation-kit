@@ -40,7 +40,7 @@ toc = [["How a build works", "#how-a-build-works"], ["Guide per task", "#find-th
 
 | To… | Read… | It covers |
 |---|---|---|
-| Run commands and configure the site | [README commands](readme.html#commands), [tooling and ownership](authoring.html#tooling-and-ownership) | `init`, `build`, `lint` and `slides`; `site.toml` keys, navigation, adapters |
+| Run commands and configure the site | [Setup and commands](commands.html), [tooling and ownership](authoring.html#tooling-and-ownership) | `init`, `build`, `lint` and `slides`; `site.toml` keys, navigation, adapters |
 | Write pages | [Authoring paths](authoring.html#authoring-paths) | Entry pages and frontmatter, link origins, includes, local components |
 | Use the reader and components | [Reader](reader.html), [panel switcher](panel-switcher.html) | Chapter views, reading layers, the home site map, the panel switcher |
 | Draw, derive and present | [Generated figures](authoring.html#generated-figures), [slide faces](authoring.html#slide-faces-and-decks) | Generated figures and number ledgers, KaTeX math, slide faces and decks |

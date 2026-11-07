@@ -27,9 +27,8 @@ file = "reader-tour.html"
 group = "start here"
 
 [[nav]]
-label = "Setup, commands and upgrades"
-short = "Setup and commands"
-file = "readme.html"
+label = "Setup and commands"
+file = "commands.html"
 group = "start here"
 
 # ── Practices: pages for people; each links its reference guides ───────
@@ -74,6 +73,11 @@ group = "releases"
 [[nav]]
 label = "About this website"
 file = "website.html"
+group = "kit development"
+
+[[nav]]
+label = "README"
+file = "readme.html"
 group = "kit development"
 
 [[nav]]
