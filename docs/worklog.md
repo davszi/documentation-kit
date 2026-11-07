@@ -2,6 +2,19 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-07 — Make folded navigation keep its state
+
+- Opening a group and then following a link in another group closed the
+  first group, because only the current page's group is open in the served
+  page. `nav.js` now remembers groups the reader opened (browser storage,
+  saved when a group header is clicked; groups the served page opens are not
+  stored) and scrolls the sidebar to the current entry. Group headers use
+  sentence-case text instead of uppercase monospace, page counts are removed,
+  and groups open and close with a short `::details-content` transition that
+  respects reduced motion.
+- A Chromium check opens a group, follows a link in another group, confirms
+  both stay open, closes one and confirms it stays closed on the next page.
+
 ## 2026-11-07 — Fold the kit site's navigation
 
 - The kit site's flat sidebar listed about 37 entries, put the current page's

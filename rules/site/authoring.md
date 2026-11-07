@@ -61,7 +61,9 @@ the build rejects any other key inside a nav entry.
 opens the current page's group (the first group on a page outside every
 group) and places the current page's sections directly under its entry. It
 applies to pages without the chapter reader, which nests chapters itself, and
-keeps working without JavaScript. The default is the flat site tree.
+keeps working without JavaScript. Groups a reader opens stay open on later
+pages through browser storage, and open or close with a short transition that
+respects reduced motion. The default is the flat site tree.
 
 Register project-specific script components with `extra_components = ["viewer"]`;
 each uses a tracked `docs/site/components/<name>.js`. For dynamically loaded

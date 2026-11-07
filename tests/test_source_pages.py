@@ -212,16 +212,16 @@ class SourcePages(unittest.TestCase):
         config.write_text('nested_nav = true\n' + config.read_text())
         self.assertEqual(self.build().returncode, 0)
         page = self.page('shared-rule')
-        self.assertNotIn('<details class="nav-fold" data-group="rules" open>', self.page('guide'))
-        self.assertIn('<details class="nav-fold" data-group="rules" open>', page)
+        self.assertNotIn('<details class="nav-fold" data-group="rules" open data-nav-default>', self.page('guide'))
+        self.assertIn('<details class="nav-fold" data-group="rules" open data-nav-default>', page)
         current = page.index('class="xpage current"')
         sections = page.index('<div class="nav-sections" aria-label="On this page">')
         self.assertLess(current, sections)
         self.assertLess(sections, page.index('href="#first-part">First part</a>'))
-        self.assertIn('<span class="nav-count">2</span>', page)
+        self.assertIn('<span class="nav-group-label">rules</span>', page)
         # The home page has no current group: the first group opens.
         home = self.page('index')
-        self.assertEqual(home.count(' open>'), 1)
+        self.assertEqual(home.count(' open data-nav-default>'), 1)
 
     def test_flat_navigation_stays_the_default(self):
         self.assertEqual(self.build().returncode, 0)

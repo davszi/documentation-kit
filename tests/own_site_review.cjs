@@ -80,6 +80,20 @@ const SHOTS = ['index', 'getting-started', 'site-toolkit', 'project-practices', 
       assert.ok(reached, 'a path card is reachable by keyboard');
       assert.ok(reached.outline !== 'none' || reached.shadow !== 'none', 'focused path card is visibly marked');
 
+      if (viewport.width >= 900) {
+        // Folded navigation keeps groups the reader opened across pages.
+        await page.goto(`${origin}/html/git.html`, {waitUntil:'networkidle'});
+        await page.click('details.nav-fold[data-group="experiments"] > summary');
+        await page.click('a.xpage[href="handoffs.html"]');
+        await page.waitForLoadState('networkidle');
+        const open = await page.$$eval('details.nav-fold', folds => folds.filter(f => f.open).map(f => f.dataset.group));
+        assert.deepEqual(open.sort(), ['engineering', 'experiments'], 'opened group survives navigation');
+        await page.click('details.nav-fold[data-group="experiments"] > summary');
+        await page.goto(`${origin}/html/git.html`, {waitUntil:'networkidle'});
+        const reopened = await page.$$eval('details.nav-fold', folds => folds.filter(f => f.open).map(f => f.dataset.group));
+        assert.deepEqual(reopened, ['engineering'], 'closed group stays closed');
+      }
+
       if (viewport.width < 900) {
         // The menu opens navigation over content; tables scroll inside their region.
         await page.goto(`${origin}/html/git.html`, {waitUntil:'networkidle'});
@@ -128,5 +142,5 @@ const SHOTS = ['index', 'getting-started', 'site-toolkit', 'project-practices', 
     server.close();
   }
   await fs.writeFile(path.join(output, 'results.json'), JSON.stringify(results, null, 2) + '\n');
-  console.log(`Own site: ${results.pages} pages contained with visible media at 1600 and 390; deep links, panel hash, keyboard paths, narrow menu/table scrolling, print and no-JavaScript reading pass.`);
+  console.log(`Own site: ${results.pages} pages contained with visible media at 1600 and 390; deep links, panel hash, keyboard paths, remembered navigation groups, narrow menu/table scrolling, print and no-JavaScript reading pass.`);
 })().catch(error => { console.error(error); process.exitCode = 1; server.close(); });

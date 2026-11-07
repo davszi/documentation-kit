@@ -551,9 +551,9 @@ def nested_nav_html(nav_entries: list, fname: str, toc: str) -> str:
             lines.extend(links)
             continue
         is_open = group == open_group
-        lines.append(f'    <details class="nav-fold" data-group="{html.escape(group)}"{" open" if is_open else ""}>'
-                     f'<summary class="nav-group" data-group="{html.escape(group)}">{html.escape(group)}'
-                     f'<span class="nav-count">{len(entries)}</span></summary>')
+        lines.append(f'    <details class="nav-fold" data-group="{html.escape(group)}"{" open data-nav-default" if is_open else ""}>'
+                     f'<summary class="nav-group" data-group="{html.escape(group)}">'
+                     f'<span class="nav-group-label">{html.escape(group)}</span></summary>')
         lines.extend(links)
         lines.append('    </details>')
     return "\n".join(lines)
