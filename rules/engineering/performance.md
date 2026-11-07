@@ -24,6 +24,20 @@ Measure the declared workload and execution path. Claims about shipped
 performance use the shipped path with its required work. Label diagnostic and
 ablation timings by the paths they measure.
 
+A production benchmark drives shipped paths end to end. Use honestly labelled
+ablations, reusable case generation and metrics, runtime reporting and
+provenanced figures. Verify the baseline before changing measured behavior and
+use the strongest relevant cheap baseline for the comparison.
+
+For engineering benchmarks and numerical validation tools, provide a quick mode
+when the full run exceeds about one minute. Label the quick mode's coverage;
+it does not replace the full workload or its acceptance criteria. This is
+engineering iteration guidance, not a requirement that every research run
+finish quickly or provide a shortened scientific protocol.
+
+Use [proportionate verification](../experiments/verification.md) for numerical
+correctness and regression gates.
+
 The [evidence guide](../writing/evidence.md) owns measurement identity, baselines,
 reruns, historical results and reporting. Projects retain concrete workloads,
 thresholds and performance contracts.

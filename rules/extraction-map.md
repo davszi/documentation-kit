@@ -13,6 +13,13 @@ Their original headings remain linkable. The [engineering guides](../docs/index.
 record later portable code, performance, execution, Git, delivery and handoff
 policy; source-specific tools, limits and project facts stay with consumers.
 
+The [experiment guides](../docs/index.md#experiments) now own shared workflow
+and proportionate verification. [Evidence reporting](writing/evidence.md)
+retains provenance, outcomes, visuals and reviews actually performed;
+[performance guidance](engineering/performance.md) owns production benchmarks
+and engineering quick modes. This ownership refinement preserves numerical
+implementation checks without applying them to every research comparison.
+
 ## Source: `docs/project/documentation.md`
 
 | Source heading | Disposition and kit home |
@@ -49,7 +56,7 @@ policy; source-specific tools, limits and project facts stay with consumers.
 | Code & design docs | Transferred: real minimal source excerpts, source/line drift verification and local rationale; source package example genericized |
 | Diagrams | Genericized: generated/self-checking or explicit local HTML source, semantics, legends and data source; source component naming/colors and exact live/backlog feature claims remain project-owned; future zoom/highlight features are explicitly not guaranteed |
 | Sim & run visuals | Genericized to Run visuals: scripted capture, labelled illustrative screenshots and artifact-derived overlays; no simulator requirement transferred |
-| Experiments: lifecycle, floor, workflow | Transferred: topic/external evidence split, ongoing lifecycle, full experiment floor, baseline verification, independent derivation, scoped native parity, fast regression gate and same-deliverable bookkeeping; source benchmark paths and application dependency lists remain project-owned |
+| Experiments: lifecycle, floor, workflow | Genericized: reporting/lifecycle and same-deliverable bookkeeping in `writing/evidence.md`; production benchmarks and quick-mode guidance in `engineering/performance.md`; independent derivation/reference, production comparison, optional native comparison, exit self-check and fast regression guidance scoped to numerical implementation correctness in `experiments/verification.md`. General design now lives in `experiments/workflow.md`; source benchmark paths and application dependency lists remain project-owned |
 
 ## Source: `docs/site/maintenance.md`
 

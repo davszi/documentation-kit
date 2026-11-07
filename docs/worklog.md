@@ -2,6 +2,31 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-07 — Scope shared experiment workflow and verification
+
+- Add shared experiment workflow and proportionate verification guides.
+  Distinguish investigations from final artifact/model runs and exploration from
+  confirmation. Keep local decisions and existing execution contracts with
+  consumers; add no automatic audit tier or approval framework.
+- Move production benchmark and engineering quick-mode guidance to performance.
+  Preserve independent numerical reference/derivation, production comparison,
+  self-check, optional native comparison and fast regression guidance under
+  numerical implementation correctness. Retain evidence provenance, actual
+  reviews, failed outcomes, visuals and existing public anchors.
+- Route root/starter agents and reading indexes to the canonical guides. Update
+  current extraction ownership without changing frozen provenance, historical
+  release records or `VERSION`. This remains unreleased local work; the landing
+  commit supplies its identity.
+- Address policy review by scoping fixed pre-results criteria to confirmation
+  and agreed acceptance checks. Allow labelled exploratory interpretation with
+  retained changes and reasons. Keep the selected recipe fixed during a final
+  run; record a recipe change as a distinct attempt. Independent re-review
+  found no remaining findings in that scope.
+- With `/home/deivid/dev/.venvs/adaptation-slide-faces-docs/bin/python`, starter
+  build, freshness and strict lint pass with zero warnings. Focused Markdown
+  link/fragment and existing-anchor checks pass. No rendered source, theme or
+  tooling changed; no browser or application-runtime checks were run.
+
 ## 2026-11-07 — Integrate upstream releases and slide support
 
 - Merge origin `072b063e6dbb` into local kit `4ab0bd10ce82`. Preserve focused
