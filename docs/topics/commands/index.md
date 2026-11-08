@@ -1,51 +1,14 @@
 +++
-title = "Setup and commands"
+title = "Commands"
 brand = "Documentation kit"
-brand_sub = "init · build · lint · preview · slides · upgrade"
-description = "Every docsite.py command a project runs, what each one checks or writes, and how to upgrade the pinned kit."
+brand_sub = "build · lint · preview · slides · upgrade"
+description = "The docsite.py commands a project runs after setup, what each one checks or writes, and how to upgrade the pinned kit."
 components = ["toc", "nav", "code", "filelinks"]
 page_css = ["build-sheet.css"]
-toc = [["Start a project", "#start-a-project"], ["Build", "#build"], ["Lint", "#lint"], ["Preview", "#preview"], ["Slides", "#slides"], ["Upgrade", "#upgrade"]]
+toc = [["Build", "#build"], ["Lint", "#lint"], ["Preview", "#preview"], ["Slides", "#slides"], ["Upgrade", "#upgrade"]]
 +++
 
-# Setup and commands
-
-<section class="card" id="start-a-project">
-
-## A new project needs one submodule, one environment and one init
-
-<p class="bs-lead">Pin the kit, install its pinned Python packages, then let <code>init</code> add the starter without overwriting anything.</p>
-
-<figure id="fig-setup">
-<div class="bs-flow" role="img" aria-label="First add the kit as a submodule at .docs-kit. Then create a Python 3.12 environment and install the kit's pinned requirements. Then run docsite.py init, which writes the starter with the project's title and repository.">
-<div class="bs-node bs-teal"><span class="bs-label">Once</span><b>Pin the kit</b><ul><li><code>git submodule add</code></li><li>path <code>.docs-kit</code></li></ul></div>
-<div class="bs-arrow"><span>then</span></div>
-<div class="bs-node bs-violet"><span class="bs-label">Once per checkout</span><b>Create the environment</b><ul><li>Python 3.12 venv in <code>.build/docs-env</code></li><li>pinned <code>requirements.txt</code></li></ul></div>
-<div class="bs-arrow"><span>then</span></div>
-<div class="bs-node bs-orange"><span class="bs-label">Once</span><b>Add the starter</b><ul><li><code>docsite.py init</code></li><li><code>--title</code>, <code>--repository</code></li></ul></div>
-</div>
-<figcaption><b>Figure 1.</b> The three setup steps, in order. This diagram contains no measured results.</figcaption>
-</figure>
-
-```bash
-git submodule add <kit-url> .docs-kit
-git submodule update --init --recursive
-python3.12 -m venv .build/docs-env
-.build/docs-env/bin/python -m pip install -r .docs-kit/requirements.txt
-.build/docs-env/bin/python .docs-kit/docsite.py init . --title "My project" --repository https://github.com/owner/repo
-```
-
-`init` checks every destination first and writes nothing if any starter file already exists. It writes the project's `AGENTS.md`, `CLAUDE.md`, `docs/PROJECT_CONTEXT.md`, reading index, worklog, open-work file and `docs/site/site.toml`, with the title (default: the folder name) and repository filled in. Then add `.build/` to `.gitignore` and track the sources: the build only publishes tracked files.
-
-```bash
-git add docs AGENTS.md CLAUDE.md .gitmodules .docs-kit
-```
-
-<div class="bs-specs"><div><span class="bs-label">Python</span><b>3.12+</b></div><div><span class="bs-label">Packages</span><b>Pinned</b></div><div><span class="bs-label">JavaScript install</span><b>None</b></div></div>
-
-An existing documentation system keeps its content: skip `init`, add `docs/site/site.toml` deliberately and follow [adoption](maintenance.html). Full details: [README · Start a project](readme.html#start-a-project).
-
-</section>
+# Commands
 
 <section class="card" id="build">
 

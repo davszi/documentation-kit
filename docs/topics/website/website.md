@@ -22,10 +22,9 @@ tables give the navigation and `[[source_pages]]` tables map records to routes.
 | Page for people | Source | Explains |
 |---|---|---|
 | Home | [`home/index.md`](../home/index.md) | Three paths, the three adoption steps and a router snippet |
-| Get started | [`getting-started/index.md`](../getting-started/index.md) | What the kit provides, setup steps, site and upgrades, adoption routes |
-| Setup and commands | [`commands/index.md`](../commands/index.md) | Setup, build, lint, preview, slides and upgrade commands, with what each checks or writes |
+| Get started | [`getting-started/index.md`](../getting-started/index.md) | What the kit provides, how routing works, the three practice areas, setup and adoption routes |
+| Commands | [`commands/index.md`](../commands/index.md) | Build, lint, preview, slides and upgrade commands, with what each checks or writes |
 | Reader tour | [`reader-tour/index.md`](../reader-tour/index.md) | Chapters, docking, pinning, layers, figures, comparisons, status blocks and slides |
-| Practices overview | [`project-practices/index.md`](../project-practices/index.md) | Task routing, the three practice areas and project specifics |
 | Engineering | [`engineering-practices/index.md`](../engineering-practices/index.md) | The six engineering guides |
 | Documentation and writing | [`writing-practices/index.md`](../writing-practices/index.md) | The documentation system and the writing guides |
 | Experiments | [`experiments/index.md`](../experiments/index.md) | The experiment workflow and verification guides |

@@ -2,6 +2,16 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-08 — Merge the start pages
+
+- Start here had four overlapping pages (Get started, Reader tour, Setup and
+  commands, Practices overview). Get started now holds what the kit
+  provides, how routing works, the three practice areas, setup and the
+  adoption routes in five chapters; the Practices overview page is removed.
+  Commands keeps build, lint, preview, slides and upgrade. The Reader tour
+  moves to the Site toolkit group. Start here now has two pages, Practices
+  three.
+
 ## 2026-11-08 — Give setup and commands their own page
 
 - "Setup and commands" opened the README as a plain reference page in the

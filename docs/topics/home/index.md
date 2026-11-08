@@ -17,11 +17,11 @@ toc = []
 <div class="home-cta">
 <a href="getting-started.html">Get started</a>
 <a class="alt" href="reader-tour.html">Reader tour</a>
-<a class="alt" href="commands.html#start-a-project">Setup commands</a>
+<a class="alt" href="getting-started.html#set-up">Setup commands</a>
 </div>
 </div>
 <div class="bs-grid g1" role="navigation" aria-label="Choose a path">
-<a class="now-card" href="project-practices.html"><strong>1 · Adopt the practices</strong><span>Which kit guide to read before which action: code, execution, delivery, Git, documentation, writing and experiments.</span></a>
+<a class="now-card" href="getting-started.html#practice-areas"><strong>1 · Adopt the practices</strong><span>Which kit guide to read before which action: code, execution, delivery, Git, documentation, writing and experiments.</span></a>
 <a class="now-card" href="site-toolkit.html"><strong>2 · Build a site (optional)</strong><span>Turn tracked Markdown, figures and configuration into a checked static site with the shared reader.</span></a>
 <a class="now-card" href="releases.html"><strong>3 · Upgrade a pinned kit</strong><span>What each version changes for consumers, what stays stable in 1.x and how to migrate.</span></a>
 </div>

@@ -22,7 +22,7 @@ const server = http.createServer(async (req,res) => {
     res.end(await fs.readFile(file));
   } catch {res.statusCode=404;res.end('Not found');}
 });
-const SHOTS = ['index', 'getting-started', 'commands', 'site-toolkit', 'project-practices', 'git', 'releases', 'readme'];
+const SHOTS = ['index', 'getting-started', 'commands', 'site-toolkit', 'git', 'releases', 'readme'];
 
 (async () => {
   await fs.mkdir(output,{recursive:true});
@@ -81,7 +81,7 @@ const SHOTS = ['index', 'getting-started', 'commands', 'site-toolkit', 'project-
       assert.ok(reached.outline !== 'none' || reached.shadow !== 'none', 'focused path card is visibly marked');
 
       // Pages for people use the chapter reader; rendered records are plain reference pages.
-      const peoplePages = ['getting-started', 'reader-tour', 'commands', 'project-practices', 'engineering-practices',
+      const peoplePages = ['getting-started', 'reader-tour', 'commands', 'engineering-practices',
                            'writing-practices', 'experiments', 'site-toolkit'];
       for (const slug of pages.filter(slug => slug !== 'index')) {
         await page.goto(`${origin}/html/${slug}.html`, {waitUntil:'networkidle'});
