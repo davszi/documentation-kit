@@ -5,7 +5,7 @@ brand_sub = "what it provides · how it works · set up · adopt"
 description = "What the kit provides, how a project routes contributors to its rules, the three practice areas, how to set it up and which adoption route fits."
 components = ["toc", "nav", "code", "filelinks"]
 page_css = ["build-sheet.css"]
-toc = [["What it provides", "#what-the-kit-provides"], ["How it works", "#how-it-works"], ["Practice areas", "#practice-areas"], ["Set up", "#set-up"], ["Adoption routes", "#choose-how-to-adopt-it"]]
+toc = [["What it provides", "#what-the-kit-provides"], ["How it works", "#how-it-works"], ["Practice areas", "#practice-areas"], ["Set up", "#set-up"], ["Starter files", "#starter-files"], ["Adoption routes", "#choose-how-to-adopt-it"]]
 +++
 
 # Get started with the documentation kit
@@ -181,6 +181,64 @@ git add docs AGENTS.md CLAUDE.md .gitmodules .docs-kit
 </div>
 
 <div class="bs-specs"><div><span class="bs-label">Python</span><b>3.12+</b></div><div><span class="bs-label">Packages</span><b>Pinned</b></div><div><span class="bs-label">JavaScript install</span><b>None</b></div></div>
+
+</section>
+
+<section class="card" id="starter-files">
+
+## Every file the starter writes has one job
+
+<p class="bs-lead">Agents start at the router, people start at the pages, and each kind of content has exactly one file to live in.</p>
+
+```text
+my-project/
+├── AGENTS.md                 task router: which kit guide and project record to read before each action
+├── CLAUDE.md                 one line, @AGENTS.md, so Claude Code follows the same router
+├── .gitignore                keeps .build/ (environment and generated site) out of Git
+├── .docs-kit/                the pinned kit (submodule); read it, never edit it here
+└── docs/
+    ├── PROJECT_CONTEXT.md    repository map, build and review commands, project choices
+    ├── index.md              reading index: which document owns what, and the shared practices
+    ├── worklog.md            append-only chronology, newest entries first
+    ├── open/OPEN.md          open work: one line per item, each linking the record that owns it
+    ├── site/site.toml        site title, source repository, navigation
+    └── topics/
+        ├── home/index.md     home page: hero and an automatic card for every page
+        └── guide/
+            ├── index.md      page for people: the visual guide, in reader chapters
+            └── guide.md      record for agents: scope, ownership and acceptance checklist
+```
+
+<div class="bs-grid g3">
+<div class="bs-part bs-teal"><span class="bs-label">Read first by agents</span><h3>Entry and orientation</h3><ul>
+<li><code>AGENTS.md</code> routes each action to its guides; <code>CLAUDE.md</code> imports it</li>
+<li><code>PROJECT_CONTEXT.md</code> holds the map and commands the routes point to</li>
+<li><code>index.md</code> says where each kind of document lives</li>
+</ul></div>
+<div class="bs-part bs-violet"><span class="bs-label">Change over time</span><h3>Records</h3><ul>
+<li><code>worklog.md</code>: what landed and when, never rewritten</li>
+<li><code>open/OPEN.md</code>: what is still owed, deleted when done</li>
+<li><code>topics/*/*.md</code>: one record per subject, the exact contract</li>
+</ul></div>
+<div class="bs-part bs-orange"><span class="bs-label">Become the website</span><h3>The site</h3><ul>
+<li><code>site/site.toml</code>: title, repository and menu</li>
+<li><code>topics/*/index.md</code>: pages for people, built into <code>.build/docs/</code></li>
+<li>the home page lists every page automatically</li>
+</ul></div>
+</div>
+
+Each file has one job so that nobody has to guess where something goes, and an agent can find the current answer without reading everything. A fact written into the wrong file is the start of a second copy: the router grows a command, the page grows a task list, and the two drift apart. The guide topic shows the pairing every later topic follows: a record (`guide.md`) for the exact contract and a page (`index.md`) that explains it.
+
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>Commands in the router</h3><p>A new build flag is added to <code>AGENTS.md</code>, and a different version of it to the guide page. Agents and readers now see two commands.</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>One home, linked</h3><p>The flag goes into <code>PROJECT_CONTEXT.md</code> under build and review. The router's row and the page both link there.</p></div>
+</div>
+
+<!-- fold: code What is not in the project, and why -->
+
+`.docs-kit/` is the kit's own repository, pinned as a submodule: its rules, theme and tools. Change a shared rule in the kit itself, never in a project's checkout of it. `.build/` holds the Python environment (`.build/docs-env/`) and the generated site (`.build/docs/`); both are recreated by commands and stay out of Git through `.gitignore`. Generated pages are never edited; change the source and rebuild. Inside the kit, the starter's entry files are stored as `*.tmpl` so none of them is active there; `init` writes them under the names above.
+
+<!-- /fold -->
 
 </section>
 

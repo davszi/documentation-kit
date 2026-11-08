@@ -2,6 +2,14 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-08 — Show the starter's files on Get started
+
+- Get started gains a "Starter files" chapter: the annotated tree of what
+  `init` writes, one line per file stating its job, the files grouped by
+  role (agent entry and orientation, records, the site), an example of a
+  fact written into the wrong file, and a fold on `.docs-kit/`, `.build/`
+  and the `*.tmpl` storage inside the kit.
+
 ## 2026-11-08 — Give Get started full-depth cards
 
 - The merged Get started kept one claim and one visual per card and dropped
