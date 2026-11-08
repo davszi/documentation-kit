@@ -602,7 +602,13 @@ def build_source_page(page, routes: dict[str, str], site: dict, shell: str) -> t
             return None
         comps = ["nav", "code", "filelinks", "chapter-reader"]
     else:
-        meta["toc"] = table_of_contents(content)
+        # In the flat tree, a listed page is marked as the current entry, so its
+        # sidebar keeps the same site tree as every other page. A hidden page has
+        # no entry to mark, and nested navigation nests sections under the entry,
+        # so those list their own sections.
+        entry = next((n for n in site.get("nav", []) if n.get("file") == f"{page.slug}.html"), {})
+        listed_flat = not entry.get("hidden", False) and not site.get("nested_nav")
+        meta["toc"] = [] if listed_flat else table_of_contents(content)
     return finish_page(meta, page.slug, name, content, comps, site, shell, {})
 
 

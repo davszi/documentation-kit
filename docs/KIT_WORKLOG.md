@@ -2,6 +2,15 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-08 — Keep the site tree on listed reference pages
+
+- Opening a listed reference page (README, release notes, kit records)
+  replaced the sidebar's site tree with that page's section list. A listed
+  registered page now keeps the site tree with itself marked as current;
+  hidden registered pages, which have no entry to mark, and pages under
+  `nested_nav`, which nest sections under their entry, still list them.
+  A unit test covers the listed and hidden cases.
+
 ## 2026-11-08 — Show the starter's files on Get started
 
 - Get started gains a "Starter files" chapter: the annotated tree of what

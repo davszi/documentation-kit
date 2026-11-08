@@ -104,8 +104,8 @@ class SourcePages(unittest.TestCase):
         self.assertIn('<!-- include: missing.html -->', page)
         self.assertIn('<!-- fold: math Kept literal -->', page)
         self.assertIn('aria-label="Table: Key, Meaning"', page)
-        # Sidebar lists headings; navigation and manifest know the route.
-        self.assertIn('href="#first-part">First part</a>', page)
+        # Listed page: sidebar marks it in the site tree; navigation and manifest know the route.
+        self.assertIn('<h2 id="first-part">First part</h2>', page)
         self.assertIn('class="xpage current" aria-current="page"', page)
         manifest = json.loads((self.root / '.build/docs/site-build.json').read_text())
         self.assertEqual(manifest['source_pages'], {'other-rule.html': 'policy/other.md',
@@ -255,6 +255,24 @@ class SourcePages(unittest.TestCase):
         self.write('policy/rule.md', '# Shared rule\n\n' + 'A long opening sentence. ' * 40 + '\n\n## First part\n\nBody.\n')
         self.assertEqual(self.build().returncode, 0)
         self.assertIn('id="reader-introduction"', self.page('shared-rule'))
+
+    def test_listed_reference_page_keeps_the_site_tree_in_its_sidebar(self):
+        # Listed: marked as current in the tree, no section list.
+        listed = self.page_after_build('shared-rule')
+        self.assertIn('class="xpage current" aria-current="page" data-group="rules" href="shared-rule.html"', listed)
+        self.assertNotIn('<a class="top" href="#first-part">', listed)
+        # Hidden: no tree entry to mark, so the sidebar lists its sections.
+        config = self.root / 'docs/site/site.toml'
+        config.write_text(config.read_text().replace(
+            'label = "shared-rule"\nfile = "shared-rule.html"\ngroup = "rules"\n',
+            'label = "shared-rule"\nfile = "shared-rule.html"\nhidden = true\n'))
+        hidden = self.page_after_build('shared-rule')
+        self.assertIn('<a class="top" href="#first-part">', hidden)
+
+    def page_after_build(self, slug):
+        result = self.build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        return self.page(slug)
 
     def test_nested_navigation_must_be_boolean(self):
         config = self.root / 'docs/site/site.toml'

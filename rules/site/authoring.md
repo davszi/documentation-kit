@@ -99,7 +99,10 @@ description = "Commits, shared checkouts and history."  # optional
 `title` defaults to the file's first level-one heading. `description` supplies
 the site-map card text and sidebar subtitle. `math = true` enables formulas.
 `reader = true` uses the chapter reader when the site enables it; otherwise the
-page scrolls and its sidebar lists the second- and third-level headings. In the
+page scrolls. Its sidebar then shows the site tree with the page marked as
+current. Its second- and third-level headings are listed only where they do not
+replace the tree: on a page with `hidden = true`, which has no entry to mark,
+or nested under the entry with `nested_nav = true`. In the
 reader, a short opening (under 600 characters, without subheadings, figures or
 tables) joins the first chapter with the source line instead of becoming a
 nearly empty Introduction chapter; a longer opening stays its own chapter. Each
