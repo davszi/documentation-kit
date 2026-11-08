@@ -12,6 +12,14 @@ toc = [["What it provides", "#what-the-kit-provides"], ["How it works", "#how-it
 
 <section class="card" id="what-the-kit-provides">
 
+<!-- slide -->
+<p class="slide-eyebrow">Documentation kit</p>
+<p class="slide-title">Shared rules, pinned once, read right before each action</p>
+<p class="slide-lead">A project adds the kit as one submodule and routes each kind of action to its guide. Building a website from the same Markdown is optional.</p>
+<div class="slide-main"><div class="slide-row"><div class="slide-tile is-term"><h4>Pin</h4><p>.docs-kit submodule · its commit is your version</p></div><div class="slide-tile"><h4>Route</h4><p>one AGENTS.md row per action · kit guide + your record</p></div><div class="slide-tile is-held"><span class="slide-tag">optional</span><h4>Build a site</h4><p>the same Markdown as a checked website</p></div></div></div>
+<p class="slide-scope">Summary of this page · no measured results</p>
+<!-- /slide -->
+
 ## One pinned submodule gives a project shared rules and tools
 
 <p class="bs-lead">The kit supplies rules, a reader and a site toolchain. Your project keeps its content, its specifics and the decision when to upgrade.</p>
@@ -19,8 +27,8 @@ toc = [["What it provides", "#what-the-kit-provides"], ["How it works", "#how-it
 <div class="bs-grid g2">
 <div class="bs-part bs-violet"><span class="bs-label">The kit supplies · <code>.docs-kit/</code></span><h3>Shared and pinned</h3><ul>
 <li><code>rules/</code>: engineering, documentation, writing and experiment guides your router points to</li>
-<li><code>theme/</code>: chapter reader, build-sheet layout, fonts and math (<a href="reader-tour.html">reader tour</a>)</li>
-<li><code>docsite.py</code>, <code>tooling/</code>: build, lint, slides and export (<a href="commands.html">commands</a>)</li>
+<li><code>theme/</code>: chapter reader, build-sheet layout, fonts and math (<a href="build-a-site.html#the-reader">the reader</a>)</li>
+<li><code>docsite.py</code>, <code>tooling/</code>: build, lint, slides and export (<a href="build-a-site.html">build a site</a>)</li>
 <li><code>examples/starter/</code>: the project that <code>init</code> writes without overwriting</li>
 </ul></div>
 <div class="bs-part bs-teal"><span class="bs-label">Your project keeps</span><h3>Owned and local</h3><ul>
@@ -177,7 +185,7 @@ git add docs AGENTS.md CLAUDE.md .gitmodules .docs-kit
 <li>writes nothing if any of them already exists</li>
 <li>the title defaults to the folder name</li>
 <li>track what it wrote: the build publishes tracked files only</li>
-</ul><p>Next: <a href="commands.html">Commands</a> covers build, lint, preview and upgrades. A project that only adopts the rules can stop after the submodule and its router rows.</p></div>
+</ul><p>Next: <a href="build-a-site.html">Build a site</a> covers how the build works, build, lint, preview and upgrades. A project that only adopts the rules can stop after the submodule and its router rows.</p></div>
 </div>
 
 <div class="bs-specs"><div><span class="bs-label">Python</span><b>3.12+</b></div><div><span class="bs-label">Packages</span><b>Pinned</b></div><div><span class="bs-label">JavaScript install</span><b>None</b></div></div>
@@ -257,7 +265,7 @@ Each file has one job so that nobody has to guess where something goes, and an a
 </ol><p><b>Stays as is:</b> nothing yet; the starter gives you the full structure.</p></div>
 <div class="bs-part bs-violet" id="route-existing"><span class="bs-label">You already have docs</span><h3 id="route-existing-documentation">Existing documentation</h3><ol>
 <li>Add the submodule; skip <code>init</code> and add <code>docs/site/site.toml</code> deliberately.</li>
-<li>Render existing Markdown in place with <a href="authoring.html#registered-source-pages">registered source pages</a>; nothing moves.</li>
+<li>Publish existing Markdown in place as <a href="build-a-site.html#existing-markdown">registered records</a>; nothing moves.</li>
 <li>Keep historical public routes with the <a href="publication.html">publication exporter</a> and project <a href="resources.html#resource-closure-and-evidence">path adapters</a>.</li>
 <li>Replace a copied shared rule only once its project-specific parts have a linked home.</li>
 </ol><p><b>Stays as is:</b> your content, destinations and history; the <a href="migrate-1-1-0.html#prepare-the-deliverable">migration guide</a> shows the review steps.</p></div>

@@ -16,13 +16,13 @@ toc = []
 <p>Add the kit to your repository as one Git submodule. Then add rows to your <code>AGENTS.md</code>: each row names an action and the kit guide to read before it. Contributors and agents follow those rows. Building a documentation site with the kit is optional.</p>
 <div class="home-cta">
 <a href="getting-started.html">Get started</a>
-<a class="alt" href="reader-tour.html">Reader tour</a>
+<a class="alt" href="build-a-site.html">Build a site</a>
 <a class="alt" href="getting-started.html#set-up">Setup commands</a>
 </div>
 </div>
 <div class="bs-grid g1" role="navigation" aria-label="Choose a path">
 <a class="now-card" href="getting-started.html#practice-areas"><strong>1 · Adopt the practices</strong><span>Which kit guide to read before which action: code, execution, delivery, Git, documentation, writing and experiments.</span></a>
-<a class="now-card" href="site-toolkit.html"><strong>2 · Build a site (optional)</strong><span>Turn tracked Markdown, figures and configuration into a checked static site with the shared reader.</span></a>
+<a class="now-card" href="build-a-site.html"><strong>2 · Build a site (optional)</strong><span>Turn tracked Markdown, figures and configuration into a checked static site with the shared reader.</span></a>
 <a class="now-card" href="releases.html"><strong>3 · Upgrade a pinned kit</strong><span>What each version changes for consumers, what stays stable in 1.x and how to migrate.</span></a>
 </div>
 </header>
@@ -49,7 +49,7 @@ toc = []
 | Handing off work          | `.docs-kit/rules/engineering/handoffs.md`                            |
 ```
 
-<p class="home-foot">Each row pairs a kit guide with the project record that holds your specifics. The <a href="../../examples/starter/AGENTS.md.tmpl">starter's router</a> has every row; keep the ones you need. Full commands: <a href="commands.html#start-a-project">Start a project</a>.</p>
+<p class="home-foot">Each row pairs a kit guide with the project record that holds your specifics. The <a href="../../examples/starter/AGENTS.md.tmpl">starter's router</a> has every row; keep the ones you need. Full commands: <a href="getting-started.html#set-up">Start a project</a>.</p>
 </section>
 
 <section class="home-now" aria-label="Every page">

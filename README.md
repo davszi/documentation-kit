@@ -4,7 +4,7 @@ Reusable engineering and documentation policy, a complete HTML reader and a
 small static-site toolchain. Projects consume one pinned [Git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) while keeping their own
 topic records, pages, figures, navigation and evidence.
 
-![The shared chapter reader](docs/topics/reader-tour/media/reader.png)
+![The shared chapter reader](docs/topics/build-a-site/media/reader.png)
 
 The kit carries the existing chapter reader and build-sheet layout: full-width
 cards, docked navigation, one/two/all-chapter views, pinned comparisons, optional

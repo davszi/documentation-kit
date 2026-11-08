@@ -382,7 +382,7 @@ Each concept or formula is explained in one canonical place and linked elsewhere
 
 In source, a fold opens with a line such as `<!-- fold: math Derivation of the bound -->` and closes with `<!-- /fold -->`. The types are `math`, `experiment`, `code` and `dead-end`, displayed as Alternatives. A fold title is already its heading; do not repeat it inside.
 
-Choose by narrative weight, not element type: a table or equation may carry the Story, and a plot may be supporting detail. Default to visible figures and folded reference density. Keep competing formulations together, with assumptions and verdict explicit. Add a new layer only for recurring content. The [reader tour](reader-tour.html) shows how folds behave on a page.
+Choose by narrative weight, not element type: a table or equation may carry the Story, and a plot may be supporting detail. Default to visible figures and folded reference density. Keep competing formulations together, with assumptions and verdict explicit. Add a new layer only for recurring content. The [reader tour](build-a-site.html#the-reader) shows how folds behave on a page.
 
 <!-- /fold -->
 

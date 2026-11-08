@@ -22,7 +22,7 @@ const server = http.createServer(async (req,res) => {
     res.end(await fs.readFile(file));
   } catch {res.statusCode=404;res.end('Not found');}
 });
-const SHOTS = ['index', 'getting-started', 'commands', 'site-toolkit', 'git', 'releases', 'readme'];
+const SHOTS = ['index', 'getting-started', 'build-a-site', 'git', 'releases', 'readme'];
 
 (async () => {
   await fs.mkdir(output,{recursive:true});
@@ -63,7 +63,7 @@ const SHOTS = ['index', 'getting-started', 'commands', 'site-toolkit', 'git', 'r
         await page.evaluate(() => document.getElementById('100--first-stable-version').getBoundingClientRect().top));
 
       // A hash into a panel-switcher option reveals that panel; adoption routes are all visible.
-      await page.goto(`${origin}/html/reader-tour.html#view-page`, {waitUntil:'networkidle'});
+      await page.goto(`${origin}/html/build-a-site.html#view-page`, {waitUntil:'networkidle'});
       await settle(page);
       assert.equal(await page.locator('#view-page').isVisible(), true);
       assert.equal(await page.locator('#view-markdown').isVisible(), false);
@@ -85,8 +85,8 @@ const SHOTS = ['index', 'getting-started', 'commands', 'site-toolkit', 'git', 'r
       assert.ok(reached.outline !== 'none' || reached.shadow !== 'none', 'focused path card is visibly marked');
 
       // Pages for people use the chapter reader; rendered records are plain reference pages.
-      const peoplePages = ['getting-started', 'reader-tour', 'commands', 'engineering-practices',
-                           'writing-practices', 'experiments', 'site-toolkit'];
+      const peoplePages = ['getting-started', 'build-a-site', 'engineering-practices',
+                           'writing-practices', 'experiments'];
       for (const slug of pages.filter(slug => slug !== 'index')) {
         await page.goto(`${origin}/html/${slug}.html`, {waitUntil:'networkidle'});
         const chapters = await page.locator('section.card[data-reader-chapter]').count();
@@ -96,7 +96,7 @@ const SHOTS = ['index', 'getting-started', 'commands', 'site-toolkit', 'git', 'r
           assert.equal(await page.locator('.source-origin').first().isVisible(), true, slug + ' shows its source line');
         }
       }
-      await page.goto(`${origin}/html/site-toolkit.html`, {waitUntil:'networkidle'});
+      await page.goto(`${origin}/html/build-a-site.html`, {waitUntil:'networkidle'});
       if (viewport.width >= 900) {
         // The reader stage uses the content width; no line-length cap leaves the right side blank.
         const stage = await page.evaluate(() => ({card: document.querySelector('section.card[data-reader-chapter]').getBoundingClientRect().width,
@@ -107,7 +107,7 @@ const SHOTS = ['index', 'getting-started', 'commands', 'site-toolkit', 'git', 'r
         await page.click('button[data-reader-view="single"]');
 
         // Reader tour: docking, pinning and the carousel work as the tour describes.
-        await page.goto(`${origin}/html/reader-tour.html#move-through-chapters`, {waitUntil:'networkidle'});
+        await page.goto(`${origin}/html/build-a-site.html#how-a-build-works`, {waitUntil:'networkidle'});
         const docked = () => page.evaluate(() => document.body.classList.contains('reader-nav-docked'));
         assert.equal(await docked(), true, 'navigation starts docked on wide screens');
         await page.click('.reader-drawer-close');
@@ -124,17 +124,17 @@ const SHOTS = ['index', 'getting-started', 'commands', 'site-toolkit', 'git', 'r
           || document.getElementById('figures')?.getBoundingClientRect().left >= 0, null, {timeout: 3000}).catch(() => {});
         await page.waitForTimeout(400);
         const shown = await inView();
-        assert.ok(shown.includes('move-through-chapters') && !shown.includes('dock-and-pin'), 'pinned chapter holds while the other column moves: ' + shown);
+        assert.ok(shown.includes('how-a-build-works') && !shown.includes('two-kinds-of-pages'), 'pinned chapter holds while the other column moves: ' + shown);
         await page.click('button[data-reader-view="single"]');
-        await page.goto(`${origin}/html/reader-tour.html#figures`, {waitUntil:'networkidle'});
-        const slides = await page.$$eval('#figures .fig-carousel > img', imgs => imgs.filter(img => getComputedStyle(img).display !== 'none').length);
+        await page.goto(`${origin}/html/build-a-site.html#figures-and-slides`, {waitUntil:'networkidle'});
+        const slides = await page.$$eval('#figures-and-slides .fig-carousel > img', imgs => imgs.filter(img => getComputedStyle(img).display !== 'none').length);
         assert.equal(slides, 1, 'carousel shows one capture at a time');
       }
 
       if (viewport.width < 900) {
         // The menu opens navigation over content; tables scroll inside their region.
         // Reader pages open navigation from the reader bar; reference pages from the shell menu.
-        await page.goto(`${origin}/html/site-toolkit.html`, {waitUntil:'networkidle'});
+        await page.goto(`${origin}/html/build-a-site.html`, {waitUntil:'networkidle'});
         await page.click('.reader-mobile-menu');
         await page.waitForFunction(() => {
           const r = document.getElementById('sidebar').getBoundingClientRect();

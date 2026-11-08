@@ -2,6 +2,20 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-08 — Fold the toolkit and reader tour into Build a site
+
+- Site toolkit only listed what exists, and the Reader tour demonstrated
+  features without content behind them. Both pages and Commands are
+  replaced by one reader page, Build a site: how a build works, the two
+  kinds of pages, publishing existing Markdown (problem, mechanism, what
+  the build adds, a live source-versus-rendered switcher, the full registry
+  entry), what readers get (docking, pinning and layers, with real folds),
+  figures and slides (carousel of site captures, slide-face deck command),
+  then build, lint, preview, upgrade and the reference guides per task.
+  Get started and Build a site each open with a slide face. Start here now
+  holds both pages; the Site toolkit group is gone. The site review's
+  docking, pinning, carousel and switcher checks run on Build a site.
+
 ## 2026-11-08 — Keep the site tree on listed reference pages
 
 - Opening a listed reference page (README, release notes, kit records)

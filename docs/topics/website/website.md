@@ -23,12 +23,10 @@ tables give the navigation and `[[source_pages]]` tables map records to routes.
 |---|---|---|
 | Home | [`home/index.md`](../home/index.md) | Three paths, the three adoption steps and a router snippet |
 | Get started | [`getting-started/index.md`](../getting-started/index.md) | What the kit provides, how routing works, the three practice areas, setup and adoption routes |
-| Commands | [`commands/index.md`](../commands/index.md) | Build, lint, preview, slides and upgrade commands, with what each checks or writes |
-| Reader tour | [`reader-tour/index.md`](../reader-tour/index.md) | Chapters, docking, pinning, layers, figures, comparisons, status blocks and slides |
+| Build a site | [`build-a-site/index.md`](../build-a-site/index.md) | How the build works, topic pages and registered records, the reader, figures and slides, and every command from build to upgrade |
 | Engineering | [`engineering-practices/index.md`](../engineering-practices/index.md) | The six engineering guides |
 | Documentation and writing | [`writing-practices/index.md`](../writing-practices/index.md) | The documentation system and the writing guides |
 | Experiments | [`experiments/index.md`](../experiments/index.md) | The experiment workflow and verification guides |
-| Site toolkit | [`site-toolkit/index.md`](../site-toolkit/index.md) | Build pipeline, task-to-guide map, source pages and build checks |
 
 Rule guides are hidden from the navigation and reached from these pages; release
 notes, migration guides, the README and the kit-development records stay listed. The

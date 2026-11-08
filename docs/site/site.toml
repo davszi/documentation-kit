@@ -22,8 +22,8 @@ file = "getting-started.html"
 group = "start here"
 
 [[nav]]
-label = "Commands"
-file = "commands.html"
+label = "Build a site"
+file = "build-a-site.html"
 group = "start here"
 
 # ── Practices: pages for people; each links its reference guides ───────
@@ -41,17 +41,6 @@ group = "practices"
 label = "Experiments"
 file = "experiments.html"
 group = "practices"
-
-# ── Site toolkit and reader ─────────────────────────────────────────
-[[nav]]
-label = "Site toolkit"
-file = "site-toolkit.html"
-group = "site toolkit"
-
-[[nav]]
-label = "Reader tour"
-file = "reader-tour.html"
-group = "site toolkit"
 
 # ── Releases and kit development: reference records ───────────────────
 [[nav]]
