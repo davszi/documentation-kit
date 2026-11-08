@@ -2,6 +2,17 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-08 — Give Get started full-depth cards
+
+- The merged Get started kept one claim and one visual per card and dropped
+  the explanation; its adoption chapter hid two of three routes behind a
+  switcher and left most of the card empty. Each chapter now has a reason,
+  a not-this/this example and folds where detail helps; the practice-area
+  cards show each page's chapter claims; setup shows the full commands
+  beside what `init` writes and why it is safe to run; the three adoption
+  routes sit side by side with steps and what stays as is. The site review's
+  panel-switcher hash check moves to the Reader tour's switcher.
+
 ## 2026-11-08 — Merge the start pages
 
 - Start here had four overlapping pages (Get started, Reader tour, Setup and

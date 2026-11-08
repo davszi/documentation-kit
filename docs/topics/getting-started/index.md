@@ -2,10 +2,10 @@
 title = "Get started"
 brand = "Documentation kit"
 brand_sub = "what it provides · how it works · set up · adopt"
-description = "What the kit provides, how a project routes contributors to its rules, the three practice areas, setup and which adoption route fits."
-components = ["toc", "nav", "code", "filelinks", "panel-switcher"]
+description = "What the kit provides, how a project routes contributors to its rules, the three practice areas, how to set it up and which adoption route fits."
+components = ["toc", "nav", "code", "filelinks"]
 page_css = ["build-sheet.css"]
-toc = [["What it provides", "#what-the-kit-provides"], ["How it works", "#how-it-works"], ["Practice areas", "#practice-areas"], ["Set up", "#set-up"], ["Adoption route", "#choose-how-to-adopt-it"]]
+toc = [["What it provides", "#what-the-kit-provides"], ["How it works", "#how-it-works"], ["Practice areas", "#practice-areas"], ["Set up", "#set-up"], ["Adoption routes", "#choose-how-to-adopt-it"]]
 +++
 
 # Get started with the documentation kit
@@ -32,9 +32,27 @@ toc = [["What it provides", "#what-the-kit-provides"], ["How it works", "#how-it
 </ul></div>
 </div>
 
+A rule that several projects share has one home: the kit. Without that, each project keeps its own copy, a fix lands in one copy and the others drift. The split also works the other way: a project's commands, thresholds and exceptions are facts about that project, so they stay in its own records, where its contributors look. Changing a common rule means changing the kit; a project picks the change up when it moves its pin.
+
 <div class="bs-specs"><div><span class="bs-label">Install</span><b>One submodule</b></div><div><span class="bs-label">Needed to use the rules</span><b>Router rows</b></div><div><span class="bs-label">Site build</span><b>Optional</b></div></div>
 
-A common rule changes in the kit, never in a consumer's copy; a project's exception stays in the project. [Ownership](readme.html#ownership) lists every path on each side; [canonical homes](documentation-system.html#canonical-homes) explains why.
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>Copy the rule and edit it locally</h3><p>A project pastes the Git guide into its own docs and adds its test command in the middle. The next kit fix never reaches it, and nobody can tell which sentences are shared and which are local.</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>Point at the rule, keep the specifics apart</h3><p>The project's router names <code>.docs-kit/rules/engineering/git.md</code> and the project's validation record. The guide stays shared; the test command lives in the project.</p></div>
+</div>
+
+<!-- fold: code Which paths belong to whom -->
+
+| Shared kit | Each project |
+|---|---|
+| `rules/`: engineering, documentation, writing and site practices | `docs/PROJECT_CONTEXT.md`, `docs/index.md`: orientation, reading routes, project additions |
+| `theme/`: HTML shell, chapter reader, CSS/JS, fonts, math | `docs/topics/`: records and optional rendered `index.md` pages |
+| `tooling/`, `docsite.py`: renderer, packaging, checks | `docs/site/site.toml`, local CSS and components, `docs/figures/` |
+| `examples/starter/`: the starter `init` writes | open plans, evidence, dated sessions and `docs/worklog.md` |
+
+The full split is in [Ownership](readme.html#ownership); [canonical homes](documentation-system.html#canonical-homes) explains the one-home rule.
+
+<!-- /fold -->
 
 </section>
 
@@ -55,15 +73,25 @@ A common rule changes in the kit, never in a consumer's copy; a project's except
 <figcaption><b>Figure 1.</b> Adoption is a pointer, not a copy: one router row joins a shared rule with the project's own specifics. This diagram contains no measured results.</figcaption>
 </figure>
 
-The trigger is the action, not the topic, so contributors and agents load only what applies. Step 2 for one action looks like this:
+[Figure 1](#fig-routing) is the whole mechanism. The router is triggered by the action, not the topic: an agent about to commit reads the Git guide, not every guide. That keeps each task's reading short and makes it hard to skip the rule that applies. Read the orientation and the rules that apply to every task once at the start; route the rest by action, and recheck the routes when the task grows. Reading a route grants no permission to run or publish anything.
 
 ```markdown
 | Before…                   | Read…                                                           |
 |---------------------------|-----------------------------------------------------------------|
 | Quoting a measured number | `.docs-kit/rules/writing/evidence.md` and our benchmark records |
+| Staging or committing     | `.docs-kit/rules/engineering/git.md` and our validation records |
 ```
 
-The [starter's router](../../examples/starter/AGENTS.md.tmpl) has every row; keep the ones you need. See [agent entrypoints](documentation-system.html#agent-entrypoints-import-versus-point).
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>A topic list</h3><p>"Documentation: see rules/. Git: see git.md." Nothing says when to read which, so an agent either reads everything up front or nothing at the moment it matters.</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>An action trigger</h3><p>"Before staging or committing: read the Git guide and our validation records." The row fires at the moment of the action and names both owners.</p></div>
+</div>
+
+<!-- fold: code How Codex and Claude Code read the same router -->
+
+Keep one thin router in `AGENTS.md`. Codex follows its named paths and triggers directly. For Claude Code, `CLAUDE.md` contains a bare, standalone `@AGENTS.md` import, so both clients use the same router; backticks or a fence would make the import literal. Submodule consumers initialize `.docs-kit` before relying on its rules, and report a missing policy instead of working around it. The [starter's router](../../examples/starter/AGENTS.md.tmpl) has every row; see [agent entrypoints](documentation-system.html#agent-entrypoints-import-versus-point).
+
+<!-- /fold -->
 
 </section>
 
@@ -74,18 +102,39 @@ The [starter's router](../../examples/starter/AGENTS.md.tmpl) has every row; kee
 <p class="bs-lead">Each page explains its guides with reasons and examples and lists the router row for every guide; the guides stay the exact reference.</p>
 
 <div class="bs-grid g3">
-<div class="bs-part bs-teal"><span class="bs-label">6 guides</span><h3><a href="engineering-practices.html">Engineering</a></h3><ul>
-<li>code and repository</li><li>efficient implementation and performance claims</li><li>execution and shared resources</li><li>ownership, delivery and handoffs</li><li>Git and shared checkouts</li>
-</ul></div>
-<div class="bs-part bs-violet"><span class="bs-label">7 guides</span><h3><a href="writing-practices.html">Documentation and writing</a></h3><ul>
-<li>documentation system: homes, records and pages</li><li>page design and build sheets</li><li>explanations and honest claims</li><li>measurements and evidence</li><li>figures, mathematics and code excerpts</li>
-</ul></div>
-<div class="bs-part bs-orange"><span class="bs-label">2 guides</span><h3><a href="experiments.html">Experiments</a></h3><ul>
-<li>keep experiments small</li><li>investigation or qualification</li><li>proportionate verification</li><li>final runs only for learned or fitted models</li>
-</ul></div>
+<div class="bs-part bs-teal"><span class="bs-label">6 guides · 11 chapters</span><h3><a href="engineering-practices.html">Engineering</a></h3><ul>
+<li>consumed output is an interface; generated files change at their source</li>
+<li>efficient by default; a performance claim names its workload and path</li>
+<li>expensive jobs run on the project's route, under a stated budget, owned through cleanup</li>
+<li>the owner finishes routine work; changes to the agreement go back for a decision</li>
+<li>reports lead with the outcome and say how each claim is known</li>
+<li>one commit per logical deliverable, reviewed as a whole</li>
+</ul><p><b>Read before:</b> changing code, running heavy jobs, handing off, committing.</p></div>
+<div class="bs-part bs-violet"><span class="bs-label">7 guides · 13 chapters</span><h3><a href="writing-practices.html">Documentation and writing</a></h3><ul>
+<li>every fact has one home; finished work moves to its subject</li>
+<li>records keep the contract for agents; pages explain it to people</li>
+<li>each section states its takeaway before the evidence</li>
+<li>one visible story; optional depth in typed folds</li>
+<li>a measured number is current only with its full provenance</li>
+<li>figures, mathematics and code excerpts follow shared conventions</li>
+</ul><p><b>Read before:</b> creating or moving a document, writing a page, quoting a number, drawing.</p></div>
+<div class="bs-part bs-orange"><span class="bs-label">2 guides · 9 chapters</span><h3><a href="experiments.html">Experiments</a></h3><ul>
+<li>start with the smallest experiment that can change a decision</li>
+<li>classify by what the result decides: investigation or qualification</li>
+<li>build on existing evidence and stop once the question is answered</li>
+<li>state the plan before running; report every attempt after</li>
+<li>final runs only when results depend on a learned or fitted model</li>
+<li>add a check only for a named gap; never lower a failed bar</li>
+</ul><p><b>Read before:</b> designing or running an experiment, choosing its checks.</p></div>
 </div>
 
-The [writing](writing.html) and [site maintenance](maintenance.html) entrypoints remain as short routers, so old links to their section anchors still arrive at the right guide.
+Each practice page starts with a router table for its guides, so you can copy the rows you need into your `AGENTS.md`. The bullets above summarise each page's chapter claims; open a page for the reason behind each rule and a worked example.
+
+<!-- fold: dead-end Old links to the writing and maintenance routers -->
+
+The [writing](writing.html) and [site maintenance](maintenance.html) entrypoints remain as short routers, so links written before the guides were split still arrive at the right guide and section.
+
+<!-- /fold -->
 
 </section>
 
@@ -93,7 +142,18 @@ The [writing](writing.html) and [site maintenance](maintenance.html) entrypoints
 
 ## A new project needs one submodule, one environment and one init
 
-<p class="bs-lead">Pin the kit, install its pinned Python packages, then let <code>init</code> add the starter without overwriting anything.</p>
+<p class="bs-lead">Pin the kit, install its pinned Python packages, let <code>init</code> add the starter, then track what it wrote.</p>
+
+<figure id="fig-setup">
+<div class="bs-flow" role="img" aria-label="Pin the kit as a submodule at .docs-kit, then create a Python 3.12 environment with the kit's pinned requirements, then run docsite.py init with the project's title and repository, which writes the starter files. Finally track the sources in Git, because the build only publishes tracked files.">
+<div class="bs-node bs-teal"><span class="bs-label">Once</span><b>Pin and install</b><ul><li><code>.docs-kit</code> submodule</li><li>Python 3.12 env, pinned packages</li></ul></div>
+<div class="bs-arrow"><span>init</span></div>
+<div class="bs-node bs-violet"><span class="bs-label"><code>docsite.py init</code></span><b>Write the starter</b><ul><li>never overwrites a file</li><li>fills title and repository</li></ul></div>
+<div class="bs-arrow"><span>track</span></div>
+<div class="bs-node bs-orange"><span class="bs-label">Git</span><b>Track the sources</b><ul><li>the build publishes tracked files only</li><li>add <code>.build/</code> to <code>.gitignore</code></li></ul></div>
+</div>
+<figcaption><b>Figure 2.</b> Setup in three steps. This diagram contains no measured results.</figcaption>
+</figure>
 
 ```bash
 git submodule add <kit-url> .docs-kit
@@ -104,11 +164,23 @@ python3.12 -m venv .build/docs-env
 git add docs AGENTS.md CLAUDE.md .gitmodules .docs-kit
 ```
 
-`init` checks every destination first and writes nothing if any starter file already exists. It writes `AGENTS.md`, `CLAUDE.md`, `docs/PROJECT_CONTEXT.md`, the reading index, worklog, open-work file and `docs/site/site.toml`, with the title (default: the folder name) and repository filled in. Add `.build/` to `.gitignore` and track the sources: the build only publishes tracked files.
+<div class="bs-grid g2">
+<div class="bs-part bs-violet"><span class="bs-label">What <code>init</code> writes</span><h3>Your project's entry files</h3><ul>
+<li><code>AGENTS.md</code>, <code>CLAUDE.md</code>: the task router and its Claude import</li>
+<li><code>docs/PROJECT_CONTEXT.md</code>, <code>docs/index.md</code>: repository map and reading routes</li>
+<li><code>docs/worklog.md</code>, <code>docs/open/OPEN.md</code>: chronology and open work</li>
+<li><code>docs/site/site.toml</code>: title, repository and navigation</li>
+<li><code>docs/topics/</code>: a home page and a visual guide to replace</li>
+</ul></div>
+<div class="bs-part bs-teal"><span class="bs-label">Safe to run</span><h3>It never overwrites your work</h3><ul>
+<li>checks every destination before writing</li>
+<li>writes nothing if any of them already exists</li>
+<li>the title defaults to the folder name</li>
+<li>track what it wrote: the build publishes tracked files only</li>
+</ul><p>Next: <a href="commands.html">Commands</a> covers build, lint, preview and upgrades. A project that only adopts the rules can stop after the submodule and its router rows.</p></div>
+</div>
 
 <div class="bs-specs"><div><span class="bs-label">Python</span><b>3.12+</b></div><div><span class="bs-label">Packages</span><b>Pinned</b></div><div><span class="bs-label">JavaScript install</span><b>None</b></div></div>
-
-Then [build, lint and preview](commands.html) the site, and [upgrade](commands.html#upgrade) the pin when you choose. A project that only adopts the rules can stop after the submodule and its router rows.
 
 </section>
 
@@ -118,39 +190,32 @@ Then [build, lint and preview](commands.html) the site, and [upgrade](commands.h
 
 <p class="bs-lead">A new project starts from the starter; existing documentation stays where it is; a project can also adopt the rules alone.</p>
 
-<div class="panel-switcher" data-panel-switcher data-panel-default="new">
-<div class="panel-switcher-controls" role="group" aria-label="Adoption route">
-<button type="button" data-panel-choice="new" aria-pressed="false" aria-controls="route-new">New project</button>
-<button type="button" data-panel-choice="existing" aria-pressed="false" aria-controls="route-existing">Existing documentation</button>
-<button type="button" data-panel-choice="practices" aria-pressed="false" aria-controls="route-practices">Practices only</button>
-</div>
-<div id="route-new" data-panel="new">
-<h3 id="route-new-project">New project</h3>
-<p>Start from the starter. <code>docsite.py init</code> checks every destination first and refuses to overwrite existing files.</p>
-<ul>
+<div class="bs-grid g3">
+<div class="bs-part bs-teal" id="route-new"><span class="bs-label">You have no documentation yet</span><h3 id="route-new-project">New project</h3><ol>
 <li>Run the commands in <a href="#set-up">set up</a>.</li>
 <li>Replace the starter's guide with your topics, following <a href="authoring.html#authoring-paths">authoring paths</a>.</li>
-<li>Keep the single task router the starter adds; see <a href="documentation-system.html#agent-entrypoints-import-versus-point">agent entrypoints</a>.</li>
-</ul>
-</div>
-<div id="route-existing" data-panel="existing">
-<h3 id="route-existing-documentation">Existing documentation</h3>
-<p>Keep the existing content and destinations. Add the configuration deliberately, page by page.</p>
-<ul>
+<li>Fill <code>docs/PROJECT_CONTEXT.md</code> with your repository map and commands.</li>
+<li>Keep the single task router the starter adds and trim its rows to what you need.</li>
+</ol><p><b>Stays as is:</b> nothing yet; the starter gives you the full structure.</p></div>
+<div class="bs-part bs-violet" id="route-existing"><span class="bs-label">You already have docs</span><h3 id="route-existing-documentation">Existing documentation</h3><ol>
+<li>Add the submodule; skip <code>init</code> and add <code>docs/site/site.toml</code> deliberately.</li>
 <li>Render existing Markdown in place with <a href="authoring.html#registered-source-pages">registered source pages</a>; nothing moves.</li>
 <li>Keep historical public routes with the <a href="publication.html">publication exporter</a> and project <a href="resources.html#resource-closure-and-evidence">path adapters</a>.</li>
-<li>Replace copied shared rules only after their project-specific parts have a linked home, as the <a href="migrate-1-1-0.html#prepare-the-deliverable">migration guide</a> describes.</li>
-</ul>
+<li>Replace a copied shared rule only once its project-specific parts have a linked home.</li>
+</ol><p><b>Stays as is:</b> your content, destinations and history; the <a href="migrate-1-1-0.html#prepare-the-deliverable">migration guide</a> shows the review steps.</p></div>
+<div class="bs-part bs-orange" id="route-practices"><span class="bs-label">You want the rules, not a site</span><h3 id="route-practices-only">Practices only</h3><ol>
+<li>Add the submodule.</li>
+<li>Add router rows to <code>AGENTS.md</code>, as in <a href="#how-it-works">how it works</a>.</li>
+<li>Pick the rows from the <a href="#practice-areas">practice pages</a>.</li>
+<li>Keep concrete commands, thresholds and resource profiles in your own records.</li>
+</ol><p><b>Stays as is:</b> everything; no build, no new pages.</p></div>
 </div>
-<div id="route-practices" data-panel="practices">
-<h3 id="route-practices-only">Practices only</h3>
-<p>The rules are plain Markdown. A project can route contributors to them without building a site.</p>
-<ul>
-<li>Add the submodule and the router rows from <a href="#how-it-works">how it works</a>.</li>
-<li>Choose rows from the <a href="#practice-areas">practice pages</a>.</li>
-<li>Keep concrete commands, thresholds and resource profiles in the project's own records.</li>
-</ul>
-</div>
+
+All three routes share the same core: a pinned submodule and router rows. They differ only in how much of the site toolchain you take. You can start with practices only and add a site later without undoing anything; the rules and the router stay the same.
+
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>Run <code>init</code> over existing docs</h3><p>If any starter file already exists, <code>init</code> refuses and writes nothing; forcing a copy by hand would overwrite or duplicate the project's own records.</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>Register what is already there</h3><p>The project adds <code>site.toml</code>, registers its existing records as source pages and keeps every file where it was.</p></div>
 </div>
 
 </section>

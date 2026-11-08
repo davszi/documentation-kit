@@ -62,11 +62,15 @@ const SHOTS = ['index', 'getting-started', 'commands', 'site-toolkit', 'git', 'r
       assert.ok(landed !== null, 'deep link target near top: ' +
         await page.evaluate(() => document.getElementById('100--first-stable-version').getBoundingClientRect().top));
 
-      // A hash into an adoption route reveals that panel.
-      await page.goto(`${origin}/html/getting-started.html#route-existing`, {waitUntil:'networkidle'});
+      // A hash into a panel-switcher option reveals that panel; adoption routes are all visible.
+      await page.goto(`${origin}/html/reader-tour.html#view-page`, {waitUntil:'networkidle'});
       await settle(page);
-      assert.equal(await page.locator('#route-existing').isVisible(), true);
-      assert.equal(await page.locator('#route-new').isVisible(), false);
+      assert.equal(await page.locator('#view-page').isVisible(), true);
+      assert.equal(await page.locator('#view-markdown').isVisible(), false);
+      await page.goto(`${origin}/html/getting-started.html#choose-how-to-adopt-it`, {waitUntil:'networkidle'});
+      await settle(page);
+      for (const id of ['route-new', 'route-existing', 'route-practices'])
+        assert.equal(await page.locator('#' + id).isVisible(), true, id + ' shown side by side');
 
       // Keyboard: the home paths are reachable by Tab and show focus.
       await page.goto(`${origin}/html/index.html`, {waitUntil:'networkidle'});
