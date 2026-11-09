@@ -2,6 +2,18 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Open the work to simplify frozen-record machinery
+
+- deivid stated that parts of ADP's documentation system became too
+  complicated and that simplifying them is our work. The frozen-record chain
+  is one such part: old documents kept byte-exact in the live tree and still
+  link-checked need a path translator, hash manifests and a validator in ADP
+  and adapt, plus adapter hooks and rule text in the kit.
+- `docs/open/simplify-frozen-record-machinery.md` holds the direction, the
+  measured sizes, the order constraint and the undecided choices;
+  `docs/open/KIT_OPEN.md` routes to it. No target shape is decided.
+- Checks: strict lint passes for the kit's own site.
+
 ## 2026-11-09 — Remove the unused number-ledger and verbatim-lock modules
 
 - deivid approved removing shared tooling that no project uses. A search of
