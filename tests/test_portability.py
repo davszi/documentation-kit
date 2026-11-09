@@ -71,6 +71,65 @@ class Consumers(unittest.TestCase):
         self.assertIn('No files written', result.stderr)
         self.assertEqual(source.read_text(), 'keep this\n')
 
+    def test_configured_publication_cli_from_unrelated_working_directory(self):
+        config = self.root / 'docs/site/site.toml'
+        config.write_text(config.read_text() + '''
+[publication]
+assets_manifest = "docs/site/public-assets.json"
+pages = ["index.html", "guide.html"]
+private_suffixes = [".md", ".py", ".toml"]
+''')
+        (self.root / 'docs/site/public-assets.json').write_text('{"files": ["docs/site/result.json"]}')
+        (self.root / 'docs/site/result.json').write_text('{"value": 42}')
+        self.track()
+        destination = self.root / '_site'
+        result = invoke('publish', '--project', self.root, '--out', destination, cwd=Path('/tmp'))
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertTrue((destination / 'index.html').is_file())
+        self.assertTrue((destination / 'guide.html').is_file())
+        self.assertEqual((destination / 'docs/site/result.json').read_text(), '{"value": 42}')
+        self.assertEqual(list(destination.rglob('*.md')), [])
+        result = invoke('publish', '--project', self.root, '--out', destination)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('must be fresh', result.stderr)
+
+    def test_publication_rejects_removed_keys(self):
+        config = self.root / 'docs/site/site.toml'
+        config.write_text(config.read_text() + '''
+[publication]
+pages = ["index.html"]
+[publication.page_routes]
+"home.html" = "index.html"
+''')
+        self.track()
+        destination = self.root / '_site'
+        result = invoke('publish', '--project', self.root, '--out', destination)
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn('Unsupported [publication] keys: page_routes', result.stderr)
+        self.assertFalse(destination.exists())
+        self.assertFalse((self.root / '.build').exists())
+
+    def test_publication_rejects_private_stylesheet_source_alias(self):
+        config = self.root / 'docs/site/site.toml'
+        config.write_text(config.read_text() + '''
+[publication]
+pages = ["index.html", "guide.html"]
+private_prefixes = ["configs/"]
+''')
+        guide = self.root / 'docs/topics/guide/index.md'
+        guide.write_text(guide.read_text().replace('page_css = ["build-sheet.css"]',
+                                                  'page_css = ["build-sheet.css", "../../configs/policy.css"]'))
+        private = self.root / 'configs/policy.css'
+        private.parent.mkdir()
+        private.write_text('/* private configuration */')
+        self.track()
+        subprocess.run(['git', 'add', 'configs'], cwd=self.root, check=True)
+        destination = self.root / '_site'
+        result = invoke('publish', '--project', self.root, '--out', destination)
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn('Private source cannot be published: configs/policy.css', result.stderr)
+        self.assertFalse(destination.exists())
+
     def test_shared_panel_switcher_needs_no_local_extension(self):
         guide = self.root / 'docs/topics/guide/index.md'
         guide.write_text(guide.read_text().replace('components = ["toc",', 'components = ["panel-switcher", "toc",'))

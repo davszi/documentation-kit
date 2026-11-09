@@ -476,7 +476,13 @@ Creating a commit does not establish that its tests passed or that its acceptanc
 
 <!-- /fold -->
 
-Full guide: [Git changes and shared checkouts](git.html) · [Deliverables and validation](git.html#deliverables-and-validation) · [Commit messages](git.html#commit-messages) · [Preparing a commit](git.html#preparing-a-commit)
+<!-- fold: dead-end Committing inside the kit submodule -->
+
+A fix to the kit made inside a project's `.docs-kit` folder looks finished: the project builds, and the pin moves to the new commit. But that commit exists only on that disk. Once the project is pushed, every fresh clone and CI checkout fails to fetch the pinned kit commit. The guide sends kit changes to the kit's own repository first; the project moves its pin to the pushed commit afterwards. `docsite.py lint` fails when the pinned commit is on none of the kit's remote branches.
+
+<!-- /fold -->
+
+Full guide: [Git changes and shared checkouts](git.html) · [Deliverables and validation](git.html#deliverables-and-validation) · [Commit messages](git.html#commit-messages) · [Preparing a commit](git.html#preparing-a-commit) · [The shared kit submodule](git.html#the-shared-kit-submodule)
 
 </section>
 

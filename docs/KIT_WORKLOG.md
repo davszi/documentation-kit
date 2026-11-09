@@ -2,6 +2,20 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Port configured publication and guard the kit pin
+
+- adapt pinned kit commit `101cea4`, made inside its `.docs-kit` folder and
+  never pushed; its Pages run fails with `not our ref`. The commit's
+  `docsite.py publish` command is ported without page renaming, file
+  relocation and retirement pages; `[publication]` rejects those keys.
+- The rule against editing a detached submodule sat in the site-authoring
+  guide, which no consumer router sends agents to. The Git guide now owns it
+  as "The shared kit submodule", the starter router routes kit changes there,
+  and `docsite.py lint` fails when the pinned kit commit is on no remote
+  branch (skipped for shallow checkouts, copies without Git and the kit's own
+  repository). Against the real checkouts it flags adapt's `101cea4` and
+  passes ADP's pin. The migration guide lists adapt's steps.
+
 ## 2026-11-09 — Remove the exporter's renaming and the old manifest location
 
 - The owner decided no compatibility is needed for either. `export_pages`

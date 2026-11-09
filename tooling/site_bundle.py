@@ -29,6 +29,8 @@ class SiteBundle:
         self.tracked = {resolve_legacy_path(root / path, root=root)
                         for path in result.stdout.decode().split('\0') if path}
         self.resources: dict[str, bytes] = {}
+        # Output name to tracked source, so publication can apply source policy.
+        self.resource_origins: dict[str, str] = {}
         self.local_media: set[str] = set()
         self.declared_local = set(site.get('local_media', []))
         import json
@@ -42,6 +44,7 @@ class SiteBundle:
         if source not in self.tracked or not source.is_file():
             raise ValueError(f'Website resource is not a tracked file: {source}')
         self.resources[name] = source.read_bytes()
+        self.resource_origins[name] = source.relative_to(self.root).as_posix()
 
     def source_url(self, path: Path, fragment: str = '') -> str:
         relative = path.relative_to(self.root).as_posix()

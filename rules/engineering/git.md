@@ -49,6 +49,22 @@ when they help assess the change. Do not use Conventional Commits prefixes.
 - Coordinate overlapping file edits separately. A staging-area lock does not
   protect working files from concurrent edits.
 
+## The shared kit submodule
+
+Never commit inside the `.docs-kit` submodule of a consuming project. A commit
+made there exists only on that disk. The project's pin then names a commit
+nobody else can fetch, and every fresh clone and CI checkout fails.
+
+To change the kit:
+
+1. Make the change in the kit's own repository, with its checks and review.
+2. Push it there.
+3. Move the consuming project's pin to the pushed commit as its own
+   deliverable, following the kit's migration guide.
+
+`docsite.py lint` fails when the pinned kit commit is on none of the kit's
+remote branches or tags.
+
 ## History and recovery
 
 - Consolidate temporary checkpoints only in isolated, unshared history.

@@ -50,6 +50,12 @@ python3.12 -m http.server 8321 --bind 127.0.0.1 --directory .build/docs
 Open `http://127.0.0.1:8321/html/guide.html` to inspect the starter. The home
 page is `html/index.html`. The server exposes generated output only.
 
+For a separate public bundle, configure `[publication]` in `docs/site/site.toml`
+and run `python .docs-kit/docsite.py publish --project . --out _site`. The kit
+builds and exports the bundle. The project declares its public pages, admitted
+files and private-source policy. See
+[configured publication](rules/site/publication.md#configured-publication).
+
 ## Ownership
 
 | Shared kit | Each project |

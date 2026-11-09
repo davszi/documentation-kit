@@ -726,15 +726,21 @@ def component_script(name: str) -> Path:
     return shared if shared.is_file() else local_resource(SRC / "components" / f"{name}.js")
 
 
-def gather_assets(site: dict) -> dict[str, bytes]:
-    """Everything that lands under .build/docs/html/assets/, path → content."""
+def gather_assets(site: dict, *, origins: dict[str, str] | None = None) -> dict[str, bytes]:
+    """Everything that lands under .build/docs/html/assets/, path → content.
+
+    ``origins`` receives the repository path of each asset read from the project.
+    """
     assets: dict[str, bytes] = {}
     assets["assets/base.css"] = (COMPONENTS / "base.css").read_bytes()
     assets["assets/chapter-reader.css"] = (COMPONENTS / "chapter-reader.css").read_bytes()
     assets["assets/panel-switcher.css"] = (COMPONENTS / "panel-switcher.css").read_bytes()
     assets["assets/slide-face.css"] = (COMPONENTS / "slide-face.css").read_bytes()
     for c in KNOWN_COMPONENTS:
-        text = component_script(c).read_text()
+        script = component_script(c)
+        text = script.read_text()
+        if origins is not None and script.is_relative_to(REPO):
+            origins[f"html/assets/{c}.js"] = script.relative_to(REPO).as_posix()
         if c == "filelinks":
             text = text.replace("{{GH_REPO}}", site.get("gh_repo", "")).replace("{{GH_REF}}", site.get("gh_ref", "main"))
         assets[f"assets/{c}.js"] = text.encode()
@@ -759,10 +765,12 @@ def gather_assets(site: dict) -> dict[str, bytes]:
         if destination in assets:
             raise ValueError('Project asset would overwrite a shared asset: ' + name)
         assets[destination] = local_resource(REPO / source).read_bytes()
+        if origins is not None:
+            origins["html/" + destination] = source
     return assets
 
 
-def gather_page_css(pages_meta: list[dict]) -> dict[str, bytes]:
+def gather_page_css(pages_meta: list[dict], *, origins: dict[str, str] | None = None) -> dict[str, bytes]:
     out: dict[str, bytes] = {}
     for meta in pages_meta:
         for css in meta.get("page_css", []):
@@ -772,6 +780,8 @@ def gather_page_css(pages_meta: list[dict]) -> dict[str, bytes]:
                 if name in out and out[name] != data:
                     raise ValueError(f"Stylesheet output collision: {name}")
                 out[name] = data
+                if origins is not None and p.is_relative_to(REPO):
+                    origins["html/" + name] = p.relative_to(REPO).as_posix()
     return out
 
 
@@ -813,7 +823,8 @@ def main() -> int:
     if os.environ.get("GITHUB_SHA"):
         site["gh_ref"] = os.environ["GITHUB_SHA"]
     bundle = SiteBundle(site)
-    outputs: dict[str, bytes] = {"html/" + name: data for name, data in gather_assets(site).items()}
+    origins: dict[str, str] = {}
+    outputs: dict[str, bytes] = {"html/" + name: data for name, data in gather_assets(site, origins=origins).items()}
     pages_meta = []
     md_files = topic_pages()
     for flat_source in sorted(PAGES.glob("*.md")):
@@ -862,7 +873,7 @@ def main() -> int:
         err(problem)
     if args.page and args.page not in seen_slugs:
         err("unknown page slug: " + args.page)
-    for name, data in gather_page_css(pages_meta).items():
+    for name, data in gather_page_css(pages_meta, origins=origins).items():
         destination = "html/" + name
         if destination in outputs and outputs[destination] != data:
             err(f"Local stylesheet would overwrite a shared asset: {name}")
@@ -870,6 +881,7 @@ def main() -> int:
             outputs[destination] = data
     try:
         outputs.update(bundle.gather())
+        origins.update(bundle.resource_origins)
     except (ValueError, OSError) as problem:
         err(str(problem))
     outputs[".nojekyll"] = b""
@@ -881,6 +893,8 @@ def main() -> int:
         "public_pages": sorted(name for name in outputs if name.startswith("html/") and name.endswith(".html")),
         "source_pages": {page.route: page.source for page in source_pages},
         "local_media": sorted(bundle.local_media), "large_captures_packaged": False,
+        # Repository source of each copied resource; publication checks these.
+        "resource_origins": dict(sorted(origins.items())),
         "kit": {"version": (KIT_SITE.parent / "VERSION").read_text().strip(),
                 "asset_sha256": hashlib.sha256(b"".join(key.encode() + outputs[key] for key in sorted(outputs) if key.startswith("html/assets/"))).hexdigest()},
         # Every generated file, so the next build can prune what it no longer produces.

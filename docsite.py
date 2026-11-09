@@ -32,6 +32,9 @@ def main():
     slides.add_argument('--select', action='append', required=True, help='slug or slug#chapter,chapter (repeatable)')
     slides.add_argument('--out', required=True, help='deck name; written to .build/slides/<name>.html')
     slides.add_argument('--title', default='Slides')
+    publish = commands.add_parser('publish', help='build, then export a fresh public bundle configured in site.toml')
+    publish.add_argument('--project', type=Path, default=Path.cwd())
+    publish.add_argument('--out', type=Path, default=Path('_site'))
     args = parser.parse_args()
     if sys.version_info < (3, 12):
         parser.error('Python 3.12 or newer is required; validation uses Python 3.12.')
@@ -71,6 +74,14 @@ def main():
     if not (project / 'docs/site/site.toml').is_file():
         parser.error(f'No docs/site/site.toml under {project}; use init for a new project.')
     env = dict(os.environ, DOCSITE_PROJECT_ROOT=str(project))
+    if args.command == 'publish':
+        sys.path.insert(0, str(KIT / 'tooling'))
+        from publication import publish_project
+        try:
+            publish_project(project, args.out, kit=KIT)
+        except (ValueError, OSError, subprocess.CalledProcessError) as error:
+            parser.exit(1, f'Publication failed: {error}\n')
+        return 0
     if args.command == 'slides':
         built = subprocess.run([sys.executable, str(KIT / 'tooling' / 'build.py')], env=env, cwd=project).returncode
         if built:

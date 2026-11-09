@@ -19,6 +19,7 @@ Checks (shared rules/writing.md is the spec):
   8. .build/docs/html freshness (`build.py --check`)
   9. built html loads no external resources (external <a> navigation is fine)
  10. relocated evidence records retain their manifest bytes and identities
+ 11. the project's pinned kit commit is on a remote branch of the kit
 
 Exit 0 clean (warnings print unless --strict fails them), 1 on errors.
 """
@@ -534,6 +535,13 @@ def check_build() -> None:
         error(f"build.py --check failed:\n{r.stderr.strip()}")
 
 
+def check_kit_pin() -> None:
+    from kit_pin import unpublished_pin
+    problem = unpublished_pin(Path(__file__).resolve().parents[1], REPO)
+    if problem:
+        error(problem)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--strict", action="store_true", help="warnings fail the run")
@@ -559,6 +567,7 @@ def main() -> int:
     check_worklog()
     check_tails()
     check_build()
+    check_kit_pin()
 
     for w in warnings:
         print(f"WARN: {w}")

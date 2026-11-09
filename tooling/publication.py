@@ -1,16 +1,25 @@
 """Copy an existing generated bundle into a consumer-owned publication tree.
 
-This optional overlay does not build pages, discover repository resources or
+``export_pages`` does not build pages, discover repository resources or
 choose source URLs. Consumers supply admitted public files, private-file policy
 and the exact existing outputs that may be replaced. HTML changes use source
 spans; scripts, JSON, labels and unrelated attributes remain opaque.
+
+``publish_project`` builds a project and exports a fresh bundle configured by
+the ``[publication]`` table in ``docs/site/site.toml``.
 """
 from __future__ import annotations
 
 import html
+import json
 from pathlib import Path, PurePosixPath
 import posixpath
 import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import tomllib
 from collections.abc import Iterable, Mapping
 from urllib.parse import unquote, urlsplit
 
@@ -191,3 +200,104 @@ def export_pages(generated_root: Path, destination: Path, *, root: Path,
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(data)
     return tuple(outputs)
+
+
+PUBLICATION_KEYS = ('assets_manifest', 'pages', 'private_suffixes', 'private_prefixes')
+
+
+def _publication_options(config: dict) -> dict:
+    options = config.get('publication')
+    supported = ', '.join(PUBLICATION_KEYS)
+    if not isinstance(options, dict):
+        raise ValueError(f'Configure [publication] in docs/site/site.toml; supported keys: {supported}')
+    unknown = sorted(options.keys() - set(PUBLICATION_KEYS))
+    if unknown:
+        raise ValueError(f'Unsupported [publication] keys: {", ".join(unknown)}; supported keys: {supported}')
+    for key in ('pages', 'private_suffixes', 'private_prefixes'):
+        values = options.get(key, [])
+        if not isinstance(values, list) or any(not isinstance(v, str) or not v for v in values):
+            raise ValueError(f'[publication] {key} must be an array of non-empty strings')
+    if not isinstance(options.get('assets_manifest', ''), str):
+        raise ValueError('[publication] assets_manifest must name a tracked JSON file')
+    return options
+
+
+def publish_project(root: Path, destination: Path, *, kit: Path) -> None:
+    """Build the project and atomically export a fresh public bundle.
+
+    Generated pages and assets come from the same build as ``docsite.py build``.
+    Files listed in the optional assets manifest are published at their
+    repository path. Sources, public files, generated assets and their
+    repository origins must not match the private suffixes or prefixes.
+    """
+    root, kit = Path(root).resolve(), Path(kit).resolve()
+    destination = Path(destination)
+    destination = Path.cwd() / destination if not destination.is_absolute() else destination
+    # Check physical components before resolving; never hide a symlink output.
+    if any(p.is_symlink() for p in (destination, *destination.parents)):
+        raise ValueError('Publication output cannot follow a symlink')
+    destination = destination.resolve()
+    if destination.exists():
+        raise ValueError(f'Publication output must be fresh: {destination}')
+    generated = root / '.build/docs/html'
+    if destination.is_relative_to(generated) or generated.is_relative_to(destination):
+        raise ValueError('Generated and publication directories must not overlap')
+    config = tomllib.loads((root / 'docs/site/site.toml').read_text())
+    options = _publication_options(config)
+    pages = [_name(page) for page in options.get('pages', [])]
+    suffixes = tuple(options.get('private_suffixes', []))
+    prefixes = tuple(options.get('private_prefixes', []))
+    tracked = set(filter(None, subprocess.check_output(['git', 'ls-files', '-z'], cwd=root, text=True).split('\0')))
+
+    def source(name):
+        path = _contained(root, name)
+        if name not in tracked or not path.is_file():
+            raise ValueError(f'Publication source must exist and be tracked: {name}')
+        return path
+
+    def require_public(name):
+        name = _name(name)
+        # Generated media keep their repository path below _media/.
+        origin = name.removeprefix('_media/')
+        if any(value.endswith(suffixes) or value.startswith(prefixes) for value in (name, origin)):
+            raise ValueError(f'Private source cannot be published: {name}')
+        return name
+
+    public = []
+    if 'assets_manifest' in options:
+        names = json.loads(source(options['assets_manifest']).read_text()).get('files')
+        if not isinstance(names, list):
+            raise ValueError('Public asset manifest must contain a files array')
+        for name in names:
+            name = require_public(name)
+            source(name)
+            if name in public:
+                raise ValueError(f'Duplicate publication resource: {name}')
+            public.append(name)
+    # Fail before building when a renamed project asset hides a private source.
+    extra_assets = config.get('extra_assets', {})
+    if not isinstance(extra_assets, dict):
+        raise ValueError('extra_assets must map asset names to project files')
+    for target, name in extra_assets.items():
+        require_public(name)
+        require_public('assets/' + target)
+    subprocess.run([sys.executable, str(kit / 'docsite.py'), 'build', '--project', str(root)], check=True, cwd=root)
+    built = json.loads((root / '.build/docs/site-build.json').read_text())
+    for name, origin in built.get('resource_origins', {}).items():
+        if name.startswith('html/'):
+            require_public(origin)
+    for path in generated.rglob('*'):
+        if path.is_file():
+            require_public(path.relative_to(generated).as_posix())
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='.docsite-publish-', dir=destination.parent) as temporary:
+        output = Path(temporary) / 'site'
+        output.mkdir()
+        for name in public:
+            path = _contained(output, name)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source(name), path)
+        export_pages(generated, output, root=root, tracked=tracked, pages=pages, public_files=public,
+                     private_suffixes=suffixes, private_prefixes=prefixes)
+        output.rename(destination)
+    print(f'Published {len(pages)} configured pages and {len(public)} project resources to {destination}')

@@ -13,7 +13,7 @@
 
 Initialize the submodule before building. The kit is versioned in `VERSION` and
 tagged `v<version>`; [release notes](../../docs/topics/releases/releases.md) list each
-version's changes and its migration steps. Upgrade the pin as a reviewed deliverable, run the shared and consumer checks, and record the adopted revision and compatibility evidence. Do not edit a detached submodule as a substitute for a shared-kit change. Engine and shared-theme changes belong upstream; project content and optional extensions stay local.
+version's changes and its migration steps. Upgrade the pin as a reviewed deliverable, run the shared and consumer checks, and record the adopted revision and compatibility evidence. Change the kit only in its own repository, following [the shared kit submodule](../engineering/git.md#the-shared-kit-submodule). Engine and shared-theme changes belong upstream; project content and optional extensions stay local.
 
 From the consuming project root, use the pinned kit directly:
 

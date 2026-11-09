@@ -6,9 +6,24 @@ the upgrade as in the [1.1.0 guide](1.1.0.md#prepare-the-deliverable): record
 the old and new kit commits, keep a baseline build and follow the project's
 permissions and staging workflow.
 
-Two compatibility forms are removed, following
-[refactoring over compatibility](../../../../rules/engineering/code.md#refactoring-over-compatibility).
-A consumer that uses neither needs no change.
+Every consumer adds one router row and must pin a pushed kit commit. Two
+compatibility forms are removed, following
+[refactoring over compatibility](../../../../rules/engineering/code.md#refactoring-over-compatibility);
+a consumer that uses neither needs no change for them.
+
+## Kit changes and the pin
+
+`docsite.py lint` now fails when the pinned kit commit is on none of the kit's
+remote branches. A commit made inside the project's `.docs-kit` folder fails
+this check, because nobody else can fetch it.
+
+1. Add this row to the project's agent router in `AGENTS.md`:
+   `| Changing anything under .docs-kit/ or moving its pin | **The shared kit submodule** in .docs-kit/rules/engineering/git.md |`
+2. Run `git -C .docs-kit branch -r --contains HEAD`. If it prints nothing,
+   the pin is a local-only commit. Move each kit change it carries into the
+   kit's own repository, as described in
+   [the shared kit submodule](../../../../rules/engineering/git.md#the-shared-kit-submodule),
+   then pin the pushed release.
 
 ## Local-artifact manifest location
 
@@ -31,3 +46,49 @@ The build no longer reads `docs/project/local-artifacts.json` when
    at that same path. Move or stop publishing files that were published under
    another name, and update links and tests that used the old public paths.
 3. Run the project's packaging and its rendered-page checks.
+
+## Configured publication
+
+The kit gains `python .docs-kit/docsite.py publish --project . --out _site`.
+It builds the site and exports a fresh public bundle, configured by
+`[publication]` in `docs/site/site.toml`; see
+[configured publication](../../../../rules/site/publication.md#configured-publication).
+A project with its own packaging script may keep it or switch to the command.
+`[publication]` accepts only `assets_manifest`, `pages`, `private_suffixes` and
+`private_prefixes`; any other key fails before the build.
+
+## adapt: leave the unpublished kit commit
+
+adapt pins kit commit `101cea4`, which was committed inside adapt's
+`.docs-kit` folder and never pushed to the kit repository. Its Pages workflow
+fails with `remote error: upload-pack: not our ref 101cea4…`. The kit release
+now carries the `publish` command without that commit's page renaming, file
+relocation and retirement pages. An agent working in adapt does this, in order:
+
+1. Do not push anything from `.docs-kit`. Move the pin to the pushed kit
+   release: `git -C .docs-kit fetch origin`, check out the release tag, then
+   stage `.docs-kit`.
+2. In `docs/site/site.toml`, delete `[publication.page_routes]`,
+   `[publication.files]` and `retired_routes`. Keep `assets_manifest`, `pages`,
+   `private_suffixes` and `private_prefixes`.
+3. Make the front page a kit page: move the content of `docs/site/entry.html`
+   into a page with `slug = "index"`, as the kit's own home page does, and
+   change `docs/topics/research/index.md` from `slug = "index"` to
+   `slug = "overview"`. The built files are then `index.html` and
+   `overview.html` without renaming. Update links that pointed to the overview
+   as `index.html`, and delete `docs/site/entry.html`.
+4. List every public evidence file in `docs/site/public-assets.json` at its
+   repository path, such as `studies/minigroot/reports/adaptation_curves.svg`.
+   Update links and checks that used the old relocated paths, such as
+   `docs/results/…` and `minigroot/reports/…`.
+5. Delete `docs/site/retired-routes.json` and the checks for retirement pages.
+6. Update the records that describe publication: `README.md`,
+   `docs/development/documentation.md`, `docs/PROJECT_CONTEXT.md`,
+   `docs/index.md` and `docs/development/architecture.md`. Leave frozen
+   evidence records, such as `docs/topics/cursor-study/evidence/b5-publication-20261104.json`,
+   unchanged.
+7. Add the router row from [kit changes and the pin](#kit-changes-and-the-pin).
+8. Run `docsite.py lint --project .`, which now checks the pin, then
+   `docsite.py publish --project . --out _site` and the steps of
+   `.github/workflows/pages.yml`. After pushing, confirm that the Pages run
+   passes.
