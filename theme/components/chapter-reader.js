@@ -425,6 +425,11 @@ document.addEventListener('DOMContentLoaded', () => {
       topics.forEach(topic => { topic.section.style.transform = ''; });
       const section = topics[active].section;
       strip.style.transform = `translate3d(${(stage.clientWidth - section.offsetWidth) / 2 - section.offsetLeft}px,0,0)`;
+      // The previous/next targets cover exactly the visible sliver of each
+      // neighbouring card, so their hover outline matches what the reader sees.
+      const gap = parseFloat(window.getComputedStyle(stage).getPropertyValue('--topic-gap')) || 20;
+      const sliver = Math.max(24, (stage.clientWidth - section.offsetWidth) / 2 - gap);
+      peekButtons.forEach(node => { node.style.width = `${sliver}px`; });
     }
   }
   function render(animate = true) {

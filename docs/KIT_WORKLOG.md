@@ -2,6 +2,15 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Fit the chapter peek targets to the visible slivers
+
+- In One chapter view the previous/next click targets were a fixed 10% of the
+  stage (93px at 1400 wide) while only about 49px of the neighbouring card
+  shows, so their hover outline overlapped the current card. The reader now
+  sizes each target to the neighbour's visible sliver when it aligns the cards.
+- Checks: 135 tests, strict lint, all four browser suites; target and sliver
+  measured at x 1339–1388 on Get started at 1400 wide.
+
 ## 2026-11-09 — Publish the kit website on GitHub Pages
 
 - deivid decided to publish the site publicly. Pages was already enabled

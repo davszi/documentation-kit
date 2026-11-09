@@ -152,7 +152,7 @@ body.topic-deck {overflow:hidden;}
 .chapter-body :is(.fold-dead-end,.fold-code) > .fold-content > ul > li > strong:first-child {display:block;margin-bottom:6px;font-size:14px;line-height:1.45;color:var(--bright);}
 .chapter-body details.fold[open] > .fold-content {animation:layer-reveal .25s ease-out;}
 @keyframes layer-reveal {from {opacity:.35;} to {opacity:1;}}
-.topic-peek {position:absolute;z-index:5;top:0;bottom:0;width:calc(10% - var(--topic-gap));min-width:44px;height:100%;padding:0;border:0;border-radius:12px;background:transparent;cursor:pointer;transition:background .25s,box-shadow .25s;}
+.topic-peek {position:absolute;z-index:5;top:0;bottom:0;width:calc(6% - var(--topic-gap));min-width:24px;height:100%;padding:0;border:0;border-radius:12px;background:transparent;cursor:pointer;transition:background .25s,box-shadow .25s;}
 .topic-peek-prev {left:0;}
 .topic-peek-next {right:0;}
 .topic-peek:hover {background:rgba(57,210,192,.025);box-shadow:inset 0 0 0 1px rgba(57,210,192,.12);}
