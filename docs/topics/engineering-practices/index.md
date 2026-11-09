@@ -20,7 +20,7 @@ toc = [["Routes", "#routes"], ["Code", "#code"], ["Efficiency", "#performance"],
 
 | Before… | Read… | It covers | Explained in |
 |---|---|---|---|
-| Changing program output or a generated file | [Code and repository practices](code-practices.html) | Diagnostics and consumed output; changing generated files at their source | [Code](#code) |
+| Changing program output, a generated file or an interface others use | [Code and repository practices](code-practices.html) | Diagnostics and consumed output; changing generated files at their source; refactoring instead of keeping old forms | [Code](#code), [Compatibility](#compatibility) |
 | Writing code on a hot path or claiming a speed-up | [Efficient implementation](performance.html) | Routine efficiency; measuring the declared workload and path | [Efficiency](#performance), [Claims](#performance-claims) |
 | Running an expensive job on shared resources | [Execution and shared resources](execution.html) | Execution route, coordination, budgets, usage records, failure attribution, cleanup | [Execution](#execution), [Cleanup](#supervision) |
 | Delegating work or editing in parallel | [Ownership and delivery](delivery.html) | Assignments, owner responsibility, integration, parallel work, escalation | [Delivery](#delivery), [Decisions](#decisions) |
@@ -70,6 +70,41 @@ Progress lines or warnings on stdout look harmless while developing, but a progr
 <!-- /fold -->
 
 Full guide: [Code and repository practices](code-practices.html) · [Logging and program output](code-practices.html#logging-and-program-output) · [Generated files](code-practices.html#generated-files)
+
+</section>
+
+<section class="card" id="compatibility">
+
+## Refactor fully once the owner has decided no old form is needed
+
+<p class="bs-lead">Before changing something others may still use, ask the owner with the evidence; on a no, update every reference and delete the old form in the same change.</p>
+
+<div class="bs-flow">
+<div class="bs-node"><span class="bs-label">1 · Check</span><h3>Who uses the old form?</h3><ul><li>Published URLs or packages</li><li>Other repositories</li><li>Saved data, frozen records</li><li>Running jobs</li></ul></div>
+<div class="bs-arrow">→</div>
+<div class="bs-node"><span class="bs-label">2 · Ask</span><h3>Give the owner the decision</h3><ul><li>What changes and why</li><li>Who uses it, with evidence</li><li>What breaks</li><li>What keeping it costs</li></ul></div>
+<div class="bs-arrow">→</div>
+<div class="bs-node"><span class="bs-label">3a · No compatibility</span><h3>Refactor fully</h3><ul><li>Update every caller and reference</li><li>Remove the old form</li><li>No aliases, shims or redirects</li></ul></div>
+<div class="bs-arrow">or</div>
+<div class="bs-node"><span class="bs-label">3b · Keep it</span><h3>Record it</h3><ul><li>Why it exists</li><li>When it can be removed</li></ul></div>
+</div>
+
+The project prefers clean refactors. An alias, fallback or redirect looks cheap when it is added, but every later reader must learn both forms, every check must cover both, and nobody remembers when the old one may go. The guide therefore removes the old form by default. Only the owner can know whether a link went out to people, whether another repository depends on a path, or whether a frozen record still names it, so the decision is theirs; the agent's part is to find the users and state what would break. When nothing outside the change uses the old form, no question is needed: the refactor goes ahead.
+
+An illustrative example, not taken from a real project:
+
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>Keep the old key just in case</h3><p>A configuration key is renamed. The loader also accepts the old name, silently, with no record of who needed it. A year later two spellings are in use and nobody knows if the old one can go.</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>Ask, then rename everywhere</h3><p>The agent finds that one other repository reads the key and tells the owner what would break. The owner says no compatibility is needed. The rename lands with every reference updated, and the other repository is changed alongside it.</p></div>
+</div>
+
+<!-- fold: dead-end Silent fallbacks for moved files -->
+
+Accepting a file at its old location when the new one is missing hides typos and stale references: a wrong path keeps working by accident. If an old path must keep working, the owner approves it and the record says why and until when.
+
+<!-- /fold -->
+
+Full guide: [Refactoring over compatibility](code-practices.html#refactoring-over-compatibility)
 
 </section>
 

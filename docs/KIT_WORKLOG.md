@@ -2,6 +2,17 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Prefer refactoring to backward compatibility
+
+- The code guide gains "Refactoring over compatibility": before changing a
+  name, path, format, API, URL or configuration key that something outside
+  the change may use, the agent asks the owner with the evidence (what
+  changes, who uses it, what breaks, what keeping it costs). Without a need
+  for compatibility, every reference is updated and the old form removed;
+  kept compatibility records its reason and removal condition. The
+  documentation guide's allowance for compatibility routes now defers to it.
+  Engineering practices gains a Compatibility chapter.
+
 ## 2026-11-08 — Fold the toolkit and reader tour into Build a site
 
 - Site toolkit only listed what exists, and the Reader tour demonstrated

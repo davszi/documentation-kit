@@ -110,7 +110,7 @@ Keep one thin router in `AGENTS.md`. Codex follows its named paths and triggers 
 <p class="bs-lead">Each page explains its guides with reasons and examples and lists the router row for every guide; the guides stay the exact reference.</p>
 
 <div class="bs-grid g3">
-<div class="bs-part bs-teal"><span class="bs-label">6 guides · 11 chapters</span><h3><a href="engineering-practices.html">Engineering</a></h3><ul>
+<div class="bs-part bs-teal"><span class="bs-label">6 guides · 12 chapters</span><h3><a href="engineering-practices.html">Engineering</a></h3><ul>
 <li>consumed output is an interface; generated files change at their source</li>
 <li>efficient by default; a performance claim names its workload and path</li>
 <li>expensive jobs run on the project's route, under a stated budget, owned through cleanup</li>

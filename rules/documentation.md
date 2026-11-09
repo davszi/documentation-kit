@@ -36,8 +36,9 @@ These rules are shared policy. A consuming project's `docs/PROJECT_CONTEXT.md` o
 | `.build/docs/` | Ignored generated site; never hand-edit or commit |
 | `README.md` | Bounded human landing summary, with links to canonical homes |
 
-These are canonical roles for new projects; existing projects may retain explicit
-local destinations and compatibility routes. Create a directory or document only
+These are canonical roles for new projects. Existing projects may keep explicit
+local destinations; follow [refactoring over compatibility](engineering/code.md#refactoring-over-compatibility)
+before keeping old routes. Create a directory or document only
 when content needs it, and link that owner from `docs/index.md`.
 
 Other Markdown must have a defined role: a subject record, log, experiment contract/guide, exact evidence, or unfinished plan/decision. Do not create a generic archive, review collection or second status system to avoid choosing an owner. Names explain the subject or mechanism; avoid vague `Info` or `Manager` labels.
