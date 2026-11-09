@@ -114,7 +114,7 @@ Keep one thin router in `AGENTS.md`. Codex follows its named paths and triggers 
 <p class="bs-lead">Each page explains its guides with reasons and examples and lists the router row for every guide; the guides stay the exact reference.</p>
 
 <div class="bs-grid g3">
-<div class="bs-part bs-teal"><span class="bs-label">6 guides · 12 chapters</span><h3><a href="engineering-practices.html">Engineering</a></h3><ul>
+<div class="bs-part bs-teal"><span class="bs-label">Code, runs and delivery</span><h3><a href="engineering-practices.html">Engineering</a></h3><ul>
 <li>consumed output is an interface; generated files change at their source</li>
 <li>efficient by default; a performance claim names its workload and path</li>
 <li>expensive jobs run on the project's route, under a stated budget, owned through cleanup</li>
@@ -122,7 +122,7 @@ Keep one thin router in `AGENTS.md`. Codex follows its named paths and triggers 
 <li>reports lead with the outcome and say how each claim is known</li>
 <li>one commit per logical deliverable, reviewed as a whole</li>
 </ul><p><b>Read before:</b> changing code, running heavy jobs, handing off, committing.</p></div>
-<div class="bs-part bs-violet"><span class="bs-label">7 guides · 16 chapters</span><h3><a href="writing-practices.html">Documentation and writing</a></h3><ul>
+<div class="bs-part bs-violet"><span class="bs-label">Records and pages</span><h3><a href="writing-practices.html">Documentation and writing</a></h3><ul>
 <li>every fact has one home; finished work moves to its subject</li>
 <li>the record is written first; a new page only when a person asks</li>
 <li>a record names each object once; a measured number carries its provenance</li>
@@ -130,7 +130,7 @@ Keep one thin router in `AGENTS.md`. Codex follows its named paths and triggers 
 <li>one visible story; optional depth in typed folds</li>
 <li>figures, mathematics and code excerpts follow shared conventions</li>
 </ul><p><b>Read before:</b> creating or moving a document, writing a record, making or updating a page.</p></div>
-<div class="bs-part bs-orange"><span class="bs-label">2 guides · 9 chapters</span><h3><a href="experiments.html">Experiments</a></h3><ul>
+<div class="bs-part bs-orange"><span class="bs-label">Investigations and qualifications</span><h3><a href="experiments.html">Experiments</a></h3><ul>
 <li>start with the smallest experiment that can change a decision</li>
 <li>classify by what the result decides: investigation or qualification</li>
 <li>build on existing evidence and stop once the question is answered</li>

@@ -2,6 +2,18 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Take the guide and chapter counts off the Get started cards
+
+- The three practice cards on Get started were labelled with counts such as
+  "6 guides · 12 chapters". No record states those counts, the page-number note
+  listed 6, 12 and 7, and the counts had drifted when the guides were
+  restructured. deivid approved removing them. Each card is now labelled by
+  what it covers: code, runs and delivery; records and pages; investigations
+  and qualifications.
+- Checks: `tests/run_checks.sh` with the browser suites passes (157 tests,
+  strict lint, 22 scripts, four suites); lint prints no page-number note for
+  the kit site; the cards were captured at 1600 and 390 px and reviewed.
+
 ## 2026-11-10 — Add optional lint notes for page numbers no linked record states
 
 - deivid asked whether a rule ensures that numbers on pages for people have a
