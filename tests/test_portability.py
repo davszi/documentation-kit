@@ -138,8 +138,8 @@ private_prefixes = ["configs/"]
         self.assertEqual(result.returncode, 0, result.stderr)
         output = self.root / '.build/docs/html'
         page = (output / 'guide.html').read_text()
-        self.assertIn('href="assets/panel-switcher.css"', page)
-        self.assertIn('src="assets/panel-switcher.js"', page)
+        self.assertRegex(page, r'href="assets/panel-switcher\.css\?v=[0-9a-f]{10}"')
+        self.assertRegex(page, r'src="assets/panel-switcher\.js\?v=[0-9a-f]{10}"')
         for extension in ('js', 'css'):
             name = 'panel-switcher.' + extension
             self.assertEqual((output / 'assets' / name).read_bytes(), (KIT / 'theme/components' / name).read_bytes())

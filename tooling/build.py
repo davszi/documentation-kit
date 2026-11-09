@@ -799,6 +799,25 @@ def gather_page_css(pages_meta: list[dict], *, origins: dict[str, str] | None = 
     return out
 
 
+ASSET_LINK = re.compile(r'\b(href|src)="(assets/[^"?#]+)"')
+
+
+def version_asset_links(outputs: dict[str, bytes]) -> None:
+    """Add a content hash to each page's shared asset URLs.
+
+    A browser that cached an older stylesheet or script would otherwise pair
+    it with newer markup after a rebuild. The query changes only when the
+    asset's bytes change, so unchanged assets stay cached.
+    """
+    for name in [n for n in outputs if n.startswith("html/") and n.endswith(".html")]:
+        def stamp(match):
+            data = outputs.get("html/" + match[2])
+            if data is None:
+                return match[0]
+            return f'{match[1]}="{match[2]}?v={hashlib.sha256(data).hexdigest()[:10]}"'
+        outputs[name] = ASSET_LINK.sub(stamp, outputs[name].decode()).encode()
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--check", action="store_true", help="verify the generated site is fresh; write nothing")
@@ -899,6 +918,7 @@ def main() -> int:
         origins.update(bundle.resource_origins)
     except (ValueError, OSError) as problem:
         err(str(problem))
+    version_asset_links(outputs)
     outputs[".nojekyll"] = b""
     outputs["index.html"] = ("<!doctype html><html lang=\"en\"><meta charset=\"utf-8\">"
                              f"<title>{html.escape(site.get('title', 'Documentation'))}</title>"

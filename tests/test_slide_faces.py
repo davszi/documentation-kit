@@ -154,8 +154,8 @@ class DeckExport(unittest.TestCase):
         built = (slides.OUTPUT_ROOT / "html" / "guide.html").read_text()
         found = [c for c in slides.chapters(built) if c["face"]]
         self.assertEqual([c["id"] for c in found], ["pipeline", "slides"])
-        self.assertIn('href="assets/slide-face.css"', built)
-        self.assertIn('src="assets/slide-face.js"', built)
+        self.assertRegex(built, r'href="assets/slide-face\.css\?v=[0-9a-f]{10}"')
+        self.assertRegex(built, r'src="assets/slide-face\.js\?v=[0-9a-f]{10}"')
 
 
 if __name__ == "__main__":

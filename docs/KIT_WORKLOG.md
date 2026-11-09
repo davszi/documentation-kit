@@ -2,6 +2,20 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Version asset URLs and dock the repository section
+
+- After rebuilds, browsers paired cached old stylesheets with new pages, so
+  the repository section and fixed figures appeared unstyled or stale. Pages
+  now load shared assets as `assets/<file>?v=<first 10 hex of its SHA-256>`;
+  lint and the resource checks ignore the query.
+- On reader pages the chapter list pushed the repository section below the
+  window. While **All files** is closed the section is docked to the bottom
+  of the menu; opened, it returns to the normal flow and the menu scrolls to
+  the current file.
+- Checks: 130 tests, strict lint for starter and kit site, own-site, visual,
+  browser-helper and panel-switcher suites; reviewed in the app pane on Build a
+  site and in the narrow menu on `git.html`.
+
 ## 2026-11-09 — Fix figure styling found in a visual review
 
 - Earlier checks proved containment and overflow, not appearance. A review

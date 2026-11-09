@@ -38,6 +38,9 @@
   var current = document.querySelector('.toc a.xpage.current') || document.querySelector('.toc .repo-tree a[aria-current="page"]');
   var bar = current && current.closest('.sidebar');
   if (!bar || !(document.querySelector('.toc details.nav-fold') || current.closest('.repo-tree'))) return;
-  var box = bar.getBoundingClientRect(), r = current.getBoundingClientRect();
-  if (r.height && r.bottom > box.bottom - 40) bar.scrollTop += r.top - box.top - box.height / 3;
+  // A docked repository section scrolls on its own; otherwise scroll the menu.
+  var tree = current.closest('.repo-tree');
+  var scroller = tree && tree.scrollHeight > tree.clientHeight + 1 ? tree : bar;
+  var box = scroller.getBoundingClientRect(), r = current.getBoundingClientRect();
+  if (r.height && (r.bottom > box.bottom - 24 || r.top < box.top)) scroller.scrollTop += r.top - box.top - box.height / 3;
 })();

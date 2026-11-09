@@ -262,6 +262,7 @@ def _check_chunk_links(f: Path, text: str, base: Path) -> None:
             if target.startswith(("http://", "https://", "mailto:")):
                 continue
             path_part, _, frag = target.partition("#")
+            path_part = path_part.partition("?")[0]  # versioned asset URLs carry ?v=<hash>
             rel = f.relative_to(REPO)
             if not path_part:  # same-file anchor
                 if frag and frag not in md_anchors(f):
@@ -313,6 +314,7 @@ def check_html() -> None:
             if href.startswith(("http://", "https://", "mailto:", "vscode:")):
                 continue
             path_part, _, frag = href.partition("#")
+            path_part = path_part.partition("?")[0]
             if not path_part:
                 if frag and frag not in ids:
                     error(f"{rel}: dead internal anchor #{frag}")
@@ -330,7 +332,7 @@ def check_html() -> None:
                 if target.startswith(("http://", "https://", "//")):
                     error(f"{rel}: external {tag} resource {target}")
                 elif not target.startswith("data:"):
-                    resource = resolve_path(DOCS / "html" / target.partition("#")[0])
+                    resource = resolve_path(DOCS / "html" / target.partition("#")[0].partition("?")[0])
                     if not resource.is_file():
                         if retained_locally(resource):
                             warn(f"{rel}: artifact retained locally, omitted from push: {target}")

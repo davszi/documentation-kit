@@ -375,8 +375,15 @@ body.reference-page .content figure{margin:18px 0}
 @media (prefers-reduced-motion:reduce){.toc details.nav-fold>summary.nav-group,.toc details.nav-fold>summary.nav-group::before,.toc details.nav-fold::details-content{transition:none}}
 
 /* ---- repository section: pinned records, then every record by folder in one disclosure ---- */
-.toc .repo-tree{margin:22px 0 8px;padding:12px 4px 8px 0;border-top:1px solid var(--border);
-  background:linear-gradient(180deg,rgba(121,192,255,.045),transparent 160px);interpolate-size:allow-keywords}
+/* Docked to the bottom of the scrolling menu, so a long chapter list never hides it;
+   an opened file tree scrolls inside the block. -18px covers the menu's bottom padding. */
+.toc .repo-tree{position:sticky;bottom:-18px;z-index:2;max-height:62vh;overflow-y:auto;overscroll-behavior:contain;
+  margin:22px 0 -18px;padding:12px 4px 10px 0;border-top:1px solid var(--border);
+  background:linear-gradient(180deg,rgba(121,192,255,.06),rgba(121,192,255,0) 160px),var(--bg2);
+  box-shadow:0 -14px 22px -10px rgba(0,0,0,.55);interpolate-size:allow-keywords}
+/* With the file tree open the section is long; it returns to the normal flow and
+   the whole menu scrolls, so its header and pins stay above the tree. */
+.toc .repo-tree:has(details.repo-tree-all[open]){position:static;max-height:none;overflow:visible;margin-bottom:0;box-shadow:none}
 .toc .repo-tree-label{display:flex;align-items:center;gap:8px;padding:2px 10px 8px;font:700 11px var(--sans);
   letter-spacing:.1em;text-transform:uppercase;color:var(--blue)}
 .toc .repo-tree-label::before{content:"";width:12px;height:9px;border:1.5px solid currentColor;border-radius:2px 2px 3px 3px;
