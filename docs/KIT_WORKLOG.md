@@ -2,6 +2,27 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Remove consumer-specific text and a dead compatibility name
+
+- deivid asked to fix the places where the kit broke its own placement rules,
+  since the consumer upgrades are coordinated from here anyway.
+- `tooling/lint.py` loses `sdk_document_locations()`, a compatibility name
+  with no caller in the kit, ADP, adapt or adaptation.
+- `docs/KIT_CONTEXT.md` no longer lists source coverage under `rules/`; that
+  map was removed in 2.0.0.
+- The 2.0.0 migration guide loses its section for adapt, and the
+  panel-switcher record loses its instruction for ADP's adoption. Consumer
+  steps belong in each consuming project. Both texts remain at the pushed
+  [`v2.0.0` tag](https://github.com/davszi/documentation-kit/blob/v2.0.0/docs/topics/releases/migrations/2.0.0.md);
+  adapt still pins the unpushed commit `101cea4`, so its upgrade plan takes
+  those eight steps from there.
+- Not changed: the stub headings in `rules/writing.md` and
+  `rules/maintenance.md`. ADP, adapt and adaptation hold 30 live links to
+  them; removing them breaks lint without `--strict`, which the version
+  promise calls a major change. That choice is deivid's.
+- Checks: `tests/run_checks.sh` with the browser suites passes (148 tests,
+  strict lint, 22 scripts, four suites).
+
 ## 2026-11-09 — Rewrite the remaining copied folds for people
 
 - deivid approved the style of the Engineering pilot below. The same rewrite

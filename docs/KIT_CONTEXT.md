@@ -6,7 +6,7 @@ The [README](../README.md) owns consumer setup and update commands;
 
 | Location | Responsibility |
 |---|---|
-| `rules/` | Canonical engineering/documentation policy, writing/layout rules and source coverage |
+| `rules/` | Canonical engineering/documentation policy and writing/layout rules |
 | `theme/` | Shared shell, reader, CSS/JS, fonts and local math assets |
 | `tooling/`, `docsite.py` | Consumer-root-independent build/lint and safe initialization |
 | `examples/starter/` | Neutral consuming project and visual guide; its entry files are `*.tmpl` templates that `init` writes under their real names |

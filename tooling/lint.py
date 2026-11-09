@@ -102,11 +102,6 @@ def evidence_document_locations() -> dict[Path, Path]:
     return {REPO / row["original_path"]: REPO / row["path"] for row in rows}
 
 
-def sdk_document_locations() -> dict[Path, Path]:
-    """Compatibility name; includes topic and qualification evidence as well."""
-    return evidence_document_locations()
-
-
 def recorded_source_roots(source: Path | None = None) -> tuple[str, ...]:
     """Explicit host origins apply only to their frozen collection or chronology."""
     roots = []
