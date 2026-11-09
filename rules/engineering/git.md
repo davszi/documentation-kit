@@ -63,7 +63,9 @@ To change the kit:
    deliverable, following the kit's migration guide.
 
 `docsite.py lint` fails when the pinned kit commit is on none of the kit's
-remote branches or tags.
+remote branches. A tag does not count, because a local tag looks the same as a
+pushed one. The check is skipped for a shallow checkout, whose fetch already
+proves the remote has the commit, and for a kit copy without Git metadata.
 
 ## History and recovery
 

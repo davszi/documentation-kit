@@ -36,7 +36,7 @@ whose pinned kit commit is on no remote branch of the kit. Everything else adds
 to the 1.x surface. Every consumer follows the
 [2.0.0 migration guide](migrations/2.0.0.md); a consumer that uses neither
 removed form only adds one router row. The 1.0.0 stable and provisional
-interfaces below still apply to 2.x, apart from these removals. The release number is not yet decided.
+interfaces below still apply to 2.x, apart from these removals.
 
 | Area | Consumer change | Owning contract |
 |---|---|---|

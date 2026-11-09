@@ -31,7 +31,7 @@ explanations, measurements, figures, mathematics and code guides.
 ## Reference website
 
 The [website record](topics/website/website.md) owns the kit's own site: its
-structure, source registry, build command and open hosting decision.
+structure, source registry, build command and hosting.
 [Open work](open/KIT_OPEN.md) routes owed workstreams to their owners.
 
 ## Site development

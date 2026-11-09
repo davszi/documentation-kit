@@ -296,7 +296,7 @@ Without `--strict`, warnings print but the run passes; with it, any warning fail
 python3.12 -m http.server 8321 --bind 127.0.0.1 --directory .build/docs
 ```
 
-Open `http://127.0.0.1:8321/html/index.html`. The server exposes only the generated output, not the repository. A successful build and lint still need a look at the rendered page: check the changed layout at wide and narrow widths before committing or publishing. [Validation](validation.html#validation-and-review) lists what a complete review covers, including the reusable browser checks.
+Open `http://127.0.0.1:8321/html/index.html`. The server exposes only the generated output, not the repository. A successful build, lint and browser suite still need a look by eye: capture each changed element whole, at wide and narrow widths and in each reader view it appears in, and look at the captures before committing or publishing. [Validation](validation.html#validation-and-review) lists what a complete review covers, including the reusable browser checks.
 
 <div class="bs-grid g2">
 <div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>"Lint passed, so it looks fine"</h3><p>The new table is never opened on a phone; it pushes the page sideways for every narrow reader.</p></div>

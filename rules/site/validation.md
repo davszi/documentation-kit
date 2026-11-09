@@ -14,6 +14,8 @@ A page-only build is useful for iteration; it does not validate unrelated output
 
 Tests that compare DOM/structure, content or numerical identities are useful evidence. They do not establish browser pixel inspection. Report results under the [handoff rules](../engineering/handoffs.md#reporting-completion). Never call a layout checked from source inspection alone.
 
+Review every visual change by eye before reporting it done. Capture each element the change touched, whole, at every width the site supports and in each reader view it appears in, such as one or two chapters; `captureElement` with `unclip` captures a reader chapter whole. Look at each capture for alignment, spacing, list markers, typography, colour and overflow, and compare it with the page around it. Passing browser suites do not replace this look. Report which captures were reviewed and what they showed.
+
 For local review, follow the [owned-server and browser rules](../documentation.md#review-build-and-publishing), using `.build/docs/` and `/html/<slug>.html`. Follow the [publication gate](../documentation.md#review-build-and-publishing) before deployment.
 
 ## Reusable browser checks

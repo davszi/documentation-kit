@@ -126,8 +126,8 @@ Each file shows its name and title.
 The disclosure starts closed on pages for people, on pinned pages and on
 registered pages listed in the navigation, because their entry already marks
 them. On any other registered page it starts open, with only the folders that
-lead to that page unfolded. While closed, the section stays docked to the bottom
-of the menu.
+lead to that page unfolded. The section follows the navigation in the menu's
+normal flow.
 
 A registered file needs no `[[nav]]` entry, because the section lists it. Keep
 `[[nav]]` for pages written for people, and for records every reader needs,

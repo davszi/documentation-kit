@@ -163,7 +163,7 @@ Full guide: [from open work to subject knowledge](documentation-system.html#from
 <div class="bs-checks">
 <div class="bs-check"><span class="bs-badge bs-ok">default</span><h3>Record and page</h3><p>Agents follow the spec and people need it explained: the record holds the exact text, the page the reasoning and figures.</p></div>
 <div class="bs-check"><span class="bs-badge bs-ok">contract only</span><h3>Record, no page</h3><p>A schema, checklist or limit nobody needs walked through. Add a page later if someone does.</p></div>
-<div class="bs-check"><span class="bs-badge bs-wait">declared exception</span><h3>Page, no record</h3><p>Only for a page with nothing agents must follow, such as a review. It says why in its frontmatter, <code>page_only = "…"</code>; without that, lint warns.</p></div>
+<div class="bs-check"><span class="bs-badge bs-wait">declared exception</span><h3>Page, no record</h3><p>For cases the rules do not foresee yet, such as the kit's own pages that explain its guides. It says why in its frontmatter, <code>page_only = "…"</code>; without that, lint warns.</p></div>
 </div>
 
 The split follows how each reader uses the text. An agent is routed to an exact file and section and must find the same words there next time; a person wants the conclusion first, a figure and an example, and is better served when the page is rearranged for reading. Putting both in one file means layout HTML in the agent's way, or a spec that moves whenever the page is improved. So the record comes first; a topic without one is a rare, declared exception that the conformance check rereads on every upgrade.

@@ -96,7 +96,7 @@ description = "What a complete validation covers and the reusable browser-check 
 [[source_pages]]
 source = "rules/site/publication.md"
 slug = "publication"
-description = "Export a generated bundle into an existing project publication."
+description = "Build and export a public bundle with `publish`, or export a built site into an existing publication."
 
 [[source_pages]]
 source = "rules/engineering/code.md"
@@ -198,7 +198,7 @@ description = "Move an existing consumer from 1.1.0 to 2.0.0."
 [[source_pages]]
 source = "docs/topics/website/website.md"
 slug = "website"
-description = "How this site is organized, built and previewed, and its open hosting decision."
+description = "How this site is organized, built, previewed and hosted."
 
 [[source_pages]]
 source = "docs/KIT_CONTEXT.md"

@@ -2,6 +2,29 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Fix what a fresh reader found, require by-eye review, undock the Reference section
+
+- A fresh agent read the kit with no session context. It found stale or
+  contradictory statements; fixed: the 2.0.0 notes no longer say the release
+  number is undecided; the reading index and the website source page no longer
+  call hosting open; `git.md` now matches `kit_pin.py` (remote branches only,
+  tags do not count, shallow checkouts and copies without Git are skipped); the
+  1.1.0 guide notes that 2.0.0 removes the old manifest fallback; the
+  publication source page mentions `publish`.
+- The starter home linked `../project/PROJECT_CONTEXT.md`, which resolved to a
+  missing `docs/project/` file; it now links `docs/PROJECT_CONTEXT.md`. Strict
+  lint did not catch the broken repository link in the raw home page.
+- deivid: which topics may be page-only is not settled; the rule now says so
+  and names the kit's explanation pages as the one known case.
+- deivid asked that visual changes be reviewed by eye; `rules/site/validation.md`
+  now requires whole-element captures at each supported width and reader view,
+  looked at before reporting done. The Preview chapter says the same.
+- deivid asked to unpin **Browse by folder**: the Reference section now follows
+  the navigation in the normal flow instead of docking to the menu bottom.
+- Checks: `tests/run_checks.sh` (153 tests) and strict lint pass; own-site,
+  visual, browser-helper and panel-switcher suites pass; sidebar captures at
+  1400 px reviewed.
+
 ## 2026-11-09 — Require topic records, remind about explaining pages, add the conformance check
 
 - deivid decided that every topic has a record; a page-only topic is a

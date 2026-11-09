@@ -50,9 +50,9 @@ a growing record into descriptively named files. Do not name subject records
 `README.md`. Add `index.md` when a human has something to learn or act on; the
 page explains the record in its own words and links its sections.
 
-A topic without a record is an exception, for a page with nothing agents must
-follow or cite, such as a review or an explainer of records kept elsewhere.
-Declare it in the page's frontmatter as `page_only = "<reason>"`. Lint warns
+A topic without a record is an exception. Which cases need it is not settled
+yet; the kit's own pages that explain its guides, whose records live in
+`rules/`, are one known case. Declare it in the page's frontmatter as `page_only = "<reason>"`. Lint warns
 about a topic page with neither a record nor that declaration. Once the page
 gains a rule, specification or limit, that part moves into a record.
 

@@ -17,7 +17,7 @@ toc = []
 <p>Write durable knowledge once, draw the explanation for people, and build it with a pinned shared kit.</p>
 <div class="home-cta">
 <a href="guide.html">Explore the visual guide</a>
-<a class="alt" href="../project/PROJECT_CONTEXT.md">Read the project map</a>
+<a class="alt" href="../PROJECT_CONTEXT.md">Read the project map</a>
 </div>
 </div>
 <div class="home-now-grid">
