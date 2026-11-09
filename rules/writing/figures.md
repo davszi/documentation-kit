@@ -35,3 +35,18 @@ Use the project's shared dark-compatible figure style, never ad hoc per-figure s
 Interactive views load independently, confine drag/scroll/keys to their region and never steal page focus. Linked views follow the same selected state. Data comes from the exact run inputs/outputs, checked by hash; show a static main render while loading. SVG toggles and their zoomed/lightbox controls stay synchronized. Carousel autoplay stops on engagement and pauses while a lightbox is open.
 
 Use shared components rather than duplicating handlers. Keep controls visible, labelled, keyboard accessible and at least 44 px touch targets. Give scrollable tables/equations labelled local regions. Nothing may overflow the page at any viewport. Apply the [site validation and review requirements](../site/validation.md#validation-and-review).
+
+## Run visuals and experiment lifecycle
+
+Prefer scripted captures with the same provenance as other figures. An inherently interactive screenshot must state commit, date and scenario/preset; it illustrates appearance, never a quantitative claim. Derive overlays from recorded artifacts rather than screenshots when data exists. Show dynamic behavior through an intentionally packaged short clip or useful frame sequence, with normal captions and provenance. For large local captures, posters/keyframes and their published notices, follow the [local-media packaging rules](../site/resources.md#resource-closure-and-evidence).
+
+A live public experiment report uses `ongoing = true`; remove it only when findings and limits are settled. Apply the [experiment retention rules](../records.md#numbers-and-staleness). The owning topic explains scope and links to evidence.
+
+The [experiment workflow](../experiments/workflow.md) owns experiment kinds,
+baselines, stopping conditions and the [required content](../experiments/workflow.md#required-content)
+of every experiment, including its verdict. [Proportionate verification](../experiments/verification.md)
+owns check selection and numerical implementation correctness.
+[Performance guidance](../engineering/performance.md) owns production benchmarks
+and engineering quick modes.
+
+Suitable experiment visuals include actual-geometry quality overlays, convergence, reference parity, timing/scaling and trade-off plots; omit inapplicable views explicitly. Update topic, worklog and open routing in the same deliverable.

@@ -44,7 +44,7 @@ A temporary cache supports budget selection and confers no execution authority.
 For immutable run requests, bind limits before freezing the request and validate
 those pinned limits at launch instead of selecting replacements from mutable
 cache. Retain evidential measurements under the
-[evidence rules](../writing/evidence.md#numbers-and-staleness).
+[evidence rules](../records.md#numbers-and-staleness).
 
 ## Attribute failures from evidence
 
@@ -56,7 +56,7 @@ terminal peak remains unmeasured.
 
 For unexpected pressure or inadequate budgets, follow the
 [escalation rules](delivery.md#decisions-and-blockers). Preserve attempts and
-their original settings under the [evidence rules](../writing/evidence.md#numbers-and-staleness).
+their original settings under the [evidence rules](../records.md#numbers-and-staleness).
 
 ## Own supervision and cleanup
 
@@ -71,4 +71,4 @@ a [handoff blocker](handoffs.md#reporting-blockers).
 
 Scale records to the work. Routine checks need concise command, limits and
 result records. A [qualification](../experiments/workflow.md#choose-the-purpose) follows the project's full evidence chain and
-the [claim-scope rules](../writing/explanations.md#naming-and-honest-claims).
+the [claim-scope rules](../records.md#naming-and-honest-claims).

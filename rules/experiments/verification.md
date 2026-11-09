@@ -57,7 +57,7 @@ seconds for a fast gate. The target limits gates, not experiments.
 When source, inputs, splits, metrics, composition or runtime conditions change,
 rerun the affected checks before treating their evidence as current; reuse
 unaffected evidence only after confirming its identity and scope (see
-[staleness](../writing/evidence.md#numbers-and-staleness)).
+[staleness](../records.md#numbers-and-staleness)).
 
 Investigate failed checks against the agreed criteria. Do not lower a failed
 bar to make the same result pass. Changing an obsolete criterion needs an

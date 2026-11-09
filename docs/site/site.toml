@@ -96,12 +96,12 @@ description = "Resource closure, local evidence, inventories and project adapter
 [[source_pages]]
 source = "rules/site/validation.md"
 slug = "validation"
-description = "What a complete validation covers and the reusable browser-check helpers."
+description = "What a complete validation covers, local review and browser access, and the reusable browser-check helpers."
 
 [[source_pages]]
 source = "rules/site/publication.md"
 slug = "publication"
-description = "Build and export a public bundle with `publish`, or export a built site into an existing publication."
+description = "The publishing gate; build and export a public bundle with `publish`, or export a built site into an existing publication."
 
 [[source_pages]]
 source = "rules/engineering/code.md"
@@ -136,7 +136,12 @@ description = "Deliverables, validation, commit messages, shared checkouts and h
 [[source_pages]]
 source = "rules/documentation.md"
 slug = "documentation-system"
-description = "Canonical homes, lifecycle, evidence identity, publishing and agent entrypoints."
+description = "Canonical homes, record first and page on request, lifecycle, changes and agent entrypoints."
+
+[[source_pages]]
+source = "rules/records.md"
+slug = "records"
+description = "What a record says: format, honest claims, measured numbers, frozen evidence and shelved investigations."
 
 [[source_pages]]
 source = "rules/conformance.md"
@@ -151,17 +156,12 @@ description = "Section purpose, figure placement, homepages, build-sheet pages, 
 [[source_pages]]
 source = "rules/writing/explanations.md"
 slug = "explanations"
-description = "Reading order, optional depth layers, naming and honest claims."
-
-[[source_pages]]
-source = "rules/writing/evidence.md"
-slug = "evidence"
-description = "Measured claims, staleness, number ledgers and experiment records."
+description = "Reading order and optional depth layers."
 
 [[source_pages]]
 source = "rules/writing/figures.md"
 slug = "figures"
-description = "Choosing a representation, comparisons, interaction and accessibility."
+description = "Choosing a representation, comparisons, interaction, accessibility and run visuals."
 
 [[source_pages]]
 source = "rules/writing/math.md"

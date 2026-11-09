@@ -25,7 +25,7 @@ page_only = "Explains the documentation and writing guides; they are the records
 | Upgrading the kit pin or taking over a repository | [Project conformance check](conformance.html) | Pin, router, copied rules, homes, topics, pages and records, open work, compatibility, changed rules, site | [Topics](#topics), [In step](#page-and-record-in-step) |
 | Laying out a rendered page | [Page design](page-design.html) | Section purpose, takeaway titles, homepages, build-sheet blocks, status boards, slide faces, review | [Section design](#page-design), [Build sheets](#build-sheets) |
 | Writing an explanation | [Explanations](explanations.html) | Story order, typed folds, naming, honest claims | [Story and folds](#explanations), [Honest claims](#honest-claims) |
-| Quoting a measured number | [Evidence](evidence.html) | Required provenance, staleness, number ledgers, run visuals, experiment records | [Evidence](#evidence) |
+| Quoting a measured number | [Evidence](records.html#numbers-and-staleness) | Required provenance, staleness, number ledgers, run visuals, experiment records | [Evidence](#evidence) |
 | Adding a figure or comparison | [Figures](figures.html) | The visual completion gate, captions and references, comparisons, chart sizing, interaction and access | [Figures](#figures) |
 | Writing mathematics | [Math](math.html) | Definitions, derivations, KaTeX use, verification of analytic claims | [Mathematics](#mathematics) |
 | Showing code or a code diagram | [Code excerpts](code-excerpts.html) | Real excerpts with source metadata, rendering chrome, shared diagram semantics, diagram controls | [Code excerpts](#code-excerpts) |
@@ -152,7 +152,7 @@ A shelved page can stay reachable through its direct link with `hidden = true`. 
 
 <!-- /fold -->
 
-Full guide: [from open work to subject knowledge](documentation-system.html#from-open-work-to-subject-knowledge), [evidence identity and frozen records](documentation-system.html#evidence-identity-and-frozen-records) and [shelved investigations](documentation-system.html#shelved-investigations).
+Full guide: [from open work to subject knowledge](documentation-system.html#from-open-work-to-subject-knowledge), [evidence identity and frozen records](records.html#evidence-identity-and-frozen-records) and [shelved investigations](records.html#shelved-investigations).
 
 </section>
 
@@ -313,7 +313,7 @@ A probe is recorded in one line:
 probed <subject> → <verdict>, <decisive reason>, <time spent>
 ```
 
-Detailed probe artifacts follow the [experiment retention rules](evidence.html#numbers-and-staleness).
+Detailed probe artifacts follow the [experiment retention rules](records.html#numbers-and-staleness).
 
 <!-- /fold -->
 
@@ -343,7 +343,7 @@ A related leak concerns labels. Source markers such as `INVARIANT` and `DON'T-RE
 
 <!-- /fold -->
 
-Full guide: [rules for changes and chronology](documentation-system.html#rules-for-changes-and-chronology) and [review, build and publishing](documentation-system.html#review-build-and-publishing).
+Full guide: [rules for changes and chronology](documentation-system.html#rules-for-changes-and-chronology) and [review, build and publishing](validation.html#local-review-and-browser-access).
 
 </section>
 
@@ -532,7 +532,7 @@ Name a mechanism by what the reader can see it do. Terms from inside a formulati
 
 <!-- /fold -->
 
-Full guide: [naming and honest claims](explanations.html#naming-and-honest-claims).
+Full guide: [naming and honest claims](records.html#naming-and-honest-claims).
 
 </section>
 
@@ -583,7 +583,7 @@ A rerun does not overwrite history. The old record keeps its date, runtime, inpu
 
 <!-- /fold -->
 
-Full guide: [numbers and staleness](evidence.html#numbers-and-staleness) and [run visuals and experiment lifecycle](evidence.html#run-visuals-and-experiment-lifecycle).
+Full guide: [numbers and staleness](records.html#numbers-and-staleness) and [run visuals and experiment lifecycle](figures.html#run-visuals-and-experiment-lifecycle).
 
 </section>
 

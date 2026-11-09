@@ -1,4 +1,4 @@
-# Explanations and honest claims
+# Explanations and reading layers
 
 ## Story and reading layers
 
@@ -18,10 +18,4 @@ Choose by narrative weight, not element type: a table or equation may carry the 
 
 When moving detail into a record, keep the former page anchor on the summary that replaces it and link to the matching record anchor. Keep concise lessons from rejected methods reachable, with verdict up front; detailed captures/reproduction remain evidence.
 
-## Naming and honest claims
-
-Use one term per object across prose, controls, legends, tables, figures and output. Name a mechanism the reader sees; use formulation internals only when explaining that formulation. A rename sweeps all surfaces. State what a function receives, returns and optimizes/interpolates, and which inputs vary or stay fixed.
-
-Decision rationale belongs beside the decision, including why an instrument/default was chosen and why alternatives lost. A baseline cited for current shipped behavior measures what ships; label retired baselines historical. An experimental verdict and deployment measurements are distinct content kinds.
-
-Separate claims requiring different evidence: visual fidelity, smoothness, input preservation, correspondence with a source and physical accuracy. A local check or smoother drawing proves only its tested property. Label accepted future behavior, implemented behavior, CPU checks and native/runtime observations separately. Say "not measured" plainly and provide a supported bound where available. Never manufacture an estimate to fill an empty metric.
+Naming and claims on a page follow the same rules as in its record: [naming and honest claims](../records.md#naming-and-honest-claims).

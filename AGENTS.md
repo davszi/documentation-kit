@@ -24,8 +24,9 @@ expands. These routes grant no execution or publication permission.
 | Assigning work, coordinating contributors or editing in parallel | `rules/engineering/delivery.md` |
 | Reporting completion or blockers, handing off work or integrating a handoff | `rules/engineering/handoffs.md` |
 | Staging, committing or rewriting Git history | `rules/engineering/git.md` and repository validation requirements |
-| Creating, editing, moving, reviewing, publishing or retiring documentation | `rules/documentation.md` |
-| Writing explanations, mathematics, code excerpts, figures or evidence | The applicable focused guides linked from `rules/writing.md` |
+| Writing or changing a record: a guide, topic record, plan, worklog or open-work entry | `rules/records.md`, and **Rules for changes and chronology** in `rules/documentation.md` |
+| Creating, moving, splitting or retiring a document | `rules/documentation.md` |
+| Making or changing a page for people, only when a person asked for one | **Record first, page on request** in `rules/documentation.md`; the page author reads the focused guides linked from `rules/writing.md` and `rules/maintenance.md` |
 | Building, checking, publishing or changing the site or reader | The applicable focused guides linked from `rules/maintenance.md` and the checks in `docs/KIT_CONTEXT.md` |
 
 `docsite.py` owns the consumer entrypoint, `tooling/` implements rendering and

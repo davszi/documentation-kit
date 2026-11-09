@@ -18,15 +18,18 @@ commands. [README](../README.md) owns consumer setup and upgrades.
 - [Proportionate verification](../rules/experiments/verification.md): evidence gaps, application logic, numerical correctness and regression gates.
 
 Projects keep concrete questions, recipes, decisions and accepted execution
-contracts in their owning records. [Evidence reporting](../rules/writing/evidence.md)
+contracts in their owning records. [Evidence reporting](../rules/records.md#numbers-and-staleness)
 and [execution](../rules/engineering/execution.md) retain their separate ownership.
 
 ## Documentation and writing
 
 [Project conformance check](../rules/conformance.md) is what a project checks when its pin moves.
-[Documentation policy](../rules/documentation.md) owns canonical homes and
-lifecycle. The [writing router](../rules/writing.md) links to page design,
-explanations, measurements, figures, mathematics and code guides.
+[Documentation policy](../rules/documentation.md) owns canonical homes, the
+order of work and lifecycle: the record comes first, and a page for people is
+made on request. [Writing records](../rules/records.md) owns what a record
+says: format, honest claims, measured numbers and frozen evidence. The
+[page index](../rules/writing.md) links to the guides for pages written for
+people: page design, explanations, figures, mathematics and code.
 
 ## Reference website
 

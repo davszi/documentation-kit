@@ -15,7 +15,7 @@ architecture decisions arising from performance work.
 - Fix waste in the current implementation when found within the assigned scope.
   Moving code to another language requires an explicit decision with the project
   owner; it is never the default response to waste.
-- Follow the [measurement rules](../writing/evidence.md#numbers-and-staleness)
+- Follow the [measurement rules](../records.md#numbers-and-staleness)
   when claiming a speed-up.
 
 ## Workload and evidence
@@ -36,6 +36,6 @@ workload, its acceptance criteria or an experiment's agreed protocol.
 Use [proportionate verification](../experiments/verification.md) for numerical
 correctness and regression gates.
 
-The [evidence guide](../writing/evidence.md) owns measurement identity, baselines,
+The [evidence guide](../records.md#numbers-and-staleness) owns measurement identity, baselines,
 reruns, historical results and reporting. Projects retain concrete workloads,
 thresholds and performance contracts.

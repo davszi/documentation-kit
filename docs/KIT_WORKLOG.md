@@ -2,6 +2,38 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Give records their own guide; record first, page on request
+
+- deivid decided how documentation work is split. The agent that did the work
+  writes the record in Markdown first. A page for people is made only when a
+  person asked for one, by a separate agent that receives the finished record
+  as its brief and is kept for later page requests in the same work. A
+  one-line page sync stays with the agent that edited the record.
+- Why: the rule files did not separate the two jobs. The router row for
+  writing fired for records too, record rules sat inside page guides, and page
+  review sat in the placement guide. A record writer was led to between 2,941
+  and 4,050 words of guides.
+- `rules/records.md` is new and gathers what a record needs: one record per
+  topic, format, naming and honest claims, numbers and staleness, frozen
+  evidence and shelved investigations. `rules/documentation.md` keeps placement,
+  the new section Record first, page on request, lifecycle and changes.
+  `rules/writing/` covers pages only; `rules/writing/evidence.md` is removed
+  and its run-visuals section moved to `figures.md`. Local review and browser
+  access moved to `rules/site/validation.md`, the publishing gate to
+  `rules/site/publication.md`. `rules/engineering/delivery.md` gains Delegating
+  a page for people. No rule text was dropped; moved sections keep their
+  anchor names.
+- The kit router and the starter router have three documentation rows in
+  place of two. A record edit now routes to `rules/records.md` and one section
+  of `rules/documentation.md`: about 1,130 words.
+- 42 links in the kit were repointed to the new locations. The 3.0.0 guide lists the moved sections and the new router
+  rows; the release notes carry a row.
+- The pages for people still explain the old guide layout; only their link
+  targets were repointed here. Their update is delegated next, as the new rule
+  asks.
+- Checks: `tests/run_checks.sh` with the browser suites passes (148 tests,
+  strict lint, 22 scripts, four suites).
+
 ## 2026-11-09 — Keep the worklog and state why it repeats commit messages
 
 - Measured: this worklog has one entry per commit, 62 and 62, and an entry

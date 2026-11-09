@@ -183,7 +183,7 @@ When a benchmark or validation tool needs more than about a minute for its full 
 
 This chapter covers what to time. What a speed-up claim must carry is spread over three other places:
 
-- [Evidence](evidence.html#numbers-and-staleness) says what makes a number quotable: its identity, its baseline, reruns after a change, and how older results are labelled and reported. Follow it whenever you claim a speed-up.
+- [Evidence](records.html#numbers-and-staleness) says what makes a number quotable: its identity, its baseline, reruns after a change, and how older results are labelled and reported. Follow it whenever you claim a speed-up.
 - [Proportionate verification](experiment-verification.html) covers whether the numerical code is correct in the first place, and the regression gates that keep a fixed defect from returning.
 - Your project's own records hold the concrete workloads, thresholds and performance contracts. The kit does not set them.
 
@@ -234,7 +234,7 @@ A reservation is the capacity, such as memory, that you set aside for a job befo
 
 Inputs that come from outside or change between runs, and the roots that code is imported from, are easy to overlook, so name them explicitly. If any item differs, the old figure no longer applies: make a new, explicit and adequate reservation. An estimate, or a limit that a job failed at, is not a successful measurement and cannot be reused as one.
 
-Some projects keep a temporary cache of earlier usage. It helps you choose a budget; it gives nobody permission to run a job. For a run request that is frozen and must not change, set the limits before freezing it and check those same limits at launch, instead of picking replacements from a cache that may have changed since. Measurements that serve as evidence are kept under the [evidence rules](evidence.html#numbers-and-staleness).
+Some projects keep a temporary cache of earlier usage. It helps you choose a budget; it gives nobody permission to run a job. For a run request that is frozen and must not change, set the limits before freezing it and check those same limits at launch, instead of picking replacements from a cache that may have changed since. Measurements that serve as evidence are kept under the [evidence rules](records.html#numbers-and-staleness).
 
 <!-- /fold -->
 
@@ -295,13 +295,13 @@ To say that a job needed more memory than its limit, you need evidence that it a
 
 If the peak at the end of the run could not be read, report memory use as unmeasured. Do not fill the gap with a guess.
 
-When pressure was unexpected or the budget turned out too small, follow the [escalation rules](delivery.html#decisions-and-blockers). Keep each attempt together with the settings it actually ran under, as the [evidence rules](evidence.html#numbers-and-staleness) require.
+When pressure was unexpected or the budget turned out too small, follow the [escalation rules](delivery.html#decisions-and-blockers). Keep each attempt together with the settings it actually ran under, as the [evidence rules](records.html#numbers-and-staleness) require.
 
 <!-- /fold -->
 
 <!-- fold: experiment How much a job record holds -->
 
-Match the record to the weight of the work. For a routine check a short note is enough: the command, the limits and the result. A [qualification](experiment-workflow.html#choose-the-purpose), which passes or fails a named system, needs the project's full evidence chain and follows the [claim-scope rules](explanations.html#naming-and-honest-claims). In both cases the record has to outlive the conversation it came from; the [durable-record rules](handoffs.html#evidence-and-durable-records) say where it goes.
+Match the record to the weight of the work. For a routine check a short note is enough: the command, the limits and the result. A [qualification](experiment-workflow.html#choose-the-purpose), which passes or fails a named system, needs the project's full evidence chain and follows the [claim-scope rules](records.html#naming-and-honest-claims). In both cases the record has to outlive the conversation it came from; the [durable-record rules](handoffs.html#evidence-and-durable-records) say where it goes.
 
 <!-- /fold -->
 
@@ -436,7 +436,7 @@ Use the same channel to report that you finished. A closing message in some othe
 
 <!-- fold: experiment Durable records and receiving a handoff -->
 
-A handoff message is a pointer, not an archive. Detailed results and the steps to reproduce them go into the records that own them, under the [documentation](documentation-system.html) and [evidence rules](evidence.html#numbers-and-staleness); the handoff links to those records.
+A handoff message is a pointer, not an archive. Detailed results and the steps to reproduce them go into the records that own them, under the [documentation](documentation-system.html) and [evidence rules](records.html#numbers-and-staleness); the handoff links to those records.
 
 On the receiving side, two small acts keep work from stalling. Confirm receipt when the sender is waiting for it before going on. And when responsibility moves, say who owns the work now and what they do next.
 

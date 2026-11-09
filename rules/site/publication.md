@@ -1,5 +1,9 @@
 # Publication export
 
+## Publishing gate
+
+Builds on feature branches must not publish production documentation. Publishing requires the consuming project's chosen branch/environment, authorization and successful checks. Hosting source changes are a separate explicit operation; a source build does not imply a deployed version. Rollback must preserve unrelated work and rebuild/verify the chosen revision.
+
 ## Configured publication
 
 Run `python .docs-kit/docsite.py publish --project . --out _site` to build the

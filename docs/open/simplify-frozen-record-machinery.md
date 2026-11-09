@@ -40,7 +40,7 @@ tree and stay link-checked.
 | adapt | `docs/site/layout_paths.py`, the same pattern | 291 lines |
 | Kit | `tooling/site_paths.py`, `tooling/evidence_documents.py`, `tooling/project_extensions.py` | 180 lines |
 | Kit | Path and evidence resolution in `tooling/lint.py` | about 70 lines |
-| Kit | [Evidence identity and frozen records](../../rules/documentation.md#evidence-identity-and-frozen-records) | 177 words |
+| Kit | [Evidence identity and frozen records](../../rules/records.md#evidence-identity-and-frozen-records) | 177 words |
 | Kit | [Resource closure and evidence](../../rules/site/resources.md#resource-closure-and-evidence) | 595 words |
 
 ## Constraint on order

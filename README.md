@@ -94,8 +94,8 @@ links to the kit's contracts, evidence and chronology.
 | Engineering | [Code and generated files](rules/engineering/code.md), [performance](rules/engineering/performance.md), [execution and resources](rules/engineering/execution.md) |
 | Experiments | [Workflow](rules/experiments/workflow.md), [proportionate verification](rules/experiments/verification.md) |
 | Delivery | [Ownership](rules/engineering/delivery.md), [handoffs](rules/engineering/handoffs.md), [Git](rules/engineering/git.md) |
-| Documentation | [Canonical homes and lifecycle](rules/documentation.md) |
-| Writing | [Pages and review](rules/writing/pages.md), [explanations](rules/writing/explanations.md), [measurements](rules/writing/evidence.md), [figures and access](rules/writing/figures.md), [math](rules/writing/math.md), [code and diagrams](rules/writing/code.md) |
+| Documentation | [Canonical homes, order of work and lifecycle](rules/documentation.md), [writing records](rules/records.md) |
+| Pages for people | [Pages and review](rules/writing/pages.md), [explanations](rules/writing/explanations.md), [figures and access](rules/writing/figures.md), [math](rules/writing/math.md), [code and diagrams](rules/writing/code.md) |
 | Site | [Authoring](rules/site/authoring.md), [validation](rules/site/validation.md), [resources](rules/site/resources.md), [publication](rules/site/publication.md), [reader](rules/site/reader.md) |
 
 The [writing](rules/writing.md) and [maintenance](rules/maintenance.md)

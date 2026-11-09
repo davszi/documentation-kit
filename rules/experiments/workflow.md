@@ -66,7 +66,7 @@ its bar or expected observation, tolerances, workload, analysis and what counts
 as failure or inconclusive.
 
 Every experiment reports: reproduction details under the
-[measurement rules](../writing/evidence.md#numbers-and-staleness); results with
+[measurement rules](../records.md#numbers-and-staleness); results with
 units and scope; the verdict for a confirmatory investigation or qualification;
 every attempt, failure and changed setting with its reason, never only the best
 one; for exploration, how the interpretation developed; caveats and next step.
@@ -88,6 +88,6 @@ Nothing here applies to other experiments.
 
 Checks: [verification](verification.md). Resources and cleanup:
 [execution](../engineering/execution.md). Provenance and visuals:
-[evidence](../writing/evidence.md). Benchmarks:
+[evidence](../records.md#numbers-and-staleness). Benchmarks:
 [performance](../engineering/performance.md). Placement:
 [documentation policy](../documentation.md).

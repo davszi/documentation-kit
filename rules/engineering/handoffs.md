@@ -30,7 +30,7 @@ and independent work that can continue.
 
 Keep detailed results and reproduction information in their owning records,
 following the [documentation](../documentation.md) and
-[evidence rules](../writing/evidence.md#numbers-and-staleness). Link those records from
+[evidence rules](../records.md#numbers-and-staleness). Link those records from
 the handoff.
 
 Chat, temporary coordination state and temporary files must not be the only

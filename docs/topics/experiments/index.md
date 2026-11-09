@@ -36,7 +36,7 @@ The experiment guides do not restate what other guides own. When an experiment t
 
 - Checks: [proportionate verification](experiment-verification.html).
 - Resources and cleanup: [execution](execution.html).
-- Provenance and visuals: [evidence](evidence.html).
+- Provenance and visuals: [evidence](records.html#numbers-and-staleness).
 - Benchmarks: [performance](performance.html).
 - Placement: [documentation policy](documentation-system.html).
 
@@ -160,7 +160,7 @@ See [start from evidence](experiment-workflow.html#start-from-evidence-and-bound
 
 <div class="bs-grid g2">
 <div class="bs-part bs-teal"><span class="bs-label">Before running</span><h3>State the plan</h3><ul><li>question and measured motivation</li><li>kind: exploratory, confirmatory or qualification</li><li>the decision it informs</li><li>baseline, budget and stopping condition</li></ul><p><b>Confirmatory or qualification</b> also fixes its bar or expected observation, tolerances, workload, analysis, and what counts as failure or inconclusive.</p></div>
-<div class="bs-part bs-violet"><span class="bs-label">After running</span><h3>Report the whole run</h3><ul><li>reproduction details under the <a href="evidence.html#numbers-and-staleness">measurement rules</a></li><li>results with units and scope</li><li>the verdict, for confirmatory work or a qualification</li><li>every attempt, failure and changed setting, with its reason</li><li>for exploration, how the interpretation developed</li><li>caveats and next step</li></ul></div>
+<div class="bs-part bs-violet"><span class="bs-label">After running</span><h3>Report the whole run</h3><ul><li>reproduction details under the <a href="records.html#numbers-and-staleness">measurement rules</a></li><li>results with units and scope</li><li>the verdict, for confirmatory work or a qualification</li><li>every attempt, failure and changed setting, with its reason</li><li>for exploration, how the interpretation developed</li><li>caveats and next step</li></ul></div>
 </div>
 
 A plan written before results exist keeps the decision, baseline and stopping condition from drifting toward whichever outcome appears. Reporting every attempt matters because a best-only report hides how many tries the result needed and which settings failed. This is content, not a form: a short note in the project's own record can hold it, and no template is added unless the project asks.
@@ -174,7 +174,7 @@ A plan written before results exist keeps the decision, baseline and stopping co
 
 <!-- fold: experiment What the reproduction details include -->
 
-The [measurement rules](evidence.html#numbers-and-staleness) say what makes a measured claim reproducible: its source commit, exact reproduction command, runtime or environment, workload, units, baseline, method and scope, with links to its raw result and limitations. When code, input data, method, workload or runtime conditions affecting the claim change, rerun before quoting it as current.
+The [measurement rules](records.html#numbers-and-staleness) say what makes a measured claim reproducible: its source commit, exact reproduction command, runtime or environment, workload, units, baseline, method and scope, with links to its raw result and limitations. When code, input data, method, workload or runtime conditions affecting the claim change, rerun before quoting it as current.
 
 <!-- /fold -->
 
@@ -313,7 +313,7 @@ Evidence describes the source, inputs and conditions that produced it. After a c
 
 A long run can be interrupted. Where that could affect the validity or the cost of a run, verify the recovery behaviour that matters for that run: its checkpoints, the identity it resumes under, its partial outputs or its restart. There is no universal interruption suite to add on top.
 
-The report then keeps four things apart, under the [handoff guide](handoffs.html): the checks that were executed, their results, the conclusions reached by inspection only, and the uncertainty that remains. Reusing a result after something changed follows the [staleness rules](evidence.html#numbers-and-staleness).
+The report then keeps four things apart, under the [handoff guide](handoffs.html): the checks that were executed, their results, the conclusions reached by inspection only, and the uncertainty that remains. Reusing a result after something changed follows the [staleness rules](records.html#numbers-and-staleness).
 
 <!-- /fold -->
 
