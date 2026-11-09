@@ -69,11 +69,11 @@ The table lists the homes most projects use; the guide lists every one, includin
 
 <!-- fold: code The README exception and project-local homes -->
 
-`README.md` is the bounded exception. A human arriving cold may need the project's purpose, installation and run commands there, even when those facts have a canonical home elsewhere. Keep the repetition short and sweep the README in the same deliverable when those facts change; the verified canonical owner wins on conflict.
+"One fact, one home" has a single deliberate exception: `README.md`. Someone arriving cold reads the README first and may need the project's purpose, how to install it and how to run it, even though each of those facts already has a home elsewhere. So the README may repeat them, briefly. The price is a duty: when those facts change, update the README in the same deliverable. If the README and the owning document disagree, check the owning document; it wins.
 
-The kit's rules are shared policy. A consuming project's `docs/PROJECT_CONTEXT.md` owns its repository map, commands, named documentation routes and project-specific choices; the rules are not copied into project entrypoints.
+The kit's rules are shared policy and are not copied into a project's entry files. What a project owns is its `docs/PROJECT_CONTEXT.md`: the repository map, the commands, the named documentation routes and the choices specific to that project.
 
-The homes in the guide are canonical roles for new projects. Existing projects may retain explicit local destinations and compatibility routes. Create a directory or document only when content needs it, and link that owner from `docs/index.md`.
+The homes listed in the guide describe new projects. An existing project may keep its own explicit locations; whether an old route may stay is decided under [refactoring over compatibility](code-practices.html#refactoring-over-compatibility). Create a directory or document only when there is content for it, and link it from `docs/index.md`.
 
 <!-- /fold -->
 
@@ -118,24 +118,37 @@ Unfinished implementation, unresolved choices and prospective acceptance stay wi
 
 <!-- fold: dead-end Why readiness has one owner instead of several boards -->
 
-Plans distinguish investigation readiness from implementation readiness. A workstream's execution owner carries order, prerequisites, status and resume instructions; implementation plans carry prospective acceptance; coverage maps obligations to evidence. The guide does not distribute this state among competing boards. Without one owner, two boards can disagree about what is ready, and neither can be trusted.
+It is tempting to track "what is ready" on several boards at once. Then two boards disagree, and neither can be trusted. The guide gives each kind of state one place instead:
+
+- the execution owner of a workstream carries its order, prerequisites, status and the instructions for resuming it;
+- an implementation plan carries the acceptance conditions agreed in advance;
+- a coverage map links each obligation to its evidence.
+
+Plans also keep two kinds of readiness apart: ready to investigate is not the same as ready to implement.
 
 <!-- /fold -->
 
 <!-- fold: experiment Evidence identity and frozen records -->
 
-- Retain exact original bytes only for a specific citation, source pin or reproduction dependency.
-- Preserve the necessary reference closure, original logical path, source revision, byte count and cryptographic hash in a location manifest. Record a per-document source revision when it differs from the collection default. The manifest indexes identity and location; it is not a second content home.
-- Do not rewrite frozen links, add banners to originals or silently replace missing bytes. Current prose links to current knowledge or explicit evidence locations.
-- If a project implements historical link resolution, it rebases only explicitly registered origins and records; current links and missing targets remain strict. A reading view distinguishes exact originals from mutable supporting current files. A symlink is not described as a frozen source or write protection.
-- Restore an original only into an absent destination. Preserve a newer live file separately, and do not overwrite unrelated pending work.
-- Source relocation, hash verification and a reading view establish document integrity. They do not establish runtime qualification or permission to execute old procedures.
+Sometimes a document must be kept exactly as it was, byte for byte, because something cites it, pins it as a source or needs it to reproduce a result. Keep exact originals only for such a concrete purpose.
+
+**What is recorded.** A location manifest lists, for each frozen document, its original logical path, source revision, byte count and cryptographic hash, together with the references needed to follow it. A document that comes from a different revision than the rest of its collection gets its own revision entry. The manifest says what a document is and where it lives. It is an index, not a second home for the content.
+
+**What is never done.** Frozen links are not rewritten, originals get no banners, and missing bytes are not quietly replaced. Current prose links to current knowledge or to an explicit evidence location.
+
+**Reading old links.** A project may resolve the links inside frozen documents to where files live today. If it does, only origins and records that were explicitly registered are translated; current links and missing targets stay strict. A reading view shows which files are exact originals and which are current files that may still change. A symlink is neither a frozen source nor write protection, and is not described as one.
+
+**Restoring.** Put an original back only where nothing exists yet. If a newer live file is in the way, keep it separately, and do not overwrite unrelated pending work.
+
+**What this proves.** Relocating sources, verifying hashes and offering a reading view establish that a document is intact. They do not show that an old procedure still qualifies at runtime, and they give no permission to execute it.
 
 <!-- /fold -->
 
 <!-- fold: experiment Shelved investigations -->
 
-Shelving is a scope decision recorded in the experiment guide and the owning topic. Inputs, code, failures and concrete recovery conditions are preserved there. Resumption requires a new explicit assignment. A hidden page may remain directly linkable with `hidden = true`; hiding neither deletes evidence nor qualifies a replacement.
+Shelving an investigation is a decision about scope, not a quiet stop. Record it in the experiment guide and in the topic that owns the work, and keep there what a later restart would need: the inputs, the code, the failures and the concrete conditions under which the work could resume. Resuming is not automatic; it takes a new, explicit assignment.
+
+A shelved page can stay reachable through its direct link with `hidden = true`. Hiding does less than it may seem: it deletes no evidence, and it does not make any replacement qualified.
 
 <!-- /fold -->
 
@@ -206,18 +219,20 @@ Agents and people need different things from the same knowledge. An agent follow
 
 <!-- fold: code Record format and registered source pages -->
 
-- Every topic has a record, `docs/topics/<topic>/<topic>.md`; split a growing record into descriptively named files. Subject records are not named `README.md`. Add `index.md` when a person has something to learn or act on. A page without a record declares `page_only = "<reason>"` in its frontmatter, or lint warns.
-- Records use plain Markdown headings, tables, lists, exact file references and evidence links. Layout HTML stays out of agent records; a needed diagram is stored in a separate file and linked. Anchors that other documents reference are preserved.
-- A site may render a whole record as a [registered source page](authoring.html#registered-source-pages). The Markdown file stays the record and its only editable copy; the page adds no content of its own. The guides linked from this page are rendered that way.
+- **One record per topic.** It starts as `docs/topics/<topic>/<topic>.md`; when it grows, split it into files named after what they describe. A subject record is never called `README.md`. Add the page, `index.md`, once a person has something to learn or act on. A page with no record says why in its frontmatter, with `page_only = "<reason>"`; otherwise lint warns.
+- **Plain Markdown in records.** Headings, tables, lists, exact file references and links to evidence. Layout HTML stays out; a diagram that a record needs goes into its own file and is linked. Anchors that other documents point to are kept.
+- **A record can also be shown whole.** A site may render a record as a [registered source page](authoring.html#registered-source-pages). The Markdown file remains the record and the only copy anyone edits; the rendered page adds nothing of its own. The guides linked from this page are rendered that way.
 
 <!-- /fold -->
 
 <!-- fold: code Agent entrypoints: import versus point -->
 
-- Keep one thin repository router in `AGENTS.md`. Name the project context and prerequisites there. Read the orientation and the rules that apply to every task at the start of work, unless they are already loaded.
-- Route the remaining rules by action. For each trigger, name the required files or sections and say when to read them. Apply every matching route before its action, and recheck the routes when the task expands. Find task-specific plans, topics and evidence through named links in the project context or the applicable rule.
-- Codex uses the named paths and triggers in `AGENTS.md`. Claude Code uses a bare, standalone `@AGENTS.md` import in `CLAUDE.md`, so both clients use the same router. Import paths are relative to the importing file; keep the import chain short. Backticks and fences make an import literal.
-- Submodule consumers must initialize `.docs-kit` before relying on its rules. If a required policy is missing, report it and resolve the prerequisite before proceeding with the work it governs.
+Coding agents read a repository's entry file before they act. The guide keeps that file small and makes it a router, not a rulebook.
+
+- **One thin router.** `AGENTS.md` names the project context and the prerequisites. An agent reads the orientation, and the rules that apply to every task, once at the start of work, unless they are already loaded.
+- **Everything else by action.** Each row names a trigger, the files or sections to read and when to read them. Every matching row applies before its action, and the rows are checked again when a task grows. Plans, topics and evidence for one task are found through named links in the project context or in the rule that applies.
+- **Two clients, one router.** Codex follows the named paths and triggers in `AGENTS.md` directly. Claude Code gets the same router through a bare, standalone `@AGENTS.md` line in `CLAUDE.md`. An import path is relative to the file that imports, and the chain of imports stays short. Written inside backticks or a code fence, an import is plain text and imports nothing.
+- **The kit must be present.** A project that uses the kit as a submodule initializes `.docs-kit` before relying on its rules. If a required policy file is missing, report that and resolve it before doing the work the policy governs.
 
 <!-- /fold -->
 
@@ -302,22 +317,27 @@ Detailed probe artifacts follow the [experiment retention rules](evidence.html#n
 
 <!-- fold: code Drafts kept below the page end -->
 
-A page may keep topic-owned drafts below a <code>&lt;!-- page-end --&gt;</code> marker; only the content above it is rendered. Chronology still belongs in the worklog, and owed work still needs an `OPEN.md` route to its owner. Unreachable notes tails are not left behind.
+A page may carry drafts that belong to its topic below a <code>&lt;!-- page-end --&gt;</code> marker. Only what stands above the marker is rendered, so readers never see the drafts. Two things do not move into that tail: chronology, which belongs in the worklog, and owed work, which still needs a route in `OPEN.md` to its owner. Nor is the tail a dumping ground: notes that nothing leads to are not left behind.
 
 <!-- /fold -->
 
 <!-- fold: dead-end Why there is no archive staging layer -->
 
-Approved superseded sources are removed in the landing commit; the guide adds no archive staging layer. Exact evidence is preserved only when its identity has a concrete purpose. Current invariants live in owning records and cross-cutting conventions, and source markers such as `INVARIANT` and `DON'T-REDO` must not leak as internal labels onto rendered pages.
+An archive folder for superseded files feels cautious. In practice it becomes one more place where facts live on without an owner. The guide skips that step: once the removal of a superseded source is approved, it goes in the same commit that lands its replacement. Exact evidence is kept only when its identity serves a concrete purpose.
+
+A related leak concerns labels. Source markers such as `INVARIANT` and `DON'T-REDO` are internal. The invariants they mark live in the owning records and in cross-cutting conventions, and the labels themselves must not appear on rendered pages.
 
 <!-- /fold -->
 
 <!-- fold: experiment Local review, browser approval and publishing -->
 
-- Use the pinned kit from the consuming project root, follow the concrete commands in the project's context and the shared [validation guide](validation.html#validation-and-review), and complete the linked validation before review. Share the rendered page with its figures first, then source or evidence links where useful.
-- Serve only generated output on loopback for local browser review. Confirm the listener's owner and served checkout before reusing it. Do not expose the repository root or stop another session's server. Stop owned temporary servers after review unless they are retained for the user's preview.
-- Browser approval remains scoped to the supported origin. If access is rejected on policy grounds, preserve the rejection and resolve the permission with the owner; do not change transport, browser or control API to bypass the block. A manual file URL is not evidence that an agent inspected the rendering.
-- Hosting source changes are a separate explicit operation; a source build does not imply a deployed version. Rollback must preserve unrelated work and rebuild and verify the chosen revision.
+**Before review.** Work from the project root with the pinned kit, use the commands in the project's context and finish the checks in the [validation guide](validation.html#validation-and-review) first. Then show the reviewer the rendered page with its figures; add source or evidence links where they help.
+
+**Serving the page locally.** Serve only the generated output, and only on loopback. Before reusing a server that is already running, confirm who owns it and which checkout it serves. Do not expose the repository root, and do not stop a server that belongs to another session. Stop your own temporary servers after the review, unless one is kept running for the user's preview.
+
+**When a browser is refused.** Approval to use a browser covers the supported origin only. If access is rejected on policy grounds, keep the rejection and settle the permission with its owner. Switching transport, browser or control API to get around the block is not allowed. Opening a file URL by hand is no proof that an agent inspected the rendering.
+
+**Publishing.** Changing what the hosting serves is a separate, explicit operation: building the source does not mean a version is deployed. A rollback leaves unrelated work untouched, and the chosen revision is rebuilt and verified.
 
 <!-- /fold -->
 
@@ -348,9 +368,11 @@ A heading that only names a topic, such as "Results", makes the reader search th
 
 <!-- fold: dead-end Why homepages are not one shared template -->
 
-Each project chooses its homepage composition, information hierarchy, sections, hero treatment and visual story. Using the shared kit does not require matching homepages: a research narrative, an engineering reference and a navigation dashboard can use different arrangements. Shared visual components are optional building blocks, and sharing one does not transfer ownership of the surrounding page. Project illustrations, scientific figures, domain widgets and distinctive compositions stay local; the starter homepage is an example, not a required template.
+A shared kit could have forced one homepage layout on every project. It does not. Each project decides how its homepage is composed: the order of information, the sections, the hero and the visual story. A research narrative, an engineering reference and a navigation dashboard can look quite different and still use the kit.
 
-Navigation is shared, not owned by one page. A homepage that lists its own sections instead of the shared site tree makes every move to a reader feel like a different site. Keep the same tree on every page and let the homepage present the pages through cards or its own composition.
+The shared visual components are optional building blocks. Using one does not hand the surrounding page over to the kit. Project illustrations, scientific figures, domain widgets and distinctive compositions stay with the project, and the starter homepage is an example, not a template to follow.
+
+One thing is shared: navigation. It belongs to the whole site, not to any single page. A homepage that lists its own sections, where every other page shows the site tree, makes each move into a reader feel like entering a different site. Keep the same tree on every page, and let the homepage introduce the pages through cards or its own composition.
 
 <!-- /fold -->
 
@@ -383,37 +405,43 @@ The board below illustrates what each of the five states means; it reports no pr
 
 <!-- fold: code Block vocabulary and filling rows -->
 
-Opt in with `page_css = ["build-sheet.css"]` and keep page-specific extras in a separate local stylesheet. Cards keep the reader stage height. Each chapter carries its claim and a meaningful visual block: figure, flow, table or tiles. At 1600 × 1000 a chapter should fill about half a card; merge a thin chapter rather than padding it.
+A page opts in with `page_css = ["build-sheet.css"]`; anything specific to one page goes into a separate local stylesheet. Cards keep the height of the reader stage. Each chapter states its claim and shows one meaningful visual block: a figure, a flow, a table or tiles. As a size check, at 1600 × 1000 a chapter should fill about half a card. A thinner chapter is merged into a neighbour, not padded.
 
-| Block | Purpose |
+The blocks, by what they are for:
+
+| Block | Use it for |
 |---|---|
-| `bs-lead` | One-sentence chapter claim |
-| `bs-specs`, `bs-stats` | Labelled key values; two to four headline measurements with units and scope |
-| `bs-chips` | Short option tags; rejected options retain their reason |
-| `bs-grid g1` through `g4`, `bs-part` | Visual or parallel-content rows; contrasting parallel lists |
-| `bs-checks`, `bs-check`, `bs-badge` | Checkable parallel claims with explicit state |
-| `bs-board`, `bs-row`, `bs-state` | Single current-status board |
-| `bs-flow`, `bs-node`, `bs-arrow`, `bs-back`, `bs-stack` | One-way mechanism with labelled arrows and explicit prohibited feedback |
-| `bs-orange` through `bs-muted` | Shared semantic tones, never meaning by color alone |
+| `bs-lead` | The chapter's claim, in one sentence |
+| `bs-specs`, `bs-stats` | Key values with labels; two to four headline measurements, each with units and scope |
+| `bs-chips` | Short tags for options; a rejected option keeps its reason |
+| `bs-grid g1` through `g4`, `bs-part` | Rows of visuals or parallel content; lists set against each other |
+| `bs-checks`, `bs-check`, `bs-badge` | Parallel claims that can be checked, each showing its state |
+| `bs-board`, `bs-row`, `bs-state` | The one board that shows current status |
+| `bs-flow`, `bs-node`, `bs-arrow`, `bs-back`, `bs-stack` | A one-way mechanism: labelled arrows, with prohibited feedback drawn explicitly |
+| `bs-orange` through `bs-muted` | The shared tones; a tone never carries meaning on its own |
 
-Main media uses full width (`bs-grid g1`); photos and renders use at most two per row; paired animations sit together. Fill every row: two, three or four items; five as three over two (`bs-checks r32`); six as three by two; seven as four over three; eight as four by two. Reflow for narrow columns. Keep flow arrow labels near 12 characters and box titles near 30, with full mappings in the topic record.
+Rows are always full. The main medium takes the whole width (`bs-grid g1`). Photos and renders go at most two to a row, and paired animations sit side by side. Two, three or four items fill one row. Five split three over two (`bs-checks r32`), six go three by two, seven four over three, eight four by two. Narrow columns reflow.
+
+In a flow, keep arrow labels to about 12 characters and box titles to about 30. Full mappings belong in the topic record.
 
 <!-- /fold -->
 
 <!-- fold: code Slide face details -->
 
-- A chapter may open with one 16:9 slide face that states its takeaway with one visual. The full chapter follows and remains the complete, end-to-end readable source.
-- The eyebrow names the subject without a chapter number. The visual comes from the shared slide vocabulary or a project-local diagram and reuses the chapter's own figure assets.
-- Caveats that change a claim's meaning belong on the slide, not only in the chapter. The slide is the one sanctioned repetition of a fact: a view of the chapter, never its owner.
-- A face that does not fit 16:9 has too much content; move detail into the chapter instead of shrinking type. Below 720 px the face stacks into a readable column.
-- Slide figures are views of numbered chapter figures and carry a short caption without a new number.
-- Each tone keeps one meaning across a project's slides: accent and warm tones identify the compared methods, `is-alert` marks failures and warnings, `is-held` marks held-out, hidden or pending items, and everything else stays neutral.
+- **One face per chapter.** A chapter may open with a single 16:9 slide face that states its takeaway with one visual. The chapter that follows stays the complete source and reads end to end without the slide.
+- **Eyebrow and visual.** The eyebrow names the subject and carries no chapter number. The visual is built from the shared slide vocabulary or a project-local diagram, and it reuses the chapter's own figure assets.
+- **Caveats travel with the claim.** A caveat that changes what a claim means goes on the slide too, not only into the chapter. The slide is the one permitted repetition of a fact: it shows the chapter and never owns the fact.
+- **Too much content.** A face that does not fit 16:9 is holding too much. Move detail into the chapter; do not shrink the type. Below 720 px the face stacks into a readable column.
+- **Figures.** A slide figure is a view of a numbered chapter figure. It gets a short caption and no new number.
+- **Tones.** Each tone means one thing across all of a project's slides. The accent and warm tones identify the methods being compared, `is-alert` marks failures and warnings, `is-held` marks held-out, hidden or pending items, and everything else stays neutral.
 
 <!-- /fold -->
 
 <!-- fold: experiment Completion and review -->
 
-Follow the requested review arrangement: a separate prototype or an uncommitted in-place trial. Preserve content, evidence, media identities and public anchors during layout work. Follow the [documentation review gate](documentation-system.html#rules-for-changes-and-chronology) and complete [site validation](validation.html#validation-and-review), including the project-required checks. A decision page ends with a criteria-based options table and a clear verdict.
+Layout work is reviewed in the form the reviewer asked for: a separate prototype, or a trial made in place and left uncommitted. Either way the redesign must not lose anything. Content, evidence, media identities and public anchors all survive it. Before calling it done, pass the [documentation review gate](documentation-system.html#rules-for-changes-and-chronology) and complete [site validation](validation.html#validation-and-review), including the checks the project requires.
+
+A page that exists to support a decision ends with a table that sets the options against stated criteria, and with a clear verdict.
 
 <!-- /fold -->
 
@@ -490,13 +518,15 @@ The four labels below mark claims that the guide keeps apart.
 
 <!-- fold: dead-end Decision rationale and baselines -->
 
-Decision rationale belongs beside the decision, including why an instrument or default was chosen and why the alternatives lost. A baseline cited for current shipped behavior measures what ships; retired baselines are labelled historical. An experimental verdict and deployment measurements are distinct content kinds.
+A decision recorded without its reasons invites the same debate again. Put the rationale next to the decision, including why this instrument or default was chosen and why the alternatives lost.
+
+Baselines need the same care. A baseline cited for what currently ships has to measure what ships, and a retired baseline is labelled historical. The verdict of an experiment is also a different kind of content from measurements taken in deployment, so the two are not presented as one.
 
 <!-- /fold -->
 
 <!-- fold: code Naming mechanisms, functions and renames -->
 
-Name a mechanism the reader sees; use formulation internals only when explaining that formulation. A rename sweeps all surfaces. State what a function receives, returns and optimizes or interpolates, and which inputs vary or stay fixed.
+Name a mechanism by what the reader can see it do. Terms from inside a formulation belong only where that formulation is being explained. When something is renamed, the rename covers every surface it appears on, so that no old name lingers. For a function, say what it receives, what it returns, what it optimizes or interpolates, and which of its inputs vary and which stay fixed.
 
 <!-- /fold -->
 
@@ -523,25 +553,31 @@ A current measured claim records the eight items below and links its raw result 
 
 <!-- fold: experiment Number ledgers for redesigns -->
 
-When a redesign restates numbers in new prose, figures or slides, record each number's source in a ledger and lock the evidence blocks kept verbatim. Each project keeps its own ledger format and the checks for both. A slide face may show only numbers that its chapter also shows. Every distinct number a redesigned chapter shows, figure labels included, has a ledger source. Presentation-only edits may reuse captured results only after checking that identities, numbers and treatments remain intact.
+A redesign restates numbers: in new prose, in redrawn figures, on slides. Each restatement is a chance to change a number by accident. Two safeguards answer that. A ledger records the source of every number, and the evidence blocks that are kept word for word are locked so that they cannot change unnoticed. Each project keeps its own ledger format and its own checks for both.
+
+Two rules bound what may appear. A slide face shows only numbers that its chapter also shows. And every distinct number in a redesigned chapter, labels inside figures included, has a source in the ledger.
+
+An edit that changes presentation only may reuse captured results, but only after checking that identities, numbers and treatments are still intact.
 
 <!-- /fold -->
 
 <!-- fold: experiment What stays with the producing work -->
 
-Protocols, outputs, snapshots, failed attempts, changed settings, actual outcomes, reviews actually performed and relevant uncertainty stay with the work that produced them. Experiments also retain producing code, inputs, full result tables, source pins and any independent reviews performed in the experiment directory. The page explains what they establish; the worklog records the landing and hashes without duplicating tables. Retained measured content remains subject to the deletion gate.
+The work that produced a result keeps its own record: protocols, outputs, snapshots, failed attempts, changed settings, what actually happened, the reviews that were really performed and the uncertainty that matters. For an experiment, the experiment directory also holds the producing code, the inputs, the full result tables, the source pins and any independent reviews.
 
-When a claim is rerun, the old record keeps its date, runtime, inputs and scope. Historical records preserve their original source pins, inputs, runtime, settings, resource limits, deadlines and verdicts where those fields apply.
+Other documents point there without copying. The page explains what the results establish. The worklog records the landing and its hashes and does not duplicate the tables. Retained measured content falls under the deletion gate like everything else.
+
+A rerun does not overwrite history. The old record keeps its date, runtime, inputs and scope, and historical records keep their original source pins, inputs, runtime, settings, resource limits, deadlines and verdicts wherever those fields apply.
 
 <!-- /fold -->
 
 <!-- fold: experiment Run visuals and live experiment reports -->
 
-- Prefer scripted captures with the same provenance as other figures. An inherently interactive screenshot states commit, date and scenario or preset; it illustrates appearance, never a quantitative claim.
-- Derive overlays from recorded artifacts rather than screenshots when data exists. Show dynamic behavior through an intentionally packaged short clip or useful frame sequence, with normal captions and provenance.
-- A live public experiment report uses `ongoing = true`, removed only when findings and limits are settled. The owning topic explains scope and links to evidence.
-- Suitable experiment visuals include actual-geometry quality overlays, convergence, reference parity, timing or scaling and trade-off plots; inapplicable views are omitted explicitly. Topic, worklog and open routing are updated in the same deliverable.
-- The [experiment workflow](experiment-workflow.html) owns experiment kinds, baselines, stopping conditions and the required content of every experiment, including its verdict.
+- **Captures.** Prefer captures made by a script, with the same provenance as any other figure. A screenshot that can only be taken interactively states its commit, date and scenario or preset. It shows what something looks like and never supports a quantitative claim.
+- **Overlays and motion.** When recorded data exists, derive overlays from it, not from screenshots. Show behaviour over time with a short clip packaged for the purpose or a useful sequence of frames, captioned and sourced like any figure.
+- **Reports still in progress.** A public report on a live experiment carries `ongoing = true`. The flag comes off only when findings and limits are settled. The owning topic explains the scope and links to the evidence.
+- **Which visuals fit.** Good candidates are quality overlays on the actual geometry, convergence, parity with a reference, timing or scaling, and trade-off plots. Say explicitly when a view does not apply. Topic, worklog and open routing are updated in the same deliverable.
+- **Where the rest lives.** The [experiment workflow](experiment-workflow.html) owns experiment kinds, baselines, stopping conditions and what every experiment must contain, its verdict included.
 
 <!-- /fold -->
 
@@ -573,33 +609,35 @@ Every included figure carries the four items below.
 
 <!-- fold: experiment Designing comparisons -->
 
-- Design comparisons together: matched orientation, scale, framing and input cases; persistent zoom across switching; an overview locating a detail; consistent markers and colors across profiles and tables.
-- Method names in controls and legends carry identity independently of color. Offer every option named in the comparison, grouped by method with roles such as current, selected, previous or rejected.
-- An interactive comparison replaces its redundant static gallery while retaining a useful loading or fallback image.
-- Draw the finding directly rather than making the eye compute it. Show the actual sample locations and construction; distinguish measurements, solved points, continuous geometry and its rendering polygon.
-- For independent changes, show the baseline, each change alone and their combination across relevant scenarios, with a neighboring ablation table and metric definitions. Explain a zero effect honestly.
+- **Design the views as a set.** Give the compared views the same orientation, scale, framing and input cases. Keep the zoom when the reader switches between them, show an overview that locates each detail, and use the same markers and colours in profiles and tables.
+- **Identity does not depend on colour.** Method names in controls and legends carry it. Offer every option the comparison names, grouped by method, each with its role: current, selected, previous or rejected.
+- **No duplicate gallery.** An interactive comparison replaces the static gallery that would repeat it, and keeps a useful image for loading or fallback.
+- **Draw the finding.** Do not make the eye compute it. Show where the samples really are and how the result is constructed, and keep four things visibly apart: measurements, solved points, continuous geometry and the polygon used to render it.
+- **Independent changes.** Show the baseline, each change alone and their combination across the relevant scenarios, next to an ablation table and the metric definitions. If an effect is zero, say so and explain it honestly.
 
 <!-- /fold -->
 
 <!-- fold: code Chart sizing, interaction and access -->
 
-- Charts fit their actual column with labels at least 11 px. Keep bar labels short or move them into a legend. Crop empty margins; avoid baked title bars, badges and debugging chronology. Use one camera or view across a series.
-- Do not shrink an important comparison to fit a screen at the cost of legibility. Bound overview height and retain full-size inspection.
-- Interactive views load independently, confine drag, scroll and keys to their region and never steal page focus. Linked views follow the same selected state. Data comes from the exact run inputs and outputs, checked by hash; a static main render shows while loading.
-- SVG toggles and their zoomed or lightbox controls stay synchronized. Carousel autoplay stops on engagement and pauses while a lightbox is open.
-- Use shared components rather than duplicating handlers. Keep controls visible, labelled, keyboard accessible and at least 44 px touch targets. Give scrollable tables and equations labelled local regions. Nothing may overflow the page at any viewport.
+- **Size.** A chart fits the column it actually sits in, with labels of at least 11 px. Keep bar labels short or move them into a legend. Crop empty margins, and leave out baked-in title bars, badges and debugging chronology. Use one camera or view across a series.
+- **Legibility first.** An important comparison is not shrunk to fit a screen if that makes it hard to read. Limit the height of the overview and keep full-size inspection available.
+- **Interactive views.** Each loads on its own, keeps dragging, scrolling and keys inside its region and never takes focus from the page. Linked views follow one selected state. Their data comes from the exact inputs and outputs of the run, checked by hash, and a static main render shows while they load.
+- **Controls in step.** SVG toggles stay synchronized with their zoomed or lightbox versions. A carousel stops autoplay once the reader engages and pauses while a lightbox is open.
+- **Access.** Use the shared components instead of duplicating handlers. Controls are visible, labelled, usable from the keyboard and at least 44 px as touch targets. Scrollable tables and equations get labelled local regions. Nothing overflows the page at any viewport.
 
 <!-- /fold -->
 
 <!-- fold: code Numbering, unnumbered images and generated figures -->
 
-Use page-wide numbers or a named sequence such as P1; numbers are unique and follow reading order within a sequence. A plot, diagram, flow, interactive comparison or evidence capture is a figure. An appearance-only image gets a short caption without a number. A deliberate unreferenced figure needs an adjacent source comment:
+**Numbering.** Number figures across the page, or use a named sequence such as P1. Numbers are unique and follow reading order within their sequence. A plot, a diagram, a flow, an interactive comparison and an evidence capture all count as figures. An image that only shows what something looks like gets a short caption and no number. A figure left unreferenced on purpose says so in a source comment placed next to it:
 
 ```html
 <!-- unreferenced figure: reason -->
 ```
 
-Generated figures name their generator, source revision, inputs, date and output hash in a manifest or metadata, for SVG, PNG and interactive data alike. Use the project's shared dark-compatible figure style, never ad hoc per-figure styles, and keep an explicit figure-to-generator manifest checked for missing or orphaned resources. Source-authored HTML flows, like the figures on this page, count as local diagrams: their page source is the generator, and their layout passes the same collision and overflow review.
+**Generated figures.** Each names its generator, source revision, inputs, date and output hash in a manifest or in metadata; this holds for SVG, PNG and interactive data alike. Figures use the project's shared dark-compatible style, never a style invented for one figure. An explicit manifest maps figures to generators and is checked for missing and orphaned resources.
+
+**Flows written in the page source.** HTML flows, like the figures on this page, count as local diagrams. The page source is their generator, and their layout passes the same collision and overflow review.
 
 <!-- /fold -->
 
@@ -636,20 +674,20 @@ A formula that arrives with undefined symbols asks the reader to trust it rather
 
 <!-- fold: code KaTeX syntax and rendering -->
 
-With `math = true` in the page frontmatter, write mathematics with these delimiters:
+Set `math = true` in the page frontmatter, then write mathematics with these delimiters:
 
 ```text
 In Markdown:      $…$   inline     $$…$$   display
 Inside raw HTML:  \(…\)
 ```
 
-Math uses bundled KaTeX without a CDN. Wrap long expressions or provide contained scrolling; never make type unreadably small. Inspect rendered raw-HTML formulas too.
+The kit renders math with its bundled KaTeX; nothing is fetched from a CDN. A long expression wraps or scrolls inside its own box, and the type is never shrunk until it is hard to read. Formulas written inside raw HTML are easy to overlook, so inspect those in the rendered page too.
 
 <!-- /fold -->
 
 <!-- fold: experiment Verifying analytic claims -->
 
-Analytic derivative and Jacobian claims name their numerical verification tolerance and executable self-test. A non-obvious formula needs a derivation or a precise companion-section citation.
+A claim about an analytic derivative or Jacobian comes with two things: the tolerance it was verified to numerically, and the executable self-test that did the verifying. A formula that is not obvious needs either its derivation or a precise citation of the companion section that derives it.
 
 <!-- /fold -->
 
@@ -679,13 +717,13 @@ Code on a page can go stale silently: the file changes and the excerpt does not.
 
 <!-- fold: code Rendering chrome and diagram patterns -->
 
-Render excerpts with distinct type, class and function colors, a copy button, a source chip, a language badge and a line-number gutter showing actual source lines. Reuse shared code chrome and keep every control accessible. Numbered sequence steps, common-data mode views and quantitative generated SVGs are useful diagram patterns.
+A rendered excerpt has distinct colours for types, classes and functions, a copy button, a chip naming its source, a language badge and a gutter that shows the line numbers of the real source file. Reuse the shared code chrome and keep every control accessible. For diagrams, three patterns are useful: numbered sequence steps, mode views over common data, and quantitative SVGs that are generated.
 
 <!-- /fold -->
 
 <!-- fold: dead-end Interactive diagram controls not yet built -->
 
-Reuse supported pan, fullscreen and annotation controls where relevant. Do not claim planned edge highlighting, drill-down or semantic zoom as implemented. If one is added, choose drill-down for independent child diagrams with a breadcrumb, or semantic zoom when the surrounding context must remain visible.
+Diagrams can use the pan, fullscreen and annotation controls that exist. Edge highlighting, drill-down and semantic zoom are only planned, so no page may describe them as working. If one is built later, the choice between the last two follows the content: drill-down, with a breadcrumb, when the child diagrams stand on their own; semantic zoom when the surrounding context has to stay visible.
 
 <!-- /fold -->
 

@@ -2,6 +2,27 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Rewrite the remaining copied folds for people
+
+- deivid approved the style of the Engineering pilot below. The same rewrite
+  is applied to 25 folds on Documentation and writing and 2 on Experiments:
+  situation and reason first, plain wording, labelled paragraphs where a fold
+  covers several things. Reference tables and code samples stay; no rule,
+  number or limit was added.
+- One fold was stale against its record: The README exception said existing
+  projects may retain compatibility routes, while `rules/documentation.md`
+  sends that question to refactoring over compatibility. The fold now links
+  there.
+- Measured with the same seven-word count: fold text copied from rules went
+  from 78% to 13% on Documentation and writing (2,794 to 3,745 words) and from
+  36% to 17% on Experiments (471 to 544 words). No fold on any page is 50% or
+  more copied. The pages now hold 22,749 words. Whole pages are 15%, 11% and
+  19% copied; what remains is in the visible story, which was not changed.
+- Checks: `tests/run_checks.sh` with the browser suites passes (148 tests,
+  strict lint, 22 scripts, four suites); five rewritten folds, including the
+  block table and two code samples, were captured open at 1600 and 390 px and
+  reviewed.
+
 ## 2026-11-09 — Rewrite the Engineering page's copied folds for people
 
 - The gate from the entry below is verified on GitHub: workflow run

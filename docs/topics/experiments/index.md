@@ -274,7 +274,7 @@ A reference that shares the suspected error is no evidence against it, which is 
 
 <!-- fold: dead-end Why the library itself is not re-tested -->
 
-Ordinary library use needs no recertification of the library. Verify the application's use instead: how the experiment composes configuration, library calls and saved outputs where they affect the claim. Look deeper only when a concrete risk or claim depends on library behavior.
+Re-testing a well-used library before trusting an experiment looks rigorous and mostly checks the wrong thing. Using a library in the ordinary way does not call for certifying it again. The errors that matter sit in the experiment's own wiring: how it puts together configuration, library calls and saved outputs, wherever those affect the claim. Verify that. Look into the library itself only when a concrete risk, or the claim, depends on how the library behaves.
 
 <!-- /fold -->
 
@@ -311,9 +311,9 @@ Evidence describes the source, inputs and conditions that produced it. After a c
 
 <!-- fold: experiment Interruptions and what the report states -->
 
-When interruptions could affect validity or cost, verify the recovery behavior that matters to that run: checkpoints, resume identity, partial outputs or restart. Add no universal interruption suite.
+A long run can be interrupted. Where that could affect the validity or the cost of a run, verify the recovery behaviour that matters for that run: its checkpoints, the identity it resumes under, its partial outputs or its restart. There is no universal interruption suite to add on top.
 
-Report checks executed, results, conclusions reached by inspection only and remaining uncertainty under the [handoff guide](handoffs.html). Reuse after a change follows the [staleness rules](evidence.html#numbers-and-staleness).
+The report then keeps four things apart, under the [handoff guide](handoffs.html): the checks that were executed, their results, the conclusions reached by inspection only, and the uncertainty that remains. Reusing a result after something changed follows the [staleness rules](evidence.html#numbers-and-staleness).
 
 <!-- /fold -->
 
