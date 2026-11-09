@@ -2,6 +2,27 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Rewrite the Engineering page's copied folds for people
+
+- The gate from the entry below is verified on GitHub: workflow run
+  42705539031 for `d6b45aa` passed every step, including 148 tests and the four
+  browser suites on a runner, and deployed the site.
+- Measured: the pages for people hold 21,081 words against 13,238 under
+  `rules/`. Counting runs of seven or more consecutive words identical to rule
+  text, the folds were mostly pasted rules: 78% of 2,794 fold words on
+  Documentation and writing, 62% of 1,084 on Engineering, 36% of 471 on
+  Experiments. The visible story was 14–19% copied.
+- deivid decided that the pages stay, that folds do not become links to the
+  records, and that readers should not have to leave the HTML pages; pasted
+  agent-centric text is rewritten for people instead.
+- Engineering: 15 folds rewritten in plain wording, each opening with the
+  situation and the reason before the steps. No rule, number or limit was
+  added. The folds went from 62% to 4% copied and from 1,084 to 1,728 words.
+- Still to do: 24 folds on Documentation and writing and 2 on Experiments.
+- Checks: `tests/run_checks.sh` with the browser suites passes (148 tests,
+  strict lint, 22 scripts, four suites); four rewritten folds were captured
+  open at 1600 and 390 px and reviewed.
+
 ## 2026-11-09 — Gate checks and the Pages deploy on the browser suites
 
 - deivid chose a local and a CI gate for the shared scripts. The four browser
