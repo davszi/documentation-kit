@@ -70,9 +70,12 @@ _SVG_IMG_RE = re.compile(r'<img([^>]*?)\ssrc="\.\./figures/([^"]+\.svg)"([^>]*?)
 #   <!-- /fold -->
 # Types drive the color + the reader-mode bar (fold-controls.js).
 FOLD_TYPES = ("math", "experiment", "code", "dead-end")
+# The markers match to the end of their own line only. Matching further would
+# swallow the blank line after a closing marker, and Markdown would then read
+# the next paragraph as part of the HTML block and show it as raw text.
 _FOLD_OPEN_RE = re.compile(
-    r"^<!--\s*fold:\s*(" + "|".join(FOLD_TYPES) + r")\s+(.+?)\s*-->\s*$", re.M)
-_FOLD_CLOSE_RE = re.compile(r"^<!--\s*/fold\s*-->\s*$", re.M)
+    r"^<!--\s*fold:\s*(" + "|".join(FOLD_TYPES) + r")\s+(.+?)\s*-->[ \t]*$", re.M)
+_FOLD_CLOSE_RE = re.compile(r"^<!--\s*/fold\s*-->[ \t]*$", re.M)
 
 
 def folds_to_html(chunk: str, name: str) -> str:

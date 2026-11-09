@@ -354,7 +354,7 @@ One hand-over does need names. When changes from several owners must come togeth
 
 Page work for people is a delegated assignment of its own kind. The record already exists, written by the agent that did the work. Either a person has asked for a new page or chapter that explains it, or the record changed and an existing page must follow. The [documentation chapter on record first](writing-practices.html#record-first) shows the whole order; this fold covers the assignment.
 
-**What the brief holds.** The finished record, the source of every rule, number and limit the page shows; the person's request, or the record change the page has to follow; the pages and chapters to change; and the completion condition. For a page, done means the site validation that applies to the change has passed, captures at every supported width included.
+**What the brief holds.** The finished record, the source of every rule, number and limit the page shows; the person's request, or the record change the page has to follow; the pages and chapters to change; the guides the page author must read before writing, named in the brief because a delegated agent knows only what its brief says; and the completion condition. For a page, done means the site validation that applies to the change has passed, captures at every supported width included.
 
 **What the page author does.** It reads the page guides and site guides that apply and writes the explanation in its own words. It adds no rule, number or limit that the record lacks. A gap or contradiction it finds goes back to whoever owns the record, who fixes the record first; the page does not paper over it.
 

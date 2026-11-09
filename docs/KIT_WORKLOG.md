@@ -2,6 +2,28 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Render the paragraph after a fold; make the page brief name its guides
+
+- The page agent reported that a paragraph directly after a fold showed as raw
+  Markdown, for example a "Full guide" line with its links unrendered. The
+  built kit site had 24 such lines on two pages. The cause is in
+  `tooling/build.py`, unchanged since 2026-11-04: the closing fold marker
+  matched trailing whitespace across lines, swallowed the blank line after it,
+  and Markdown then read the next paragraph as part of the HTML block.
+- Both fold markers now match to the end of their own line only. A new test in
+  `tests/test_site_contract.py` builds a page with a paragraph after a fold; it
+  fails without the change and passes with it.
+- deivid asked whether a delegated page agent is told which guides to read.
+  The rule told the page author to read them but did not require the brief to
+  say so, and a delegated agent knows only its brief.
+  `rules/engineering/delivery.md` now requires the brief to name the guides.
+  Two page sentences that describe the brief were synced by the record's
+  editor, as a small sync.
+- Checks: `tests/run_checks.sh` with the browser suites passes (149 tests,
+  strict lint, 22 scripts, four suites). No raw "Full guide" line remains in
+  the built site; the end of the Record first chapter was captured at 1600 and
+  390 px and reviewed.
+
 ## 2026-11-10 — Fix what an independent review found in the restructured guides
 
 - deivid asked whether a subagent had reviewed the changes. None had. A

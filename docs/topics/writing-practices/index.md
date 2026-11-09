@@ -141,7 +141,7 @@ Writing a record and writing a page are different jobs. The agent that did the w
 
 <!-- fold: experiment What a page agent receives and returns -->
 
-**The brief.** The agent that hands the page work on writes a brief with four parts: the finished record; what started the work, either the person's request or the record change the page must now follow; the pages and chapters to change; and when the work counts as done. Done means the site validation that applies to the change has passed, captures at every supported width included.
+**The brief.** The agent that hands the page work on writes a brief with five parts: the finished record; what started the work, either the person's request or the record change the page must now follow; the pages and chapters to change; the guides the page agent must read first, named one by one, because a delegated agent knows only what its brief says; and when the work counts as done. Done means the site validation that applies to the change has passed, captures at every supported width included.
 
 **The page agent's part.** It reads the page guides and site guides that apply, then explains the record in its own words. It may reorder, simplify and illustrate, but a rule, number or limit on the page must already be in the record. When it finds a gap or a contradiction, it does not fill it on the page; it reports it to the record's owner, who corrects the record first.
 

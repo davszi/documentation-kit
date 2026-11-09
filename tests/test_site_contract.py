@@ -43,6 +43,17 @@ class SiteContract(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('would overwrite a shared asset', result.stdout + result.stderr)
 
+    def test_a_paragraph_after_a_fold_renders_as_markdown(self):
+        self.guide.write_text(self.guide.read_text() + (
+            '\n<!-- fold: code Fold before a paragraph -->\n\nInside the fold.\n\n<!-- /fold -->\n\n'
+            'After the fold: [the guide](guide.html) and **bold**.\n'))
+        result = self.build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        page = (self.root / '.build/docs/html/guide.html').read_text()
+        self.assertIn('Inside the fold.</p>', page)
+        self.assertIn('After the fold: <a href="guide.html">the guide</a> and <strong>bold</strong>.', page)
+        self.assertNotIn('[the guide](guide.html)', page)
+
     def test_included_fragments_may_include_others(self):
         (self.fragments / 'outer.html').write_text('<p id="outer-part">outer</p>\n<!-- include: fragments/inner.html -->\n')
         (self.fragments / 'inner.html').write_text('<p id="inner-part">inner</p>\n')
