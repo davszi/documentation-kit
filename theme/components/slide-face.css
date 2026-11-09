@@ -83,6 +83,7 @@
   .slide-canvas :is(.slide-equation,.slide-steps) {grid-auto-flow:row!important;grid-template-columns:1fr!important;}
   .slide-canvas :is(.slide-split,.slide-split.is-wide-side,.slide-factors) {grid-template-columns:1fr!important;}
   .slide-canvas .slide-row {grid-auto-flow:row!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  .slide-canvas .slide-row:has(> :nth-child(3):last-child) {grid-template-columns:minmax(0,1fr)!important;}
   .slide-canvas .slide-equation > .slide-op {margin:0!important;text-align:center!important;font-size:22px!important;}
   .slide-canvas .slide-title {font-size:24px!important;}
   .slide-canvas :is(.slide-eyebrow,.slide-tag) {font-size:11px!important;}

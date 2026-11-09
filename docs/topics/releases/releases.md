@@ -10,7 +10,9 @@ release changes for consumers and how to move to it. Chronology stays in the
 
 These changes are on `main` after 2.0.0 and are not yet tagged. They add to the
 2.x surface; no consumer migration is required. Build-sheet flows now stack
-vertically when their chapter card or page is narrow.
+vertically when their chapter card or page is narrow; grids, checks and
+chapter headlines follow the card's width; box lists use dashes and tinted code
+chips, and code keeps its case inside uppercase titles.
 
 | Area | Consumer change | Owning contract |
 |---|---|---|

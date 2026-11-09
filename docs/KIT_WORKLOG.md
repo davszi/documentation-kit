@@ -2,6 +2,23 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Fix figure styling found in a visual review
+
+- Earlier checks proved containment and overflow, not appearance. A review
+  in the 1024px app pane found: repository paths uppercased inside box
+  titles, default disc bullets and mismatched code chips in boxes, arrow
+  labels detached from stacked arrows, three-column grids and 46px headlines
+  crushed inside Two chapters cards (grids followed the window, not the
+  card), and the active carousel dot filling its 44px touch target as a
+  large disc.
+- Boxes now use short tone-coloured dashes and tinted code chips; code keeps
+  its case in titles and labels; a stacked box puts its title beside its
+  list; arrow labels sit next to the arrow; grids, checks and headlines
+  follow the chapter card's width; the carousel dot keeps its small mark.
+- Checks: 128 tests, strict lint for starter and kit site, own-site, visual,
+  browser-helper and panel-switcher suites; reviewed in the pane at 1024px in
+  One and Two chapters views.
+
 ## 2026-11-09 — Pin key records; keep the file tree out of the way
 
 - The first tree repeated every page for people as a one-file folder,
