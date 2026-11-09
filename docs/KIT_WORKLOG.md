@@ -2,6 +2,16 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — State why pages and records overlap; document capped browser suites
+
+- deivid approved two drafts. `rules/documentation.md` now says a page and its
+  record overlap on purpose for different readers, and that the record is
+  authoritative: a page adds no rule, number or limit the record lacks. The
+  Topics chapter of Documentation and writing says the same in its own words.
+- `README.md` now shows the browser suites run under a 4G memory cap without
+  swap, with `DBUS_SESSION_BUS_ADDRESS` pointed at a missing socket. This
+  machine's Playwright, Chromium and Node paths stay out of the kit.
+
 ## 2026-11-09 — Fix what a fresh reader found, require by-eye review, undock the Reference section
 
 - A fresh agent read the kit with no session context. It found stale or

@@ -194,6 +194,14 @@ DOCS_PLAYWRIGHT=/path/to/playwright DOCS_CHROMIUM=/path/to/chromium node tests/t
 DOCS_PLAYWRIGHT=/path/to/playwright DOCS_CHROMIUM=/path/to/chromium node tests/own_site_review.cjs
 ```
 
+Run each suite under a memory cap with no swap, and set
+`DBUS_SESSION_BUS_ADDRESS=unix:path=/nonexistent-docs-kit-review` so Chromium
+does not reach the desktop session:
+
+```bash
+systemd-run --user --scope --quiet -p MemoryMax=4G -p MemorySwapMax=0 timeout 280 node tests/own_site_review.cjs
+```
+
 It starts an owned loopback server, checks desktop/phone and paired layouts,
 mobile table scrolling and no-JavaScript reading, then closes browser and server.
 Screenshots stay under `.build/visual-review/`.

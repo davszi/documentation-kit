@@ -50,10 +50,17 @@ a growing record into descriptively named files. Do not name subject records
 `README.md`. Add `index.md` when a human has something to learn or act on; the
 page explains the record in its own words and links its sections.
 
+A page and its record cover the same subject for different readers, so their
+overlap is expected, not duplication to remove. The record holds the exact
+wording an agent is routed to and must find again. The page leads with the
+conclusion, shows a figure and orders the explanation for a person. The record
+is authoritative: a page never adds a rule, number or limit its record lacks.
+
 A topic without a record is an exception. Which cases need it is not settled
 yet; the kit's own pages that explain its guides, whose records live in
-`rules/`, are one known case. Declare it in the page's frontmatter as `page_only = "<reason>"`. Lint warns
-about a topic page with neither a record nor that declaration. Once the page
+`rules/`, are one known case. Declare it in the page's frontmatter as
+`page_only = "<reason>"`. Lint warns about a topic page with neither a record
+nor that declaration. Once the page
 gains a rule, specification or limit, that part moves into a record.
 
 When a record section changes, `docsite.py lint` prints a note listing the pages
