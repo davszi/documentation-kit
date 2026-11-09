@@ -6,10 +6,29 @@ A consuming project pins an exact commit or tag and upgrades deliberately, follo
 release changes for consumers and how to move to it. Chronology stays in the
 [worklog](../../KIT_WORKLOG.md); consumer adoption status stays in each consuming project.
 
-## Unreleased — repository files in the sidebar
+## What a version number promises
 
-These changes are on `main` after 2.0.0 and are not yet tagged. They add to the
-2.x surface. One check can fail a strict lint run: a topic page without a record
+The [stable and provisional interfaces](#100--first-stable-version) list what a
+project may rely on. From 2.1.0 the version number means this:
+
+- A **major** release removes or renames a stable interface, or adds a lint
+  error that fails without `--strict`.
+- A **minor** release adds to the stable interfaces. It may also add lint
+  warnings, which fail `--strict`, change how the shared theme looks, and change
+  or remove a provisional interface.
+
+The release notes list every such change, and the version's migration guide
+gives the step for each. A minor upgrade can therefore need work: the
+[project conformance check](../../../rules/conformance.md) runs strict lint and
+shows the new warnings.
+
+## 2.1.0 — repository files in the sidebar and topic records
+
+Not tagged yet: these changes are on `main` after 2.0.0, and `VERSION` changes
+when the release is tagged. It is a minor release under
+[what a version number promises](#what-a-version-number-promises). Follow the
+[2.1.0 migration guide](migrations/2.1.0.md).
+One check can fail a strict lint run: a topic page without a record
 must add one or declare `page_only`. Two provisional tooling modules that no
 known consumer imported are removed. A project that wants to keep the
 ∿ sidebar mark sets `brand_mark = "∿"`. Build-sheet flows now stack

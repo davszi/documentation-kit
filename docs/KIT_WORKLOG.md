@@ -2,6 +2,27 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — State what a version number promises; add the 2.1.0 migration guide
+
+- deivid decided the untagged work after 2.0.0 becomes 2.1.0, a minor release,
+  and that the release notes say what a version number promises: a major
+  release removes or renames a stable interface or adds a lint error that fails
+  without `--strict`; a minor release may add lint warnings, change the theme's
+  look and change or remove a provisional interface.
+- Why minor: adapt, adaptation and ADP all run lint without `--strict` in their
+  workflows, so the new topic-record warning fails none of them. The upgrade
+  still costs work, because the conformance check runs strict lint; measured in
+  the working trees, 24 of ADP's 35 topic pages and 2 of 3 in adapt and in
+  adaptation have neither a record nor `page_only`.
+- `docs/topics/releases/migrations/2.1.0.md` gives the steps: topic records,
+  the router row for the conformance check, the sidebar mark, the removed
+  ledger modules and the starter home link. The site lists it in the Releases
+  group. The release-notes section is headed 2.1.0 and marked not yet tagged;
+  `VERSION` stays 2.0.0 until the tag.
+- Checks: `tests/run_checks.sh` (146 tests) and strict lint pass; the own-site
+  browser suite passes; the new page and the sidebar were captured at 1600 and
+  390 px and reviewed.
+
 ## 2026-11-09 — Open the work to simplify frozen-record machinery
 
 - deivid stated that parts of ADP's documentation system became too

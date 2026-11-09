@@ -130,6 +130,7 @@ The kit is versioned in `VERSION` and tagged `v<version>`. [Releases and
 upgrades](docs/topics/releases/releases.md) lists what each version changes for
 consumers and the migration steps; 1.0.0 is the first stable version.
 The current 2.0.0 release has a [consumer migration guide](docs/topics/releases/migrations/2.0.0.md); the [1.1.0 guide](docs/topics/releases/migrations/1.1.0.md) covers the earlier step.
+The [2.1.0 guide](docs/topics/releases/migrations/2.1.0.md) covers the changes on `main` that are not tagged yet.
 
 Then run the [project conformance check](rules/conformance.md) and report its
 findings. Review changed human pages at wide and narrow widths before committing the
