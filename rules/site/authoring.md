@@ -107,21 +107,24 @@ nearly empty Introduction chapter; a longer opening stays its own chapter. One
 slug belongs to one page. Topic entry pages keep their own frontmatter path and
 cannot be registered.
 
-Once a site registers a source page, every sidebar ends with a **Repository
-files** section that lists the registered files. There is no setting: a site
+Once a site registers a source page, every sidebar ends with a **Reference**
+section that lists the registered files. There is no setting: a site
 without source pages shows no section. `pinned = true` lists a file at the top
 of the section by its title, always visible, in the order the tables are
-declared. Below the pinned files, one **All files** disclosure holds every
+declared. Below the pinned files, one **Browse by folder** disclosure holds every
 registered file in a folder tree at its repository path, pinned files included.
 Each file shows its name and title.
 
-The disclosure starts closed on pages for people and on pinned pages. On any
-other registered page it starts open, with only the folders that lead to that
-page unfolded. The current page is marked in the section.
+The disclosure starts closed on pages for people, on pinned pages and on
+registered pages listed in the navigation, because their entry already marks
+them. On any other registered page it starts open, with only the folders that
+lead to that page unfolded. While closed, the section stays docked to the bottom
+of the menu.
 
 A registered file needs no `[[nav]]` entry, because the section lists it. Keep
-`[[nav]]` for pages written for people. A `[[nav]]` entry for a registered file
-also lists it among those pages. A scrolling source page's sidebar shows the
+`[[nav]]` for pages written for people, and for records every reader needs,
+such as release notes and migration guides; such an entry lists the record
+among those pages. A scrolling source page's sidebar shows the
 site navigation and the repository section, not the page's own headings. With
 `nested_nav = true`, a page that has a visible `[[nav]]` entry lists its
 headings under that entry.

@@ -42,6 +42,21 @@ label = "Experiments"
 file = "experiments.html"
 group = "practices"
 
+[[nav]]
+label = "Release notes"
+file = "releases.html"
+group = "releases"
+
+[[nav]]
+label = "Migrate to 2.0.0"
+file = "migrate-2-0-0.html"
+group = "releases"
+
+[[nav]]
+label = "Migrate to 1.1.0"
+file = "migrate-1-1-0.html"
+group = "releases"
+
 # ── Source registry: canonical Markdown rendered as whole-file pages ───
 # The sidebar's repository section lists these by path, pinned ones first in
 # declared order; no [[nav]] entry is needed.
@@ -160,7 +175,6 @@ description = "Choosing checks for a claim, application logic, numerical correct
 [[source_pages]]
 source = "docs/topics/releases/releases.md"
 slug = "releases"
-pinned = true
 title = "Release notes"
 description = "What each version changes for consumers and what stays stable within a major version."
 
@@ -172,7 +186,6 @@ description = "Move an existing consumer from 1.0.0 to 1.1.0."
 [[source_pages]]
 source = "docs/topics/releases/migrations/2.0.0.md"
 slug = "migrate-2-0-0"
-pinned = true
 title = "Migrate to 2.0.0"
 description = "Move an existing consumer from 1.1.0 to 2.0.0."
 

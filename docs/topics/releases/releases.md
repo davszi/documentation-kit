@@ -16,7 +16,7 @@ chips, and code keeps its case inside uppercase titles.
 
 | Area | Consumer change | Owning contract |
 |---|---|---|
-| Sidebar | A site with at least one `[[source_pages]]` entry gets a **Repository files** section after its navigation: records with `pinned = true` listed first, then an **All files** folder tree of every registered file, closed on pages for people. Sites without registered files are unchanged | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
+| Sidebar | A site with at least one `[[source_pages]]` entry gets a **Reference** section after its navigation: records with `pinned = true` listed first, then a **Browse by folder** tree of every registered file, closed on pages for people. Sites without registered files are unchanged | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
 | Assets | Pages load shared assets with a content-hash query, `assets/<file>?v=<hash>`, so browsers fetch a changed stylesheet or script after a rebuild; unchanged assets stay cached | [Authoring and configuration](../../../rules/site/authoring.md) |
 | Configuration | A registered source page no longer needs a `[[nav]]` entry; topic pages still do. `[[source_pages]]` accepts optional `pinned = true` | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
 

@@ -2,6 +2,17 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — List releases in the menu; rename the records section
+
+- Release notes and migration guides matter to every reader, so they form a
+  Releases group in the main menu instead of being pinned inside the records
+  section; README stays pinned. A record listed in the menu keeps the folder
+  tree closed, because its menu entry already marks it.
+- The section holds documents, not loose files: it is now **Reference**, and
+  its disclosure **Browse by folder**.
+- Checks: 132 tests, strict lint, all four browser suites; checked in the pane
+  on Build a site and the release notes.
+
 ## 2026-11-09 — Version asset URLs and dock the repository section
 
 - After rebuilds, browsers paired cached old stylesheets with new pages, so

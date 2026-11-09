@@ -672,7 +672,8 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
         crossnav, toc = nested_nav_html(nav_entries, fname, toc), ""
     if tree:
         from source_tree import tree_html
-        crossnav += "\n" + tree_html(tree, fname)
+        listed = any(entry.get("file") == fname and not entry.get("hidden") for entry in nav_entries)
+        crossnav += "\n" + tree_html(tree, fname, listed=listed)
 
     head_extra = ""
     if meta.get("math"):

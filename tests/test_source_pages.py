@@ -189,10 +189,10 @@ class SourcePages(unittest.TestCase):
         self.register('notes/record.md', 'record', nav=False)
         page = self.page_after_build('record')
         tree = page[page.index('<div class="repo-tree"'):]
-        self.assertIn('<span class="repo-tree-label" id="repo-tree-label">Repository files</span>', tree)
+        self.assertIn('<span class="repo-tree-label" id="repo-tree-label">Reference</span>', tree)
         self.assertNotIn('href="record.html"', page[:page.index('<div class="repo-tree"')])
         # On an unpinned record the disclosure opens, unfolded to the current file only.
-        self.assertIn('<details class="repo-tree-all" open><summary><span class="repo-tree-name">All files</span>'
+        self.assertIn('<details class="repo-tree-all" open><summary><span class="repo-tree-name">Browse by folder</span>'
                       '<span class="repo-tree-count" title="3 files">3</span></summary>', tree)
         self.assertIn('<li class="repo-tree-folder has-current"><details open><summary>'
                       '<span class="repo-tree-name">notes/</span>', tree)
@@ -303,10 +303,12 @@ class SourcePages(unittest.TestCase):
         self.assertIn('id="reader-introduction"', self.page('shared-rule'))
 
     def test_reference_page_keeps_the_site_tree_in_its_sidebar(self):
-        # Listed: marked as current in the navigation and the repository tree, no section list.
+        # Listed: announced as current in the navigation; the tree leaf is only styled
+        # and the folder disclosure stays closed. No section list.
         listed = self.page_after_build('shared-rule')
         self.assertIn('class="xpage current" aria-current="page" data-group="rules" href="shared-rule.html"', listed)
-        self.assertIn('class="repo-tree-file current" aria-current="page" href="shared-rule.html"', listed)
+        self.assertIn('class="repo-tree-file current" href="shared-rule.html"', listed)
+        self.assertIn('<details class="repo-tree-all">', listed)
         self.assertNotIn('<a class="top" href="#first-part">', listed)
         # Hidden from navigation: the repository tree still marks it, so no section list either.
         config = self.root / 'docs/site/site.toml'

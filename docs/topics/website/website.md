@@ -28,11 +28,11 @@ tables give the navigation and `[[source_pages]]` tables map records to routes.
 | Documentation and writing | [`writing-practices/index.md`](../writing-practices/index.md) | The documentation system and the writing guides |
 | Experiments | [`experiments/index.md`](../experiments/index.md) | The experiment workflow and verification guides |
 
-The navigation lists only these pages. Every registered record, including the
-rule guides, release notes, migration guides, README and kit-development
-records, appears in the sidebar's **Repository files** section: README, release
-notes and the 2.0.0 migration guide are pinned at its top, and an **All files**
-folder tree built from `[[source_pages]]` lists every record.
+The navigation lists these pages and, in a Releases group, the release notes
+and migration guides. Every registered record, including the rule guides,
+README and kit-development records, appears in the sidebar's **Reference**
+section: README is pinned at its top, and a **Browse by folder** tree built from
+`[[source_pages]]` lists every record.
 
 The site sets `chapter_reader = true`; records keep the registry default
 `reader = false`. Topic pages use only the shared `home.css` and

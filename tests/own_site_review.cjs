@@ -96,10 +96,12 @@ const SHOTS = ['index', 'getting-started', 'build-a-site', 'git', 'releases', 'r
           assert.equal(await page.locator('.source-origin').first().isVisible(), true, slug + ' shows its source line');
         }
       }
-      // Sidebar: navigation holds pages for people. The repository section lists
-      // pinned records first, then every record in one "All files" disclosure,
-      // closed on pages for people and pinned records, open to an unpinned record.
-      const pinnedRoutes = ['readme.html', 'releases.html', 'migrate-2-0-0.html'];
+      // Sidebar: navigation holds pages for people and the release records. The
+      // repository section lists pinned records first, then every record in one
+      // "Browse by folder" disclosure, closed on pages for people and pinned records,
+      // open to an unpinned record.
+      const pinnedRoutes = ['readme.html'];
+      const releaseRoutes = ['releases.html', 'migrate-2-0-0.html', 'migrate-1-1-0.html'];
       for (const [slug, open, folders] of [['index', false, []], ['getting-started', false, []],
                                            ['releases', false, ['docs/', 'topics/', 'releases/']],
                                            ['git', true, ['rules/', 'engineering/']]]) {
@@ -111,11 +113,12 @@ const SHOTS = ['index', 'getting-started', 'build-a-site', 'git', 'releases', 'r
           open: document.querySelector('.repo-tree details.repo-tree-all').open,
           folders: [...document.querySelectorAll('.repo-tree-folder > details[open] > summary .repo-tree-name')].map(n => n.textContent),
           files: [...document.querySelectorAll('.repo-tree a.repo-tree-file')].map(a => a.getAttribute('href'))}));
-        assert.ok(tree.nav.every(href => peoplePages.includes(href.slice(0, -5))), 'navigation lists only pages for people: ' + tree.nav);
+        assert.ok(tree.nav.every(href => peoplePages.includes(href.slice(0, -5)) || releaseRoutes.includes(href)), 'navigation lists pages for people and release records: ' + tree.nav);
+        assert.deepEqual(tree.nav.filter(href => releaseRoutes.includes(href)), releaseRoutes, 'release records listed in the navigation');
         assert.deepEqual(tree.pinned, pinnedRoutes, 'pinned records in declared order');
         assert.deepEqual(tree.files.sort(), Object.keys(manifest.source_pages).sort(), 'the tree lists exactly the registered records');
-        assert.deepEqual(tree.current, peoplePages.includes(slug) || slug === 'index' ? [] : [slug + '.html'], slug + ' current mark');
-        assert.equal(tree.open, open, slug + ' All files disclosure ' + (open ? 'open' : 'closed'));
+        assert.deepEqual(tree.current, peoplePages.includes(slug) || slug === 'index' || releaseRoutes.includes(slug + '.html') ? [] : [slug + '.html'], slug + ' current mark');
+        assert.equal(tree.open, open, slug + ' Browse by folder disclosure ' + (open ? 'open' : 'closed'));
         assert.deepEqual(tree.folders, folders, slug + ' unfolds only the folders to its own file');
       }
       await page.goto(`${origin}/html/build-a-site.html`, {waitUntil:'networkidle'});
