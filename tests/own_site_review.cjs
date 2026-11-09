@@ -96,22 +96,27 @@ const SHOTS = ['index', 'getting-started', 'build-a-site', 'git', 'releases', 'r
           assert.equal(await page.locator('.source-origin').first().isVisible(), true, slug + ' shows its source line');
         }
       }
-      // Sidebar: navigation holds pages for people; the repository tree lists every
-      // built page by path, marks the current file and opens only its folders.
-      for (const [slug, folders] of [['git', ['rules/', 'engineering/']],
-                                     ['getting-started', ['docs/', 'topics/', 'getting-started/']]]) {
+      // Sidebar: navigation holds pages for people. The repository section lists
+      // pinned records first, then every record in one "All files" disclosure,
+      // closed on pages for people and pinned records, open to an unpinned record.
+      const pinnedRoutes = ['readme.html', 'releases.html', 'migrate-2-0-0.html'];
+      for (const [slug, open, folders] of [['index', false, []], ['getting-started', false, []],
+                                           ['releases', false, ['docs/', 'topics/', 'releases/']],
+                                           ['git', true, ['rules/', 'engineering/']]]) {
         await page.goto(`${origin}/html/${slug}.html`, {waitUntil:'networkidle'});
         const tree = await page.evaluate(() => ({
           nav: [...document.querySelectorAll('.toc a.xpage')].map(a => a.getAttribute('href')),
-          current: [...document.querySelectorAll('.repo-tree a[aria-current="page"]')].map(a => a.getAttribute('href')),
-          open: [...document.querySelectorAll('.repo-tree details[open] > summary .repo-tree-name')].map(n => n.textContent),
-          files: document.querySelectorAll('.repo-tree a.repo-tree-file').length,
-          pages: [...document.querySelectorAll('.repo-tree a.repo-tree-file.is-page')].map(a => a.getAttribute('href'))}));
+          pinned: [...document.querySelectorAll('.repo-tree-pinned a')].map(a => a.getAttribute('href')),
+          current: [...document.querySelectorAll('.repo-tree [aria-current="page"]')].map(a => a.getAttribute('href')),
+          open: document.querySelector('.repo-tree details.repo-tree-all').open,
+          folders: [...document.querySelectorAll('.repo-tree-folder > details[open] > summary .repo-tree-name')].map(n => n.textContent),
+          files: [...document.querySelectorAll('.repo-tree a.repo-tree-file')].map(a => a.getAttribute('href'))}));
         assert.ok(tree.nav.every(href => peoplePages.includes(href.slice(0, -5))), 'navigation lists only pages for people: ' + tree.nav);
-        assert.deepEqual(tree.current, [slug + '.html'], slug + ' is the current tree file');
-        assert.deepEqual(tree.open, folders, slug + ' opens only its own folders');
-        assert.equal(tree.files, pages.length, 'repository tree lists every built page');
-        assert.deepEqual(tree.pages.sort(), ['index', ...peoplePages].map(name => name + '.html').sort(), 'page badges mark topic pages');
+        assert.deepEqual(tree.pinned, pinnedRoutes, 'pinned records in declared order');
+        assert.deepEqual(tree.files.sort(), Object.keys(manifest.source_pages).sort(), 'the tree lists exactly the registered records');
+        assert.deepEqual(tree.current, peoplePages.includes(slug) || slug === 'index' ? [] : [slug + '.html'], slug + ' current mark');
+        assert.equal(tree.open, open, slug + ' All files disclosure ' + (open ? 'open' : 'closed'));
+        assert.deepEqual(tree.folders, folders, slug + ' unfolds only the folders to its own file');
       }
       await page.goto(`${origin}/html/build-a-site.html`, {waitUntil:'networkidle'});
       if (viewport.width >= 900) {

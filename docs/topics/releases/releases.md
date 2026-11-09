@@ -9,12 +9,13 @@ release changes for consumers and how to move to it. Chronology stays in the
 ## Unreleased — repository files in the sidebar
 
 These changes are on `main` after 2.0.0 and are not yet tagged. They add to the
-2.x surface; no consumer migration is required.
+2.x surface; no consumer migration is required. Build-sheet flows now stack
+vertically when their chapter card or page is narrow.
 
 | Area | Consumer change | Owning contract |
 |---|---|---|
-| Sidebar | A site with at least one `[[source_pages]]` entry gets a **Repository files** section after its navigation: a folder tree of every registered file and every topic page source, the latter marked as pages. Sites without registered files are unchanged | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
-| Configuration | A registered source page no longer needs a `[[nav]]` entry; topic pages still do | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
+| Sidebar | A site with at least one `[[source_pages]]` entry gets a **Repository files** section after its navigation: records with `pinned = true` listed first, then an **All files** folder tree of every registered file, closed on pages for people. Sites without registered files are unchanged | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
+| Configuration | A registered source page no longer needs a `[[nav]]` entry; topic pages still do. `[[source_pages]]` accepts optional `pinned = true` | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
 
 ## 2.0.0 — source pages, kit website, configured publication and compatibility removals
 

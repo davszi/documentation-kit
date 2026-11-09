@@ -2,6 +2,19 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Pin key records; keep the file tree out of the way
+
+- The first tree repeated every page for people as a one-file folder,
+  unfolded file paths on the home page and stayed open everywhere. The tree
+  now lists registered records only, inside an **All files** disclosure that
+  is closed on pages for people and opens to the current file on other
+  record pages. `pinned = true` on `[[source_pages]]` lists README, release
+  notes and the 2.0.0 migration guide above it.
+- Build-sheet flows stack vertically when their card or page is too narrow
+  for three boxes without breaking code paths (about 940px of flow).
+- Checks: 128 tests, strict lint for starter and kit site, own-site, visual,
+  browser-helper and panel-switcher browser suites.
+
 ## 2026-11-09 — List repository files in the sidebar; lead with writing pages
 
 - The site's 30 registered records were mostly hidden nav entries reachable

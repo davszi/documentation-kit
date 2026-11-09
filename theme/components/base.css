@@ -374,7 +374,7 @@ body.reference-page .content figure{margin:18px 0}
 .toc .nav-sections a.active{color:var(--adp)}
 @media (prefers-reduced-motion:reduce){.toc details.nav-fold>summary.nav-group,.toc details.nav-fold>summary.nav-group::before,.toc details.nav-fold::details-content{transition:none}}
 
-/* ---- repository tree: registered Markdown by folder, after the site's pages ---- */
+/* ---- repository section: pinned records, then every record by folder in one disclosure ---- */
 .toc .repo-tree{margin:22px 0 8px;padding:12px 4px 8px 0;border-top:1px solid var(--border);
   background:linear-gradient(180deg,rgba(121,192,255,.045),transparent 160px);interpolate-size:allow-keywords}
 .toc .repo-tree-label{display:flex;align-items:center;gap:8px;padding:2px 10px 8px;font:700 11px var(--sans);
@@ -393,7 +393,7 @@ body.reference-page .content figure{margin:18px 0}
   border-bottom:1.6px solid var(--muted);transform:rotate(-45deg);transition:transform .15s,border-color .15s}
 .toc .repo-tree details[open]>summary::before{transform:rotate(45deg);border-color:var(--blue)}
 .toc .repo-tree summary:hover{color:var(--bright);background:rgba(148,178,214,.07)}
-.toc .repo-tree summary:focus-visible,.toc .repo-tree a.repo-tree-file:focus-visible{outline:2px solid var(--adp);outline-offset:1px}
+.toc .repo-tree summary:focus-visible,.toc .repo-tree a.repo-tree-file:focus-visible,.toc .repo-tree a.repo-tree-pin:focus-visible{outline:2px solid var(--adp);outline-offset:1px}
 .toc .repo-tree .has-current>details>summary{color:var(--bright)}
 .toc .repo-tree-count{margin-left:auto;padding:0 7px;border-radius:999px;font:600 10.5px/18px var(--mono);color:var(--muted);
   background:rgba(148,178,214,.1)}
@@ -405,10 +405,19 @@ body.reference-page .content figure{margin:18px 0}
 .toc .repo-tree a.repo-tree-file:hover{color:var(--bright);background:rgba(148,178,214,.07);border-left-color:rgba(121,192,255,.45)}
 .toc .repo-tree-name{display:flex;align-items:center;gap:6px;min-width:0;font:500 13px/1.35 var(--mono);overflow-wrap:anywhere}
 .toc .repo-tree-title{font:400 12px/1.35 var(--sans);color:var(--muted);overflow-wrap:anywhere}
-.toc .repo-tree-badge{flex:none;padding:0 6px;border:1px solid rgba(57,210,192,.4);border-radius:999px;font:700 9.5px/15px var(--sans);
-  letter-spacing:.08em;text-transform:uppercase;color:var(--adp);background:rgba(57,210,192,.1)}
 .toc .repo-tree a.repo-tree-file.current{color:var(--bright);border-left-color:var(--adp);
   background:linear-gradient(90deg,rgba(57,210,192,.16),transparent);box-shadow:inset 0 0 18px -12px rgba(57,210,192,.6)}
 .toc .repo-tree a.repo-tree-file.current .repo-tree-name{font-weight:700}
 .toc .repo-tree a.repo-tree-file.current .repo-tree-title{color:var(--text)}
-@media (prefers-reduced-motion:reduce){.toc .repo-tree summary,.toc .repo-tree summary::before,.toc .repo-tree a.repo-tree-file,.toc .repo-tree details::details-content{transition:none}}
+.toc .repo-tree-pinned{list-style:none;margin:0 0 6px;padding:0}
+.toc .repo-tree a.repo-tree-pin{display:flex;align-items:center;gap:8px;min-height:32px;margin:0;padding:4px 10px;font-size:13.5px;line-height:1.35;
+  color:var(--text);border-left:2px solid transparent;border-radius:0 7px 7px 0;transition:background .15s,color .15s,border-color .15s}
+.toc .repo-tree a.repo-tree-pin::before{content:"";flex:none;width:5px;height:5px;border-radius:50%;background:var(--blue);opacity:.7}
+.toc .repo-tree a.repo-tree-pin:hover{color:var(--bright);background:rgba(148,178,214,.07);border-left-color:rgba(121,192,255,.45)}
+.toc .repo-tree a.repo-tree-pin.current{color:var(--bright);font-weight:700;border-left-color:var(--adp);
+  background:linear-gradient(90deg,rgba(57,210,192,.16),transparent)}
+.toc .repo-tree a.repo-tree-pin.current::before{background:var(--adp);opacity:1;box-shadow:0 0 8px rgba(57,210,192,.7)}
+.toc .repo-tree details.repo-tree-all>summary{font:600 12.5px var(--sans);letter-spacing:.02em;color:var(--muted)}
+.toc .repo-tree details.repo-tree-all[open]>summary{color:var(--text)}
+.toc .repo-tree details.repo-tree-all>.repo-tree-list{margin:2px 0 0 6px}
+@media (prefers-reduced-motion:reduce){.toc .repo-tree a.repo-tree-pin,.toc .repo-tree summary,.toc .repo-tree summary::before,.toc .repo-tree a.repo-tree-file,.toc .repo-tree details::details-content{transition:none}}

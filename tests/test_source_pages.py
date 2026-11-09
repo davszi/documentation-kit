@@ -191,22 +191,40 @@ class SourcePages(unittest.TestCase):
         tree = page[page.index('<div class="repo-tree"'):]
         self.assertIn('<span class="repo-tree-label" id="repo-tree-label">Repository files</span>', tree)
         self.assertNotIn('href="record.html"', page[:page.index('<div class="repo-tree"')])
-        # The current file is marked; its folder starts open and other folders closed.
+        # On an unpinned record the disclosure opens, unfolded to the current file only.
+        self.assertIn('<details class="repo-tree-all" open><summary><span class="repo-tree-name">All files</span>'
+                      '<span class="repo-tree-count" title="3 files">3</span></summary>', tree)
         self.assertIn('<li class="repo-tree-folder has-current"><details open><summary>'
                       '<span class="repo-tree-name">notes/</span>', tree)
         self.assertIn('<a class="repo-tree-file current" aria-current="page" href="record.html" title="Record">'
                       '<span class="repo-tree-name">record.md</span><span class="repo-tree-title">Record</span></a>', tree)
         self.assertIn('<li class="repo-tree-folder"><details><summary><span class="repo-tree-name">policy/</span>'
                       '<span class="repo-tree-count" title="2 files">2</span>', tree)
-        # Registered descriptions become tooltips; folders sort before files.
         self.assertIn('title="Shared rule: A shared rule."', tree)
-        self.assertLess(tree.index('docs/</span>'), tree.index('notes/</span>'))
-        # Topic entry pages appear at their path with a page badge, linking their own route.
+        self.assertNotIn('repo-tree-pinned', tree)
+        # Topic pages stay in the navigation only; on them the disclosure is closed.
         guide = self.page('guide')
-        self.assertIn('class="repo-tree-file is-page current" aria-current="page" href="guide.html"', guide)
-        self.assertIn('<span class="repo-tree-name">index.md<span class="repo-tree-badge">page</span></span>', guide)
-        self.assertIn('<details open><summary><span class="repo-tree-name">guide/</span>', guide)
-        self.assertNotIn('<details open><summary><span class="repo-tree-name">notes/</span>', guide)
+        self.assertNotIn('href="guide.html"', guide[guide.index('<div class="repo-tree"'):])
+        self.assertIn('<details class="repo-tree-all"><summary>', guide)
+        self.assertNotIn('<details open>', guide[guide.index('<div class="repo-tree"'):])
+
+    def test_pinned_records_lead_the_section_in_declared_order(self):
+        self.register('notes/record.md', 'record', nav=False, pinned=True)
+        config = self.root / 'docs/site/site.toml'
+        config.write_text(config.read_text().replace('slug = "other-rule"\n', 'slug = "other-rule"\npinned = true\n'))
+        pinned_page = self.page_after_build('record')
+        pinned = pinned_page[pinned_page.index('<ul class="repo-tree-pinned"'):pinned_page.index('<details class="repo-tree-all"')]
+        self.assertLess(pinned.index('href="other-rule.html"'), pinned.index('href="record.html"'))
+        self.assertIn('<a class="repo-tree-pin current" aria-current="page" href="record.html" '
+                      'title="notes/record.md">Record</a>', pinned)
+        # A pinned page keeps the disclosure closed; its tree leaf is styled, not announced, as current.
+        self.assertIn('<details class="repo-tree-all"><summary>', pinned_page)
+        self.assertIn('<a class="repo-tree-file current" href="record.html"', pinned_page)
+        self.assertEqual(pinned_page.count('aria-current="page"'), 1)
+        # Pinned files stay in the folder tree.
+        self.assertIn('<span class="repo-tree-name">other.md</span>', self.page('shared-rule'))
+        config.write_text(config.read_text().replace('pinned = true\n', 'pinned = "yes"\n', 1))
+        self.assertFails("wrong value types for ['pinned']")
 
     def test_topic_page_still_needs_a_navigation_entry(self):
         self.write('docs/topics/extra/index.md', '+++\ntitle = "Extra"\ntoc = []\n+++\n\n# Extra\n\n## Part\n\nBody.\n')

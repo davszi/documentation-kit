@@ -43,11 +43,13 @@ file = "experiments.html"
 group = "practices"
 
 # ── Source registry: canonical Markdown rendered as whole-file pages ───
-# The sidebar's repository tree lists these by path; no [[nav]] entry needed.
+# The sidebar's repository section lists these by path, pinned ones first in
+# declared order; no [[nav]] entry is needed.
 [[source_pages]]
 source = "README.md"
 slug = "readme"
-title = "Setup, commands and upgrades"
+pinned = true
+title = "README"
 description = "Install the pinned submodule, build and lint a site, upgrade the pin and develop the kit."
 
 [[source_pages]]
@@ -158,7 +160,9 @@ description = "Choosing checks for a claim, application logic, numerical correct
 [[source_pages]]
 source = "docs/topics/releases/releases.md"
 slug = "releases"
-description = "What each version changes for consumers and the 1.x compatibility contract."
+pinned = true
+title = "Release notes"
+description = "What each version changes for consumers and what stays stable within a major version."
 
 [[source_pages]]
 source = "docs/topics/releases/migrations/1.1.0.md"
@@ -168,6 +172,8 @@ description = "Move an existing consumer from 1.0.0 to 1.1.0."
 [[source_pages]]
 source = "docs/topics/releases/migrations/2.0.0.md"
 slug = "migrate-2-0-0"
+pinned = true
+title = "Migrate to 2.0.0"
 description = "Move an existing consumer from 1.1.0 to 2.0.0."
 
 [[source_pages]]

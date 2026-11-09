@@ -23,7 +23,7 @@ toc = []
 <div class="bs-grid g1" role="navigation" aria-label="Choose a path">
 <a class="now-card" href="getting-started.html#practice-areas"><strong>1 · Adopt the practices</strong><span>Which kit guide to read before which action: code, execution, delivery, Git, documentation, writing and experiments.</span></a>
 <a class="now-card" href="build-a-site.html"><strong>2 · Build a site (optional)</strong><span>Turn tracked Markdown, figures and configuration into a checked static site with the shared reader.</span></a>
-<a class="now-card" href="releases.html"><strong>3 · Upgrade a pinned kit</strong><span>What each version changes for consumers, what stays stable in 1.x and how to migrate.</span></a>
+<a class="now-card" href="releases.html"><strong>3 · Upgrade a pinned kit</strong><span>What each version changes for consumers, what stays stable within a major version and how to migrate.</span></a>
 </div>
 </header>
 

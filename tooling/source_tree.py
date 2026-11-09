@@ -1,10 +1,10 @@
-"""Sidebar folder tree of the repository Markdown that a site renders.
+"""Sidebar section listing the registered Markdown records of a site.
 
-Every registered source page appears at its repository path, beside the topic
-entry pages, so a reader can browse records by folder. Topic pages link to
-their existing route and carry a `page` badge; records link to their rendered
-source page. The current page is marked and its ancestor folders start open;
-native `<details>` keep the tree usable without JavaScript.
+Pinned records come first as a short list of titles in their declared order.
+Every record then appears at its repository path in a folder tree inside one
+"All files" disclosure. The disclosure opens, unfolded to the current file,
+only on a record page that is not pinned; pages for people and pinned records
+keep it closed. Native `<details>` keep the section usable without JavaScript.
 """
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ class TreeFile:
     route: str               # public file name, such as git.html
     title: str
     description: str | None
-    page: bool               # a topic page written for people, not a rendered record
+    pinned: bool
 
 
 @dataclass
@@ -47,14 +47,24 @@ def _folder_tree(files: list[TreeFile]) -> _Folder:
     return root
 
 
+def _hint(item: TreeFile, lead: str) -> str:
+    return html.escape(lead + (": " + item.description if item.description else ""), quote=True)
+
+
+def _count(count: int) -> str:
+    return f'<span class="repo-tree-count" title="{count} file{"" if count == 1 else "s"}">{count}</span>'
+
+
 def _file_html(item: TreeFile, current: str) -> str:
+    """A tree leaf: file name with the title below. A pinned current file is
+    announced by its pinned entry, so the leaf is only styled as current."""
     name = item.path.rsplit("/", 1)[-1]
-    classes = "repo-tree-file" + (" is-page" if item.page else "") + (" current" if item.route == current else "")
-    attrs = f' class="{classes}"' + (' aria-current="page"' if item.route == current else "")
-    hint = item.title + (": " + item.description if item.description else "")
-    badge = '<span class="repo-tree-badge">page</span>' if item.page else ""
-    return (f'<li><a{attrs} href="{html.escape(item.route, quote=True)}" title="{html.escape(hint, quote=True)}">'
-            f'<span class="repo-tree-name">{html.escape(name)}{badge}</span>'
+    here = item.route == current
+    attrs = ' class="repo-tree-file' + (' current"' if here else '"')
+    if here and not item.pinned:
+        attrs += ' aria-current="page"'
+    return (f'<li><a{attrs} href="{html.escape(item.route, quote=True)}" title="{_hint(item, item.title)}">'
+            f'<span class="repo-tree-name">{html.escape(name)}</span>'
             f'<span class="repo-tree-title">{html.escape(item.title)}</span></a></li>')
 
 
@@ -62,22 +72,37 @@ def _folder_html(folder: _Folder, current: str) -> str:
     items = []
     for name in sorted(folder.folders, key=str.casefold):
         child = folder.folders[name]
-        opened, count = child.holds(current), child.count()
+        opened = child.holds(current)
         items.append(f'<li class="repo-tree-folder{" has-current" if opened else ""}">'
                      f'<details{" open" if opened else ""}><summary>'
-                     f'<span class="repo-tree-name">{html.escape(name)}/</span>'
-                     f'<span class="repo-tree-count" title="{count} file{"" if count == 1 else "s"}">{count}</span>'
+                     f'<span class="repo-tree-name">{html.escape(name)}/</span>{_count(child.count())}'
                      f'</summary>{_folder_html(child, current)}</details></li>')
     for item in sorted(folder.files, key=lambda entry: entry.path.casefold()):
         items.append(_file_html(item, current))
     return '<ul class="repo-tree-list">' + "".join(items) + "</ul>"
 
 
+def _pinned_html(files: list[TreeFile], current: str) -> str:
+    links = []
+    for item in files:
+        here = item.route == current
+        attrs = ' class="repo-tree-pin current" aria-current="page"' if here else ' class="repo-tree-pin"'
+        links.append(f'<li><a{attrs} href="{html.escape(item.route, quote=True)}" title="{_hint(item, item.path)}">'
+                     f'{html.escape(item.title)}</a></li>')
+    return '<ul class="repo-tree-pinned" aria-label="Pinned files">' + "".join(links) + "</ul>"
+
+
 def tree_html(files: list[TreeFile], current: str) -> str:
-    """The labelled tree for the page whose public file name is `current`; empty without files."""
+    """The section for the page whose public file name is `current`; empty without files."""
     if not files:
         return ""
+    pinned = [item for item in files if item.pinned]
+    opened = any(item.route == current and not item.pinned for item in files)
     return (f'    <div class="repo-tree" role="group" aria-labelledby="{TREE_LABEL_ID}">\n'
             f'    <span class="repo-tree-label" id="{TREE_LABEL_ID}">{TREE_LABEL}</span>\n'
+            + (f'    {_pinned_html(pinned, current)}\n' if pinned else "")
+            + f'    <details class="repo-tree-all"{" open" if opened else ""}><summary>'
+            f'<span class="repo-tree-name">All files</span>{_count(len(files))}</summary>\n'
             f'    {_folder_html(_folder_tree(files), current)}\n'
+            f'    </details>\n'
             f'    </div>')

@@ -30,9 +30,9 @@ tables give the navigation and `[[source_pages]]` tables map records to routes.
 
 The navigation lists only these pages. Every registered record, including the
 rule guides, release notes, migration guides, README and kit-development
-records, appears in the sidebar's **Repository files** section, a folder tree
-built from `[[source_pages]]`; the tree also lists the topic page sources, marked
-as pages.
+records, appears in the sidebar's **Repository files** section: README, release
+notes and the 2.0.0 migration guide are pinned at its top, and an **All files**
+folder tree built from `[[source_pages]]` lists every record.
 
 The site sets `chapter_reader = true`; records keep the registry default
 `reader = false`. Topic pages use only the shared `home.css` and

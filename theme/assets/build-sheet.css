@@ -171,4 +171,24 @@ body:has(.xpage.current[data-group="related work"]) { --bs-number: #8394a7; }
   .bs-specs > div { border-right: 0; border-bottom: 1px solid var(--border); }
   .bs-specs b { font-size: 18px; }
 }
+/* Three boxes and two arrows need a flow about 940px wide before a repository
+   path in a box, such as docs/topics/guide/index.md, breaks mid-word; narrower
+   flows stack with downward arrows. Reader chapter cards are size containers,
+   so a flow inside one follows the card's width (the flow plus about 60px of
+   padding). Pages without the reader follow the viewport: below 900px the
+   content spans it, above it the 288px sidebar and padding take about 384px. */
+@container (max-width: 1000px) {
+  .bs-flow, .bs-flow.n2 { grid-template-columns: minmax(0, 1fr); }
+  .bs-arrow { height: 44px; }
+  .bs-arrow::before { left: 50%; right: auto; top: 4px; bottom: 10px; width: 2px; height: auto; background: linear-gradient(180deg, var(--border), var(--muted)); }
+  .bs-arrow::after { left: calc(50% - 6px); right: auto; top: auto; bottom: 2px; border: 7px solid transparent; border-top: 9px solid var(--muted); border-bottom: 0; }
+  .bs-arrow span { top: 0; left: 34px; position: absolute; }
+}
+@media (max-width: 1320px) {
+  body:not(.reader-enabled) .bs-flow, body:not(.reader-enabled) .bs-flow.n2 { grid-template-columns: minmax(0, 1fr); }
+  body:not(.reader-enabled) .bs-arrow { height: 44px; }
+  body:not(.reader-enabled) .bs-arrow::before { left: 50%; right: auto; top: 4px; bottom: 10px; width: 2px; height: auto; background: linear-gradient(180deg, var(--border), var(--muted)); }
+  body:not(.reader-enabled) .bs-arrow::after { left: calc(50% - 6px); right: auto; top: auto; bottom: 2px; border: 7px solid transparent; border-top: 9px solid var(--muted); border-bottom: 0; }
+  body:not(.reader-enabled) .bs-arrow span { top: 0; left: 34px; position: absolute; }
+}
 @media (prefers-reduced-motion: reduce) { .bs-chip, .bs-grid figure img, .bs-stats > div, .bs-node, .bs-check { transition: none; } }

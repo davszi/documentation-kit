@@ -94,10 +94,11 @@ whose Markdown must stay the canonical source:
 source = "rules/engineering/git.md"  # contained, tracked .md file without +++ frontmatter
 slug = "git"                         # public route: git.html
 description = "Commits, shared checkouts and history."  # optional
+pinned = true                        # optional: list first in the sidebar
 ```
 
 `title` defaults to the file's first level-one heading. `description` supplies
-the site-map card text and the tree tooltip. `math = true` enables formulas.
+the site-map card text and the sidebar tooltip. `math = true` enables formulas.
 `reader = true` uses the chapter reader when the site enables it; otherwise the
 page scrolls. In the
 reader, a short opening (under 600 characters, without subheadings, figures or
@@ -107,16 +108,21 @@ slug belongs to one page. Topic entry pages keep their own frontmatter path and
 cannot be registered.
 
 Once a site registers a source page, every sidebar ends with a **Repository
-files** section. It lists the registered files and the topic entry pages as a
-folder tree at their repository paths. There is no setting: a site without
-source pages shows no tree. Each file shows its name and title. Topic entry
-pages carry a `page` badge and link to their existing page. The current page is
-marked wherever it appears, and only its folders start open.
+files** section that lists the registered files. There is no setting: a site
+without source pages shows no section. `pinned = true` lists a file at the top
+of the section by its title, always visible, in the order the tables are
+declared. Below the pinned files, one **All files** disclosure holds every
+registered file in a folder tree at its repository path, pinned files included.
+Each file shows its name and title.
 
-A registered file needs no `[[nav]]` entry, because the tree lists it. Keep
+The disclosure starts closed on pages for people and on pinned pages. On any
+other registered page it starts open, with only the folders that lead to that
+page unfolded. The current page is marked in the section.
+
+A registered file needs no `[[nav]]` entry, because the section lists it. Keep
 `[[nav]]` for pages written for people. A `[[nav]]` entry for a registered file
 also lists it among those pages. A scrolling source page's sidebar shows the
-site navigation and the tree, not the page's own headings. With
+site navigation and the repository section, not the page's own headings. With
 `nested_nav = true`, a page that has a visible `[[nav]]` entry lists its
 headings under that entry.
 

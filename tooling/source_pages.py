@@ -22,7 +22,7 @@ import posixpath
 import re
 from urllib.parse import quote, unquote, urlsplit
 
-SOURCE_KEYS = {"source", "slug", "title", "description", "math", "reader"}
+SOURCE_KEYS = {"source", "slug", "title", "description", "math", "reader", "pinned"}
 _SLUG = re.compile(r"[a-z0-9][a-z0-9-]*")
 _TAG = re.compile(r"<(a|img|video|audio|source|iframe)\b[^>]*>", re.I)
 _ATTR = re.compile(r'(?<![\w-])(href|src|poster)="([^"]*)"')
@@ -38,6 +38,7 @@ class SourcePage:
     description: str | None
     math: bool
     reader: bool
+    pinned: bool         # listed first in the sidebar's repository section
 
     @property
     def route(self) -> str:
@@ -58,7 +59,8 @@ def load_registry(site: dict, root: Path, tracked: frozenset[Path]) -> tuple[lis
         if unknown or not {"source", "slug"} <= set(entry):
             problems.append(f"site.toml [[source_pages]] {label}: unknown keys {unknown} or missing source/slug")
             continue
-        types = {"source": str, "slug": str, "title": str, "description": str, "math": bool, "reader": bool}
+        types = {"source": str, "slug": str, "title": str, "description": str, "math": bool, "reader": bool,
+                 "pinned": bool}
         wrong = sorted(key for key, value in entry.items() if not isinstance(value, types[key]))
         if wrong:
             problems.append(f"site.toml [[source_pages]] {label}: wrong value types for {wrong}")
@@ -94,7 +96,7 @@ def load_registry(site: dict, root: Path, tracked: frozenset[Path]) -> tuple[lis
             continue
         seen_sources[source] = slug
         pages.append(SourcePage(source, slug, entry.get("title"), entry.get("description"),
-                                entry.get("math", False), entry.get("reader", False)))
+                                entry.get("math", False), entry.get("reader", False), entry.get("pinned", False)))
     return pages, problems
 
 

@@ -564,24 +564,15 @@ def nested_nav_html(nav_entries: list, fname: str, toc: str) -> str:
     return "\n".join(lines)
 
 
-def repository_tree(topic_metas: list, source_pages: list) -> list:
-    """Files for the sidebar's repository tree; empty when no source page is registered.
-
-    Topic entry pages join the registered records at their repository paths;
-    forwarding stubs are left out because they hold no content.
-    """
+def repository_tree(source_pages: list) -> list:
+    """Registered records for the sidebar's repository section, in declared order."""
     from source_pages import first_heading
     from source_tree import TreeFile
 
-    if not source_pages:
-        return []
-    files = [TreeFile(md_path.relative_to(REPO).as_posix(), meta.get("slug", md_path.parent.name) + ".html",
-                      meta.get("title", md_path.parent.name), meta.get("description"), True)
-             for md_path, meta in topic_metas if "page-redirect" not in meta.get("components", [])]
-    for page in source_pages:
-        title = page.title or first_heading(local_resource(REPO / page.source).read_text()) or page.source
-        files.append(TreeFile(page.source, page.route, title, page.description, False))
-    return files
+    return [TreeFile(page.source, page.route,
+                     page.title or first_heading(local_resource(REPO / page.source).read_text()) or page.source,
+                     page.description, page.pinned)
+            for page in source_pages]
 
 
 def build_source_page(page, routes: dict[str, str], site: dict, shell: str) -> tuple[str, str] | None:
@@ -655,7 +646,7 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
     fname = f"{slug}.html"
     tree = site.get("_repository_tree", [])
     # Registered records are listed by the repository tree; pages need a nav entry.
-    if fname not in {n["file"] for n in nav_entries} and fname not in {f.route for f in tree if not f.page}:
+    if fname not in {n["file"] for n in nav_entries} and fname not in {f.route for f in tree}:
         err(f"{name}: {fname} missing from site.toml [[nav]] registry")
     crossnav_lines, last_group = [], None
     # One site tree on every page; the current page stays in place so the
@@ -854,23 +845,20 @@ def main() -> int:
         err(f"flat topic source {flat_source.name}: use <topic>/index.md")
     if not md_files:
         err(f"no pages found in {PAGES}")
-    seen_slugs: set[str] = set()
-    topic_metas = []
-    for md_path in md_files:
-        local_resource(md_path)
-        meta, _ = parse_frontmatter(md_path.read_text(), md_path.name)
-        pages_meta.append(meta)
-        topic_metas.append((md_path, meta))
-        slug = meta.get("slug", md_path.parent.name)
-        if slug in seen_slugs:
-            err(f"duplicate slug: {slug}")
-        seen_slugs.add(slug)
     from source_pages import fragment_problems, load_registry
     source_pages, problems = load_registry(site, REPO, consumer_tracked_paths())
     for problem in problems:
         err(problem)
-    site["_repository_tree"] = repository_tree(topic_metas, source_pages)
-    for md_path, _ in topic_metas:
+    site["_repository_tree"] = repository_tree(source_pages)
+    seen_slugs: set[str] = set()
+    for md_path in md_files:
+        local_resource(md_path)
+        meta, _ = parse_frontmatter(md_path.read_text(), md_path.name)
+        pages_meta.append(meta)
+        slug = meta.get("slug", md_path.parent.name)
+        if slug in seen_slugs:
+            err(f"duplicate slug: {slug}")
+        seen_slugs.add(slug)
         built = build_page(md_path, site, shell)
         if built:
             try:

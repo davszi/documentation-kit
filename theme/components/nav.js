@@ -35,9 +35,9 @@
 // Keep the current page's sidebar entry in view: its nested_nav group entry, or
 // its repository-tree file when the page has no navigation entry.
 (function(){
-  var current = document.querySelector('.toc a.xpage.current') || document.querySelector('.toc .repo-tree a.current');
+  var current = document.querySelector('.toc a.xpage.current') || document.querySelector('.toc .repo-tree a[aria-current="page"]');
   var bar = current && current.closest('.sidebar');
   if (!bar || !(document.querySelector('.toc details.nav-fold') || current.closest('.repo-tree'))) return;
   var box = bar.getBoundingClientRect(), r = current.getBoundingClientRect();
-  if (r.bottom > box.bottom - 40) bar.scrollTop += r.top - box.top - box.height / 3;
+  if (r.height && r.bottom > box.bottom - 40) bar.scrollTop += r.top - box.top - box.height / 3;
 })();
