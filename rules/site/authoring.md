@@ -165,15 +165,6 @@ shown as an image) and drawing helpers with a literal colour palette. Generated
 SVG uses literal colours: surrounding cards may redefine page variables, and an
 SVG loaded as an image cannot read them.
 
-`tooling/number_ledger.py` checks that every distinct number a redesigned section
-shows has a declared source: a configuration value, project evidence expression,
-arithmetic, saved record, quoted text or an explained illustrative value. Values
-are unsigned as written. Projects pass their own evidence namespace and keep the
-ledgers beside the page. Ledger expressions are executable project code: review
-them as code; they are not evaluated in a sandbox. `tooling/verbatim_blocks.py`
-hash-locks the blocks a redesign keeps unchanged, so kept evidence wording cannot
-change silently; locked blocks and fragments are the only text a ledger may set aside.
-
 ### Slide faces and decks
 
 Write a chapter's slide face between standalone `<!-- slide -->` and `<!-- /slide -->` lines at the start of the chapter: inside its `section.card`, or directly before its `##` heading on a flat Markdown page. The build converts it into `<div class="slide-face" data-slide-face><div class="slide-canvas">…</div></div>` and loads the shared `slide-face` component automatically. Markdown pages match markers after rendering, so examples inside code blocks stay literal. Unbalanced or nested markers fail the build. Use `p.slide-eyebrow` and `p.slide-title`, not headings: the reader names a chapter by its first heading, which opens the full chapter below the slide.

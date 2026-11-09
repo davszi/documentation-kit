@@ -347,7 +347,7 @@ Others clone with `git clone --recurse-submodules <project-url>` and get exactly
 | Configure the site | [Tooling and ownership](authoring.html#tooling-and-ownership) | `site.toml` keys, navigation, adapters and project components |
 | Write pages | [Authoring paths](authoring.html#authoring-paths), [registered source pages](authoring.html#registered-source-pages) | Entry pages and frontmatter, link origins, includes, registered records |
 | Shape the reader | [Reader](reader.html), [panel switcher](panel-switcher.html) | Chapter views, reading layers, the home site map, the panel switcher contract |
-| Draw, derive and present | [Generated figures](authoring.html#generated-figures), [slide faces and decks](authoring.html#slide-faces-and-decks) | Generated figures and number ledgers, math, slide faces and decks |
+| Draw, derive and present | [Generated figures](authoring.html#generated-figures), [slide faces and decks](authoring.html#slide-faces-and-decks) | Generated figures, math, slide faces and decks |
 | Package images, media and evidence | [Resources and evidence](resources.html) | Resource closure, local-only captures, inventories, path adapters |
 | Check and publish | [Validation](validation.html), [publication export](publication.html) | Complete validation, browser checks, export into an existing publication |
 | Upgrade the pin | [Project conformance check](conformance.html) | What to check in the project after the pin moves |

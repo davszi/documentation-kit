@@ -523,7 +523,7 @@ A current measured claim records the eight items below and links its raw result 
 
 <!-- fold: experiment Number ledgers for redesigns -->
 
-When a redesign restates numbers in new prose, figures or slides, record each number's source in a ledger and lock the evidence blocks kept verbatim (see [generated figures](authoring.html#generated-figures)). A slide face may show only numbers that its chapter also shows. Every distinct number a redesigned chapter shows, figure labels included, has a ledger source. Presentation-only edits may reuse captured results only after checking that identities, numbers and treatments remain intact.
+When a redesign restates numbers in new prose, figures or slides, record each number's source in a ledger and lock the evidence blocks kept verbatim. Each project keeps its own ledger format and the checks for both. A slide face may show only numbers that its chapter also shows. Every distinct number a redesigned chapter shows, figure labels included, has a ledger source. Presentation-only edits may reuse captured results only after checking that identities, numbers and treatments remain intact.
 
 <!-- /fold -->
 

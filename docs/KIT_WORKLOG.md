@@ -2,6 +2,21 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Remove the unused number-ledger and verbatim-lock modules
+
+- deivid approved removing shared tooling that no project uses. A search of
+  adapt, adaptation and ADP, across every local and remote-tracking branch and
+  the working trees, found no import of `tooling/number_ledger.py` or
+  `tooling/verbatim_blocks.py`. adapt and adaptation check their ledgers and
+  locks with their own `docs/site/checks/test_chapter_facts.py` and
+  `test_content.py`. Both modules, their tests and their paragraph in
+  `rules/site/authoring.md` are removed.
+- `tooling/svg_figures.py` stays: generators in adapt and adaptation import it.
+- The ledger and lock rule in `rules/writing/evidence.md` stays and now says
+  the project owns the ledger format and checks. The Evidence chapter of
+  Documentation and writing says the same.
+- Checks: `tests/run_checks.sh` (146 tests) and strict lint pass.
+
 ## 2026-11-09 — State why pages and records overlap; document capped browser suites
 
 - deivid approved two drafts. `rules/documentation.md` now says a page and its

@@ -10,7 +10,8 @@ release changes for consumers and how to move to it. Chronology stays in the
 
 These changes are on `main` after 2.0.0 and are not yet tagged. They add to the
 2.x surface. One check can fail a strict lint run: a topic page without a record
-must add one or declare `page_only`. A project that wants to keep the
+must add one or declare `page_only`. Two provisional tooling modules that no
+known consumer imported are removed. A project that wants to keep the
 ∿ sidebar mark sets `brand_mark = "∿"`. Build-sheet flows now stack
 vertically when their chapter card or page is narrow; grids, checks and
 chapter headlines follow the card's width; box lists use dashes and tinted code
@@ -25,6 +26,7 @@ chips, and code keeps its case inside uppercase titles.
 | Lint | When a record section changes, lint prints notes naming the pages that link to it; `--since <rev>` compares with an older commit. Notes never fail lint | [Rendered pages are for people](../../../rules/documentation.md#rendered-pages-are-for-people-records-stay-markdown) |
 | Conformance | New guide: the project conformance check to run when a kit pin moves or a repository changes hands; the starter router routes to it | [Project conformance check](../../../rules/conformance.md) |
 | Configuration | A registered source page no longer needs a `[[nav]]` entry; topic pages still do. `[[source_pages]]` accepts optional `pinned = true` | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
+| Tooling | Removed: `tooling/number_ledger.py` and `tooling/verbatim_blocks.py`, both provisional since 1.0.0. The rule that a redesign records number sources in a ledger and locks kept blocks stays; each project keeps its own ledger format and checks. `tooling/svg_figures.py` stays | [Numbers and staleness](../../../rules/writing/evidence.md#numbers-and-staleness) |
 
 ## 2.0.0 — source pages, kit website, configured publication and compatibility removals
 
