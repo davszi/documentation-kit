@@ -358,6 +358,8 @@ NOTE: rules/engineering/code.md › Refactoring over compatibility changed.
 <div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>The change names its pages</h3><p>The same edit makes lint list the one chapter that explains the rule. The author rereads it, adds the exception in the page's own words and commits both.</p></div>
 </div>
 
+Numbers get a second reminder on a site that turns it on with `page_number_notes = true`. Lint then lists every number in a page's prose that none of the records the page links state, chapter by chapter. Such a number has three ways out: state it in its record, show it as code when it is a literal value such as a size in a sample, or take it off the page. Like the reread reminder, this is a note and never fails a run, and it does not judge whether the record's own number is right. It fits pages that explain Markdown records; pages that report measurements from experiment data show rounded or derived numbers, so they keep their own ledger check.
+
 This update needs no new request: an existing page always follows its record. Who makes it follows from [Record first](#record-first). When the listed chapter needs a sentence or two, the agent that edited the record makes that sync itself, in the same change. Anything larger is page work: where the runtime supports delegation, it goes to a page agent with the finished record as its brief.
 
 Full guide: [rules for changes and chronology](documentation-system.html#rules-for-changes-and-chronology)

@@ -2,6 +2,34 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Add optional lint notes for page numbers no linked record states
+
+- deivid asked whether a rule ensures that numbers on pages for people have a
+  verified source. The rule chain existed: a page adds no number its record
+  lacks, and a record's number needs its provenance. No check enforced the
+  first link. A report by a page agent was rejected as the mechanism, because
+  often no page agent exists.
+- `tooling/page_numbers.py` is new. For each topic page it reads the numbers
+  in the prose and lists those that appear in none of the records the page
+  links, grouped by chapter. Code, inline SVG, attributes, link targets,
+  versions, dates, ratios and labels are not read; a page that links no record
+  is skipped. Lint prints the result as notes, which never fail a run.
+- The notes are off unless the site sets `page_number_notes = true`. Run
+  against the consumers' working trees with the note forced on, it listed
+  1,790 numbers on 17 pages in ADP and 2,679 on one page in adapt. Those pages
+  report measurements from experiment data, rounded or derived, so the numbers
+  match no text. The setting suits pages that explain Markdown records; a
+  project with measured pages keeps its own ledger check, as adapt does.
+- On the kit's own site, turned on, the note found two cases. The 900 px
+  sidebar breakpoint on Build a site was in the reader code
+  (`chapter-reader.js`) and in no guide; `rules/site/reader.md` now states it.
+  The counts of guides and chapters on the Get started cards (6, 12, 7) are in
+  no record; the note stays until deivid decides about them.
+- The documentation guide, the authoring guide, the conformance check, the
+  release notes, the 3.0.0 guide and the In step chapter describe the setting.
+- Checks: `tests/run_checks.sh` with the browser suites passes (157 tests,
+  strict lint, 22 scripts, four suites).
+
 ## 2026-11-10 — Render the paragraph after a fold; make the page brief name its guides
 
 - The page agent reported that a paragraph directly after a fold showed as raw

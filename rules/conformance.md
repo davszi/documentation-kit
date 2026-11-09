@@ -34,6 +34,8 @@ their owner instead of changing them in the same deliverable.
    [rendered pages are for people](documentation.md#rendered-pages-are-for-people-records-stay-markdown).
 6. **Pages and records.** No contract, handoff state, readiness board or long
    chronology sits on a rendered page, and no layout HTML sits in a record.
+   Where the site sets `page_number_notes = true`, lint notes list page
+   numbers that no linked record states **(lint)**; settle each one.
 7. **Open work.** `OPEN.md` holds one-line routes only, each linking its
    owner.
 8. **Compatibility layers.** Each kept compatibility form, such as a path

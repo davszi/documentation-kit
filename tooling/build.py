@@ -894,6 +894,8 @@ def main() -> int:
                      "(text for label, file, group and short; true or false for hidden)")
     if not isinstance(site.get("nested_nav", False), bool):
         ap.error("site.toml: nested_nav must be true or false")
+    if not isinstance(site.get("page_number_notes", False), bool):
+        ap.error("site.toml: page_number_notes must be true or false")
     global KNOWN_COMPONENTS
     extra = site.get("extra_components", [])
     if not isinstance(extra, list) or any(not isinstance(c, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", c) or c in KNOWN_COMPONENTS for c in extra) or len(set(extra)) != len(extra):

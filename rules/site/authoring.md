@@ -65,6 +65,11 @@ the mark is the initials of `title`. Each project uses its own mark.
 Navigation groups take their colour from `--g` in project CSS; a group without
 one gets the next shared tone in order.
 
+`page_number_notes = true` turns on lint notes for numbers in a topic page's
+prose that none of the page's linked records state, as
+[rendered pages are for people](../documentation.md#rendered-pages-are-for-people-records-stay-markdown)
+describes. The default is off.
+
 `nested_nav = true` folds each navigation group into a native disclosure,
 opens the current page's group (the first group on a page outside every
 group) and places the current page's sections directly under its entry. It

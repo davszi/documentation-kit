@@ -27,6 +27,8 @@ Checks (the shared guides under rules/ are the spec):
 Notes (never fail, not even under --strict): a changed record section
 (working tree vs HEAD, or vs --since <rev>) lists the topic pages that link
 it, so someone rereads them.
+A topic page also gets a note for each number in its prose that none of its
+linked records state; values shown as code are not checked.
 
 Exit 0 clean (warnings print unless --strict fails them), 1 on errors.
 """
@@ -556,6 +558,12 @@ def record_change_notes(since: str | None) -> list[str]:
         return []
 
 
+def page_number_notes() -> list[str]:
+    """Reminders, never failures: page numbers that no linked record states."""
+    from page_numbers import page_number_notes as notes
+    return notes(REPO, slugify)
+
+
 def check_kit_pin() -> None:
     from kit_pin import unpublished_pin
     problem = unpublished_pin(Path(__file__).resolve().parents[1], REPO)
@@ -592,7 +600,7 @@ def main() -> int:
     check_topic_structure()
     check_build()
     check_kit_pin()
-    notes = record_change_notes(args.since)
+    notes = record_change_notes(args.since) + page_number_notes()
 
     for w in warnings:
         print(f"WARN: {w}")

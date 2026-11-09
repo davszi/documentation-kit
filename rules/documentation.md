@@ -80,6 +80,16 @@ that link to that section; a link to the whole record is listed only when its
 opening text changes. Reread each listed page and update its explanation in the
 same change. `--since <rev>` compares with an older commit; notes never fail lint.
 
+On a site that sets `page_number_notes = true`, lint also lists the numbers in a
+page's prose that none of its linked records state. State such a number in its
+record, show it as code when it is a literal value, or take it off the page.
+The check reads prose only and does not judge whether the record's number is
+right; [numbers and staleness](records.md#numbers-and-staleness) owns that.
+These notes never fail lint either. The setting suits pages that explain
+Markdown records. Pages that report measurements from experiment data show
+rounded or derived numbers that match no text; such a project keeps its own
+ledger check.
+
 A rendered page explains current conclusions, accepted specifications, demonstrated behavior with its evidence scope, useful figures and the decisions needed next. Contracts, handoff/resume state, readiness boards, bookkeeping and long run chronology stay in records. Link to those records instead of reproducing them.
 
 A site may also render a whole record as a [registered source page](site/authoring.md#registered-source-pages). The Markdown file stays the record and its only editable copy; the page adds no content of its own.

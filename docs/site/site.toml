@@ -7,6 +7,8 @@ gh_repo = "https://github.com/davszi/documentation-kit"
 gh_ref = "main"
 chapter_reader = true
 brand_mark = "docs/site/brand-mark.svg"
+# Lint notes for page numbers that no linked record states.
+page_number_notes = true
 # The kit's own chronology and open work use KIT_ names so they are never
 # mistaken for a consuming project's docs/worklog.md or docs/open/OPEN.md.
 worklog = "docs/KIT_WORKLOG.md"
