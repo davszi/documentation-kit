@@ -157,14 +157,20 @@ body:has(.xpage.current[data-group="related work"]) { --bs-number: #8394a7; }
 
 /* Lists inside boxes use a short tone-coloured dash instead of a bullet, and
    code inside them is a tinted chip. Code in uppercase headings keeps its case. */
-:is(.bs-node, .bs-part) ul { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 7px; font-size: 14.5px; line-height: 1.45; }
-:is(.bs-node, .bs-part) li { position: relative; padding-left: 17px; }
-:is(.bs-node, .bs-part) li::before { content: ""; position: absolute; left: 0; top: .66em; width: 8px; height: 2px; border-radius: 1px;
+:is(.bs-node, .bs-part) :is(ul, ol) { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 7px; font-size: 14.5px; line-height: 1.45; }
+:is(.bs-node, .bs-part) :is(ul, ol) > li { position: relative; padding-left: 17px; }
+:is(.bs-node, .bs-part) ul > li::before { content: ""; position: absolute; left: 0; top: .66em; width: 8px; height: 2px; border-radius: 1px;
   background: var(--tone, var(--adp)); opacity: .85; }
+/* Numbered steps: the number in the tone colour replaces the dash. */
+:is(.bs-node, .bs-part) ol { counter-reset: bs-step; }
+:is(.bs-node, .bs-part) ol > li { counter-increment: bs-step; padding-left: 26px; }
+:is(.bs-node, .bs-part) ol > li::before { content: counter(bs-step); position: absolute; left: 0; top: .1em; width: 18px; height: 18px;
+  display: grid; place-items: center; border-radius: 50%; font: 700 11px/1 var(--mono); color: var(--tone, var(--adp));
+  background: color-mix(in srgb, var(--tone, var(--adp)) 16%, transparent); }
 :is(.bs-node, .bs-part) :is(li, b, h3) code { font: 500 .86em/1.3 var(--mono); letter-spacing: 0; text-transform: none; color: var(--bright);
   background: color-mix(in srgb, var(--tone, var(--adp)) 14%, transparent); border-radius: 4px; padding: 1px 5px; }
 :is(.chapter-body h2, .chapter-body h3, .bs-row b) code { text-transform: none; letter-spacing: 0; font-size: .8em; }
-.bs-label code { text-transform: none; letter-spacing: 0; }
+.bs-label code { text-transform: none; letter-spacing: 0; white-space: nowrap; }
 
 @media (max-width: 760px) {
   .bs-grid.g2, .bs-grid.g3 { grid-template-columns: 1fr; }
@@ -189,7 +195,7 @@ body:has(.xpage.current[data-group="related work"]) { --bs-number: #8394a7; }
     background: linear-gradient(180deg, transparent, var(--muted)); }
   .bs-arrow::after { left: calc(50% - 7px); right: auto; top: auto; bottom: 3px; border: 7px solid transparent; border-top: 9px solid var(--muted); border-bottom: 0; }
   .bs-arrow span { position: absolute; top: 50%; left: calc(50% + 16px); transform: translateY(-60%); }
-  .bs-node { display: grid; grid-template-columns: minmax(150px, 32%) minmax(0, 1fr); grid-template-rows: auto 1fr; column-gap: 24px; align-items: start; }
+  .bs-node { display: grid; grid-template-columns: minmax(190px, 38%) minmax(0, 1fr); grid-template-rows: auto 1fr; column-gap: 24px; align-items: start; }
   .bs-node > :is(.bs-label, b) { grid-column: 1; }
   .bs-node > b { margin-bottom: 0; }
   .bs-node > ul { grid-column: 2; grid-row: 1 / span 2; margin-top: 0; }
@@ -202,7 +208,7 @@ body:has(.xpage.current[data-group="related work"]) { --bs-number: #8394a7; }
     background: linear-gradient(180deg, transparent, var(--muted)); }
   body:not(.reader-enabled) .bs-arrow::after { left: calc(50% - 7px); right: auto; top: auto; bottom: 3px; border: 7px solid transparent; border-top: 9px solid var(--muted); border-bottom: 0; }
   body:not(.reader-enabled) .bs-arrow span { position: absolute; top: 50%; left: calc(50% + 16px); transform: translateY(-60%); }
-  body:not(.reader-enabled) .bs-node { display: grid; grid-template-columns: minmax(150px, 32%) minmax(0, 1fr); grid-template-rows: auto 1fr; column-gap: 24px; align-items: start; }
+  body:not(.reader-enabled) .bs-node { display: grid; grid-template-columns: minmax(190px, 38%) minmax(0, 1fr); grid-template-rows: auto 1fr; column-gap: 24px; align-items: start; }
   body:not(.reader-enabled) .bs-node > :is(.bs-label, b) { grid-column: 1; }
   body:not(.reader-enabled) .bs-node > b { margin-bottom: 0; }
   body:not(.reader-enabled) .bs-node > ul { grid-column: 2; grid-row: 1 / span 2; margin-top: 0; }

@@ -412,11 +412,9 @@ body.reference-page .content figure{margin:18px 0}
 .toc .repo-tree-pinned{list-style:none;margin:0 0 6px;padding:0}
 .toc .repo-tree a.repo-tree-pin{display:flex;align-items:center;gap:8px;min-height:32px;margin:0;padding:4px 10px;font-size:13.5px;line-height:1.35;
   color:var(--text);border-left:2px solid transparent;border-radius:0 7px 7px 0;transition:background .15s,color .15s,border-color .15s}
-.toc .repo-tree a.repo-tree-pin::before{content:"";flex:none;width:5px;height:5px;border-radius:50%;background:var(--blue);opacity:.7}
 .toc .repo-tree a.repo-tree-pin:hover{color:var(--bright);background:rgba(148,178,214,.07);border-left-color:rgba(121,192,255,.45)}
 .toc .repo-tree a.repo-tree-pin.current{color:var(--bright);font-weight:700;border-left-color:var(--adp);
   background:linear-gradient(90deg,rgba(57,210,192,.16),transparent)}
-.toc .repo-tree a.repo-tree-pin.current::before{background:var(--adp);opacity:1;box-shadow:0 0 8px rgba(57,210,192,.7)}
 .toc .repo-tree details.repo-tree-all>summary{font:600 12.5px var(--sans);letter-spacing:.02em;color:var(--muted)}
 .toc .repo-tree details.repo-tree-all[open]>summary{color:var(--text)}
 .toc .repo-tree details.repo-tree-all>.repo-tree-list{margin:2px 0 0 6px}
