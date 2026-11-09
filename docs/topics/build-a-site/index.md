@@ -7,6 +7,7 @@ components = ["toc", "nav", "code", "filelinks", "lightbox", "carousel", "panel-
 page_css = ["build-sheet.css"]
 math = true
 toc = [["How it works", "#how-a-build-works"], ["Write a page", "#write-a-topic-page"], ["The reader", "#the-reader"], ["Figures and slides", "#figures-and-slides"], ["Existing Markdown", "#existing-markdown"], ["Build", "#build"], ["Lint", "#lint"], ["Preview", "#preview"], ["Upgrade", "#upgrade"], ["Reference guides", "#reference-guides"]]
+page_only = "Explains building a site; its records are the site guides in rules/site/."
 +++
 
 # Build a site
@@ -311,12 +312,12 @@ Open `http://127.0.0.1:8321/html/index.html`. The server exposes only the genera
 <p class="bs-lead">The submodule commit is your version. Nothing changes until you move it, rebuild, review and commit the new pin.</p>
 
 <figure id="fig-upgrade">
-<div class="bs-flow" role="img" aria-label="Read the release notes between your pinned version and the target. Move the .docs-kit submodule to the reviewed commit or tag. Rebuild and lint, review the pages, then commit the pin together with any consumer changes.">
+<div class="bs-flow" role="img" aria-label="Read the release notes between your pinned version and the target. Move the .docs-kit submodule to the reviewed commit or tag. Rebuild and lint, run the project conformance check, review the pages, then commit the pin together with any consumer changes.">
 <div class="bs-node bs-teal"><span class="bs-label">Read</span><b>Release notes</b><ul><li>changes since your pin</li><li>migration guide if any</li></ul></div>
 <div class="bs-arrow"><span>move</span></div>
 <div class="bs-node bs-violet"><span class="bs-label"><code>.docs-kit</code></span><b>Check out the target</b><ul><li>a reviewed commit or tag</li></ul></div>
 <div class="bs-arrow"><span>verify</span></div>
-<div class="bs-node bs-orange"><span class="bs-label">One commit</span><b>Rebuild, review, commit</b><ul><li>build and lint</li><li>pin plus consumer changes</li></ul></div>
+<div class="bs-node bs-orange"><span class="bs-label">One commit</span><b>Rebuild, check, commit</b><ul><li>build and lint</li><li>conformance check</li><li>pin plus consumer changes</li></ul></div>
 </div>
 <figcaption><b>Figure 4.</b> The upgrade sequence. This diagram contains no measured results.</figcaption>
 </figure>
@@ -349,6 +350,7 @@ Others clone with `git clone --recurse-submodules <project-url>` and get exactly
 | Draw, derive and present | [Generated figures](authoring.html#generated-figures), [slide faces and decks](authoring.html#slide-faces-and-decks) | Generated figures and number ledgers, math, slide faces and decks |
 | Package images, media and evidence | [Resources and evidence](resources.html) | Resource closure, local-only captures, inventories, path adapters |
 | Check and publish | [Validation](validation.html), [publication export](publication.html) | Complete validation, browser checks, export into an existing publication |
+| Upgrade the pin | [Project conformance check](conformance.html) | What to check in the project after the pin moves |
 
 </div>
 

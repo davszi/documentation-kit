@@ -6,6 +6,7 @@ description = "How the kit's two experiment guides keep experiments small, choos
 components = ["toc", "nav", "code", "filelinks"]
 page_css = ["build-sheet.css"]
 toc = [["Guides", "#routes"], ["Keep it small", "#keep-experiments-small"], ["Purpose", "#choose-the-purpose"], ["Evidence and stopping", "#start-from-evidence"], ["Before and after", "#required-content"], ["Learned models only", "#learned-or-fitted-models-only"], ["Evidence gap", "#identify-the-evidence-gap"], ["Targeted checks", "#checks-and-failures"], ["Changes and failures", "#changes-and-failures"]]
+page_only = "Explains the experiment guides; they are the records, in rules/experiments/."
 +++
 
 # Experiments

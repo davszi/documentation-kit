@@ -134,6 +134,11 @@ slug = "documentation-system"
 description = "Canonical homes, lifecycle, evidence identity, publishing and agent entrypoints."
 
 [[source_pages]]
+source = "rules/conformance.md"
+slug = "conformance"
+description = "What to check in a project when its kit pin moves or a new owner takes over."
+
+[[source_pages]]
 source = "rules/writing/pages.md"
 slug = "page-design"
 description = "Section purpose, figure placement, homepages, build-sheet pages, slides and review."

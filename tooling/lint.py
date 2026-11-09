@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Doc-system lint — run before pushing docs.
 
-    python .docs-kit/docsite.py lint --project . [--strict] [--registry]
+    python .docs-kit/docsite.py lint --project . [--strict] [--registry] [--since <rev>]
 
 Checks (shared rules/writing.md is the spec):
   1. markdown links + anchors resolve (docs/**, AGENTS.md, CLAUDE.md, README.md)
@@ -20,6 +20,13 @@ Checks (shared rules/writing.md is the spec):
   9. built html loads no external resources (external <a> navigation is fine)
  10. relocated evidence records retain their manifest bytes and identities
  11. the project's pinned kit commit is on a remote branch of the kit
+ 12. topic structure: each docs/topics/<topic>/ page has a record beside it
+     (another .md outside evidence/) or declares `page_only = "<reason>"`;
+     an empty page_only is an error, an unneeded one a warning; home exempt
+
+Notes (never fail, not even under --strict): a changed record section
+(working tree vs HEAD, or vs --since <rev>) lists the topic pages that link
+it, so someone rereads them.
 
 Exit 0 clean (warnings print unless --strict fails them), 1 on errors.
 """
@@ -537,6 +544,23 @@ def check_build() -> None:
         error(f"build.py --check failed:\n{r.stderr.strip()}")
 
 
+def check_topic_structure() -> None:
+    from topic_structure import topic_structure_problems
+    found_errors, found_warnings = topic_structure_problems(REPO)
+    errors.extend(found_errors)
+    warnings.extend(found_warnings)
+
+
+def record_change_notes(since: str | None) -> list[str]:
+    """Reminders, never failures: pages that explain a changed record section."""
+    from record_changes import record_change_notes as notes
+    try:
+        return notes(REPO, slugify, since)
+    except ValueError as problem:
+        error(str(problem))
+        return []
+
+
 def check_kit_pin() -> None:
     from kit_pin import unpublished_pin
     problem = unpublished_pin(Path(__file__).resolve().parents[1], REPO)
@@ -548,6 +572,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--strict", action="store_true", help="warnings fail the run")
     ap.add_argument("--registry", action="store_true", help="dump the INVARIANT/DON'T-REDO registry and exit")
+    ap.add_argument("--since", metavar="REV",
+                    help="list pages explaining record sections changed since REV (default: HEAD)")
     args = ap.parse_args()
 
     if args.registry:
@@ -568,11 +594,15 @@ def main() -> int:
     check_open()
     check_worklog()
     check_tails()
+    check_topic_structure()
     check_build()
     check_kit_pin()
+    notes = record_change_notes(args.since)
 
     for w in warnings:
         print(f"WARN: {w}")
+    for note in notes:
+        print(note)
     for e in errors:
         print(f"ERROR: {e}", file=sys.stderr)
     if errors or (args.strict and warnings):

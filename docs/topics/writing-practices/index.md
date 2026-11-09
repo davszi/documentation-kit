@@ -5,7 +5,8 @@ brand_sub = "homes · pages · evidence · figures"
 description = "Where each kind of documentation belongs, why the rules exist, and how the kit's writing guides shape pages, explanations, evidence, figures, math and code, with illustrative examples."
 components = ["toc", "nav", "code", "filelinks"]
 page_css = ["build-sheet.css"]
-toc = [["Guide per task", "#routes"], ["One home", "#homes"], ["Open to topic", "#open-to-topic"], ["Records and pages", "#records-and-pages"], ["Changes and publishing", "#changes-and-publishing"], ["Section design", "#page-design"], ["Build sheets", "#build-sheets"], ["Story and folds", "#explanations"], ["Honest claims", "#honest-claims"], ["Evidence", "#evidence"], ["Figures", "#figures"], ["Mathematics", "#mathematics"], ["Code excerpts", "#code-excerpts"]]
+toc = [["Guide per task", "#routes"], ["One home", "#homes"], ["Open to topic", "#open-to-topic"], ["Topics", "#topics"], ["Records and pages", "#records-and-pages"], ["In step", "#page-and-record-in-step"], ["Changes and publishing", "#changes-and-publishing"], ["Section design", "#page-design"], ["Build sheets", "#build-sheets"], ["Story and folds", "#explanations"], ["Honest claims", "#honest-claims"], ["Evidence", "#evidence"], ["Figures", "#figures"], ["Mathematics", "#mathematics"], ["Code excerpts", "#code-excerpts"]]
+page_only = "Explains the documentation and writing guides; they are the records, in rules/."
 +++
 
 # Documentation and writing
@@ -21,6 +22,7 @@ toc = [["Guide per task", "#routes"], ["One home", "#homes"], ["Open to topic", 
 | Before… | Read… | It covers | Explained here |
 |---|---|---|---|
 | Creating, moving or retiring a document | [Documentation system](documentation-system.html) | Canonical homes, the path from open work to topic, evidence identity, records and pages, agent entrypoints, changes, worklog and publishing | [One home](#homes), [Open to topic](#open-to-topic), [Records and pages](#records-and-pages), [Changes and publishing](#changes-and-publishing) |
+| Upgrading the kit pin or taking over a repository | [Project conformance check](conformance.html) | Pin, router, copied rules, homes, topics, pages and records, open work, compatibility, changed rules, site | [Topics](#topics), [In step](#page-and-record-in-step) |
 | Laying out a rendered page | [Page design](page-design.html) | Section purpose, takeaway titles, homepages, build-sheet blocks, status boards, slide faces, review | [Section design](#page-design), [Build sheets](#build-sheets) |
 | Writing an explanation | [Explanations](explanations.html) | Story order, typed folds, naming, honest claims | [Story and folds](#explanations), [Honest claims](#honest-claims) |
 | Quoting a measured number | [Evidence](evidence.html) | Required provenance, staleness, number ledgers, run visuals, experiment records | [Evidence](#evidence) |
@@ -46,7 +48,7 @@ The guides are records for agents and own the complete rules. This page explains
 |---|---|
 | Project purpose, repository map, run and build instructions, named documentation routes | `docs/PROJECT_CONTEXT.md` |
 | Reading routes to development guidance, topics, evidence, sessions and open work | `docs/index.md` |
-| Mechanisms, accepted specifications, methods, scoped results and limits | `docs/topics/<topic>/<topic>.md` and further descriptively named records |
+| Mechanisms, accepted specifications, methods, scoped results and limits | `docs/topics/<topic>/<topic>.md` and further descriptively named records; every topic has one unless its page declares `page_only` |
 | Human explanation of a topic: current conclusions, figures, decisions and blockers | `docs/topics/<topic>/index.md`, when needed |
 | Unfinished delivery, prospective acceptance and unresolved choices with their owners | Named unfinished plans and decision records |
 | A one-line route to every owed workstream | `docs/open/OPEN.md`, never a duplicate task board |
@@ -141,6 +143,40 @@ Full guide: [from open work to subject knowledge](documentation-system.html#from
 
 </section>
 
+<section class="card" id="topics">
+
+## A topic is one folder: always a record for agents, and a page when people need one
+
+<p class="bs-lead">Each subject lives in <code>docs/topics/&lt;topic&gt;/</code>. Every topic has a record agents follow; a page explains it to people when they need one.</p>
+
+<figure id="fig-topic-folder">
+<div class="bs-folder" role="img" aria-label="The folder docs/topics/vehicle-model holds vehicle-model.md and tyre-fitting.md, records that agents follow; index.md, the page people read, which links to the records; and evidence, sources kept for a citation or reproduction.">
+<div class="bs-folder-head"><code>docs/topics/vehicle-model/</code></div>
+<div class="bs-folder-row bs-teal"><code>vehicle-model.md</code><span class="bs-badge">record</span><span><b>Agents follow it.</b> The exact spec: terms, limits, anchors other files point to.</span></div>
+<div class="bs-folder-row bs-teal"><code>tyre-fitting.md</code><span class="bs-badge">record</span><span><b>More records</b> as the subject grows, each named for what it holds.</span></div>
+<div class="bs-folder-row bs-violet"><code>index.md</code><span class="bs-badge">page</span><span><b>People read it.</b> The conclusion, a figure, why, the next decision; links the records.</span></div>
+<div class="bs-folder-row bs-orange"><code>evidence/</code><span class="bs-badge">evidence</span><span><b>Kept for a reason:</b> sources for one citation or reproduction.</span></div>
+</div>
+<figcaption><b>Figure 2.</b> One topic folder and who reads each file. This diagram contains no measured results.</figcaption>
+</figure>
+
+<div class="bs-checks">
+<div class="bs-check"><span class="bs-badge bs-ok">default</span><h3>Record and page</h3><p>Agents follow the spec and people need it explained: the record holds the exact text, the page the reasoning and figures.</p></div>
+<div class="bs-check"><span class="bs-badge bs-ok">contract only</span><h3>Record, no page</h3><p>A schema, checklist or limit nobody needs walked through. Add a page later if someone does.</p></div>
+<div class="bs-check"><span class="bs-badge bs-wait">declared exception</span><h3>Page, no record</h3><p>Only for a page with nothing agents must follow, such as a review. It says why in its frontmatter, <code>page_only = "…"</code>; without that, lint warns.</p></div>
+</div>
+
+The split follows how each reader uses the text. An agent is routed to an exact file and section and must find the same words there next time; a person wants the conclusion first, a figure and an example, and is better served when the page is rearranged for reading. Putting both in one file means layout HTML in the agent's way, or a spec that moves whenever the page is improved. So the record comes first; a topic without one is a rare, declared exception that the conformance check rereads on every upgrade.
+
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>The spec inside a fold</h3><p>A topic has only <code>index.md</code>. Its tyre limits sit in a fold between two figures. An agent routed there reads card markup to find them, and a later layout change moves them.</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>Spec in the record, page links it</h3><p>The limits live in <code>vehicle-model.md</code> under their own heading. The page shows the figure, says why the limits are what they are and links that heading.</p></div>
+</div>
+
+Full guide: [canonical homes](documentation-system.html#canonical-homes) · [rendered pages are for people; records stay Markdown](documentation-system.html#rendered-pages-are-for-people-records-stay-markdown)
+
+</section>
+
 <section class="card" id="records-and-pages">
 
 ## Records keep the contract for agents; pages explain it to people
@@ -156,12 +192,12 @@ Full guide: [from open work to subject knowledge](documentation-system.html#from
 <div class="bs-node bs-violet"><span class="bs-label">Page for people</span><b>Conclusions and decisions</b><ul><li>Current conclusions and accepted specifications</li><li>Demonstrated behavior with its evidence scope</li><li>Useful figures and the next decisions</li></ul></div>
 <div class="bs-back"><span>×</span> A page links to records instead of reproducing them. Reading a route grants no permission to execute or publish.</div>
 </div>
-<figcaption><b>Figure 2.</b> Agents reach records through one router; people reach an explanation through pages that link back to the records. This illustrative diagram is authored in the page source and contains no measured results.</figcaption>
+<figcaption><b>Figure 3.</b> Agents reach records through one router; people reach an explanation through pages that link back to the records. This illustrative diagram is authored in the page source and contains no measured results.</figcaption>
 </figure>
 
 Agents and people need different things from the same knowledge. An agent follows exact headings, file references and anchors; a person needs the conclusion, a figure and the next decision. Without this split, layout HTML gets in an agent's way and bookkeeping buries what a person came to learn. The guide therefore keeps contracts, handoff and resume state, readiness boards, bookkeeping and long run chronology in records, and pages link to those records instead of reproducing them.
 
-[Figure 2](#fig-records-and-pages) shows the two reading paths. Notice that the page sits downstream of the records: it explains them but does not own them.
+[Figure 3](#fig-records-and-pages) shows the two reading paths. Notice that the page sits downstream of the records: it explains them but does not own them.
 
 <div class="bs-grid g2">
 <div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>A topic page doubling as a work log</h3><p>Below its conclusion, the rendered topic page holds a readiness board, a handoff checklist and a dated diary of every run.</p></div>
@@ -170,7 +206,7 @@ Agents and people need different things from the same knowledge. An agent follow
 
 <!-- fold: code Record format and registered source pages -->
 
-- Start a topic as `docs/topics/<topic>/<topic>.md` and split a growing record into descriptively named files. Subject records are not named `README.md`. Add `index.md` only when a human has something to learn or act on.
+- Every topic has a record, `docs/topics/<topic>/<topic>.md`; split a growing record into descriptively named files. Subject records are not named `README.md`. Add `index.md` when a person has something to learn or act on. A page without a record declares `page_only = "<reason>"` in its frontmatter, or lint warns.
 - Records use plain Markdown headings, tables, lists, exact file references and evidence links. Layout HTML stays out of agent records; a needed diagram is stored in a separate file and linked. Anchors that other documents reference are preserved.
 - A site may render a whole record as a [registered source page](authoring.html#registered-source-pages). The Markdown file stays the record and its only editable copy; the page adds no content of its own. The guides linked from this page are rendered that way.
 
@@ -192,6 +228,40 @@ When a page becomes predominantly agent-facing, its agent material moves into re
 <!-- /fold -->
 
 Full guide: [rendered pages are for people; records stay Markdown](documentation-system.html#rendered-pages-are-for-people-records-stay-markdown) and [agent entrypoints](documentation-system.html#agent-entrypoints-import-versus-point).
+
+</section>
+
+<section class="card" id="page-and-record-in-step">
+
+## A page explains its record in its own words; a changed record names the pages to reread
+
+<p class="bs-lead">Pages are written for people and do not copy the record's wording. When a record section changes, lint notes the pages that link to it so someone rereads them.</p>
+
+<figure id="fig-page-and-record">
+<div class="bs-flow" role="img" aria-label="A section of a record is edited, for example Refactoring over compatibility in rules/engineering/code.md. Lint compares the record with the last commit and finds which sections changed. It then lists every page that links to a changed section, for example the Compatibility chapter on the Engineering page, as pages to reread.">
+<div class="bs-node bs-teal"><span class="bs-label">1 · Edit</span><b>A record section changes</b><ul><li><code>rules/engineering/code.md</code></li><li>section: Refactoring over compatibility</li></ul></div>
+<div class="bs-arrow"><span>lint</span></div>
+<div class="bs-node bs-violet"><span class="bs-label">2 · Compare</span><b>Changed sections</b><ul><li>diff against the last commit</li><li>each changed line belongs to a heading</li></ul></div>
+<div class="bs-arrow"><span>links</span></div>
+<div class="bs-node bs-orange"><span class="bs-label">3 · Remind</span><b>Pages to reread</b><ul><li>every page linking that heading</li><li>a note, never a failure</li></ul></div>
+</div>
+<figcaption><b>Figure 4.</b> How a record change reaches the pages that explain it. This diagram contains no measured results.</figcaption>
+</figure>
+
+An explanation for people is not the record in nicer type: it leads with the outcome, reorders, simplifies and adds an example. So a page cannot quote its record without getting worse, and two texts about one rule will drift unless something connects them. The connection already exists: every explanation links the record section it explains. Lint follows those links backwards from the sections a change touched. A link to a whole guide, as in a routes table, is noted only when the guide's opening text changes, so a routine edit names the few chapters that explain it.
+
+```text
+NOTE: rules/engineering/code.md › Refactoring over compatibility changed.
+      Pages that explain it — reread them:
+        docs/topics/engineering-practices/index.md  (chapter: compatibility)
+```
+
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>The rule moves, the page stays</h3><p>A rule gains an exception. The record is updated; the page that explains the rule still states it without the exception, and nothing points at it.</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>The change names its pages</h3><p>The same edit makes lint list the one chapter that explains the rule. The author rereads it, adds the exception in the page's own words and commits both.</p></div>
+</div>
+
+Full guide: [rules for changes and chronology](documentation-system.html#rules-for-changes-and-chronology)
 
 </section>
 
@@ -364,12 +434,12 @@ Full guide: [build-sheet pages](page-design.html#build-sheet-pages), [slide face
 <div class="bs-node bs-violet"><span class="bs-label">Optional</span><b>Typed folds</b><ul><li><code>math</code> derivations</li><li><code>experiment</code> detail</li><li><code>code</code> excerpts</li><li><code>dead-end</code>, shown as Alternatives</li></ul></div>
 <div class="bs-back"><span>×</span> A fold never hides a separate required argument.</div>
 </div>
-<figcaption><b>Figure 3.</b> Optional depth branches from a complete visible argument. This illustrative diagram is authored in the page source and contains no measured results.</figcaption>
+<figcaption><b>Figure 5.</b> Optional depth branches from a complete visible argument. This illustrative diagram is authored in the page source and contains no measured results.</figcaption>
 </figure>
 
 An explanation fails when the reader meets a number before the instrument that produced it, or a term before its definition. It also fails when the decisive step hides in an optional section that many readers never open. The guide orders by understanding: purpose, prerequisites, ingredients, mechanism, examples, evidence and limits. The complete argument, narrative figures, comparison cases and verdict must remain intelligible with every fold closed.
 
-[Figure 3](#fig-story) shows the two reading layers. Notice that the arrow goes one way: folds deepen the Story but do not hide a separate required argument.
+[Figure 5](#fig-story) shows the two reading layers. Notice that the arrow goes one way: folds deepen the Story but do not hide a separate required argument.
 
 Each concept or formula is explained in one canonical place and linked elsewhere. A brief result label or scope condition stays beside the evidence whenever it affects how the reader should interpret that evidence.
 
@@ -552,12 +622,12 @@ Full guide: [figures and comparisons](figures.html#figures-and-comparisons) and 
 <div class="bs-node bs-blue"><span class="bs-label">Result</span><b>Equation and example</b><ul><li>Intermediate steps</li><li>Worked numerical example</li></ul></div>
 <div class="bs-back"><span>×</span> No disconnected formula plot or duplicate picture without useful annotations.</div>
 </div>
-<figcaption><b>Figure 4.</b> The Math layer walks from marks on the Story's picture to the equation and a worked example. This illustrative diagram is authored in the page source and contains no measured results.</figcaption>
+<figcaption><b>Figure 6.</b> The Math layer walks from marks on the Story's picture to the equation and a worked example. This illustrative diagram is authored in the page source and contains no measured results.</figcaption>
 </figure>
 
 A formula that arrives with undefined symbols asks the reader to trust it rather than follow it, and a formula plot disconnected from the Story adds a second picture to decode. The guide builds from the reader's known construction. Define symbols, units, mathematical terms and prerequisites before use. Show intermediate reasoning, including product and chain rules when relevant. State structural assumptions and distinguish local conditions from global validity. A non-obvious formula needs a derivation or a precise companion-section citation.
 
-[Figure 4](#fig-math) shows how the Math layer reuses the Story. Notice that the equation is reached through marks on the same picture, not drawn from a separate one.
+[Figure 6](#fig-math) shows how the Math layer reuses the Story. Notice that the equation is reached through marks on the same picture, not drawn from a separate one.
 
 <div class="bs-grid g2">
 <div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>A formula dropped in</h3><p>An equation appears with symbols the page never defined, followed by a plot of the formula over a range the Story never mentions.</p></div>

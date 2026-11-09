@@ -23,6 +23,7 @@ and [execution](../rules/engineering/execution.md) retain their separate ownersh
 
 ## Documentation and writing
 
+[Project conformance check](../rules/conformance.md) is what a project checks when its pin moves.
 [Documentation policy](../rules/documentation.md) owns canonical homes and
 lifecycle. The [writing router](../rules/writing.md) links to page design,
 explanations, measurements, figures, mathematics and code guides.

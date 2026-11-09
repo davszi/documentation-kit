@@ -6,6 +6,7 @@ description = "What the kit provides, how a project routes contributors to its r
 components = ["toc", "nav", "code", "filelinks"]
 page_css = ["build-sheet.css"]
 toc = [["What it provides", "#what-the-kit-provides"], ["How it works", "#how-it-works"], ["Practice areas", "#practice-areas"], ["Set up", "#set-up"], ["Starter files", "#starter-files"], ["Adoption routes", "#choose-how-to-adopt-it"]]
+page_only = "Explains the kit as a whole; its records are README.md and the guides in rules/."
 +++
 
 # Get started with the documentation kit
@@ -118,7 +119,7 @@ Keep one thin router in `AGENTS.md`. Codex follows its named paths and triggers 
 <li>reports lead with the outcome and say how each claim is known</li>
 <li>one commit per logical deliverable, reviewed as a whole</li>
 </ul><p><b>Read before:</b> changing code, running heavy jobs, handing off, committing.</p></div>
-<div class="bs-part bs-violet"><span class="bs-label">7 guides · 13 chapters</span><h3><a href="writing-practices.html">Documentation and writing</a></h3><ul>
+<div class="bs-part bs-violet"><span class="bs-label">7 guides · 15 chapters</span><h3><a href="writing-practices.html">Documentation and writing</a></h3><ul>
 <li>every fact has one home; finished work moves to its subject</li>
 <li>records keep the contract for agents; pages explain it to people</li>
 <li>each section states its takeaway before the evidence</li>

@@ -2,6 +2,22 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Require topic records, remind about explaining pages, add the conformance check
+
+- deivid decided that every topic has a record; a page-only topic is a
+  declared exception, `page_only = "<reason>"` in its frontmatter. Lint warns
+  about a topic page with neither, so strict lint fails. The kit's five
+  explanation pages declare it: their records are the guides in `rules/`.
+  ADP has page-only topics and will see the warning when it upgrades.
+- Pages explain records in their own words, so drift is caught by a reminder
+  instead of quoting: when a record section changes, lint prints notes naming
+  the pages and chapters that link to it (`--since <rev>` for older
+  comparisons). Links to a whole record count only for its opening text.
+- `rules/conformance.md` is the checklist a project runs when its pin moves or
+  the repository changes hands; both migration guides, the README, the
+  authoring guide and the starter router link it. Documentation and writing
+  gains Topics (with a folder figure) and In step chapters.
+
 ## 2026-11-09 — Fit the chapter peek targets to the visible slivers
 
 - In One chapter view the previous/next click targets were a fixed 10% of the

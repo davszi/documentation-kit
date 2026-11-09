@@ -22,7 +22,7 @@ These rules are shared policy. A consuming project's `docs/PROJECT_CONTEXT.md` o
 | `.docs-kit/rules/engineering/handoffs.md` | Completion and blocker reports, durable evidence and handoff receipt |
 | `.docs-kit/rules/experiments/workflow.md` | Shared experiment kinds (investigation, qualification), scope limits, baselines, evaluation, stopping and required content |
 | `.docs-kit/rules/experiments/verification.md` | Claim-scoped check selection, numerical correctness, regression gates and changed-input verification |
-| `docs/topics/<topic>/<topic>.md` and further descriptively named records | Canonical mechanisms, accepted specifications, methods, scoped results, limits and topic-owned research notes |
+| `docs/topics/<topic>/<topic>.md` and further descriptively named records; every topic has one unless its page declares `page_only` | Canonical mechanisms, accepted specifications, methods, scoped results, limits and topic-owned research notes |
 | `docs/topics/<topic>/index.md`, when needed | Human explanation drawn from the topic records: current conclusions, figures, decisions and blockers |
 | `docs/open/OPEN.md` | One-line routes to every owed workstream, each with its owning document; never a duplicate task board |
 | Named unfinished plans/decision records | Unfinished delivery, prospective acceptance, unresolved choices and their owners |
@@ -45,7 +45,21 @@ Other Markdown must have a defined role: a subject record, log, experiment contr
 
 ## Rendered pages are for people; records stay Markdown
 
-Start a topic as `docs/topics/<topic>/<topic>.md`; split growing records into descriptively named files. Do not name subject records `README.md`. Add `index.md` only when a human has something to learn or act on.
+Every topic has a record: start it as `docs/topics/<topic>/<topic>.md` and split
+a growing record into descriptively named files. Do not name subject records
+`README.md`. Add `index.md` when a human has something to learn or act on; the
+page explains the record in its own words and links its sections.
+
+A topic without a record is an exception, for a page with nothing agents must
+follow or cite, such as a review or an explainer of records kept elsewhere.
+Declare it in the page's frontmatter as `page_only = "<reason>"`. Lint warns
+about a topic page with neither a record nor that declaration. Once the page
+gains a rule, specification or limit, that part moves into a record.
+
+When a record section changes, `docsite.py lint` prints a note listing the pages
+that link to that section; a link to the whole record is listed only when its
+opening text changes. Reread each listed page and update its explanation in the
+same change. `--since <rev>` compares with an older commit; notes never fail lint.
 
 A rendered page explains current conclusions, accepted specifications, demonstrated behavior with its evidence scope, useful figures and the decisions needed next. Contracts, handoff/resume state, readiness boards, bookkeeping and long run chronology stay in records. Link to those records instead of reproducing them.
 

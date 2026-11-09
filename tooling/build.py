@@ -49,7 +49,7 @@ COMPONENTS = KIT_SITE / "components"
 KATEX_SRC = KIT_SITE / "assets" / "vendor" / "katex"
 
 FRONTMATTER_KEYS = {"title", "slug", "brand", "brand_sub", "body_class", "math", "components", "page_css", "toc", "raw", "ongoing", "reader",
-                    "description", "thumbnail"}
+                    "description", "thumbnail", "page_only"}
 # A [[nav]] table accepts only these keys. TOML assigns every key written after a table header to that
 # table, so a top-level setting placed below the first [[nav]] silently becomes part of a nav entry.
 NAV_KEYS = {"label", "file", "group", "short", "hidden"}

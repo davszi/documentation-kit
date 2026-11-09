@@ -6,6 +6,7 @@ description = "Why the kit's six engineering guides exist, what each requires, a
 components = ["toc", "nav", "code", "filelinks"]
 page_css = ["build-sheet.css"]
 toc = [["Routes", "#routes"], ["Code", "#code"], ["Compatibility", "#compatibility"], ["Efficiency", "#performance"], ["Claims", "#performance-claims"], ["Execution", "#execution"], ["Cleanup", "#supervision"], ["Delivery", "#delivery"], ["Decisions", "#decisions"], ["Handoffs", "#handoffs"], ["Git", "#git"], ["Shared checkout", "#shared-checkout"]]
+page_only = "Explains the engineering guides; they are the records, in rules/engineering/."
 +++
 
 # Engineering practices

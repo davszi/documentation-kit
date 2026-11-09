@@ -27,6 +27,8 @@ def main():
         else:
             command.add_argument('--strict', action='store_true')
             command.add_argument('--registry', action='store_true')
+            command.add_argument('--since', metavar='REV',
+                                 help='compare record changes with REV instead of HEAD')
     slides = commands.add_parser('slides', help='build the site, then extract chapter slide faces into a deck')
     slides.add_argument('--project', type=Path, default=Path.cwd())
     slides.add_argument('--select', action='append', required=True, help='slug or slug#chapter,chapter (repeatable)')
@@ -94,6 +96,8 @@ def main():
                if getattr(args, option[2:], False)]
     if getattr(args, 'page', None):
         options.extend(('--page', args.page))
+    if getattr(args, 'since', None):
+        options.extend(('--since', args.since))
     return subprocess.run([sys.executable, str(KIT / 'tooling' / (args.command + '.py')), *options],
                           env=env, cwd=project).returncode
 
