@@ -49,8 +49,8 @@ file = "releases.html"
 group = "releases"
 
 [[nav]]
-label = "Migrate to 2.1.0"
-file = "migrate-2-1-0.html"
+label = "Migrate to 3.0.0"
+file = "migrate-3-0-0.html"
 group = "releases"
 
 [[nav]]
@@ -201,10 +201,10 @@ title = "Migrate to 2.0.0"
 description = "Move an existing consumer from 1.1.0 to 2.0.0."
 
 [[source_pages]]
-source = "docs/topics/releases/migrations/2.1.0.md"
-slug = "migrate-2-1-0"
-title = "Migrate to 2.1.0"
-description = "Move an existing consumer from 2.0.0 to 2.1.0."
+source = "docs/topics/releases/migrations/3.0.0.md"
+slug = "migrate-3-0-0"
+title = "Migrate to 3.0.0"
+description = "Move an existing consumer from 2.0.0 to 3.0.0."
 
 [[source_pages]]
 source = "docs/topics/website/website.md"

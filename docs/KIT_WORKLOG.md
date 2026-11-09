@@ -2,6 +2,29 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Remove the router stub headings; the pending release becomes 3.0.0
+
+- deivid decided to remove the stub headings from `rules/writing.md` and
+  `rules/maintenance.md` now and to name the pending release 3.0.0. This
+  replaces the 2.1.0 name chosen earlier today. The stubs only forwarded links
+  written before the guides were split; both files are now plain indexes that
+  list each focused guide and what it owns.
+- Why major: ADP holds 25 live links to the removed anchors, adapt 2 and
+  adaptation 3. Their lint fails without `--strict` until the links are
+  repointed, which the version promise calls a major change.
+- The migration guide is renamed to `migrations/3.0.0.md` and gains a Router
+  anchors step with the mapping from each former anchor to its guide; the
+  mapping was checked against the guides' headings. The release-notes section,
+  the site navigation and route, the own-site browser test and the pointers in
+  README, context and index now say 3.0.0. Nine links in the release notes
+  point at the focused guides. `VERSION` stays 2.0.0 until the tag.
+- Lint also checks this worklog. 7 links in older entries pointed at the
+  removed anchors; only their targets were repointed, the entries' wording is
+  unchanged. The migration guide tells projects to do the same.
+- Checks: `tests/run_checks.sh` with the browser suites passes (148 tests,
+  strict lint, 22 scripts, four suites); the two index pages and the new guide
+  were captured at 1600 and 390 px and reviewed.
+
 ## 2026-11-09 — Remove consumer-specific text and a dead compatibility name
 
 - deivid asked to fix the places where the kit broke its own placement rules,
@@ -847,9 +870,9 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
 ## 2026-11-06 — Visual ordering and evidence presentation
 
-- Clarify the [page lead](../rules/writing.md#page-design),
-  [scope notes](../rules/writing.md#story-and-reading-layers) and
-  [choice of representation](../rules/writing.md#figures-and-comparisons).
+- Clarify the [page lead](../rules/writing/pages.md#page-design),
+  [scope notes](../rules/writing/explanations.md#story-and-reading-layers) and
+  [choice of representation](../rules/writing/figures.md#figures-and-comparisons).
   Put the figure early in mechanism and geometry explanations. Keep brief
   qualifications beside the relevant evidence and the full rationale in its
   record. Use diagrams for relationships and tables for precise comparisons.
@@ -869,8 +892,8 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   query, so it needs no JavaScript; print
   keeps the slide palette. Flat Markdown pages start a chapter at a face written
   before its heading; code examples of the markers stay literal.
-  The [writing rules](../rules/writing.md#slide-faces) own content guidance; the
-  [maintenance contract](../rules/maintenance.md#slide-faces-and-decks) owns
+  The [writing rules](../rules/writing/pages.md#slide-faces) own content guidance; the
+  [maintenance contract](../rules/site/authoring.md#slide-faces-and-decks) owns
   markers, vocabulary and the `slides` command, which writes presentable and
   printable decks to `.build/slides/` outside the published bundle. Decks prefix
   slide ids, re-root all relative URLs, link other anchors back to their page,
@@ -893,9 +916,9 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
 - Extract the optional existing-site exporter and common browser checks from
   adaptation. Projects retain publication admission, stable URLs, historical
   packaging, credentials and scientific assertions. The
-  [maintenance contracts](../rules/maintenance.md#exporting-into-an-existing-publication)
+  [maintenance contracts](../rules/site/publication.md#exporting-into-an-existing-publication)
   own both APIs. Homepage composition stays project-owned; the starter is an
-  optional example, as recorded in the [writing rules](../rules/writing.md#project-owned-homepages).
+  optional example, as recorded in the [writing rules](../rules/writing/pages.md#project-owned-homepages).
 - Preserve embedded JavaScript/JSON and unrelated HTML bytes. Align source-span
   offsets with HTMLParser's LF counting and cover literal Unicode/control
   separators plus mixed mapped/unmapped routes. Browser checks retain real

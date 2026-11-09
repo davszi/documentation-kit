@@ -141,7 +141,7 @@ Each practice page starts with a router table for its guides, so you can copy th
 
 <!-- fold: dead-end Old links to the writing and maintenance routers -->
 
-The [writing](writing.html) and [site maintenance](maintenance.html) entrypoints remain as short routers, so links written before the guides were split still arrive at the right guide and section.
+The [writing](writing.html) and [site maintenance](maintenance.html) entrypoints are short indexes that list the focused guides and what each one owns.
 
 <!-- /fold -->
 

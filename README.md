@@ -98,8 +98,8 @@ links to the kit's contracts, evidence and chronology.
 | Writing | [Pages and review](rules/writing/pages.md), [explanations](rules/writing/explanations.md), [measurements](rules/writing/evidence.md), [figures and access](rules/writing/figures.md), [math](rules/writing/math.md), [code and diagrams](rules/writing/code.md) |
 | Site | [Authoring](rules/site/authoring.md), [validation](rules/site/validation.md), [resources](rules/site/resources.md), [publication](rules/site/publication.md), [reader](rules/site/reader.md) |
 
-The original [writing](rules/writing.md) and [maintenance](rules/maintenance.md)
-entrypoints remain short routers with their existing section anchors. Projects
+The [writing](rules/writing.md) and [maintenance](rules/maintenance.md)
+entrypoints are short indexes of these guides. Projects
 keep concrete tools, workloads, resource profiles, acceptance thresholds and
 runtime requirements in their own records.
 
@@ -130,7 +130,7 @@ The kit is versioned in `VERSION` and tagged `v<version>`. [Releases and
 upgrades](docs/topics/releases/releases.md) lists what each version changes for
 consumers and the migration steps; 1.0.0 is the first stable version.
 The current 2.0.0 release has a [consumer migration guide](docs/topics/releases/migrations/2.0.0.md); the [1.1.0 guide](docs/topics/releases/migrations/1.1.0.md) covers the earlier step.
-The [2.1.0 guide](docs/topics/releases/migrations/2.1.0.md) covers the changes on `main` that are not tagged yet.
+The [3.0.0 guide](docs/topics/releases/migrations/3.0.0.md) covers the changes on `main` that are not tagged yet.
 
 Then run the [project conformance check](rules/conformance.md) and report its
 findings. Review changed human pages at wide and narrow widths before committing the

@@ -9,7 +9,7 @@ release changes for consumers and how to move to it. Chronology stays in the
 ## What a version number promises
 
 The [stable and provisional interfaces](#100--first-stable-version) list what a
-project may rely on. From 2.1.0 the version number means this:
+project may rely on. From 3.0.0 the version number means this:
 
 - A **major** release removes or renames a stable interface, or adds a lint
   error that fails without `--strict`.
@@ -22,12 +22,15 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
-## 2.1.0 — repository files in the sidebar and topic records
+## 3.0.0 — router anchors removed, topic records and repository files in the sidebar
 
 Not tagged yet: these changes are on `main` after 2.0.0, and `VERSION` changes
-when the release is tagged. It is a minor release under
-[what a version number promises](#what-a-version-number-promises). Follow the
-[2.1.0 migration guide](migrations/2.1.0.md).
+when the release is tagged. It is a major release under
+[what a version number promises](#what-a-version-number-promises) for one
+reason: `rules/writing.md` and `rules/maintenance.md` lose their section
+anchors, so a project that links to them fails lint until it repoints the
+links. No command, configuration key, marker or adapter signature is removed.
+Follow the [3.0.0 migration guide](migrations/3.0.0.md).
 One check can fail a strict lint run: a topic page without a record
 must add one or declare `page_only`. Two provisional tooling modules that no
 known consumer imported are removed. A project that wants to keep the
@@ -45,6 +48,7 @@ chips, and code keeps its case inside uppercase titles.
 | Lint | When a record section changes, lint prints notes naming the pages that link to it; `--since <rev>` compares with an older commit. Notes never fail lint | [Rendered pages are for people](../../../rules/documentation.md#rendered-pages-are-for-people-records-stay-markdown) |
 | Conformance | New guide: the project conformance check to run when a kit pin moves or a repository changes hands; the starter router routes to it | [Project conformance check](../../../rules/conformance.md) |
 | Configuration | A registered source page no longer needs a `[[nav]]` entry; topic pages still do. `[[source_pages]]` accepts optional `pinned = true` | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
+| Rules | Removed: the stub headings in `rules/writing.md` and `rules/maintenance.md`, which only forwarded old links. Both files are now plain indexes of the focused guides. A link to one of their former anchors must point at the focused guide's own section; links to the files without an anchor still work | [Router anchors](migrations/3.0.0.md#router-anchors) |
 | License | The kit's own rules, tooling, theme and starter are under the MIT License; bundled fonts and KaTeX keep their own licenses. Earlier versions granted no license. Every built site gains one file, `html/assets/documentation-kit/LICENSE`; a project asset with that output name fails the build | [License](../../../README.md#license) |
 | Tooling | Removed: `tooling/number_ledger.py` and `tooling/verbatim_blocks.py`, both provisional since 1.0.0. The rule that a redesign records number sources in a ledger and locks kept blocks stays; each project keeps its own ledger format and checks. `tooling/svg_figures.py` stays | [Numbers and staleness](../../../rules/writing/evidence.md#numbers-and-staleness) |
 
@@ -100,7 +104,7 @@ the kit does not require moving an existing consumer's documentation layout.
 |---|---|---|
 | Engineering and delivery | Focused code, performance, execution, delivery and handoff guides; shared Git rules require an explanatory commit body and explicit ownership of shared staging | [Engineering guides](../../../README.md#focused-guides), [Git](../../../rules/engineering/git.md) |
 | Contributor entrypoints | One task-triggered `AGENTS.md` router, with a bare `@AGENTS.md` import for Claude; revised starter orientation and reading index | [Agent entrypoints](../../../rules/documentation.md#agent-entrypoints-import-versus-point) |
-| Writing and site ownership | Focused `rules/writing/` and `rules/site/` guides; original writing/maintenance routes and their anchors remain available | [Writing](../../../rules/writing.md), [site](../../../rules/maintenance.md) |
+| Writing and site ownership | Focused `rules/writing/` and `rules/site/` guides; original writing/maintenance routes and their anchors remain available (the anchors until 3.0.0) | [Writing](../../../rules/writing.md), [site](../../../rules/maintenance.md) |
 | Visual and evidence guidance | Figures lead mechanism/geometric explanations; scope stays beside evidence; representation follows the question; failed attempts and original settings remain with their evidence | [Page design](../../../rules/writing/pages.md#page-design), [figures](../../../rules/writing/figures.md#figures-and-comparisons), [evidence](../../../rules/writing/evidence.md#numbers-and-staleness) |
 | Optional project layout | New starter uses `docs/PROJECT_CONTEXT.md` and `docs/index.md`; existing project destinations and historical routes stay project-owned | [Canonical homes](../../../rules/documentation.md#canonical-homes), [optional layout migration](migrations/1.1.0.md#optional-project-layout-migration) |
 | Local media inventories | Optional `local_artifacts_manifest` selects the inventory path; omitted settings retain the legacy fallback and explicitly missing configured files fail | [Resources](../../../rules/site/resources.md#resource-closure-and-evidence) |
@@ -139,14 +143,14 @@ migration steps.
 
 | Area | Change | Owning contract |
 |---|---|---|
-| Reader | Chapter slide faces (`<!-- slide -->`), the `slides` deck command, wider One-chapter cards (88% of the stage) | [maintenance](../../../rules/maintenance.md#slide-faces-and-decks), [writing](../../../rules/writing.md#slide-faces) |
+| Reader | Chapter slide faces (`<!-- slide -->`), the `slides` deck command, wider One-chapter cards (88% of the stage) | [maintenance](../../../rules/site/authoring.md#slide-faces-and-decks), [writing](../../../rules/writing/pages.md#slide-faces) |
 | Components | `panel-switcher` local comparisons | [panel switcher](../panel-switcher/panel-switcher.md) |
-| Includes | Shared theme includes resolve first; included fragments may include others (eight levels, cycles fail) | [authoring paths](../../../rules/maintenance.md#authoring-paths) |
+| Includes | Shared theme includes resolve first; included fragments may include others (eight levels, cycles fail) | [authoring paths](../../../rules/site/authoring.md#authoring-paths) |
 | Configuration | `[[nav]]` tables accept only `label`, `file`, `group`, `short`, `hidden`; project adapters (`path_resolver`, `evidence_validator`, `content_transform`), `extra_assets`, `body_class`, a configured `worklog` path (`extra_components` already existed in 0.1.0) | [maintenance](../../../rules/maintenance.md) |
-| Home page | Site-map cards use frontmatter `description` and `thumbnail` when present; guidance to keep the same site tree on every page (`toc = []` on a reader-free home) | [shared reading layout](../../../rules/maintenance.md#shared-reading-layout), [writing](../../../rules/writing.md#project-owned-homepages) |
-| Publication | Exporter into an existing publication (`tooling/publication.py`) | [exporting](../../../rules/maintenance.md#exporting-into-an-existing-publication) |
-| Generators and checks | `tooling/svg_figures.py`, `tooling/number_ledger.py`, `tooling/verbatim_blocks.py`; browser helpers `slideFaces` and `captureElement` | [generated figures](../../../rules/maintenance.md#generated-figures), [browser checks](../../../rules/maintenance.md#reusable-browser-checks) |
-| Rules | Numbers restated by a redesign need ledger sources; generated SVG uses literal colours | [numbers and staleness](../../../rules/writing.md#numbers-and-staleness) |
+| Home page | Site-map cards use frontmatter `description` and `thumbnail` when present; guidance to keep the same site tree on every page (`toc = []` on a reader-free home) | [shared reading layout](../../../rules/site/reader.md#shared-reading-layout), [writing](../../../rules/writing/pages.md#project-owned-homepages) |
+| Publication | Exporter into an existing publication (`tooling/publication.py`) | [exporting](../../../rules/site/publication.md#exporting-into-an-existing-publication) |
+| Generators and checks | `tooling/svg_figures.py`, `tooling/number_ledger.py`, `tooling/verbatim_blocks.py`; browser helpers `slideFaces` and `captureElement` | [generated figures](../../../rules/site/authoring.md#generated-figures), [browser checks](../../../rules/site/validation.md#reusable-browser-checks) |
+| Rules | Numbers restated by a redesign need ledger sources; generated SVG uses literal colours | [numbers and staleness](../../../rules/writing/evidence.md#numbers-and-staleness) |
 
 ### Migrating to 1.0.0
 

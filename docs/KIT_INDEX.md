@@ -48,7 +48,7 @@ stable interfaces and what a version number promises. The
 [2.0.0 migration guide](topics/releases/migrations/2.0.0.md)
 moves 1.1.0 consumers to the current release; the
 [1.1.0 guide](topics/releases/migrations/1.1.0.md) covers the earlier step. The
-[2.1.0 guide](topics/releases/migrations/2.1.0.md) covers the untagged changes
+[3.0.0 guide](topics/releases/migrations/3.0.0.md) covers the untagged changes
 on `main`.
 
 The extraction record, policy map, source hashes and initial receipts remain at
