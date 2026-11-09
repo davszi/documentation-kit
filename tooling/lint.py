@@ -3,7 +3,7 @@
 
     python .docs-kit/docsite.py lint --project . [--strict] [--registry] [--since <rev>]
 
-Checks (shared rules/writing.md is the spec):
+Checks (the shared guides under rules/ are the spec):
   1. markdown links + anchors resolve (docs/**, AGENTS.md, CLAUDE.md, README.md)
   2. built-html internal anchors + relative hrefs resolve
   3. snippet drift: fenced blocks tagged `source=<path>#L<a>-L<b>` must appear

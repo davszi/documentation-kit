@@ -47,7 +47,7 @@ page_only = "Explains building a site; its records are the site guides in rules/
 
 <!-- fold: code How links are rewritten -->
 
-Inside a page, link to other pages by their generated name, such as `evidence.html#numbers-and-staleness`. Links to any other repository file become source links: GitHub on a served site, the local checkout when the pages are opened as files. Every path stays inside the project; a link, include or image that escapes it fails the build. [Authoring paths](authoring.html#authoring-paths) has the exact rules.
+Inside a page, link to other pages by their generated name, such as `records.html#numbers-and-staleness`. Links to any other repository file become source links: GitHub on a served site, the local checkout when the pages are opened as files. Every path stays inside the project; a link, include or image that escapes it fails the build. [Authoring paths](authoring.html#authoring-paths) has the exact rules.
 
 <!-- /fold -->
 
@@ -297,6 +297,8 @@ python3.12 -m http.server 8321 --bind 127.0.0.1 --directory .build/docs
 ```
 
 Open `http://127.0.0.1:8321/html/index.html`. The server exposes only the generated output, not the repository. A successful build, lint and browser suite still need a look by eye: capture each changed element whole, at wide and narrow widths and in each reader view it appears in, and look at the captures before committing or publishing. [Validation](validation.html#validation-and-review) lists what a complete review covers, including the reusable browser checks.
+
+Before reusing a server that is already running, confirm who owns it and which checkout it serves, and stop only servers you started; [local review and browser access](validation.html#local-review-and-browser-access) covers the rest. When a page was written by a delegated page agent, the agent that delegated it looks at these captures itself before reporting the page done.
 
 <div class="bs-grid g2">
 <div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>"Lint passed, so it looks fine"</h3><p>The new table is never opened on a phone; it pushes the page sideways for every narrow reader.</p></div>

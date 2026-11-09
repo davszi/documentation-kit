@@ -28,7 +28,7 @@ their owner instead of changing them in the same deliverable.
    worklog and open work exist where `docs/site/site.toml` says. Follow
    [canonical homes](documentation.md#canonical-homes).
 5. **Topics.** Every topic page has a record in its folder or declares
-   `page_only` with a reason **(lint)**. No subject record is named `README.md`.
+   `page_only` with a reason **(lint)**. No subject record is named `README.md` ([writing records](records.md#one-record-per-topic)).
    Read each `page_only` reason: if the page states a rule, specification or
    limit, that part belongs in a record. Follow
    [rendered pages are for people](documentation.md#rendered-pages-are-for-people-records-stay-markdown).
@@ -46,7 +46,7 @@ their owner instead of changing them in the same deliverable.
    each explanation in the page's own words.
 10. **Site.** If the project publishes a site, the build, strict lint and its
     rendered review pass at the widths it supports. Follow the
-    [site maintenance router](maintenance.md).
+    [site guides](maintenance.md).
 
 ## Report
 

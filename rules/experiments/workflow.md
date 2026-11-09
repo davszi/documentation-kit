@@ -87,7 +87,8 @@ Nothing here applies to other experiments.
 ## Use the existing owners
 
 Checks: [verification](verification.md). Resources and cleanup:
-[execution](../engineering/execution.md). Provenance and visuals:
-[evidence](../records.md#numbers-and-staleness). Benchmarks:
+[execution](../engineering/execution.md). Provenance:
+[numbers and staleness](../records.md#numbers-and-staleness). Visuals:
+[run visuals](../writing/figures.md#run-visuals-and-experiment-lifecycle). Benchmarks:
 [performance](../engineering/performance.md). Placement:
 [documentation policy](../documentation.md).

@@ -27,7 +27,7 @@ page_only = "Explains the kit as a whole; its records are README.md and the guid
 
 <div class="bs-grid g2">
 <div class="bs-part bs-violet"><span class="bs-label">The kit supplies · <code>.docs-kit/</code></span><h3>Shared and pinned</h3><ul>
-<li><code>rules/</code>: engineering, documentation, writing and experiment guides your router points to</li>
+<li><code>rules/</code>: engineering, documentation, record, page-writing and experiment guides your router points to</li>
 <li><code>theme/</code>: chapter reader, build-sheet layout, fonts and math (<a href="build-a-site.html#the-reader">the reader</a>)</li>
 <li><code>docsite.py</code>, <code>tooling/</code>: build, lint, slides and export (<a href="build-a-site.html">build a site</a>)</li>
 <li><code>examples/starter/</code>: the project that <code>init</code> writes without overwriting</li>
@@ -72,10 +72,10 @@ The full split is in [Ownership](readme.html#ownership); [canonical homes](docum
 <p class="bs-lead">Pin the kit once; your <code>AGENTS.md</code> names, for each kind of action, the kit guide and your own record to read first.</p>
 
 <figure id="fig-routing">
-<div class="bs-flow" role="img" aria-label="Step 1: pin the kit at .docs-kit. Step 2: in AGENTS.md, add a row for each kind of action that names the kit guide and the project's own record, for example quoting a measured number with rules/writing/evidence.md and the project's benchmark records. Step 3: before that action, a contributor or agent reads both, then acts.">
+<div class="bs-flow" role="img" aria-label="Step 1: pin the kit at .docs-kit. Step 2: in AGENTS.md, add a row for each kind of action that names the kit guide and the project's own record, for example staging or committing with rules/engineering/git.md and the project's validation records. Step 3: before that action, a contributor or agent reads both, then acts.">
 <div class="bs-node bs-teal"><span class="bs-label">Step 1 · once</span><b>Pin the kit</b><ul><li><code>.docs-kit</code> submodule</li><li>its commit is your version</li></ul></div>
 <div class="bs-arrow"><span>route</span></div>
-<div class="bs-node bs-violet"><span class="bs-label">Step 2 · <code>AGENTS.md</code></span><b>One row per action</b><ul><li>before quoting a number…</li><li>…read <code>rules/writing/evidence.md</code> and your benchmark records</li></ul></div>
+<div class="bs-node bs-violet"><span class="bs-label">Step 2 · <code>AGENTS.md</code></span><b>One row per action</b><ul><li>before committing…</li><li>…read <code>rules/engineering/git.md</code> and your validation records</li></ul></div>
 <div class="bs-arrow"><span>read</span></div>
 <div class="bs-node bs-orange"><span class="bs-label">Step 3 · every time</span><b>Read both, then act</b><ul><li>shared rule + project specifics</li><li>nothing is copied</li></ul></div>
 </div>
@@ -85,11 +85,14 @@ The full split is in [Ownership](readme.html#ownership); [canonical homes](docum
 [Figure 1](#fig-routing) is the whole mechanism. The router is triggered by the action, not the topic: an agent about to commit reads the Git guide, not every guide. That keeps each task's reading short and makes it hard to skip the rule that applies. Read the orientation and the rules that apply to every task once at the start; route the rest by action, and recheck the routes when the task grows. Reading a route grants no permission to run or publish anything.
 
 ```markdown
-| Before…                   | Read…                                                           |
-|---------------------------|-----------------------------------------------------------------|
-| Quoting a measured number | `.docs-kit/rules/writing/evidence.md` and our benchmark records |
-| Staging or committing     | `.docs-kit/rules/engineering/git.md` and our validation records |
+| Before…                      | Read…                                                                 |
+|------------------------------|-----------------------------------------------------------------------|
+| Making a performance claim   | `.docs-kit/rules/engineering/performance.md` and our workload records |
+| Writing or changing a record | `.docs-kit/rules/records.md`                                          |
+| Staging or committing        | `.docs-kit/rules/engineering/git.md` and our validation records       |
 ```
+
+Documentation work has three rows, because three different jobs need different guides. A record writer reads the records guide and the documentation system's sections on order of work and changes. Someone creating, moving or retiring a document reads the documentation system. Page work sends its author to the page and site guides: a new page only when someone asked for it, an existing page whenever its record changes. A record edit therefore no longer pulls in the page guides' layout and presentation rules.
 
 <div class="bs-grid g2">
 <div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>A topic list</h3><p>"Documentation: see rules/. Git: see git.md." Nothing says when to read which, so an agent either reads everything up front or nothing at the moment it matters.</p></div>
@@ -119,14 +122,14 @@ Keep one thin router in `AGENTS.md`. Codex follows its named paths and triggers 
 <li>reports lead with the outcome and say how each claim is known</li>
 <li>one commit per logical deliverable, reviewed as a whole</li>
 </ul><p><b>Read before:</b> changing code, running heavy jobs, handing off, committing.</p></div>
-<div class="bs-part bs-violet"><span class="bs-label">7 guides · 15 chapters</span><h3><a href="writing-practices.html">Documentation and writing</a></h3><ul>
+<div class="bs-part bs-violet"><span class="bs-label">7 guides · 16 chapters</span><h3><a href="writing-practices.html">Documentation and writing</a></h3><ul>
 <li>every fact has one home; finished work moves to its subject</li>
-<li>records keep the contract for agents; pages explain it to people</li>
+<li>the record is written first; a new page only when a person asks</li>
+<li>a record names each object once; a measured number carries its provenance</li>
 <li>each section states its takeaway before the evidence</li>
 <li>one visible story; optional depth in typed folds</li>
-<li>a measured number is current only with its full provenance</li>
 <li>figures, mathematics and code excerpts follow shared conventions</li>
-</ul><p><b>Read before:</b> creating or moving a document, writing a page, quoting a number, drawing.</p></div>
+</ul><p><b>Read before:</b> creating or moving a document, writing a record, making or updating a page.</p></div>
 <div class="bs-part bs-orange"><span class="bs-label">2 guides · 9 chapters</span><h3><a href="experiments.html">Experiments</a></h3><ul>
 <li>start with the smallest experiment that can change a decision</li>
 <li>classify by what the result decides: investigation or qualification</li>
@@ -141,7 +144,7 @@ Each practice page starts with a router table for its guides, so you can copy th
 
 <!-- fold: dead-end Old links to the writing and maintenance routers -->
 
-The [writing](writing.html) and [site maintenance](maintenance.html) entrypoints are short indexes that list the focused guides and what each one owns.
+The [writing](writing.html) and [site maintenance](maintenance.html) entrypoints are short indexes that list the focused guides and what each one owns. The writing index now covers pages for people only. What a record must say, including naming, honest claims and measured numbers, has its own guide, [writing records](records.html), which the router names directly.
 
 <!-- /fold -->
 

@@ -18,12 +18,12 @@ Routine work within the agreed scope needs no separate coordinator approval.
 
 ## Delegating a page for people
 
-A page for people follows its record, as [record first, page on request](../documentation.md#record-first-page-on-request) describes. When the page work is delegated:
+A page for people follows its record, as [record first, page on request](../documentation.md#record-first-page-on-request) describes. When page work is delegated:
 
-- The brief holds the finished record, the person's request, the pages and chapters to change, and the completion condition: build, strict lint and captures at the supported widths.
-- The page author reads the [writing](../writing.md) and [site](../maintenance.md) guides and writes in its own words. A page adds no rule, number or limit its record lacks. A gap found while writing goes back to the record's owner, who fixes the record first.
+- The brief holds the finished record, the person's request or the record change the page must follow, the pages and chapters to change, and the completion condition: the [validation](../site/validation.md#validation-and-review) that applies to the change, including captures at the supported widths.
+- The page author reads the applicable [page guides](../writing.md) and [site guides](../maintenance.md) and writes in its own words, within [what a page may add](../documentation.md#rendered-pages-are-for-people-records-stay-markdown). A gap found while writing goes back to the record's owner, who fixes the record first.
 - The delegating agent looks at the captures before reporting the work done, under the [by-eye review](../site/validation.md#validation-and-review).
-- Keep the same page agent for further page requests in the same work, so it keeps what it has read. A one-line sync stays with the agent that edited the record.
+- Keep the same page agent for further page work in the same task, so it keeps what it has read.
 
 ## Coordination and integration
 

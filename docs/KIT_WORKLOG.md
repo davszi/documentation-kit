@@ -2,6 +2,55 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Fix what an independent review found in the restructured guides
+
+- deivid asked whether a subagent had reviewed the changes. None had. A
+  read-only reviewer then compared the guides at `30bfbb2` with `588d9e9` and
+  with `v2.0.0`. It found no dropped rule sentence and no blocker, and these
+  defects, all confirmed against the files and fixed here.
+- Two rules disagreed about pages. One said a page changes only on a person's
+  request; another said to update the explaining pages whenever a record
+  section changes. Now: a new page or chapter needs a request, an existing
+  page is always kept in step with its record, and the size decides who does
+  it. One term, small sync, replaces two.
+- Moving record rules out of the page guides had dropped math, code and visual
+  claim rules from the record author's route. `rules/records.md` now names
+  them in Excerpts, formulas and figures.
+- The router rows reached too little. The record row now names the sections of
+  `rules/documentation.md` from Record first through Rules for changes; the
+  page row names Rendered pages are for people; the publishing gate links the
+  review and deletion gates. `OPEN.md` format, checked by lint since before
+  2.0.0, is now written down.
+- The 3.0.0 guide gained a frozen-copy exception, a search for section names
+  written without a link, three title anchors, the starter reading-index rows
+  and a complete list of changed guides. The release notes gained three rows
+  and say outright that section anchors under `rules/` are stable.
+- Stale wording fixed in `tooling/lint.py`, `rules/conformance.md`,
+  `rules/engineering/performance.md`, `rules/experiments/workflow.md`,
+  `docs/KIT_INDEX.md`, `docs/KIT_CONTEXT.md` and the 1.1.0 guide.
+- Left as it is: the ledger paragraph in Numbers and staleness speaks about
+  page redesigns but binds the numbers a record states.
+- Correction to the entry below: it said a record edit routes to about 1,130
+  words. That route was incomplete. Counting whitespace-separated words, the
+  record row now leads to `rules/records.md` (966) plus `rules/documentation.md`
+  from Record first through Rules for changes (1,066): 2,032 words. At
+  `588d9e9` the same job led to at least 2,862 words (`documentation.md` 2,028,
+  `evidence.md` 423, `explanations.md` 411) and to 3,971 with `pages.md`.
+- The six pages for people were updated by a page agent (Opus, effort high)
+  from the records, as the new rule asks. It aligned them with the fixes above
+  while they were being made. Documentation and writing gains the chapter
+  Record first with a flow figure, and its chapters are ordered system,
+  records, pages; anchors added are `#record-first` and `#fig-record-first`,
+  none renamed. The page agent took the word counts off the page because the
+  earlier figure had no stated method.
+- The page agent found a renderer defect that predates this work: a paragraph
+  directly after a fold renders as raw Markdown. It is fixed in the next entry.
+- Checks: `tests/run_checks.sh` with the browser suites passes (148 tests,
+  strict lint, 22 scripts, four suites), run again here after the page agent's
+  own run. 42 captures of the changed chapters at 1600 and 390 px are under
+  `.build/visual-review/pages-restructure/`; the new chapter and the routes
+  chapter were looked at here.
+
 ## 2026-11-09 — Give records their own guide; record first, page on request
 
 - deivid decided how documentation work is split. The agent that did the work

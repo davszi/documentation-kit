@@ -2,6 +2,8 @@
 
 ## Publishing gate
 
+A requested review and any deletion pass their gates first; see [rules for changes and chronology](../documentation.md#rules-for-changes-and-chronology).
+
 Builds on feature branches must not publish production documentation. Publishing requires the consuming project's chosen branch/environment, authorization and successful checks. Hosting source changes are a separate explicit operation; a source build does not imply a deployed version. Rollback must preserve unrelated work and rebuild/verify the chosen revision.
 
 ## Configured publication

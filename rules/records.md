@@ -1,10 +1,10 @@
 # Writing records
 
-A record is the Markdown document an agent is routed to: a topic record, a guide, a plan, a log or exact evidence. The agent that did the work writes or updates the record first, before any page for people. The [documentation system](documentation.md) owns where a document lives and how it changes; this guide owns what a record says and how it is written. Page design, figures and reading layers belong to the [writing guides](writing.md) and apply only to pages for people.
+A record is the Markdown document an agent is routed to: a topic record, a guide, a plan or a log. The agent that did the work writes or updates the record first, before any page for people. Exact evidence is kept as records too, but it is preserved, not rewritten; see [evidence identity and frozen records](#evidence-identity-and-frozen-records). The [documentation system](documentation.md) owns where a document lives and how it changes; this guide owns what a record says and how it is written. Page design and reading layers belong to the [page guides](writing.md) and apply only to pages for people.
 
 ## One record per topic
 
-Every topic has a record: start it as `docs/topics/<topic>/<topic>.md` and split a growing record into descriptively named files. Do not name subject records `README.md`. The record is authoritative: a page for people explains it and never adds a rule, number or limit the record lacks. [Rendered pages are for people](documentation.md#rendered-pages-are-for-people-records-stay-markdown) covers pages and the `page_only` exception.
+Every topic has a record: start it as `docs/topics/<topic>/<topic>.md`. When it grows, split it into descriptively named files; together they are the topic's record. Do not name subject records `README.md`. A page for people follows the record: [rendered pages are for people](documentation.md#rendered-pages-are-for-people-records-stay-markdown) says what a page may add, how pages stay in step when a record changes, and the `page_only` exception.
 
 ## Format
 
@@ -26,9 +26,17 @@ When code, input data, method, workload or runtime conditions affecting a claim 
 
 When a redesign restates numbers in new prose, figures or slides, record each number's source in a ledger and lock the evidence blocks kept verbatim. The project owns the ledger format and the checks for both. A slide face may show only numbers that its chapter also shows; every distinct number a redesigned chapter shows, figure labels included, has a ledger source.
 
-Keep protocols, outputs, snapshots, failed attempts, changed settings, actual outcomes, reviews actually performed and relevant uncertainty with the work that produced them. For experiments, also retain producing code, inputs, full result tables, source pins and any independent reviews performed in the experiment directory. The page explains what they establish. The worklog records the landing and hashes without duplicating tables. Retained measured content remains subject to the [deletion gate](documentation.md#rules-for-changes-and-chronology).
+Keep protocols, outputs, snapshots, failed attempts, changed settings, actual outcomes, reviews actually performed and relevant uncertainty with the work that produced them. For experiments, also retain producing code, inputs, full result tables, source pins and any independent reviews performed in the experiment directory. A page, where one exists, explains what they establish. The worklog records the landing and hashes without duplicating tables. Retained measured content remains subject to the [deletion gate](documentation.md#rules-for-changes-and-chronology).
 
 Historical records preserve their original source pins, inputs, runtime, settings, resource limits, deadlines and verdicts where those fields apply.
+
+## Excerpts, formulas and figures
+
+A record may carry a code excerpt, a formula or a figure. The rules about what such content may claim apply in a record as on a page; the layout and presentation rules do not.
+
+- Code excerpts: the verified-excerpt and source-metadata rules in [code and diagrams](writing/code.md#code-and-diagrams).
+- Formulas: the derivation and numerical-verification rules in [mathematical explanation](writing/math.md#mathematical-explanation).
+- Screenshots and experiment visuals: the provenance rules in [run visuals and experiment lifecycle](writing/figures.md#run-visuals-and-experiment-lifecycle).
 
 ## Evidence identity and frozen records
 
@@ -40,6 +48,12 @@ If a project implements historical link resolution, limit rebasing to explicitly
 
 Restore an original only into an absent destination. Preserve a newer live file separately; do not overwrite unrelated pending work. Source relocation, hash verification and a reading view establish document integrity, not runtime qualification or permission to execute old procedures.
 
+The [resources guide](site/resources.md#resource-closure-and-evidence) describes the location manifest and the adapters a project may register for these records.
+
 ## Shelved investigations
 
-Shelving is a scope decision recorded in the experiment guide and owning topic. Preserve inputs, code, failures and concrete recovery conditions there. Resumption requires a new explicit assignment. A hidden page may remain directly linkable with `hidden = true`; hiding neither deletes evidence nor qualifies a replacement.
+Shelving is a scope decision recorded in the experiment's own guide and in the owning topic. Preserve inputs, code, failures and concrete recovery conditions there. Resumption requires a new explicit assignment. A hidden page may remain directly linkable with `hidden = true`; hiding neither deletes evidence nor qualifies a replacement.
+
+## Changes, worklog and open work
+
+The documentation system owns how a record changes. [Rules for changes and chronology](documentation.md#rules-for-changes-and-chronology) cover deletion, the worklog and probes. [From open work to subject knowledge](documentation.md#from-open-work-to-subject-knowledge) covers `OPEN.md` and work that matures into a topic.

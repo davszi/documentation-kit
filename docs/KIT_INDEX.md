@@ -39,7 +39,7 @@ structure, source registry, build command and hosting.
 
 ## Site development
 
-The [site router](../rules/maintenance.md) links to authoring, validation,
+The [site index](../rules/maintenance.md) links to authoring, validation,
 resources, publication and shared-reader contracts.
 [Panel-switcher contract](topics/panel-switcher/panel-switcher.md) owns the
 shared independent-comparison component.

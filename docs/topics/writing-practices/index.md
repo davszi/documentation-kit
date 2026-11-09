@@ -1,11 +1,11 @@
 +++
 title = "Documentation and writing"
 brand = "Documentation kit"
-brand_sub = "homes · pages · evidence · figures"
-description = "Where each kind of documentation belongs, why the rules exist, and how the kit's writing guides shape pages, explanations, evidence, figures, math and code, with illustrative examples."
+brand_sub = "homes · records · pages · figures"
+description = "Where each kind of documentation belongs, why the record is written before any page, what a record must say, and how the page guides shape explanations, figures, math and code, with illustrative examples."
 components = ["toc", "nav", "code", "filelinks"]
 page_css = ["build-sheet.css"]
-toc = [["Guide per task", "#routes"], ["One home", "#homes"], ["Open to topic", "#open-to-topic"], ["Topics", "#topics"], ["Records and pages", "#records-and-pages"], ["In step", "#page-and-record-in-step"], ["Changes and publishing", "#changes-and-publishing"], ["Section design", "#page-design"], ["Build sheets", "#build-sheets"], ["Story and folds", "#explanations"], ["Honest claims", "#honest-claims"], ["Evidence", "#evidence"], ["Figures", "#figures"], ["Mathematics", "#mathematics"], ["Code excerpts", "#code-excerpts"]]
+toc = [["Guide per task", "#routes"], ["One home", "#homes"], ["Record first", "#record-first"], ["Open to topic", "#open-to-topic"], ["Topics", "#topics"], ["Records and pages", "#records-and-pages"], ["In step", "#page-and-record-in-step"], ["Changes and publishing", "#changes-and-publishing"], ["Honest claims", "#honest-claims"], ["Evidence", "#evidence"], ["Section design", "#page-design"], ["Build sheets", "#build-sheets"], ["Story and folds", "#explanations"], ["Figures", "#figures"], ["Mathematics", "#mathematics"], ["Code excerpts", "#code-excerpts"]]
 page_only = "Explains the documentation and writing guides; they are the records, in rules/."
 +++
 
@@ -15,22 +15,47 @@ page_only = "Explains the documentation and writing guides; they are the records
 
 ## Each guide owns one kind of documentation decision
 
-<p class="bs-lead">The documentation system decides where content lives; six focused writing guides decide how a page presents it.</p>
+<p class="bs-lead">The documentation system decides where content lives and in what order it is written; writing records decides what a record says; five page guides decide how a page for people presents it.</p>
+
+<div class="bs-grid g3">
+<div class="bs-part bs-teal"><span class="bs-label">Where and when · documentation system</span><h3>Homes and order of work</h3><ul>
+<li>each fact is written once, in its home</li>
+<li>the record comes first; a new page only when someone asks</li>
+<li>how documents move, change and retire</li>
+<li>the <code>AGENTS.md</code> router</li>
+</ul></div>
+<div class="bs-part bs-orange"><span class="bs-label">What a record says · writing records</span><h3>Records for agents</h3><ul>
+<li>one record per topic, in plain Markdown</li>
+<li>one name per object; claims scoped to their evidence</li>
+<li>measured numbers with their full provenance</li>
+<li>frozen evidence and shelved work</li>
+<li>claim rules for excerpts, formulas and figures</li>
+</ul></div>
+<div class="bs-part bs-violet"><span class="bs-label">How a page presents it · page guides</span><h3>Pages for people</h3><ul>
+<li>section design and build-sheet blocks</li>
+<li>one visible story, depth in folds</li>
+<li>figures, mathematics and code excerpts</li>
+<li>layout and presentation, for whoever writes the page</li>
+</ul></div>
+</div>
 
 <div class="scroll" role="region" tabindex="0" data-reader-horizontal aria-label="Documentation and writing guides by task">
 
 | Before… | Read… | It covers | Explained here |
 |---|---|---|---|
-| Creating, moving or retiring a document | [Documentation system](documentation-system.html) | Canonical homes, the path from open work to topic, evidence identity, records and pages, agent entrypoints, changes, worklog and publishing | [One home](#homes), [Open to topic](#open-to-topic), [Records and pages](#records-and-pages), [Changes and publishing](#changes-and-publishing) |
+| Creating, moving, splitting or retiring a document | [Documentation system](documentation-system.html) | Canonical homes, the order of work, the path from open work to topic, records and pages, agent entrypoints, changes and the worklog | [One home](#homes), [Record first](#record-first), [Open to topic](#open-to-topic), [Records and pages](#records-and-pages), [Changes and publishing](#changes-and-publishing) |
 | Upgrading the kit pin or taking over a repository | [Project conformance check](conformance.html) | Pin, router, copied rules, homes, topics, pages and records, open work, compatibility, changed rules, site | [Topics](#topics), [In step](#page-and-record-in-step) |
+| Writing or changing a record: a guide, topic record, plan, worklog or open-work entry | [Writing records](records.html), plus the [documentation system](documentation-system.html#record-first-page-on-request) from Record first through the change rules | One record per topic, format, naming and honest claims, measured numbers, excerpts, formulas and figures, frozen evidence, shelved investigations | [Topics](#topics), [Records and pages](#records-and-pages), [Honest claims](#honest-claims), [Evidence](#evidence) |
+| Making a new page for people, once a person asked for one, or changing an existing page | [Record first, page on request](documentation-system.html#record-first-page-on-request) and [rendered pages are for people](documentation-system.html#rendered-pages-are-for-people-records-stay-markdown), then the applicable page guides below and the [site guides](maintenance.html) | When page work starts, who does it, from which brief, and who checks it | [Record first](#record-first), [Records and pages](#records-and-pages), [In step](#page-and-record-in-step) |
 | Laying out a rendered page | [Page design](page-design.html) | Section purpose, takeaway titles, homepages, build-sheet blocks, status boards, slide faces, review | [Section design](#page-design), [Build sheets](#build-sheets) |
-| Writing an explanation | [Explanations](explanations.html) | Story order, typed folds, naming, honest claims | [Story and folds](#explanations), [Honest claims](#honest-claims) |
-| Quoting a measured number | [Evidence](records.html#numbers-and-staleness) | Required provenance, staleness, number ledgers, run visuals, experiment records | [Evidence](#evidence) |
-| Adding a figure or comparison | [Figures](figures.html) | The visual completion gate, captions and references, comparisons, chart sizing, interaction and access | [Figures](#figures) |
+| Writing an explanation on a page | [Explanations](explanations.html) | Story order, typed folds, moving detail into a record | [Story and folds](#explanations) |
+| Adding a figure or comparison | [Figures](figures.html) | The visual completion gate, captions and references, comparisons, chart sizing, interaction and access, run visuals and live experiment reports | [Figures](#figures) |
 | Writing mathematics | [Math](math.html) | Definitions, derivations, KaTeX use, verification of analytic claims | [Mathematics](#mathematics) |
 | Showing code or a code diagram | [Code excerpts](code-excerpts.html) | Real excerpts with source metadata, rendering chrome, shared diagram semantics, diagram controls | [Code excerpts](#code-excerpts) |
 
 </div>
+
+Someone who only changes a record needs the first two sets: writing records and the documentation system's sections on order of work, pages and changes. From the page guides, a record writer needs only the few rules on what an excerpt, a formula or a figure may claim. The rest of the page guides matter to whoever writes a page. The chapters below follow the same split: first where content lives and in what order, then what a record says, then how a page presents it.
 
 The guides are records for agents and own the complete rules. This page explains them for people. Each chapter states a rule, the failure it prevents and one example of following it, puts further detail in folds and links back to the guide. The examples are invented for illustration: they describe no real project and contain no measured results.
 
@@ -49,7 +74,7 @@ The guides are records for agents and own the complete rules. This page explains
 | Project purpose, repository map, run and build instructions, named documentation routes | `docs/PROJECT_CONTEXT.md` |
 | Reading routes to development guidance, topics, evidence, sessions and open work | `docs/index.md` |
 | Mechanisms, accepted specifications, methods, scoped results and limits | `docs/topics/<topic>/<topic>.md` and further descriptively named records; every topic has one unless its page declares `page_only` |
-| Human explanation of a topic: current conclusions, figures, decisions and blockers | `docs/topics/<topic>/index.md`, when needed |
+| Human explanation of a topic: current conclusions, figures, decisions and blockers | `docs/topics/<topic>/index.md`, when a person asked for a page |
 | Unfinished delivery, prospective acceptance and unresolved choices with their owners | Named unfinished plans and decision records |
 | A one-line route to every owed workstream | `docs/open/OPEN.md`, never a duplicate task board |
 | Landed work, reasons, measured effects and probes | `docs/worklog.md`, append-only |
@@ -87,6 +112,61 @@ Full guide: [documentation system](documentation-system.html), especially [canon
 
 </section>
 
+<section class="card" id="record-first">
+
+## The record is written first; a new page is made only when a person asks for one
+
+<p class="bs-lead">The agent that did the work writes the record. A new page waits for a person's request, while an existing page follows every change to its record; page work beyond a sentence or two goes to a separate page agent that takes the finished record as its brief.</p>
+
+<figure id="fig-record-first">
+<div class="bs-flow" role="img" aria-label="Step 1: the working agent, which did the work, writes the record in Markdown: what changed, what was measured and why. Step 2 starts when page work is due: a person asked for a new page or chapter, or a record change made an existing page stale. A separate page agent receives the finished record as its brief, reads the applicable page and site guides, writes in its own words without adding anything the record lacks, and stays available for later page work in the same task. Step 3: the delegating agent looks at the captures before reporting the page done. A small sync of a sentence or two is not handed on; the agent that edited the record fixes it itself.">
+<div class="bs-node bs-teal"><span class="bs-label">1 · Working agent</span><b>Writes the record</b><ul><li>what changed, what was measured, why</li><li>plain Markdown, under writing records</li><li>no new page unless someone asks</li></ul></div>
+<div class="bs-arrow"><span>page work</span></div>
+<div class="bs-node bs-violet"><span class="bs-label">2 · Page agent</span><b>Writes the page</b><ul><li>brief: the finished record, plus the request or the record change</li><li>reads the applicable page and site guides</li><li>own words; nothing the record lacks</li><li>kept for later page work in the task</li></ul></div>
+<div class="bs-arrow"><span>captures</span></div>
+<div class="bs-node bs-orange"><span class="bs-label">3 · Delegating agent</span><b>Checks the captures</b><ul><li>every changed chapter, whole</li><li>at each width the site supports</li><li>only then reports the page done</li></ul></div>
+<div class="bs-back"><span>×</span> A small sync is not handed on: when a record edit makes a sentence or two of a page stale, the agent that edited the record fixes them itself.</div>
+</div>
+<figcaption><b>Figure 1.</b> Who writes what, and in which order. Page work starts from a person's request for a new page, or from a record change that an existing page must follow. This illustrative diagram is authored in the page source and contains no measured results.</figcaption>
+</figure>
+
+Writing a record and writing a page are different jobs. The agent that did the work knows what changed, what it measured and why, and that knowledge is freshest right after the work; the record is where it has to land. A page reorders, illustrates and simplifies for a reader. That takes a different set of guides, and a new page is wasted effort when nobody asked to read it. When one rule set served both jobs, an agent that only had to update a record was routed through the page guides as well. Splitting the jobs keeps the record writer's reading short and gives the page to an agent whose whole task it is.
+
+[Figure 1](#fig-record-first) shows the order. Notice the two ways page work starts. A new page or chapter needs a person's request. An existing page needs none: it explains a record, so when the record changes, the page changes with it, in the same change. Because the page agent begins from the record alone, anything the record leaves out shows up as a gap; the page agent reports it to the record's owner, who fixes the record before the page explains it.
+
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>A page nobody asked for</h3><p>An agent fixes a slow import, then spends the rest of its turn building a new topic page. The record gets two lines; the measurement and the reason for the fix are on the page only.</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>Record now, page when asked</h3><p>The agent writes the fix, its measurement and the reason into the topic record. A week later the owner asks for a page. A page agent writes the chapter from the record, and the agent that delegated it looks at the captures before reporting the page done.</p></div>
+</div>
+
+<!-- fold: experiment What a page agent receives and returns -->
+
+**The brief.** The agent that hands the page work on writes a brief with four parts: the finished record; what started the work, either the person's request or the record change the page must now follow; the pages and chapters to change; and when the work counts as done. Done means the site validation that applies to the change has passed, captures at every supported width included.
+
+**The page agent's part.** It reads the page guides and site guides that apply, then explains the record in its own words. It may reorder, simplify and illustrate, but a rule, number or limit on the page must already be in the record. When it finds a gap or a contradiction, it does not fill it on the page; it reports it to the record's owner, who corrects the record first.
+
+**The delegating agent's part.** It looks at the captures itself before it calls the page done, as the [by-eye review](validation.html#validation-and-review) asks: each changed chapter whole, checked for alignment, spacing, list markers and overflow. A passing build does not replace that look.
+
+**Later page work.** Further page work in the same task goes to the same page agent. It has already read the record and the guides, so the next job starts from what it knows.
+
+The [delivery guide](delivery.html#delegating-a-page-for-people) has the complete list.
+
+<!-- /fold -->
+
+<!-- fold: code Small syncs, runtimes without delegation and who reads what -->
+
+**A small sync.** Sometimes a record edit makes a sentence or two on a page wrong. Handing that to a new agent costs more than the fix, so the agent that edited the record changes those sentences itself, in the same change. Lint's reread notes, explained in [In step](#page-and-record-in-step), tell it which chapters to look at. Anything larger is page work for a page agent.
+
+**No delegation available.** Some runtimes cannot hand work to a second agent. The page is then still a separate step: the same agent starts it only after the record is finished.
+
+**Who reads which guides.** The record writer reads writing records and the documentation system's sections on order, pages, open work and changes. It needs the page guides only for the few rules on what a code excerpt, a formula or an experiment visual may claim, which apply in records too; [writing records](records.html#excerpts-formulas-and-figures) names them. The page author reads the applicable page and site guides, starting from the [writing index](writing.html) and the [site index](maintenance.html).
+
+<!-- /fold -->
+
+Full guide: [record first, page on request](documentation-system.html#record-first-page-on-request) and [delegating a page for people](delivery.html#delegating-a-page-for-people).
+
+</section>
+
 <section class="card" id="open-to-topic">
 
 ## Finished work moves to its subject; evidence stays where it was made
@@ -102,14 +182,14 @@ Full guide: [documentation system](documentation-system.html), especially [canon
 <div class="bs-node bs-teal"><span class="bs-label">Owning topic</span><b>Current knowledge</b><ul><li>Established behavior</li><li>Accepted requirements</li><li>Durable rationale</li><li>Accepted future specification, labelled apart</li></ul></div>
 <div class="bs-back"><span>×</span> A closed record supports current knowledge through a link. It does not become a second current knowledge home.</div>
 </div>
-<figcaption><b>Figure 1.</b> Promotion moves knowledge to its subject; the producing evidence stays where it was made. This illustrative diagram is authored in the page source and contains no measured results.</figcaption>
+<figcaption><b>Figure 2.</b> Promotion moves knowledge to its subject; the producing evidence stays where it was made. This illustrative diagram is authored in the page source and contains no measured results.</figcaption>
 </figure>
 
 A document that mixes plans, findings and evidence becomes hard to trust: without a review, a reader cannot tell whether a sentence describes current behavior or an intention. The guide therefore reviews a mixed document section by section as work matures. It also guards against a quieter failure: assistant proposals remain proposals until explicitly accepted, and migration, silence or continued discussion does not make them accepted requirements.
 
-[Figure 1](#fig-open-to-topic) follows content through its three owners. Notice the crossed-out way back: a closed record keeps supporting current knowledge through a link, but it does not become a second knowledge home.
+[Figure 2](#fig-open-to-topic) follows content through its three owners. Notice the crossed-out way back: a closed record keeps supporting current knowledge through a link, but it does not become a second knowledge home.
 
-Unfinished implementation, unresolved choices and prospective acceptance stay with the open owner; topic research notes may remain with their topic, and `OPEN.md` routes there. A completed source is retired only after its unique content and references are accounted for and the user approves the deletion.
+Unfinished implementation, unresolved choices and prospective acceptance stay with the open owner; topic research notes may remain with their topic, and `OPEN.md` routes there. Each line in `OPEN.md` is one route that links the document owning the work. When the work is finished, the line is removed, not ticked, struck through or marked done; lint checks both. A completed source is retired only after its unique content and references are accounted for and the user approves the deletion.
 
 <div class="bs-grid g2">
 <div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>A proposal promoted by silence</h3><p>An assistant suggests a naming rule in a plan. Nobody objects, so the next edit copies it into the topic as a requirement, and the plan keeps describing it as if it were still open.</p></div>
@@ -140,13 +220,15 @@ Sometimes a document must be kept exactly as it was, byte for byte, because some
 
 **Restoring.** Put an original back only where nothing exists yet. If a newer live file is in the way, keep it separately, and do not overwrite unrelated pending work.
 
+**Where the manifest is described.** The [resources guide](resources.html#resource-closure-and-evidence) explains the location manifest and the path adapters a project may register for frozen records.
+
 **What this proves.** Relocating sources, verifying hashes and offering a reading view establish that a document is intact. They do not show that an old procedure still qualifies at runtime, and they give no permission to execute it.
 
 <!-- /fold -->
 
 <!-- fold: experiment Shelved investigations -->
 
-Shelving an investigation is a decision about scope, not a quiet stop. Record it in the experiment guide and in the topic that owns the work, and keep there what a later restart would need: the inputs, the code, the failures and the concrete conditions under which the work could resume. Resuming is not automatic; it takes a new, explicit assignment.
+Shelving an investigation is a decision about scope, not a quiet stop. Record it in the experiment's own guide and in the topic that owns the work, and keep there what a later restart would need: the inputs, the code, the failures and the concrete conditions under which the work could resume. Resuming is not automatic; it takes a new, explicit assignment.
 
 A shelved page can stay reachable through its direct link with `hidden = true`. Hiding does less than it may seem: it deletes no evidence, and it does not make any replacement qualified.
 
@@ -160,7 +242,7 @@ Full guide: [from open work to subject knowledge](documentation-system.html#from
 
 ## A topic is one folder: always a record for agents, and a page when people need one
 
-<p class="bs-lead">Each subject lives in <code>docs/topics/&lt;topic&gt;/</code>. Every topic has a record agents follow; a page explains it to people when they need one.</p>
+<p class="bs-lead">Each subject lives in <code>docs/topics/&lt;topic&gt;/</code>. Every topic has a record agents follow; a page explains it to people once someone asks for one.</p>
 
 <figure id="fig-topic-folder">
 <div class="bs-folder" role="img" aria-label="The folder docs/topics/vehicle-model holds vehicle-model.md and tyre-fitting.md, records that agents follow; index.md, the page people read, which links to the records; and evidence, sources kept for a citation or reproduction.">
@@ -170,23 +252,23 @@ Full guide: [from open work to subject knowledge](documentation-system.html#from
 <div class="bs-folder-row bs-violet"><code>index.md</code><span class="bs-badge">page</span><span><b>People read it.</b> The conclusion, a figure, why, the next decision; links the records.</span></div>
 <div class="bs-folder-row bs-orange"><code>evidence/</code><span class="bs-badge">evidence</span><span><b>Kept for a reason:</b> sources for one citation or reproduction.</span></div>
 </div>
-<figcaption><b>Figure 2.</b> One topic folder and who reads each file. This diagram contains no measured results.</figcaption>
+<figcaption><b>Figure 3.</b> One topic folder and who reads each file. This diagram contains no measured results.</figcaption>
 </figure>
 
 <div class="bs-checks">
 <div class="bs-check"><span class="bs-badge bs-ok">default</span><h3>Record and page</h3><p>Agents follow the spec and people need it explained: the record holds the exact text, the page the reasoning and figures.</p></div>
-<div class="bs-check"><span class="bs-badge bs-ok">contract only</span><h3>Record, no page</h3><p>A schema, checklist or limit nobody needs walked through. Add a page later if someone does.</p></div>
+<div class="bs-check"><span class="bs-badge bs-ok">contract only</span><h3>Record, no page</h3><p>A schema, checklist or limit nobody has asked to see explained. Add a page later if someone asks.</p></div>
 <div class="bs-check"><span class="bs-badge bs-wait">declared exception</span><h3>Page, no record</h3><p>For cases the rules do not foresee yet, such as the kit's own pages that explain its guides. It says why in its frontmatter, <code>page_only = "…"</code>; without that, lint warns.</p></div>
 </div>
 
-The split follows how each reader uses the text. An agent is routed to an exact file and section and must find the same words there next time; a person wants the conclusion first, a figure and an example, and is better served when the page is rearranged for reading. Putting both in one file means layout HTML in the agent's way, or a spec that moves whenever the page is improved. The two therefore cover the same subject on purpose, and that overlap is not duplication to remove; what keeps them honest is that the record decides. A page may reorder, simplify and illustrate, but a rule, number or limit it shows must be in the record. So the record comes first; a topic without one is a rare, declared exception that the conformance check rereads on every upgrade.
+The split follows how each reader uses the text. An agent is routed to an exact file and section and must find the same words there next time; a person wants the conclusion first, a figure and an example, and is better served when the page is rearranged for reading. Putting both in one file means layout HTML in the agent's way, or a spec that moves whenever the page is improved. The two therefore cover the same subject on purpose, and that overlap is not duplication to remove; what keeps them honest is that the record decides. A page may reorder, simplify and illustrate, but a rule, number or limit it shows must be in the record. So the record comes first, as [Record first](#record-first) describes; a topic without one is a rare, declared exception that the conformance check rereads on every upgrade.
 
 <div class="bs-grid g2">
 <div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>The spec inside a fold</h3><p>A topic has only <code>index.md</code>. Its tyre limits sit in a fold between two figures. An agent routed there reads card markup to find them, and a later layout change moves them.</p></div>
 <div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>Spec in the record, page links it</h3><p>The limits live in <code>vehicle-model.md</code> under their own heading. The page shows the figure, says why the limits are what they are and links that heading.</p></div>
 </div>
 
-Full guide: [canonical homes](documentation-system.html#canonical-homes) · [rendered pages are for people; records stay Markdown](documentation-system.html#rendered-pages-are-for-people-records-stay-markdown)
+Full guide: [canonical homes](documentation-system.html#canonical-homes) · [one record per topic](records.html#one-record-per-topic) · [rendered pages are for people; records stay Markdown](documentation-system.html#rendered-pages-are-for-people-records-stay-markdown)
 
 </section>
 
@@ -194,23 +276,23 @@ Full guide: [canonical homes](documentation-system.html#canonical-homes) · [ren
 
 ## Records keep the contract for agents; pages explain it to people
 
-<p class="bs-lead">Agents read plain Markdown records through one router, and a rendered page exists only when a person has something to learn or act on.</p>
+<p class="bs-lead">Agents read plain Markdown records through one router; a rendered page is added when a person asks for one and has something to learn or act on.</p>
 
 <figure id="fig-records-and-pages">
-<div class="bs-flow" role="img" aria-label="AGENTS.md is the one thin router: it names the project context and prerequisites and routes the remaining rules by action to plain Markdown records. A rendered page explains current conclusions from those records and links to them instead of reproducing them. Reading a route grants no permission to execute or publish.">
+<div class="bs-flow" role="img" aria-label="AGENTS.md is the one thin router: it names the project context and prerequisites and routes the remaining rules by action to plain Markdown records. A rendered page, made when a person asks for one, explains current conclusions from those records and links to them instead of reproducing them. Reading a route grants no permission to execute or publish.">
 <div class="bs-node bs-orange"><span class="bs-label">Router</span><b><code>AGENTS.md</code></b><ul><li>Names the project context and prerequisites</li><li>Rules every task needs</li><li>Remaining rules routed by action</li></ul></div>
 <div class="bs-arrow"><span>by action</span></div>
 <div class="bs-node bs-teal"><span class="bs-label">Records for agents</span><b>Plain Markdown</b><ul><li>Headings, tables and lists</li><li>Exact file references and evidence links</li><li>Contracts, readiness and chronology</li></ul></div>
 <div class="bs-arrow"><span>explain</span></div>
-<div class="bs-node bs-violet"><span class="bs-label">Page for people</span><b>Conclusions and decisions</b><ul><li>Current conclusions and accepted specifications</li><li>Demonstrated behavior with its evidence scope</li><li>Useful figures and the next decisions</li></ul></div>
+<div class="bs-node bs-violet"><span class="bs-label">Page for people · on request</span><b>Conclusions and decisions</b><ul><li>Current conclusions and accepted specifications</li><li>Demonstrated behavior with its evidence scope</li><li>Useful figures and the next decisions</li></ul></div>
 <div class="bs-back"><span>×</span> A page links to records instead of reproducing them. Reading a route grants no permission to execute or publish.</div>
 </div>
-<figcaption><b>Figure 3.</b> Agents reach records through one router; people reach an explanation through pages that link back to the records. This illustrative diagram is authored in the page source and contains no measured results.</figcaption>
+<figcaption><b>Figure 4.</b> Agents reach records through one router; people reach an explanation through pages that link back to the records. This illustrative diagram is authored in the page source and contains no measured results.</figcaption>
 </figure>
 
-Agents and people need different things from the same knowledge. An agent follows exact headings, file references and anchors; a person needs the conclusion, a figure and the next decision. Without this split, layout HTML gets in an agent's way and bookkeeping buries what a person came to learn. The guide therefore keeps contracts, handoff and resume state, readiness boards, bookkeeping and long run chronology in records, and pages link to those records instead of reproducing them.
+Agents and people need different things from the same knowledge. An agent follows exact headings, file references and anchors; a person needs the conclusion, a figure and the next decision. Without this split, layout HTML gets in an agent's way and bookkeeping buries what a person came to learn. The documentation system therefore keeps contracts, handoff and resume state, readiness boards, bookkeeping and long run chronology in records, and pages link to those records instead of reproducing them. How a record itself is written, its naming, claims and numbers, has its own guide: [writing records](records.html).
 
-[Figure 3](#fig-records-and-pages) shows the two reading paths. Notice that the page sits downstream of the records: it explains them but does not own them.
+[Figure 4](#fig-records-and-pages) shows the two reading paths. Notice that the page sits downstream of the records: it explains them but does not own them.
 
 <div class="bs-grid g2">
 <div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>A topic page doubling as a work log</h3><p>Below its conclusion, the rendered topic page holds a readiness board, a handoff checklist and a dated diary of every run.</p></div>
@@ -219,8 +301,8 @@ Agents and people need different things from the same knowledge. An agent follow
 
 <!-- fold: code Record format and registered source pages -->
 
-- **One record per topic.** It starts as `docs/topics/<topic>/<topic>.md`; when it grows, split it into files named after what they describe. A subject record is never called `README.md`. Add the page, `index.md`, once a person has something to learn or act on. A page with no record says why in its frontmatter, with `page_only = "<reason>"`; otherwise lint warns.
-- **Plain Markdown in records.** Headings, tables, lists, exact file references and links to evidence. Layout HTML stays out; a diagram that a record needs goes into its own file and is linked. Anchors that other documents point to are kept.
+- **One record per topic.** It starts as `docs/topics/<topic>/<topic>.md`; when it grows, split it into files named after what they describe. A subject record is never called `README.md`. Add the page, `index.md`, once a person asks for one and has something to learn or act on. A page with no record says why in its frontmatter, with `page_only = "<reason>"`; otherwise lint warns.
+- **Plain Markdown in records.** Headings, tables, lists, exact file references and links to evidence. Layout HTML stays out; a diagram that a record needs goes into its own file and is linked. Anchors that other documents point to are kept. Both points come from [writing records](records.html#format).
 - **A record can also be shown whole.** A site may render a record as a [registered source page](authoring.html#registered-source-pages). The Markdown file remains the record and the only copy anyone edits; the rendered page adds nothing of its own. The guides linked from this page are rendered that way.
 
 <!-- /fold -->
@@ -242,7 +324,7 @@ When a page becomes predominantly agent-facing, its agent material moves into re
 
 <!-- /fold -->
 
-Full guide: [rendered pages are for people; records stay Markdown](documentation-system.html#rendered-pages-are-for-people-records-stay-markdown) and [agent entrypoints](documentation-system.html#agent-entrypoints-import-versus-point).
+Full guide: [rendered pages are for people; records stay Markdown](documentation-system.html#rendered-pages-are-for-people-records-stay-markdown), [record format](records.html#format) and [agent entrypoints](documentation-system.html#agent-entrypoints-import-versus-point).
 
 </section>
 
@@ -260,7 +342,7 @@ Full guide: [rendered pages are for people; records stay Markdown](documentation
 <div class="bs-arrow"><span>links</span></div>
 <div class="bs-node bs-orange"><span class="bs-label">3 · Remind</span><b>Pages to reread</b><ul><li>every page linking that heading</li><li>a note, never a failure</li></ul></div>
 </div>
-<figcaption><b>Figure 4.</b> How a record change reaches the pages that explain it. This diagram contains no measured results.</figcaption>
+<figcaption><b>Figure 5.</b> How a record change reaches the pages that explain it. This diagram contains no measured results.</figcaption>
 </figure>
 
 An explanation for people is not the record in nicer type: it leads with the outcome, reorders, simplifies and adds an example. So a page cannot quote its record without getting worse, and two texts about one rule will drift unless something connects them. The connection already exists: every explanation links the record section it explains. Lint follows those links backwards from the sections a change touched. A link to a whole guide, as in a routes table, is noted only when the guide's opening text changes, so a routine edit names the few chapters that explain it.
@@ -275,6 +357,8 @@ NOTE: rules/engineering/code.md › Refactoring over compatibility changed.
 <div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>The rule moves, the page stays</h3><p>A rule gains an exception. The record is updated; the page that explains the rule still states it without the exception, and nothing points at it.</p></div>
 <div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>The change names its pages</h3><p>The same edit makes lint list the one chapter that explains the rule. The author rereads it, adds the exception in the page's own words and commits both.</p></div>
 </div>
+
+This update needs no new request: an existing page always follows its record. Who makes it follows from [Record first](#record-first). When the listed chapter needs a sentence or two, the agent that edited the record makes that sync itself, in the same change. Anything larger is page work: where the runtime supports delegation, it goes to a page agent with the finished record as its brief.
 
 Full guide: [rules for changes and chronology](documentation-system.html#rules-for-changes-and-chronology)
 
@@ -333,17 +417,100 @@ A related leak concerns labels. Source markers such as `INVARIANT` and `DON'T-RE
 
 <!-- fold: experiment Local review, browser approval and publishing -->
 
+These rules belong to the site guides: local review to [validation](validation.html#local-review-and-browser-access), the gate before deployment to [publication](publication.html#publishing-gate).
+
 **Before review.** Work from the project root with the pinned kit, use the commands in the project's context and finish the checks in the [validation guide](validation.html#validation-and-review) first. Then show the reviewer the rendered page with its figures; add source or evidence links where they help.
 
 **Serving the page locally.** Serve only the generated output, and only on loopback. Before reusing a server that is already running, confirm who owns it and which checkout it serves. Do not expose the repository root, and do not stop a server that belongs to another session. Stop your own temporary servers after the review, unless one is kept running for the user's preview.
 
 **When a browser is refused.** Approval to use a browser covers the supported origin only. If access is rejected on policy grounds, keep the rejection and settle the permission with its owner. Switching transport, browser or control API to get around the block is not allowed. Opening a file URL by hand is no proof that an agent inspected the rendering.
 
-**Publishing.** Changing what the hosting serves is a separate, explicit operation: building the source does not mean a version is deployed. A rollback leaves unrelated work untouched, and the chosen revision is rebuilt and verified.
+**Publishing.** Only the project's chosen branch or environment publishes, with authorization and passing checks, and a requested review or a deletion passes its own gate first. Changing what the hosting serves is a separate, explicit operation: building the source does not mean a version is deployed. A rollback leaves unrelated work untouched, and the chosen revision is rebuilt and verified.
 
 <!-- /fold -->
 
-Full guide: [rules for changes and chronology](documentation-system.html#rules-for-changes-and-chronology) and [review, build and publishing](validation.html#local-review-and-browser-access).
+Full guide: [rules for changes and chronology](documentation-system.html#rules-for-changes-and-chronology), [local review and browser access](validation.html#local-review-and-browser-access) and the [publishing gate](publication.html#publishing-gate).
+
+</section>
+
+<section class="card" id="honest-claims">
+
+## Name each object once, and claim only what the evidence shows
+
+<p class="bs-lead">Use one term per object on every surface, and label each claim by the kind of evidence behind it.</p>
+
+<div class="bs-checks">
+<div class="bs-check"><span class="bs-badge bs-off">future</span><h3>Accepted future behavior</h3><p>Accepted but labelled apart from what is implemented.</p></div>
+<div class="bs-check"><span class="bs-badge bs-ok">implemented</span><h3>Implemented behavior</h3><p>Labelled apart from accepted future behavior and from runtime observations.</p></div>
+<div class="bs-check"><span class="bs-badge bs-ok">local</span><h3>CPU checks</h3><p>A local check proves only its tested property.</p></div>
+<div class="bs-check"><span class="bs-badge bs-ok">runtime</span><h3>Native or runtime observations</h3><p>Labelled apart from CPU checks; a local test is not a native runtime check.</p></div>
+</div>
+
+Two names for one object make a reader wonder whether there are two objects. A claim that outruns its evidence is worse: a smoother drawing can be read as proof of accuracy, and an estimate typed into an empty cell looks like a measurement. Writing records therefore asks for one term per object across prose, controls, legends, tables, figures and output, and separates claims that require different evidence: visual fidelity, smoothness, input preservation, correspondence with a source and physical accuracy. A local check or smoother drawing proves only its tested property.
+
+These rules live in the records guide because a claim is first made in a record, by the agent that did the work. A page that explains the record makes the same claims and follows the same rules; it cannot claim more than its record does. The four labels above mark claims that the guide keeps apart.
+
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>An overclaim</h3><p>"The new interpolation is accurate." The only check was that the plotted curve looks smoother, and an empty error column was filled with an estimate.</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>A scoped claim</h3><p>"The plotted curve is smoother (visual check). Correspondence with the source: not measured." Where a supported bound exists, it is given with its source.</p></div>
+</div>
+
+<!-- fold: dead-end Decision rationale and baselines -->
+
+A decision recorded without its reasons invites the same debate again. Put the rationale next to the decision, including why this instrument or default was chosen and why the alternatives lost.
+
+Baselines need the same care. A baseline cited for what currently ships has to measure what ships, and a retired baseline is labelled historical. The verdict of an experiment is also a different kind of content from measurements taken in deployment, so the two are not presented as one.
+
+<!-- /fold -->
+
+<!-- fold: code Naming mechanisms, functions and renames -->
+
+Name a mechanism by what the reader can see it do. Terms from inside a formulation belong only where that formulation is being explained. When something is renamed, the rename covers every surface it appears on, so that no old name lingers. For a function, say what it receives, what it returns, what it optimizes or interpolates, and which of its inputs vary and which stay fixed.
+
+<!-- /fold -->
+
+Full guide: [naming and honest claims](records.html#naming-and-honest-claims).
+
+</section>
+
+<section class="card" id="evidence">
+
+## A measured number is current only with its full provenance
+
+<p class="bs-lead">Quote a number as current evidence only when its source and conditions are recorded and still hold.</p>
+
+<div class="bs-specs"><div><span class="bs-label">Source</span><b>Commit + command</b></div><div><span class="bs-label">Conditions</span><b>Runtime + workload</b></div><div><span class="bs-label">Reading</span><b>Units + baseline</b></div><div><span class="bs-label">Reach</span><b>Method + scope</b></div></div>
+
+A number without its conditions cannot be checked, and a number whose inputs have changed can look authoritative while no longer being true. Writing records therefore requires full provenance for any current measured claim, and a rerun before quoting it as current when code, input data, method, workload or runtime conditions affecting it change. A historical label does not qualify changed inputs. Configuration values, derivations and design arithmetic are not measurements: they cite their source and are labelled accordingly.
+
+A current measured claim records the eight items above and links its raw result and limitations. The number is recorded in the record of the work that measured it, and a page that quotes it is held to the same rule.
+
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>A number without provenance</h3><p>"The new layout loads much faster." No commit, command, workload or baseline is given, and the input data changed after the run.</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>A number with provenance</h3><p>The claim names its source commit, exact command, runtime and workload, units, baseline, method and scope, and links the raw result and its limitations. After the input data changed, it was rerun before being quoted as current.</p></div>
+</div>
+
+<!-- fold: experiment Number ledgers for redesigns -->
+
+A redesign restates numbers: in new prose, in redrawn figures, on slides. Each restatement is a chance to change a number by accident. Two safeguards answer that. A ledger records the source of every number, and the evidence blocks that are kept word for word are locked so that they cannot change unnoticed. Each project keeps its own ledger format and its own checks for both.
+
+Two rules bound what may appear. A slide face shows only numbers that its chapter also shows. And every distinct number in a redesigned chapter, labels inside figures included, has a source in the ledger.
+
+An edit that changes presentation only may reuse captured results, but only after checking that identities, numbers and treatments are still intact.
+
+<!-- /fold -->
+
+<!-- fold: experiment What stays with the producing work -->
+
+The work that produced a result keeps its own record: protocols, outputs, snapshots, failed attempts, changed settings, what actually happened, the reviews that were really performed and the uncertainty that matters. For an experiment, the experiment directory also holds the producing code, the inputs, the full result tables, the source pins and any independent reviews.
+
+Other documents point there without copying. The page explains what the results establish. The worklog records the landing and its hashes and does not duplicate the tables. Retained measured content falls under the deletion gate like everything else.
+
+A rerun does not overwrite history. The old record keeps its date, runtime, inputs and scope, and historical records keep their original source pins, inputs, runtime, settings, resource limits, deadlines and verdicts wherever those fields apply.
+
+<!-- /fold -->
+
+Full guide: [numbers and staleness](records.html#numbers-and-staleness). Screenshots, clips and live experiment reports are presentation and belong to the figures guide; see the [Figures](#figures) chapter.
 
 </section>
 
@@ -441,7 +608,7 @@ In a flow, keep arrow labels to about 12 characters and box titles to about 30. 
 
 <!-- fold: experiment Completion and review -->
 
-Layout work is reviewed in the form the reviewer asked for: a separate prototype, or a trial made in place and left uncommitted. Either way the redesign must not lose anything. Content, evidence, media identities and public anchors all survive it. Before calling it done, pass the [documentation review gate](documentation-system.html#rules-for-changes-and-chronology) and complete [site validation](validation.html#validation-and-review), including the checks the project requires.
+Layout work is reviewed in the form the reviewer asked for: a separate prototype, or a trial made in place and left uncommitted. Either way the redesign must not lose anything. Content, evidence, media identities and public anchors all survive it. Before calling it done, pass the [documentation review gate](documentation-system.html#rules-for-changes-and-chronology) and complete [site validation](validation.html#validation-and-review), including the checks the project requires. Validation ends with a look by eye: each changed element is captured whole at every supported width and checked for alignment, spacing and overflow. When the page was delegated, the agent that delegated it looks at those captures before reporting the work done, as [Record first](#record-first) describes.
 
 A page that exists to support a decision ends with a table that sets the options against stated criteria, and with a clear verdict.
 
@@ -464,12 +631,12 @@ Full guide: [build-sheet pages](page-design.html#build-sheet-pages), [slide face
 <div class="bs-node bs-violet"><span class="bs-label">Optional</span><b>Typed folds</b><ul><li><code>math</code> derivations</li><li><code>experiment</code> detail</li><li><code>code</code> excerpts</li><li><code>dead-end</code>, shown as Alternatives</li></ul></div>
 <div class="bs-back"><span>×</span> A fold never hides a separate required argument.</div>
 </div>
-<figcaption><b>Figure 5.</b> Optional depth branches from a complete visible argument. This illustrative diagram is authored in the page source and contains no measured results.</figcaption>
+<figcaption><b>Figure 6.</b> Optional depth branches from a complete visible argument. This illustrative diagram is authored in the page source and contains no measured results.</figcaption>
 </figure>
 
 An explanation fails when the reader meets a number before the instrument that produced it, or a term before its definition. It also fails when the decisive step hides in an optional section that many readers never open. The guide orders by understanding: purpose, prerequisites, ingredients, mechanism, examples, evidence and limits. The complete argument, narrative figures, comparison cases and verdict must remain intelligible with every fold closed.
 
-[Figure 5](#fig-story) shows the two reading layers. Notice that the arrow goes one way: folds deepen the Story but do not hide a separate required argument.
+[Figure 6](#fig-story) shows the two reading layers. Notice that the arrow goes one way: folds deepen the Story but do not hide a separate required argument.
 
 Each concept or formula is explained in one canonical place and linked elsewhere. A brief result label or scope condition stays beside the evidence whenever it affects how the reader should interpret that evidence.
 
@@ -496,97 +663,6 @@ Full guide: [story and reading layers](explanations.html#story-and-reading-layer
 
 </section>
 
-<section class="card" id="honest-claims">
-
-## Name each object once, and claim only what the evidence shows
-
-<p class="bs-lead">Use one term per object on every surface, and label each claim by the kind of evidence behind it.</p>
-
-<div class="bs-checks">
-<div class="bs-check"><span class="bs-badge bs-off">future</span><h3>Accepted future behavior</h3><p>Accepted but labelled apart from what is implemented.</p></div>
-<div class="bs-check"><span class="bs-badge bs-ok">implemented</span><h3>Implemented behavior</h3><p>Labelled apart from accepted future behavior and from runtime observations.</p></div>
-<div class="bs-check"><span class="bs-badge bs-ok">local</span><h3>CPU checks</h3><p>A local check proves only its tested property.</p></div>
-<div class="bs-check"><span class="bs-badge bs-ok">runtime</span><h3>Native or runtime observations</h3><p>Labelled apart from CPU checks; a local test is not a native runtime check.</p></div>
-</div>
-
-Two names for one object make a reader wonder whether there are two objects. A claim that outruns its evidence is worse: a smoother drawing can be read as proof of accuracy, and an estimate typed into an empty cell looks like a measurement. The guide therefore uses one term per object across prose, controls, legends, tables, figures and output, and separates claims that require different evidence: visual fidelity, smoothness, input preservation, correspondence with a source and physical accuracy. A local check or smoother drawing proves only its tested property.
-
-The four labels below mark claims that the guide keeps apart.
-
-<div class="bs-grid g2">
-<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>An overclaim</h3><p>"The new interpolation is accurate." The only check was that the plotted curve looks smoother, and an empty error column was filled with an estimate.</p></div>
-<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>A scoped claim</h3><p>"The plotted curve is smoother (visual check). Correspondence with the source: not measured." Where a supported bound exists, it is given with its source.</p></div>
-</div>
-
-<!-- fold: dead-end Decision rationale and baselines -->
-
-A decision recorded without its reasons invites the same debate again. Put the rationale next to the decision, including why this instrument or default was chosen and why the alternatives lost.
-
-Baselines need the same care. A baseline cited for what currently ships has to measure what ships, and a retired baseline is labelled historical. The verdict of an experiment is also a different kind of content from measurements taken in deployment, so the two are not presented as one.
-
-<!-- /fold -->
-
-<!-- fold: code Naming mechanisms, functions and renames -->
-
-Name a mechanism by what the reader can see it do. Terms from inside a formulation belong only where that formulation is being explained. When something is renamed, the rename covers every surface it appears on, so that no old name lingers. For a function, say what it receives, what it returns, what it optimizes or interpolates, and which of its inputs vary and which stay fixed.
-
-<!-- /fold -->
-
-Full guide: [naming and honest claims](records.html#naming-and-honest-claims).
-
-</section>
-
-<section class="card" id="evidence">
-
-## A measured number is current only with its full provenance
-
-<p class="bs-lead">Quote a number as current evidence only when its source and conditions are recorded and still hold.</p>
-
-<div class="bs-specs"><div><span class="bs-label">Source</span><b>Commit + command</b></div><div><span class="bs-label">Conditions</span><b>Runtime + workload</b></div><div><span class="bs-label">Reading</span><b>Units + baseline</b></div><div><span class="bs-label">Reach</span><b>Method + scope</b></div></div>
-
-A number without its conditions cannot be checked, and a number whose inputs have changed can look authoritative while no longer being true. The guide therefore requires full provenance for any current measured claim, and a rerun before quoting it as current when code, input data, method, workload or runtime conditions affecting it change. A historical label does not qualify changed inputs. Configuration values, derivations and design arithmetic are not measurements: they cite their source and are labelled accordingly.
-
-A current measured claim records the eight items below and links its raw result and limitations.
-
-<div class="bs-grid g2">
-<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>A number without provenance</h3><p>"The new layout loads much faster." No commit, command, workload or baseline is given, and the input data changed after the run.</p></div>
-<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>A number with provenance</h3><p>The claim names its source commit, exact command, runtime and workload, units, baseline, method and scope, and links the raw result and its limitations. After the input data changed, it was rerun before being quoted as current.</p></div>
-</div>
-
-<!-- fold: experiment Number ledgers for redesigns -->
-
-A redesign restates numbers: in new prose, in redrawn figures, on slides. Each restatement is a chance to change a number by accident. Two safeguards answer that. A ledger records the source of every number, and the evidence blocks that are kept word for word are locked so that they cannot change unnoticed. Each project keeps its own ledger format and its own checks for both.
-
-Two rules bound what may appear. A slide face shows only numbers that its chapter also shows. And every distinct number in a redesigned chapter, labels inside figures included, has a source in the ledger.
-
-An edit that changes presentation only may reuse captured results, but only after checking that identities, numbers and treatments are still intact.
-
-<!-- /fold -->
-
-<!-- fold: experiment What stays with the producing work -->
-
-The work that produced a result keeps its own record: protocols, outputs, snapshots, failed attempts, changed settings, what actually happened, the reviews that were really performed and the uncertainty that matters. For an experiment, the experiment directory also holds the producing code, the inputs, the full result tables, the source pins and any independent reviews.
-
-Other documents point there without copying. The page explains what the results establish. The worklog records the landing and its hashes and does not duplicate the tables. Retained measured content falls under the deletion gate like everything else.
-
-A rerun does not overwrite history. The old record keeps its date, runtime, inputs and scope, and historical records keep their original source pins, inputs, runtime, settings, resource limits, deadlines and verdicts wherever those fields apply.
-
-<!-- /fold -->
-
-<!-- fold: experiment Run visuals and live experiment reports -->
-
-- **Captures.** Prefer captures made by a script, with the same provenance as any other figure. A screenshot that can only be taken interactively states its commit, date and scenario or preset. It shows what something looks like and never supports a quantitative claim.
-- **Overlays and motion.** When recorded data exists, derive overlays from it, not from screenshots. Show behaviour over time with a short clip packaged for the purpose or a useful sequence of frames, captioned and sourced like any figure.
-- **Reports still in progress.** A public report on a live experiment carries `ongoing = true`. The flag comes off only when findings and limits are settled. The owning topic explains the scope and links to the evidence.
-- **Which visuals fit.** Good candidates are quality overlays on the actual geometry, convergence, parity with a reference, timing or scaling, and trade-off plots. Say explicitly when a view does not apply. Topic, worklog and open routing are updated in the same deliverable.
-- **Where the rest lives.** The [experiment workflow](experiment-workflow.html) owns experiment kinds, baselines, stopping conditions and what every experiment must contain, its verdict included.
-
-<!-- /fold -->
-
-Full guide: [numbers and staleness](records.html#numbers-and-staleness) and [run visuals and experiment lifecycle](figures.html#run-visuals-and-experiment-lifecycle).
-
-</section>
-
 <section class="card" id="figures">
 
 ## Every mechanism, spatial claim and measurement needs a visual
@@ -602,7 +678,7 @@ Full guide: [numbers and staleness](records.html#numbers-and-staleness) and [run
 
 Prose alone leaves each reader to build the picture in their head, and different readers build different pictures. The guide treats visuals as a completion gate: budget visual production before declaring a section done, so that figures, tables and headings alone convey the story. It also rules out the opposite failure: a visual must answer an actual understanding or evidence need, so no decorative plot is added because a formula exists. Diagrams show structure, ownership, flow or sequence; tables give exact lookup; plots show patterns, variation or trade-offs. Pair formats when they answer different questions.
 
-Every included figure carries the four items below.
+Every included figure carries the four items above.
 
 <div class="bs-grid g2">
 <div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>An orphan figure</h3><p>A diagram sits under the text with the caption "Architecture". It has no number, anchor or source, and the text says only "see below".</p></div>
@@ -643,7 +719,17 @@ Every included figure carries the four items below.
 
 <!-- /fold -->
 
-Full guide: [figures and comparisons](figures.html#figures-and-comparisons) and [interaction and access](figures.html#interaction-and-access).
+<!-- fold: experiment Run visuals and live experiment reports -->
+
+- **Captures.** Prefer captures made by a script, with the same provenance as any other figure. A screenshot that can only be taken interactively states its commit, date and scenario or preset. It shows what something looks like and never supports a quantitative claim.
+- **Overlays and motion.** When recorded data exists, derive overlays from it, not from screenshots. Show behaviour over time with a short clip packaged for the purpose or a useful sequence of frames, captioned and sourced like any figure.
+- **Reports still in progress.** A public report on a live experiment carries `ongoing = true`. The flag comes off only when findings and limits are settled. The owning topic explains the scope and links to the evidence.
+- **Which visuals fit.** Good candidates are quality overlays on the actual geometry, convergence, parity with a reference, timing or scaling, and trade-off plots. Say explicitly when a view does not apply. Topic, worklog and open routing are updated in the same deliverable.
+- **Where the rest lives.** The [experiment workflow](experiment-workflow.html) owns experiment kinds, baselines, stopping conditions and what every experiment must contain, its verdict included.
+
+<!-- /fold -->
+
+Full guide: [figures and comparisons](figures.html#figures-and-comparisons), [interaction and access](figures.html#interaction-and-access) and [run visuals and experiment lifecycle](figures.html#run-visuals-and-experiment-lifecycle).
 
 </section>
 
@@ -662,12 +748,12 @@ Full guide: [figures and comparisons](figures.html#figures-and-comparisons) and 
 <div class="bs-node bs-blue"><span class="bs-label">Result</span><b>Equation and example</b><ul><li>Intermediate steps</li><li>Worked numerical example</li></ul></div>
 <div class="bs-back"><span>×</span> No disconnected formula plot or duplicate picture without useful annotations.</div>
 </div>
-<figcaption><b>Figure 6.</b> The Math layer walks from marks on the Story's picture to the equation and a worked example. This illustrative diagram is authored in the page source and contains no measured results.</figcaption>
+<figcaption><b>Figure 7.</b> The Math layer walks from marks on the Story's picture to the equation and a worked example. This illustrative diagram is authored in the page source and contains no measured results.</figcaption>
 </figure>
 
 A formula that arrives with undefined symbols asks the reader to trust it rather than follow it, and a formula plot disconnected from the Story adds a second picture to decode. The guide builds from the reader's known construction. Define symbols, units, mathematical terms and prerequisites before use. Show intermediate reasoning, including product and chain rules when relevant. State structural assumptions and distinguish local conditions from global validity. A non-obvious formula needs a derivation or a precise companion-section citation.
 
-[Figure 6](#fig-math) shows how the Math layer reuses the Story. Notice that the equation is reached through marks on the same picture, not drawn from a separate one.
+[Figure 7](#fig-math) shows how the Math layer reuses the Story. Notice that the equation is reached through marks on the same picture, not drawn from a separate one.
 
 <div class="bs-grid g2">
 <div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>A formula dropped in</h3><p>An equation appears with symbols the page never defined, followed by a plot of the formula over a range the Story never mentions.</p></div>

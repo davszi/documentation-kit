@@ -24,7 +24,7 @@ page_only = "Explains the engineering guides; they are the records, in rules/eng
 | Changing program output, a generated file or an interface others use | [Code and repository practices](code-practices.html) | Diagnostics and consumed output; changing generated files at their source; refactoring instead of keeping old forms | [Code](#code), [Compatibility](#compatibility) |
 | Writing code on a hot path or claiming a speed-up | [Efficient implementation](performance.html) | Routine efficiency; measuring the declared workload and path | [Efficiency](#performance), [Claims](#performance-claims) |
 | Running an expensive job on shared resources | [Execution and shared resources](execution.html) | Execution route, coordination, budgets, usage records, failure attribution, cleanup | [Execution](#execution), [Cleanup](#supervision) |
-| Delegating work or editing in parallel | [Ownership and delivery](delivery.html) | Assignments, owner responsibility, integration, parallel work, escalation | [Delivery](#delivery), [Decisions](#decisions) |
+| Delegating work, including a page for people, or editing in parallel | [Ownership and delivery](delivery.html) | Assignments, owner responsibility, delegating a page for people, integration, parallel work, escalation | [Delivery](#delivery), [Decisions](#decisions) |
 | Reporting completion or a blocker, or receiving a handoff | [Handoffs and progress reports](handoffs.html) | Report contents, return channel, durable records, checking received claims | [Handoffs](#handoffs) |
 | Staging, committing or rewriting history | [Git changes and shared checkouts](git.html) | Commit scope and messages, staging, shared checkouts, recovery | [Git](#git), [Shared checkout](#shared-checkout) |
 
@@ -183,7 +183,7 @@ When a benchmark or validation tool needs more than about a minute for its full 
 
 This chapter covers what to time. What a speed-up claim must carry is spread over three other places:
 
-- [Evidence](records.html#numbers-and-staleness) says what makes a number quotable: its identity, its baseline, reruns after a change, and how older results are labelled and reported. Follow it whenever you claim a speed-up.
+- [Numbers and staleness](records.html#numbers-and-staleness), in the guide for writing records, says what makes a number quotable: its identity, its baseline, reruns after a change, and how older results are labelled and reported. Follow it whenever you claim a speed-up.
 - [Proportionate verification](experiment-verification.html) covers whether the numerical code is correct in the first place, and the regression gates that keep a fixed defect from returning.
 - Your project's own records hold the concrete workloads, thresholds and performance contracts. The kit does not set them.
 
@@ -295,7 +295,7 @@ To say that a job needed more memory than its limit, you need evidence that it a
 
 If the peak at the end of the run could not be read, report memory use as unmeasured. Do not fill the gap with a guess.
 
-When pressure was unexpected or the budget turned out too small, follow the [escalation rules](delivery.html#decisions-and-blockers). Keep each attempt together with the settings it actually ran under, as the [evidence rules](records.html#numbers-and-staleness) require.
+When pressure was unexpected or the budget turned out too small, follow the [escalation rules](delivery.html#decisions-and-blockers). Keep each attempt together with the settings it actually ran under, as the [measurement rules for records](records.html#numbers-and-staleness) require.
 
 <!-- /fold -->
 
@@ -333,6 +333,8 @@ Full guide: [Execution and shared resources](execution.html) · [Attribute failu
 
 A vague assignment leaves the owner guessing where the work stops and where to send the result, and leaves parallel owners guessing whose files are whose. The guide asks whoever assigns delegated or parallel work to define these up front, scaled to the work: a small, self-contained task can use a short brief. In return, routine work within the agreed scope needs no separate coordinator approval, so the owner carries it through to evidence and any required review.
 
+Documentation work adds one recurring assignment: page work for people, handed to a separate page agent once its record is finished. It starts when a person asks for a new page, or when a record change leaves an existing page more than a sentence or two out of date. Its brief and its review follow the same pattern, with page-specific parts described in the fold below.
+
 An illustrative example, not taken from a real project:
 
 <div class="bs-grid g2">
@@ -348,7 +350,21 @@ One hand-over does need names. When changes from several owners must come togeth
 
 <!-- /fold -->
 
-Full guide: [Ownership and delivery](delivery.html) · [Assigning work](delivery.html#assigning-work) · [Owner responsibility](delivery.html#owner-responsibility) · [Coordination and integration](delivery.html#coordination-and-integration)
+<!-- fold: experiment Delegating a page for people -->
+
+Page work for people is a delegated assignment of its own kind. The record already exists, written by the agent that did the work. Either a person has asked for a new page or chapter that explains it, or the record changed and an existing page must follow. The [documentation chapter on record first](writing-practices.html#record-first) shows the whole order; this fold covers the assignment.
+
+**What the brief holds.** The finished record, the source of every rule, number and limit the page shows; the person's request, or the record change the page has to follow; the pages and chapters to change; and the completion condition. For a page, done means the site validation that applies to the change has passed, captures at every supported width included.
+
+**What the page author does.** It reads the page guides and site guides that apply and writes the explanation in its own words. It adds no rule, number or limit that the record lacks. A gap or contradiction it finds goes back to whoever owns the record, who fixes the record first; the page does not paper over it.
+
+**What the delegating agent does.** It looks at the captures itself, under the [by-eye review](validation.html#validation-and-review), before it reports the page done. A passing build is not that look.
+
+**Who keeps the work.** Later page work in the same task goes to the same page agent, which already knows the record and the guides. A small sync, a sentence or two that a record edit made stale, is not delegated at all: the agent that edited the record makes it.
+
+<!-- /fold -->
+
+Full guide: [Ownership and delivery](delivery.html) · [Assigning work](delivery.html#assigning-work) · [Owner responsibility](delivery.html#owner-responsibility) · [Delegating a page for people](delivery.html#delegating-a-page-for-people) · [Coordination and integration](delivery.html#coordination-and-integration)
 
 </section>
 
@@ -436,7 +452,7 @@ Use the same channel to report that you finished. A closing message in some othe
 
 <!-- fold: experiment Durable records and receiving a handoff -->
 
-A handoff message is a pointer, not an archive. Detailed results and the steps to reproduce them go into the records that own them, under the [documentation](documentation-system.html) and [evidence rules](records.html#numbers-and-staleness); the handoff links to those records.
+A handoff message is a pointer, not an archive. Detailed results and the steps to reproduce them go into the records that own them, under the [documentation system](documentation-system.html) and the [measurement rules for records](records.html#numbers-and-staleness); the handoff links to those records.
 
 On the receiving side, two small acts keep work from stalling. Confirm receipt when the sender is waiting for it before going on. And when responsibility moves, say who owns the work now and what they do next.
 

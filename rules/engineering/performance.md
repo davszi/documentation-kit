@@ -36,6 +36,6 @@ workload, its acceptance criteria or an experiment's agreed protocol.
 Use [proportionate verification](../experiments/verification.md) for numerical
 correctness and regression gates.
 
-The [evidence guide](../records.md#numbers-and-staleness) owns measurement identity, baselines,
+[Numbers and staleness](../records.md#numbers-and-staleness) owns measurement identity, baselines,
 reruns, historical results and reporting. Projects retain concrete workloads,
 thresholds and performance contracts.

@@ -24,7 +24,7 @@ This guide owns where a document lives, the order in which documentation is writ
 | `.docs-kit/rules/experiments/workflow.md` | Shared experiment kinds (investigation, qualification), scope limits, baselines, evaluation, stopping and required content |
 | `.docs-kit/rules/experiments/verification.md` | Claim-scoped check selection, numerical correctness, regression gates and changed-input verification |
 | `docs/topics/<topic>/<topic>.md` and further descriptively named records; every topic has one unless its page declares `page_only` | Canonical mechanisms, accepted specifications, methods, scoped results, limits and topic-owned research notes |
-| `docs/topics/<topic>/index.md`, when needed | Human explanation drawn from the topic records: current conclusions, figures, decisions and blockers |
+| `docs/topics/<topic>/index.md`, when a person asked for a page | Human explanation drawn from the topic records: current conclusions, figures, decisions and blockers |
 | `docs/open/OPEN.md` | One-line routes to every owed workstream, each with its owning document; never a duplicate task board |
 | Named unfinished plans/decision records | Unfinished delivery, prospective acceptance, unresolved choices and their owners |
 | `docs/worklog.md` | Append-only chronology: landed work, reasons, measured effects and probes |
@@ -49,11 +49,11 @@ Other Markdown must have a defined role: a subject record, log, experiment contr
 Document work in this order:
 
 1. The agent that did the work writes or updates the record, following [writing records](records.md). It holds the facts: what changed, what was measured and why.
-2. A page for people is made or changed only when a person asked for one.
-3. Page work goes to a separate agent where the runtime supports delegation. The finished record is its brief; follow [delegating a page for people](engineering/delivery.md#delegating-a-page-for-people). Keep that agent for later page requests in the same work. Without delegation, do the page as a separate step after the record.
-4. A small sync stays with the agent that edited the record, for example one page sentence that a record edit made stale.
+2. A new page for people, or a new chapter on one, is made only when a person asked for it.
+3. A page that exists stays true to its record. When a record changes, update the pages that explain it in the same change; that needs no new request. [Rendered pages are for people](#rendered-pages-are-for-people-records-stay-markdown) says how lint lists those pages.
+4. The size of the page work decides who does it. A small sync, a sentence or two that a record edit made stale, stays with the agent that edited the record. Anything larger goes to a separate agent where the runtime supports delegation, with the finished record as its brief; follow [delegating a page for people](engineering/delivery.md#delegating-a-page-for-people). Without delegation, do the page as a separate step after the record.
 
-The page author reads the [writing](writing.md) and [site](maintenance.md) guides. The record author does not need them.
+The page author reads the applicable [page guides](writing.md) and [site guides](maintenance.md). The record author needs them only for what [excerpts, formulas and figures](records.md#excerpts-formulas-and-figures) names.
 
 ## Rendered pages are for people; records stay Markdown
 
@@ -98,6 +98,8 @@ Review a mixed document section by section as work matures:
 Assistant proposals remain proposals until explicitly accepted. Migration, silence or continued discussion does not make them accepted requirements.
 
 Plans distinguish investigation readiness from implementation readiness. A workstream's execution owner carries order, prerequisites, status and resume instructions; implementation plans carry prospective acceptance; coverage maps obligations to evidence. Do not distribute this state among competing boards.
+
+`OPEN.md` holds one-line routes, and every bullet links its owning document. A finished line is deleted; it is not struck through, ticked or marked done. Lint checks both.
 
 ## Rules for changes and chronology
 

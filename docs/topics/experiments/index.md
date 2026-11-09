@@ -36,7 +36,8 @@ The experiment guides do not restate what other guides own. When an experiment t
 
 - Checks: [proportionate verification](experiment-verification.html).
 - Resources and cleanup: [execution](execution.html).
-- Provenance and visuals: [evidence](records.html#numbers-and-staleness).
+- Provenance of measured numbers: [numbers and staleness](records.html#numbers-and-staleness), in the guide for writing records.
+- Run visuals and live experiment reports: [figures](figures.html#run-visuals-and-experiment-lifecycle), one of the page guides.
 - Benchmarks: [performance](performance.html).
 - Placement: [documentation policy](documentation-system.html).
 

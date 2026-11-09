@@ -39,8 +39,9 @@ removed compatibility forms, configured publication and the kit-pin check; the
 [1.1.0 guide](topics/releases/migrations/1.1.0.md) covers focused policy owners,
 optional project layout changes and adapters. The
 [3.0.0 guide](topics/releases/migrations/3.0.0.md) covers the untagged changes
-on `main`: the removed router anchors, topic records, the sidebar mark and the
-removed ledger modules.
+on `main`: the removed router anchors, the new `rules/records.md` with record
+first and page on request, topic records, the sidebar mark and the removed
+ledger modules.
 
 The [website record](topics/website/website.md) owns the kit's own site.
 Build it from the kit root with `python docsite.py build --project .`.
