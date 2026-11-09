@@ -97,18 +97,28 @@ description = "Commits, shared checkouts and history."  # optional
 ```
 
 `title` defaults to the file's first level-one heading. `description` supplies
-the site-map card text and sidebar subtitle. `math = true` enables formulas.
+the site-map card text and the tree tooltip. `math = true` enables formulas.
 `reader = true` uses the chapter reader when the site enables it; otherwise the
-page scrolls. Its sidebar then shows the site tree with the page marked as
-current. Its second- and third-level headings are listed only where they do not
-replace the tree: on a page with `hidden = true`, which has no entry to mark,
-or nested under the entry with `nested_nav = true`. In the
+page scrolls. In the
 reader, a short opening (under 600 characters, without subheadings, figures or
 tables) joins the first chapter with the source line instead of becoming a
-nearly empty Introduction chapter; a longer opening stays its own chapter. Each
-route still needs a `[[nav]]` entry, where `hidden = true` keeps it out of
-navigation. One slug belongs to one page. Topic entry pages keep their own
-frontmatter path and cannot be registered.
+nearly empty Introduction chapter; a longer opening stays its own chapter. One
+slug belongs to one page. Topic entry pages keep their own frontmatter path and
+cannot be registered.
+
+Once a site registers a source page, every sidebar ends with a **Repository
+files** section. It lists the registered files and the topic entry pages as a
+folder tree at their repository paths. There is no setting: a site without
+source pages shows no tree. Each file shows its name and title. Topic entry
+pages carry a `page` badge and link to their existing page. The current page is
+marked wherever it appears, and only its folders start open.
+
+A registered file needs no `[[nav]]` entry, because the tree lists it. Keep
+`[[nav]]` for pages written for people. A `[[nav]]` entry for a registered file
+also lists it among those pages. A scrolling source page's sidebar shows the
+site navigation and the tree, not the page's own headings. With
+`nested_nav = true`, a page that has a visible `[[nav]]` entry lists its
+headings under that entry.
 
 Links and media resolve from the file's own folder, exactly as when reading the
 Markdown. A link to another registered file becomes that page's route. Other

@@ -23,15 +23,16 @@ tables give the navigation and `[[source_pages]]` tables map records to routes.
 |---|---|---|
 | Home | [`home/index.md`](../home/index.md) | Three paths, the three adoption steps and a router snippet |
 | Get started | [`getting-started/index.md`](../getting-started/index.md) | What the kit provides, how routing works, the three practice areas, setup and adoption routes |
-| Build a site | [`build-a-site/index.md`](../build-a-site/index.md) | How the build works, topic pages and registered records, the reader, figures and slides, and every command from build to upgrade |
+| Build a site | [`build-a-site/index.md`](../build-a-site/index.md) | How the build works, writing a topic page, the reader, figures and slides, publishing existing Markdown, and every command from build to upgrade |
 | Engineering | [`engineering-practices/index.md`](../engineering-practices/index.md) | The six engineering guides |
 | Documentation and writing | [`writing-practices/index.md`](../writing-practices/index.md) | The documentation system and the writing guides |
 | Experiments | [`experiments/index.md`](../experiments/index.md) | The experiment workflow and verification guides |
 
-Rule guides are hidden from the navigation and reached from these pages; release
-notes, migration guides, the README and the kit-development records stay listed. The
-writing and maintenance routers remain hidden pages so existing links to their
-section anchors keep working.
+The navigation lists only these pages. Every registered record, including the
+rule guides, release notes, migration guides, README and kit-development
+records, appears in the sidebar's **Repository files** section, a folder tree
+built from `[[source_pages]]`; the tree also lists the topic page sources, marked
+as pages.
 
 The site sets `chapter_reader = true`; records keep the registry default
 `reader = false`. Topic pages use only the shared `home.css` and

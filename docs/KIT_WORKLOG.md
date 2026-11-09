@@ -2,6 +2,20 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — List repository files in the sidebar; lead with writing pages
+
+- The site's 30 registered records were mostly hidden nav entries reachable
+  only by in-page links. The sidebar now lists pages for people first, then a
+  Repository files folder tree generated from `[[source_pages]]`, with topic
+  page sources marked as pages and linked to their existing page. Records need
+  no nav entry; the kit site's 30 record entries are removed.
+- Build a site no longer opens with two chapters on publishing existing
+  Markdown, a feature only the kit's own site uses (ADP and adapt register
+  none). A new chapter shows how to write a topic page; existing Markdown is
+  one shorter chapter after figures and slides.
+- Checks: 127 tests, strict lint for starter and kit site, own-site, visual,
+  browser-helper and panel-switcher browser suites.
+
 ## 2026-11-09 — Release 2.0.0
 
 - The changes after 1.1.0 become 2.0.0. It is a major release because the

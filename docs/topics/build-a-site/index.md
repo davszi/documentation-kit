@@ -2,11 +2,11 @@
 title = "Build a site"
 brand = "Documentation kit"
 brand_sub = "how it works · pages · reader · commands"
-description = "How the kit turns tracked Markdown into a checked website: the two kinds of pages, publishing existing records, what readers get, figures and slides, and every command from build to upgrade."
+description = "How the kit turns tracked Markdown into a checked website: writing a topic page, what readers get, figures and slides, publishing Markdown you already have, and every command from build to upgrade."
 components = ["toc", "nav", "code", "filelinks", "lightbox", "carousel", "panel-switcher"]
 page_css = ["build-sheet.css"]
 math = true
-toc = [["How it works", "#how-a-build-works"], ["Two kinds of pages", "#two-kinds-of-pages"], ["Existing Markdown", "#existing-markdown"], ["The reader", "#the-reader"], ["Figures and slides", "#figures-and-slides"], ["Build", "#build"], ["Lint", "#lint"], ["Preview", "#preview"], ["Upgrade", "#upgrade"], ["Reference guides", "#reference-guides"]]
+toc = [["How it works", "#how-a-build-works"], ["Write a page", "#write-a-topic-page"], ["The reader", "#the-reader"], ["Figures and slides", "#figures-and-slides"], ["Existing Markdown", "#existing-markdown"], ["Build", "#build"], ["Lint", "#lint"], ["Preview", "#preview"], ["Upgrade", "#upgrade"], ["Reference guides", "#reference-guides"]]
 +++
 
 # Build a site
@@ -52,99 +52,57 @@ Inside a page, link to other pages by their generated name, such as `evidence.ht
 
 </section>
 
-<section class="card" id="two-kinds-of-pages">
+<section class="card" id="write-a-topic-page">
 
-## A site has two kinds of pages: ones you write for people, and records published as they are
+## A topic page is one Markdown file of chapter cards
 
-<p class="bs-lead">Write a topic page when you want to explain something; register a record when it already exists and must stay the only copy.</p>
+<p class="bs-lead">Create <code>docs/topics/&lt;name&gt;/index.md</code>, give it frontmatter, write one card per claim and add a <code>[[nav]]</code> entry; the build does the rest.</p>
 
-<div class="bs-grid g2">
-<div class="bs-part bs-teal"><span class="bs-label">Written for people</span><h3>Topic page</h3><ul>
-<li>lives at <code>docs/topics/&lt;name&gt;/index.md</code></li>
-<li>frontmatter gives its title and chapter labels</li>
-<li>chapters from <code>##</code> headings or <code>&lt;section class="card"&gt;</code></li>
-<li>build-sheet blocks, figures, folds and slide faces</li>
-<li>appears in the menu through a <code>[[nav]]</code> entry</li>
-</ul><p>This page is one. So are Get started and the three practice pages.</p></div>
-<div class="bs-part bs-violet"><span class="bs-label">Already exists</span><h3>Registered record</h3><ul>
-<li>any tracked Markdown file, wherever it lives</li>
-<li>one <code>[[source_pages]]</code> entry in <code>site.toml</code></li>
-<li>rendered whole, with a source line and edit link</li>
-<li>links resolved from the file's own folder</li>
-<li>stays plain Markdown that agents keep reading</li>
-</ul><p>Every rule guide on this site is one, as are the README and release notes.</p></div>
-</div>
-
-The split follows what each reader needs. An agent needs the exact contract in plain Markdown, at a stable path its router names. A person needs the conclusion, a figure and the reason, in order. A topic page explains a subject and links into its records; a registered record publishes the contract itself without changing a character. Neither replaces the other, so neither is ever a second copy.
-
-<div class="bs-grid g2">
-<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>Rewrite the record as a page</h3><p>A rule guide is copied into a topic page with cards and figures, and the Markdown is kept for agents. The next rule change lands in one of them.</p></div>
-<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>Register it, explain it once</h3><p>The guide is registered as it is; one topic page explains it with examples and links to its sections.</p></div>
-</div>
-
-[Authoring paths](authoring.html#authoring-paths) covers frontmatter, link origins and includes; [records and pages](writing-practices.html#records-and-pages) explains the split as a documentation rule.
-
-</section>
-
-<section class="card" id="existing-markdown">
-
-## Existing Markdown becomes a page without being moved or copied
-
-<p class="bs-lead">One <code>[[source_pages]]</code> entry publishes a tracked Markdown file at a route you choose; the file stays where it is and stays the only copy.</p>
-
-<figure id="fig-source-page">
-<div class="bs-flow" role="img" aria-label="A tracked Markdown file, for example docs/notes/decision.md, stays unchanged. A source_pages entry in site.toml names the file and its route. The build renders decision.html with a source line and edit link, resolving links from the file's own folder and checking anchors between registered pages.">
-<div class="bs-node bs-teal"><span class="bs-label">Stays where it is</span><b>Your Markdown file</b><ul><li><code>docs/notes/decision.md</code></li><li>agents keep reading it as Markdown</li></ul></div>
-<div class="bs-arrow"><span>register</span></div>
-<div class="bs-node bs-violet"><span class="bs-label"><code>docs/site/site.toml</code></span><b>One entry</b><ul><li><code>[[source_pages]]</code></li><li><code>source = "docs/notes/decision.md"</code></li><li><code>slug = "decision"</code></li></ul></div>
+<figure id="fig-topic-page">
+<div class="bs-flow" role="img" aria-label="A topic page file with frontmatter holds chapter cards. Each card has a claim heading, a one-sentence lead, one visual, the reason, an example and optional folds. The build turns each card into a reader chapter, and a nav entry puts the page in the menu.">
+<div class="bs-node bs-teal"><span class="bs-label">One file</span><b>Topic file</b><ul><li><code>docs/topics/guide/index.md</code></li><li>frontmatter: title, description, components</li><li>one <code>&lt;section class="card"&gt;</code> per chapter</li></ul></div>
+<div class="bs-arrow"><span>each card</span></div>
+<div class="bs-node bs-violet"><span class="bs-label">One claim</span><b>Chapter card</b><ul><li><code>##</code> heading that states the claim</li><li>lead sentence, then one visual</li><li>why, an example, optional folds</li></ul></div>
 <div class="bs-arrow"><span>build</span></div>
-<div class="bs-node bs-orange"><span class="bs-label">Generated</span><b><code>decision.html</code></b><ul><li>whole file, rendered</li><li>source line and edit link</li><li>links and anchors checked</li></ul></div>
+<div class="bs-node bs-orange"><span class="bs-label">Generated</span><b>Page</b><ul><li><code>guide.html</code></li><li>a reader chapter per card</li><li>in the menu through <code>[[nav]]</code></li><li>optional slide face per card</li></ul></div>
 </div>
-<figcaption><b>Figure 2.</b> Publishing a record is a pointer, not a copy. This diagram contains no measured results.</figcaption>
+<figcaption><b>Figure 2.</b> The parts of a topic page and what each becomes. This diagram contains no measured results.</figcaption>
 </figure>
 
-**The problem it solves.** Projects already have Markdown worth reading on a site: rules, decision notes, a README, release notes. Copying a file into a page creates a second copy that drifts. Moving it breaks every link and every agent route that points at its path. Registering it changes nothing about the file; the site simply learns where it is.
+This is the page type to write by default: this page, Get started and the three practice pages are all topic pages. A reader opening a chapter wants the conclusion first, so the heading states it and the lead sentence says what to do. The visual comes next because it shows the mechanism faster than prose; the reason and an example follow for readers who want to know why. Detail that only some readers need goes into a fold, so the card stays short without losing it.
 
-<div class="bs-checks">
-<div class="bs-check"><span class="bs-badge bs-ok">top of page</span><h3>Source line</h3><p>Shows the file's path and an "Edit source" link to the original, so readers fix the file, not the page.</p></div>
-<div class="bs-check"><span class="bs-badge bs-ok">links</span><h3>Resolved from its folder</h3><p><code>../other.md</code> and images work exactly as they do on GitHub, because they resolve from the file's own folder.</p></div>
-<div class="bs-check"><span class="bs-badge bs-ok">between records</span><h3>Page links, checked</h3><p>A link to another registered file becomes <code>other.html#section</code>; the build fails if that section does not exist.</p></div>
-</div>
+A minimal page, with one chapter:
 
-The same lines, both ways. Switch between them:
+```markdown
++++
+title = "Release checklist"
+description = "What to check before tagging a release."
+components = ["toc", "nav"]
+page_css = ["build-sheet.css"]
+toc = []
++++
 
-<div class="panel-switcher" data-panel-switcher data-panel-default="markdown">
-<div class="panel-switcher-controls" role="group" aria-label="View of a registered record">
-<button type="button" data-panel-choice="markdown" aria-pressed="false" aria-controls="view-markdown">As agents read it</button>
-<button type="button" data-panel-choice="page" aria-pressed="false" aria-controls="view-page">As this site renders it</button>
-</div>
-<div id="view-markdown" data-panel="markdown">
+# Release checklist
 
-```markdown source=rules/experiments/workflow.md#L36-L38
-- A **qualification** gives a pass, fail or inconclusive verdict on a named
-  system, build or model: platform qualification, a benchmark contract, a
-  parity check, model release evaluation.
+<section class="card" id="tag-only-tested-commits">
+
+## Tag only a commit whose checks passed
+
+<p class="bs-lead">Run the full checks on the exact commit, then tag it.</p>
+
+…one visual, the reason, an example, optional folds…
+
+</section>
 ```
 
-</div>
-<div id="view-page" data-panel="page">
-<div class="bs-part bs-orange"><span class="bs-label">Rendered from the same lines · <code>rules/experiments/workflow.md</code></span><h3>Qualification</h3><p>A <b>qualification</b> gives a pass, fail or inconclusive verdict on a named system, build or model: platform qualification, a benchmark contract, a parity check, model release evaluation.</p><p><a href="experiment-workflow.html#choose-the-purpose">Open it on its page</a></p></div>
-</div>
+<div class="bs-grid g2">
+<div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>A heading per topic</h3><p>The chapter is called "Releases" and starts with background. A reader has to read it all to find out what to do.</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>A heading per claim</h3><p>The chapter is called "Tag only a commit whose checks passed". The menu alone tells a reader the rule; the card explains it.</p></div>
 </div>
 
-<!-- fold: code The full registry entry -->
+<!-- fold: code Frontmatter keys -->
 
-```toml
-[[source_pages]]
-source = "docs/notes/decision.md"   # required: a tracked file inside the project
-slug = "decision"                   # required: the page is decision.html
-title = "Decision record"           # optional: defaults to the file's first # heading
-description = "Why we chose …"      # optional: card text on the home page
-reader = true                       # optional: chapter cards instead of one scroll
-math = true                         # optional: render formulas
-```
-
-Each route also needs a `[[nav]]` entry: with a `group` it appears in the menu; with `hidden = true` it is reachable by link only. One slug belongs to one page; a collision fails the build. [Registered source pages](authoring.html#registered-source-pages) owns the contract.
+`title` and `toc` are required; `toc = []` lets the reader take its chapter labels from the cards, and a list of `[label, "#id"]` pairs sets short labels. `description` is the card text on the home page. `components` loads shared behavior such as `code`, `lightbox`, `carousel` or `panel-switcher`; `page_css = ["build-sheet.css"]` enables the figure blocks used here; `math = true` renders formulas. The page's folder gives its slug: `docs/topics/guide/index.md` becomes `guide.html`. [Authoring paths](authoring.html#authoring-paths) owns the exact contract, and [page design](page-design.html) the writing rules.
 
 <!-- /fold -->
 
@@ -237,6 +195,51 @@ A single scroll is still available as **All chapters**, and it is what print and
 
 </section>
 
+<section class="card" id="existing-markdown">
+
+## Markdown you already have can be published as it is
+
+<p class="bs-lead">For projects that already have Markdown worth reading: one <code>[[source_pages]]</code> entry publishes a tracked file at a route you choose, and the file stays where it is.</p>
+
+<div class="panel-switcher" data-panel-switcher data-panel-default="markdown">
+<div class="panel-switcher-controls" role="group" aria-label="View of a registered record">
+<button type="button" data-panel-choice="markdown" aria-pressed="false" aria-controls="view-markdown">As agents read it</button>
+<button type="button" data-panel-choice="page" aria-pressed="false" aria-controls="view-page">As this site renders it</button>
+</div>
+<div id="view-markdown" data-panel="markdown">
+
+```markdown source=rules/experiments/workflow.md#L36-L38
+- A **qualification** gives a pass, fail or inconclusive verdict on a named
+  system, build or model: platform qualification, a benchmark contract, a
+  parity check, model release evaluation.
+```
+
+</div>
+<div id="view-page" data-panel="page">
+<div class="bs-part bs-orange"><span class="bs-label">Rendered from the same lines · <code>rules/experiments/workflow.md</code></span><h3>Qualification</h3><p>A <b>qualification</b> gives a pass, fail or inconclusive verdict on a named system, build or model: platform qualification, a benchmark contract, a parity check, model release evaluation.</p><p><a href="experiment-workflow.html#choose-the-purpose">Open it on its page</a></p></div>
+</div>
+</div>
+
+Rules, decision notes, a README or release notes are often worth reading on a site, but copying one into a page creates a second copy that drifts, and moving it breaks the links and agent routes that name its path. A registered record avoids both: the build renders the file whole, with a source line and an edit link, resolves its links from its own folder, and checks links between registered files. This site uses it for its rule guides, README and release notes; every registered file is listed by folder in the sidebar's Repository files section. Write a topic page when you want to explain; register a record when the file itself is the thing to read.
+
+<!-- fold: code The registry entry -->
+
+```toml
+[[source_pages]]
+source = "docs/notes/decision.md"   # required: a tracked file inside the project
+slug = "decision"                   # required: the page is decision.html
+title = "Decision record"           # optional: defaults to the file's first # heading
+description = "Why we chose …"      # optional: card text on the home page
+reader = true                       # optional: chapter cards instead of one scroll
+math = true                         # optional: render formulas
+```
+
+One slug belongs to one page; a collision fails the build. [Registered source pages](authoring.html#registered-source-pages) owns the contract.
+
+<!-- /fold -->
+
+</section>
+
 <section class="card" id="build">
 
 ## Build writes the site; --check proves it is current without writing
@@ -315,7 +318,7 @@ Open `http://127.0.0.1:8321/html/index.html`. The server exposes only the genera
 <div class="bs-arrow"><span>verify</span></div>
 <div class="bs-node bs-orange"><span class="bs-label">One commit</span><b>Rebuild, review, commit</b><ul><li>build and lint</li><li>pin plus consumer changes</li></ul></div>
 </div>
-<figcaption><b>Figure 2.</b> The upgrade sequence. This diagram contains no measured results.</figcaption>
+<figcaption><b>Figure 4.</b> The upgrade sequence. This diagram contains no measured results.</figcaption>
 </figure>
 
 ```bash

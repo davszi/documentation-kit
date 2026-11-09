@@ -564,6 +564,26 @@ def nested_nav_html(nav_entries: list, fname: str, toc: str) -> str:
     return "\n".join(lines)
 
 
+def repository_tree(topic_metas: list, source_pages: list) -> list:
+    """Files for the sidebar's repository tree; empty when no source page is registered.
+
+    Topic entry pages join the registered records at their repository paths;
+    forwarding stubs are left out because they hold no content.
+    """
+    from source_pages import first_heading
+    from source_tree import TreeFile
+
+    if not source_pages:
+        return []
+    files = [TreeFile(md_path.relative_to(REPO).as_posix(), meta.get("slug", md_path.parent.name) + ".html",
+                      meta.get("title", md_path.parent.name), meta.get("description"), True)
+             for md_path, meta in topic_metas if "page-redirect" not in meta.get("components", [])]
+    for page in source_pages:
+        title = page.title or first_heading(local_resource(REPO / page.source).read_text()) or page.source
+        files.append(TreeFile(page.source, page.route, title, page.description, False))
+    return files
+
+
 def build_source_page(page, routes: dict[str, str], site: dict, shell: str) -> tuple[str, str] | None:
     """Render one registered Markdown file as a whole-file page.
 
@@ -602,13 +622,11 @@ def build_source_page(page, routes: dict[str, str], site: dict, shell: str) -> t
             return None
         comps = ["nav", "code", "filelinks", "chapter-reader"]
     else:
-        # In the flat tree, a listed page is marked as the current entry, so its
-        # sidebar keeps the same site tree as every other page. A hidden page has
-        # no entry to mark, and nested navigation nests sections under the entry,
-        # so those list their own sections.
-        entry = next((n for n in site.get("nav", []) if n.get("file") == f"{page.slug}.html"), {})
-        listed_flat = not entry.get("hidden", False) and not site.get("nested_nav")
-        meta["toc"] = [] if listed_flat else table_of_contents(content)
+        # The repository tree marks this page as current, so its sidebar keeps the
+        # same site tree as every other page. Only nested navigation lists the
+        # page's sections, under its own visible entry.
+        listed = any(n.get("file") == page.route and not n.get("hidden", False) for n in site.get("nav", []))
+        meta["toc"] = table_of_contents(content) if site.get("nested_nav") and listed else []
     return finish_page(meta, page.slug, name, content, comps, site, shell, {})
 
 
@@ -635,7 +653,9 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
 
     nav_entries = site.get("nav", [])
     fname = f"{slug}.html"
-    if fname not in {n["file"] for n in nav_entries}:
+    tree = site.get("_repository_tree", [])
+    # Registered records are listed by the repository tree; pages need a nav entry.
+    if fname not in {n["file"] for n in nav_entries} and fname not in {f.route for f in tree if not f.page}:
         err(f"{name}: {fname} missing from site.toml [[nav]] registry")
     crossnav_lines, last_group = [], None
     # One site tree on every page; the current page stays in place so the
@@ -659,6 +679,9 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
     toc = toc_html(meta.get("toc", []), name, id_to_panel)
     if site.get("nested_nav") and "chapter-reader" not in comps:
         crossnav, toc = nested_nav_html(nav_entries, fname, toc), ""
+    if tree:
+        from source_tree import tree_html
+        crossnav += "\n" + tree_html(tree, fname)
 
     head_extra = ""
     if meta.get("math"):
@@ -832,24 +855,28 @@ def main() -> int:
     if not md_files:
         err(f"no pages found in {PAGES}")
     seen_slugs: set[str] = set()
+    topic_metas = []
     for md_path in md_files:
         local_resource(md_path)
         meta, _ = parse_frontmatter(md_path.read_text(), md_path.name)
         pages_meta.append(meta)
+        topic_metas.append((md_path, meta))
         slug = meta.get("slug", md_path.parent.name)
         if slug in seen_slugs:
             err(f"duplicate slug: {slug}")
         seen_slugs.add(slug)
+    from source_pages import fragment_problems, load_registry
+    source_pages, problems = load_registry(site, REPO, consumer_tracked_paths())
+    for problem in problems:
+        err(problem)
+    site["_repository_tree"] = repository_tree(topic_metas, source_pages)
+    for md_path, _ in topic_metas:
         built = build_page(md_path, site, shell)
         if built:
             try:
                 outputs["html/" + built[0]] = bundle.rewrite_page(built[1]).encode()
             except (ValueError, OSError) as problem:
                 err(str(problem))
-    from source_pages import fragment_problems, load_registry
-    source_pages, problems = load_registry(site, REPO, consumer_tracked_paths())
-    for problem in problems:
-        err(problem)
     routes = {page.source: page.route for page in source_pages}
     for page in source_pages:
         if page.slug in seen_slugs:

@@ -185,9 +185,37 @@ class SourcePages(unittest.TestCase):
         self.assertIn('slug must be a lowercase filename stem', result.stderr)
         self.assertIn("unknown keys ['layout']", result.stderr)
 
-    def test_route_needs_navigation_entry(self):
+    def test_repository_tree_lists_records_without_navigation_entries(self):
         self.register('notes/record.md', 'record', nav=False)
-        self.assertFails('notes/record.md: record.html missing from site.toml [[nav]] registry')
+        page = self.page_after_build('record')
+        tree = page[page.index('<div class="repo-tree"'):]
+        self.assertIn('<span class="repo-tree-label" id="repo-tree-label">Repository files</span>', tree)
+        self.assertNotIn('href="record.html"', page[:page.index('<div class="repo-tree"')])
+        # The current file is marked; its folder starts open and other folders closed.
+        self.assertIn('<li class="repo-tree-folder has-current"><details open><summary>'
+                      '<span class="repo-tree-name">notes/</span>', tree)
+        self.assertIn('<a class="repo-tree-file current" aria-current="page" href="record.html" title="Record">'
+                      '<span class="repo-tree-name">record.md</span><span class="repo-tree-title">Record</span></a>', tree)
+        self.assertIn('<li class="repo-tree-folder"><details><summary><span class="repo-tree-name">policy/</span>'
+                      '<span class="repo-tree-count" title="2 files">2</span>', tree)
+        # Registered descriptions become tooltips; folders sort before files.
+        self.assertIn('title="Shared rule: A shared rule."', tree)
+        self.assertLess(tree.index('docs/</span>'), tree.index('notes/</span>'))
+        # Topic entry pages appear at their path with a page badge, linking their own route.
+        guide = self.page('guide')
+        self.assertIn('class="repo-tree-file is-page current" aria-current="page" href="guide.html"', guide)
+        self.assertIn('<span class="repo-tree-name">index.md<span class="repo-tree-badge">page</span></span>', guide)
+        self.assertIn('<details open><summary><span class="repo-tree-name">guide/</span>', guide)
+        self.assertNotIn('<details open><summary><span class="repo-tree-name">notes/</span>', guide)
+
+    def test_topic_page_still_needs_a_navigation_entry(self):
+        self.write('docs/topics/extra/index.md', '+++\ntitle = "Extra"\ntoc = []\n+++\n\n# Extra\n\n## Part\n\nBody.\n')
+        self.assertFails('extra/index.md: extra.html missing from site.toml [[nav]] registry')
+
+    def test_no_repository_tree_without_source_pages(self):
+        config = self.root / 'docs/site/site.toml'
+        config.write_text(config.read_text().split('\n[[source_pages]]', 1)[0] + '\n')
+        self.assertNotIn('repo-tree', self.page_after_build('guide'))
 
     def test_lint_checks_registered_source_links(self):
         self.write('policy/rule.md', RULE.replace('../notes/record.md#kept', '../notes/record.md#not-kept'))
@@ -256,18 +284,20 @@ class SourcePages(unittest.TestCase):
         self.assertEqual(self.build().returncode, 0)
         self.assertIn('id="reader-introduction"', self.page('shared-rule'))
 
-    def test_listed_reference_page_keeps_the_site_tree_in_its_sidebar(self):
-        # Listed: marked as current in the tree, no section list.
+    def test_reference_page_keeps_the_site_tree_in_its_sidebar(self):
+        # Listed: marked as current in the navigation and the repository tree, no section list.
         listed = self.page_after_build('shared-rule')
         self.assertIn('class="xpage current" aria-current="page" data-group="rules" href="shared-rule.html"', listed)
+        self.assertIn('class="repo-tree-file current" aria-current="page" href="shared-rule.html"', listed)
         self.assertNotIn('<a class="top" href="#first-part">', listed)
-        # Hidden: no tree entry to mark, so the sidebar lists its sections.
+        # Hidden from navigation: the repository tree still marks it, so no section list either.
         config = self.root / 'docs/site/site.toml'
         config.write_text(config.read_text().replace(
             'label = "shared-rule"\nfile = "shared-rule.html"\ngroup = "rules"\n',
             'label = "shared-rule"\nfile = "shared-rule.html"\nhidden = true\n'))
         hidden = self.page_after_build('shared-rule')
-        self.assertIn('<a class="top" href="#first-part">', hidden)
+        self.assertIn('class="repo-tree-file current" aria-current="page" href="shared-rule.html"', hidden)
+        self.assertNotIn('<a class="top" href="#first-part">', hidden)
 
     def page_after_build(self, slug):
         result = self.build()

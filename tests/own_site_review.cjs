@@ -96,6 +96,23 @@ const SHOTS = ['index', 'getting-started', 'build-a-site', 'git', 'releases', 'r
           assert.equal(await page.locator('.source-origin').first().isVisible(), true, slug + ' shows its source line');
         }
       }
+      // Sidebar: navigation holds pages for people; the repository tree lists every
+      // built page by path, marks the current file and opens only its folders.
+      for (const [slug, folders] of [['git', ['rules/', 'engineering/']],
+                                     ['getting-started', ['docs/', 'topics/', 'getting-started/']]]) {
+        await page.goto(`${origin}/html/${slug}.html`, {waitUntil:'networkidle'});
+        const tree = await page.evaluate(() => ({
+          nav: [...document.querySelectorAll('.toc a.xpage')].map(a => a.getAttribute('href')),
+          current: [...document.querySelectorAll('.repo-tree a[aria-current="page"]')].map(a => a.getAttribute('href')),
+          open: [...document.querySelectorAll('.repo-tree details[open] > summary .repo-tree-name')].map(n => n.textContent),
+          files: document.querySelectorAll('.repo-tree a.repo-tree-file').length,
+          pages: [...document.querySelectorAll('.repo-tree a.repo-tree-file.is-page')].map(a => a.getAttribute('href'))}));
+        assert.ok(tree.nav.every(href => peoplePages.includes(href.slice(0, -5))), 'navigation lists only pages for people: ' + tree.nav);
+        assert.deepEqual(tree.current, [slug + '.html'], slug + ' is the current tree file');
+        assert.deepEqual(tree.open, folders, slug + ' opens only its own folders');
+        assert.equal(tree.files, pages.length, 'repository tree lists every built page');
+        assert.deepEqual(tree.pages.sort(), ['index', ...peoplePages].map(name => name + '.html').sort(), 'page badges mark topic pages');
+      }
       await page.goto(`${origin}/html/build-a-site.html`, {waitUntil:'networkidle'});
       if (viewport.width >= 900) {
         // The reader stage uses the content width; no line-length cap leaves the right side blank.
@@ -124,7 +141,7 @@ const SHOTS = ['index', 'getting-started', 'build-a-site', 'git', 'releases', 'r
           || document.getElementById('figures')?.getBoundingClientRect().left >= 0, null, {timeout: 3000}).catch(() => {});
         await page.waitForTimeout(400);
         const shown = await inView();
-        assert.ok(shown.includes('how-a-build-works') && !shown.includes('two-kinds-of-pages'), 'pinned chapter holds while the other column moves: ' + shown);
+        assert.ok(shown.includes('how-a-build-works') && !shown.includes('write-a-topic-page'), 'pinned chapter holds while the other column moves: ' + shown);
         await page.click('button[data-reader-view="single"]');
         await page.goto(`${origin}/html/build-a-site.html#figures-and-slides`, {waitUntil:'networkidle'});
         const slides = await page.$$eval('#figures-and-slides .fig-carousel > img', imgs => imgs.filter(img => getComputedStyle(img).display !== 'none').length);
@@ -146,6 +163,12 @@ const SHOTS = ['index', 'getting-started', 'build-a-site', 'git', 'releases', 'r
           const r = document.getElementById('sidebar').getBoundingClientRect();
           return r.right > 100 && r.left >= -1;
         });
+        const treeFile = page.locator('.repo-tree a[aria-current="page"]');
+        await treeFile.scrollIntoViewIfNeeded();
+        assert.equal(await treeFile.isVisible(), true, 'narrow menu reaches the current file in the repository tree');
+        const folder = page.locator('.repo-tree summary', {hasText: 'writing/'});
+        await folder.click();
+        assert.equal(await folder.evaluate(node => node.parentElement.open), true, 'a closed folder opens from the narrow menu');
         await page.goto(`${origin}/html/releases.html`, {waitUntil:'networkidle'});
         const region = page.locator('.scroll[role="region"]').first();
         const metrics = await region.evaluate(el => ({scroll: el.scrollWidth, client: el.clientWidth}));
@@ -186,5 +209,5 @@ const SHOTS = ['index', 'getting-started', 'build-a-site', 'git', 'releases', 'r
     server.close();
   }
   await fs.writeFile(path.join(output, 'results.json'), JSON.stringify(results, null, 2) + '\n');
-  console.log(`Own site: ${results.pages} pages contained with visible media at 1600 and 390; deep links, panel hash, keyboard paths, reader chapters, views, docking, pinning and carousel, narrow menu/table scrolling, print and no-JavaScript reading pass.`);
+  console.log(`Own site: ${results.pages} pages contained with visible media at 1600 and 390; deep links, panel hash, keyboard paths, reader chapters, sidebar repository tree, views, docking, pinning and carousel, narrow menu/tree/table scrolling, print and no-JavaScript reading pass.`);
 })().catch(error => { console.error(error); process.exitCode = 1; server.close(); });

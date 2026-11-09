@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     topic.jumps = {group:jumpGroup, links:shortcuts}; chapterList.appendChild(jumpGroup);
   });
-  const currentPage = toc.querySelector('a.xpage.current');
+  const currentPage = toc.querySelector('a.xpage.current') || toc.querySelector('.repo-tree a.current');
   if (currentPage) { currentPage.after(chapterList); if (currentPage.dataset.group) chapterList.dataset.group = currentPage.dataset.group; }
   else toc.prepend(chapterList);
   const progressRow = make('div', 'reader-progress-row'); progressRow.setAttribute('aria-hidden', 'true');
