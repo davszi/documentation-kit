@@ -46,7 +46,8 @@
 })();
 
 // Group tones: a site may colour its groups in CSS (--g); groups without one get
-// the next tone in order, so every group header, page and chapter list matches.
+// the next tone in order, so every group header, page, chapter list and home-page
+// map group matches.
 (function(){
   var tones = ['#6ee7c5', '#b69cff', '#ffb35c', '#5cc8ff', '#ff8597', '#9ad46b'];
   var order = [];
@@ -55,7 +56,7 @@
     if (order.indexOf(group) < 0) order.push(group);
   });
   order.forEach(function(group, i){
-    var members = document.querySelectorAll('.toc [data-group="' + group.replace(/"/g, '\\"') + '"]');
+    var members = document.querySelectorAll('.toc [data-group="' + group.replace(/"/g, '\\"') + '"], .map-group[data-group="' + group.replace(/"/g, '\\"') + '"]');
     members.forEach(function(el){
       if (getComputedStyle(el).getPropertyValue('--g').trim()) return;
       el.style.setProperty('--g', tones[i % tones.length]);

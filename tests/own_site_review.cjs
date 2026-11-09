@@ -77,12 +77,12 @@ const SHOTS = ['index', 'getting-started', 'build-a-site', 'git', 'releases', 'r
       let reached = null;
       for (let step = 0; step < 80 && !reached; step++) {
         await page.keyboard.press('Tab');
-        reached = await page.evaluate(() => document.activeElement?.classList.contains('now-card')
+        reached = await page.evaluate(() => document.activeElement?.classList.contains('map-card')
           ? {href: document.activeElement.getAttribute('href'), outline: getComputedStyle(document.activeElement).outlineStyle,
              shadow: getComputedStyle(document.activeElement).boxShadow} : null);
       }
-      assert.ok(reached, 'a home path card is reachable by keyboard');
-      assert.ok(reached.outline !== 'none' || reached.shadow !== 'none', 'focused path card is visibly marked');
+      assert.ok(reached, 'a home page card is reachable by keyboard');
+      assert.ok(reached.outline !== 'none' || reached.shadow !== 'none', 'focused page card is visibly marked');
 
       // Pages for people use the chapter reader; rendered records are plain reference pages.
       const peoplePages = ['getting-started', 'build-a-site', 'engineering-practices',

@@ -2,6 +2,18 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Redesign the home page
+
+- The hero repeated the page links as three numbered text cards, the step
+  flow's command ran into its arrow, the AGENTS.md example sat in a wide
+  separate code block, and the page map mixed one stale screenshot with empty
+  boxes. The hero now pairs the claim with an AGENTS.md router card; the steps
+  are three numbered cards; the page map shows uniform cards per group in the
+  sidebar's group tones, which `nav.js` now also applies to map groups.
+- Checks: 135 tests, strict lint, all four browser suites (the keyboard check
+  now targets page cards, which gained focus outlines); captures at 1400, 1024
+  and 390 reviewed by eye.
+
 ## 2026-11-09 — Redesign the sidebar navigation
 
 - Each navigation group is now a section styled like the Reference block:
