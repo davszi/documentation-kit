@@ -49,11 +49,6 @@ def local_artifacts_manifest(root=REPO, *, site=None):
             or Path(value).as_posix() != value):
         raise ValueError("local_artifacts_manifest must name a contained relative file")
     source = root / value
-    if not configured and not source.exists() and not source.is_symlink():
-        # Consumers predating the evidence directory keep their exact default.
-        legacy = root / "docs/project/local-artifacts.json"
-        if legacy.exists() or legacy.is_symlink():
-            source = legacy
     if (not source.resolve().is_relative_to(root)
             or any(parent.is_symlink() for parent in (source, *source.parents)
                    if parent.is_relative_to(root))):

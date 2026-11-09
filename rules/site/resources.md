@@ -8,11 +8,10 @@ Register intentionally retained local media in the project's supported local-art
 
 `local_artifacts_manifest` in `site.toml` selects a contained, relative regular
 file without symlink components. Its default is
-`docs/evidence/local-artifacts.json`. If the setting is omitted and that default
-is absent, `docs/project/local-artifacts.json` remains the legacy fallback;
-absence of both means no manifest. An explicitly configured missing file fails
-instead of falling back. This setting changes the inventory location, not its
-schema or the project's evidence requirements.
+`docs/evidence/local-artifacts.json`. If the setting is omitted and that file
+is absent, the project has no manifest. An explicitly configured missing file
+fails. This setting changes the inventory location, not its schema or the
+project's evidence requirements.
 
 Projects with existing historical-path or evidence schemas can register local
 Python adapters using `path_resolver = "tools/docs/site_paths.py"` and
@@ -25,6 +24,13 @@ evidence adapter exports `MANIFESTS`, `manifest_documents(root, *, require_all_m
 returning `(documents, revisions)`, and `verify` with the same arguments; invalid
 evidence raises `ValueError`. Projects keep adapter tests and schema policy;
 the kit keeps one build/lint engine and uses the adapters consistently.
+
+The path adapter is a kept compatibility layer under
+[refactoring over compatibility](../engineering/code.md#refactoring-over-compatibility).
+It exists because frozen records cannot be edited, yet their links to moved
+files must still resolve and be checked. Live files use current paths, not the
+adapter. A project removes its adapter once no retained frozen record names an
+old path.
 
 The evidence adapter may also export `document_origin(path, *, root)`. Return
 the registered repository origin for an exact source snapshot, or `None` to

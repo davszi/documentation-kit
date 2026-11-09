@@ -2,6 +2,18 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Remove the exporter's renaming and the old manifest location
+
+- The owner decided no compatibility is needed for either. `export_pages`
+  drops `page_routes`; every generated file keeps its name, and
+  `public_files` lists tracked paths published at the same path. Tests that
+  only covered renaming are removed; a test proves names are kept. The
+  `docs/project/local-artifacts.json` fallback is removed, with a test that
+  the old location is ignored. The path adapter stays: the resources guide
+  records that it exists for frozen records and goes once none names an old
+  path. A migration guide for the next release covers both removals.
+  Kit checks: 107 tests and strict lint pass.
+
 ## 2026-11-09 — Prefer refactoring to backward compatibility
 
 - The code guide gains "Refactoring over compatibility": before changing a

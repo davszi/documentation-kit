@@ -8,10 +8,12 @@ release changes for consumers and how to move to it. Chronology stays in the
 
 ## Unreleased — source pages, kit website and experiment guides
 
-These changes are on `main` after 1.1.0 and are not yet tagged. They add to the
-1.x surface without changing existing commands, keys, markers or page output,
-so they fit a minor release. No consumer migration is required; consumers may
-add routes to the new experiment guides.
+These changes are on `main` after 1.1.0 and are not yet tagged. Most add to the
+1.x surface. Two remove compatibility forms under
+[refactoring over compatibility](../../../rules/engineering/code.md#refactoring-over-compatibility):
+the exporter's page renaming and file relocation, and the old local-artifact
+manifest location. Consumers that use either follow the
+[migration guide](migrations/next.md). The release number is not yet decided.
 
 | Area | Consumer change | Owning contract |
 |---|---|---|
@@ -29,6 +31,8 @@ add routes to the new experiment guides.
 | Lint | Optional `open_work` setting names the open-work file (default `docs/open/OPEN.md`); every worklog check now honours the existing `worklog` setting | [Resources and evidence](../../../rules/site/resources.md) |
 | Repository | The kit's own entry files are `docs/KIT_CONTEXT.md`, `docs/KIT_INDEX.md`, `docs/KIT_WORKLOG.md` and `docs/open/KIT_OPEN.md`; its `AGENTS.md` and `CLAUDE.md` state they apply only to the kit repository | [Kit context](../../KIT_CONTEXT.md) |
 | Engineering guide | New "Refactoring over compatibility" section in the code guide: ask the owner, with evidence, before changing a form others may still use; once the owner decides no compatibility is needed, update every reference and remove the old form. The documentation guide no longer allows compatibility routes by default | [Refactoring over compatibility](../../../rules/engineering/code.md#refactoring-over-compatibility) |
+| Publication export | Removed: `export_pages` no longer takes `page_routes`; every generated file keeps its name. `public_files` is a list of tracked paths published at the same path, not a mapping | [Publication export](../../../rules/site/publication.md) |
+| Evidence configuration | Removed: an absent `docs/evidence/local-artifacts.json` no longer falls back to `docs/project/local-artifacts.json`. The resources guide records why the path adapter is kept and when a project removes it | [Resources and evidence](../../../rules/site/resources.md#resource-closure-and-evidence) |
 | Kit website | The kit builds its own reference site from the repository root | [Website record](../website/website.md) |
 | Experiment guides | New shared guides: experiments are investigations or qualifications, start small and state a budget; a pre-stated bar and verdict are required for confirmatory investigations and qualifications; terms for learned or fitted models, such as final runs, are scoped to their own section; claim-scoped verification and regression gates; routes added to the starter's `AGENTS.md` | [Workflow](../../../rules/experiments/workflow.md), [verification](../../../rules/experiments/verification.md) |
 

@@ -17,7 +17,7 @@ class PublicationTests(unittest.TestCase):
         for directory in (self.root, self.generated, self.destination):
             directory.mkdir()
         self.tracked = set()
-        self.public = {}
+        self.public = set()
 
     def put(self, directory, name, content=b'content'):
         path = directory / name
@@ -25,24 +25,23 @@ class PublicationTests(unittest.TestCase):
         path.write_bytes(content.encode() if isinstance(content, str) else content)
         return path
 
-    def resource(self, name, public=None, content=b'content'):
+    def resource(self, name, public=False, content=b'content'):
         self.put(self.root, name, content)
         self.tracked.add(name)
-        if public is not None:
-            self.put(self.destination, public, content)
-            self.public[name] = public
+        if public:
+            self.put(self.destination, name, content)
+            self.public.add(name)
 
     def export(self, **kwargs):
-        options = dict(root=self.root, tracked=self.tracked, page_routes={'index.html': 'overview.html'},
-                       pages=('overview.html',), public_files=self.public)
+        options = dict(root=self.root, tracked=self.tracked, pages=('index.html',), public_files=self.public)
         options.update(kwargs)
         return export_pages(self.generated, self.destination, **options)
 
     def test_original_overlay_output_is_byte_exact(self):
-        self.resource('docs/chart.svg', 'docs/chart.svg')
-        self.resource('evidence/report.html', 'evidence/report.html')
-        self.resource('notes.md', 'notes.md')
-        self.resource('configs/run.json', 'configs/run.json')
+        self.resource('docs/chart.svg', public=True)
+        self.resource('evidence/report.html', public=True)
+        self.resource('notes.md', public=True)
+        self.resource('configs/run.json', public=True)
         # This admitted directory remains a source link, even when not tracked.
         (self.root / 'reports').mkdir()
         opaque = '''<script type="application/json">{"html":"<a href='index.html'>opaque</a>","x":"_media/docs/chart.svg"}</script>
@@ -58,86 +57,75 @@ class PublicationTests(unittest.TestCase):
                   '</body></html>')
         self.put(self.generated, 'index.html', source)
         self.put(self.generated, '_media/docs/chart.svg')
-        expected = (source.replace('href="index.html#top"', 'href="overview.html#top"')
-                    .replace('src="_media/docs/chart.svg"', 'src="docs/chart.svg"')
+        expected = (source.replace('src="_media/docs/chart.svg"', 'src="docs/chart.svg"')
                     .replace('href="https://example.test/blob/report" data-repo-path="evidence/report.html" data-repo-fragment="details"',
                              'href="evidence/report.html#details"')
                     .replace('<a href="https://example.test/blob/local" data-repo-path="results/local.html" data-repo-fragment="x"><b>Local label</b></a>',
                              '<span class="local-evidence" title="Local evidence file; not published"><b>Local label</b></span>'))
         exported = self.export(private_suffixes=('.md', '.py', '.toml'), private_prefixes=('configs/',))
-        self.assertEqual((self.destination / 'overview.html').read_bytes(), expected.encode())
-        self.assertEqual(set(exported), {'overview.html', '_media/docs/chart.svg'})
+        self.assertEqual((self.destination / 'index.html').read_bytes(), expected.encode())
+        self.assertEqual(set(exported), {'index.html', '_media/docs/chart.svg'})
         self.assertEqual((self.destination / '_media/docs/chart.svg').read_bytes(), b'content')
         self.assertEqual((self.generated / 'index.html').read_bytes(), source.encode())
 
-    def test_actual_attributes_only_with_mixed_quotes_queries_and_fragments(self):
-        source = '''<html><body>
-<a data-example='href="index.html#pretend"' href='index.html?mode=one&amp;x=2#part' id="same">Home</a>
-<a href=index.html#bare>Bare</a>
-<a href="https://example.test/index.html#remote">Remote</a>
-<a href="//example.test/index.html">Protocol relative</a>
-<a href="#index.html">Fragment</a>
-<!-- <a href="index.html">comment</a> -->
-<style>.x::after {content:'<a href="index.html">';}</style>
-<script type='application/json'>{"text":"<a href='index.html'>JSON</a>"}</script>
-<script>let literal = '<a href="index.html">script</a>';</script>
-</body></html>'''
-        self.put(self.generated, 'index.html', source)
-        expected = source.replace("href='index.html?mode=one&amp;x=2#part'", "href='overview.html?mode=one&amp;x=2#part'")
-        expected = expected.replace('href=index.html#bare', 'href=overview.html#bare')
-        self.export()
-        self.assertEqual((self.destination / 'overview.html').read_bytes(), expected.encode())
-
-    def test_non_lf_separators_in_scripts_do_not_shift_later_edits(self):
-        for separator in ('\u2028', '\r', '\f'):
-            with self.subTest(separator=repr(separator)):
-                opaque = ('<script>const value = "before' + separator + 'after";</script>'
-                          '<script type="application/json">{"html":"before' + separator
-                          + '<a href=\'index.html\'>opaque</a>"}</script>')
-                source = '<main>' + opaque + '\n<a href="index.html#later">Later</a></main>'
-                self.put(self.generated, 'index.html', source)
-                self.export(replace=('overview.html',))
-                expected = source.replace('href="index.html#later"', 'href="overview.html#later"')
-                self.assertEqual((self.destination / 'overview.html').read_bytes(), expected.encode())
-
-    def test_mixed_mapped_and_unmapped_generated_anchor_targets(self):
-        source = ('<main><a href="about.html?view=all&amp;x=1#details">About</a>'
-                  '<a href="./evidence/report.html#proof">Evidence</a>'
-                  '<a href="assets/data.json?view=raw">Data</a>'
-                  '<a href="index.html#intro">Start</a></main>')
-        about = '<a href="./index.html?view=one#intro">Start</a>'
-        evidence = '<a href="../about.html#details">About</a>'
-        self.put(self.generated, 'index.html', source)
-        self.put(self.generated, 'about.html', about)
-        self.put(self.generated, 'evidence/report.html', evidence)
-        self.put(self.generated, 'assets/data.json', b'{"opaque":"index.html"}')
-        self.export(page_routes={'index.html': 'reader/start.html'},
-                    pages=('reader/start.html', 'about.html', 'evidence/report.html'))
-        expected = (source.replace('href="about.html?', 'href="../about.html?')
-                    .replace('href="./evidence/report.html#', 'href="../evidence/report.html#')
-                    .replace('href="assets/data.json?', 'href="../assets/data.json?')
-                    .replace('href="index.html#', 'href="start.html#'))
-        self.assertEqual((self.destination / 'reader/start.html').read_text(), expected)
-        self.assertEqual((self.destination / 'about.html').read_text(),
-                         '<a href="reader/start.html?view=one#intro">Start</a>')
-        self.assertEqual((self.destination / 'evidence/report.html').read_text(), evidence)
-        self.assertEqual((self.destination / 'assets/data.json').read_bytes(), b'{"opaque":"index.html"}')
-
-    def test_unmoved_links_keep_original_spelling_and_entity_bytes(self):
+    def test_generated_outputs_keep_their_names_and_relative_links(self):
         source = ('<main><a href="./about.html?x=1&#38;y=2#part">About</a>'
                   '<a href="evidence/../about.html#part">Normalized destination</a>'
                   '<a href="%61bout.html">Encoded destination</a>'
+                  '<a href="evidence/report.html#proof">Evidence</a>'
                   '<a href="index.html#intro">Home</a></main>')
+        evidence = '<a href="../index.html?view=one#intro">Start</a>'
         self.put(self.generated, 'index.html', source)
         self.put(self.generated, 'about.html', '<p>About</p>')
-        self.export(page_routes={'index.html': 'overview.html', 'about.html': 'about.html'})
-        expected = source.replace('href="index.html#intro"', 'href="overview.html#intro"')
-        self.assertEqual((self.destination / 'overview.html').read_bytes(), expected.encode())
+        self.put(self.generated, 'evidence/report.html', evidence)
+        self.put(self.generated, 'assets/data.json', b'{"opaque":"index.html"}')
+        exported = self.export(pages=('index.html', 'evidence/report.html'))
+        self.assertEqual(set(exported), {'index.html', 'about.html', 'evidence/report.html', 'assets/data.json'})
+        self.assertEqual({path.relative_to(self.destination).as_posix()
+                          for path in self.destination.rglob('*') if path.is_file()}, set(exported))
+        self.assertEqual((self.destination / 'index.html').read_bytes(), source.encode())
+        self.assertEqual((self.destination / 'evidence/report.html').read_text(), evidence)
+        self.assertEqual((self.destination / 'assets/data.json').read_bytes(), b'{"opaque":"index.html"}')
+
+    def test_actual_attributes_only_with_mixed_quotes_queries_and_fragments(self):
+        self.resource('fig.svg', public=True)
+        self.resource('paper.html', public=True)
+        source = '''<html><body>
+<img data-example='src="_media/fig.svg"' src='_media/fig.svg?mode=one&amp;x=2#part' id="same">
+<img src=_media/fig.svg#bare>
+<img src="https://example.test/_media/fig.svg#remote">
+<img src="//example.test/_media/fig.svg">
+<a data-example="data-repo-path='paper.html'" href='https://source/paper' data-repo-path='paper.html' data-repo-fragment='a&amp;b'>Paper</a>
+<!-- <img src="_media/fig.svg"> -->
+<style>.x::after {content:'<img src="_media/fig.svg">';}</style>
+<script type='application/json'>{"text":"<img src='_media/fig.svg'>"}</script>
+<script>let literal = '<a data-repo-path="paper.html">script</a>';</script>
+</body></html>'''
+        self.put(self.generated, 'index.html', source)
+        expected = source.replace("src='_media/fig.svg?mode=one&amp;x=2#part'", "src='fig.svg?mode=one&amp;x=2#part'")
+        expected = expected.replace('src=_media/fig.svg#bare', 'src=fig.svg#bare')
+        expected = expected.replace("href='https://source/paper' data-repo-path='paper.html' data-repo-fragment='a&amp;b'",
+                                    "href='paper.html#a&amp;b'")
+        self.export()
+        self.assertEqual((self.destination / 'index.html').read_bytes(), expected.encode())
+
+    def test_non_lf_separators_in_scripts_do_not_shift_later_edits(self):
+        self.resource('fig.svg', public=True)
+        for separator in (' ', '\r', '\f'):
+            with self.subTest(separator=repr(separator)):
+                opaque = ('<script>const value = "before' + separator + 'after";</script>'
+                          '<script type="application/json">{"html":"before' + separator
+                          + '<img src=\'_media/fig.svg\'>"}</script>')
+                source = '<main>' + opaque + '\n<img src="_media/fig.svg#later"></main>'
+                self.put(self.generated, 'index.html', source)
+                self.export(replace=('index.html',))
+                expected = source.replace('src="_media/fig.svg#later"', 'src="fig.svg#later"')
+                self.assertEqual((self.destination / 'index.html').read_bytes(), expected.encode())
 
     def test_private_and_unpublished_links_and_media(self):
-        self.resource('paper.md', 'paper.md')
+        self.resource('paper.md', public=True)
         self.resource('data/hidden.json')
-        self.resource('figures/public.svg', 'figures/public.svg')
+        self.resource('figures/public.svg', public=True)
         self.resource('figures/private.svg')
         self.put(self.generated, 'index.html', '''<main>
 <a href='https://source/paper' data-repo-path='paper.md' data-repo-fragment='method'>Paper</a>
@@ -152,27 +140,27 @@ class PublicationTests(unittest.TestCase):
         expected = original.replace("<a href='https://source/local' data-repo-path='local/untracked.html'>Keep <em>all labels</em></a>",
                                     '<span class="local-note" title="Kept locally &amp; omitted">Keep <em>all labels</em></span>')
         expected = expected.replace("src='_media/figures/public.svg?scale=2&amp;n=3#point'", "src='figures/public.svg?scale=2&amp;n=3#point'")
-        self.assertEqual((self.destination / 'overview.html').read_text(), expected)
+        self.assertEqual((self.destination / 'index.html').read_text(), expected)
 
-    def test_neutral_consumer_nested_routes_and_public_html_evidence(self):
-        self.resource('research/snapshot.html', 'evidence/2026/snapshot.html')
+    def test_nested_page_links_public_files_relative_to_itself(self):
+        self.resource('research/snapshot.html', public=True)
+        self.resource('figures/plot.svg', public=True)
         source = ("<article id='original'><a href='../index.html?mode=two#intro'>Start</a>"
+                  "<img src='../_media/figures/plot.svg'>"
                   "<a href='https://source/snapshot' data-repo-path='research/snapshot.html' "
                   "data-repo-fragment='equation&amp;value'>Evidence</a></article>")
         self.put(self.generated, 'chapters/topic.html', source)
         self.put(self.generated, 'index.html', '<a href="chapters/topic.html#original">Topic</a>')
         self.put(self.generated, 'static/plain.json', b'{"href":"index.html"}\n')
-        self.export(page_routes={'index.html': 'reader/start.html', 'chapters/topic.html': 'reader/deep/topic.html'},
-                    pages=('reader/start.html', 'reader/deep/topic.html'))
-        expected = (source.replace("href='../index.html?mode=two#intro'", "href='../start.html?mode=two#intro'")
-                    .replace("href='https://source/snapshot' data-repo-path='research/snapshot.html' data-repo-fragment='equation&amp;value'",
-                             "href='../../evidence/2026/snapshot.html#equation&amp;value'"))
-        self.assertEqual((self.destination / 'reader/deep/topic.html').read_text(), expected)
-        self.assertEqual((self.destination / 'reader/start.html').read_text(), '<a href="deep/topic.html#original">Topic</a>')
+        self.export(pages=('index.html', 'chapters/topic.html'))
+        expected = source.replace("href='https://source/snapshot' data-repo-path='research/snapshot.html' data-repo-fragment='equation&amp;value'",
+                                  "href='../research/snapshot.html#equation&amp;value'")
+        self.assertEqual((self.destination / 'chapters/topic.html').read_text(), expected)
+        self.assertEqual((self.destination / 'index.html').read_text(), '<a href="chapters/topic.html#original">Topic</a>')
         self.assertEqual((self.destination / 'static/plain.json').read_bytes(), b'{"href":"index.html"}\n')
 
     def test_media_elements_restore_only_src_and_poster(self):
-        self.resource('figures/frame.svg', 'published/frame.svg')
+        self.resource('figures/frame.svg', public=True)
         source = ("<div><video poster='_media/figures/frame.svg' controls>"
                   "<source src='_media/figures/frame.svg'></video>"
                   "<audio src='_media/figures/frame.svg'></audio>"
@@ -181,76 +169,86 @@ class PublicationTests(unittest.TestCase):
                   "<script src='_media/figures/frame.svg'></script></div>")
         self.put(self.generated, 'index.html', source)
         self.export()
-        expected = source.replace("poster='_media/figures/frame.svg'", "poster='published/frame.svg'")
+        expected = source.replace("poster='_media/figures/frame.svg'", "poster='figures/frame.svg'")
         # Script and anchor references do not use the media restoration rule.
-        expected = expected.replace("<source src='_media/figures/frame.svg'>", "<source src='published/frame.svg'>")
-        expected = expected.replace("<audio src='_media/figures/frame.svg'>", "<audio src='published/frame.svg'>")
-        expected = expected.replace("<iframe src='_media/figures/frame.svg'>", "<iframe src='published/frame.svg'>")
-        self.assertEqual((self.destination / 'overview.html').read_text(), expected)
+        expected = expected.replace("<source src='_media/figures/frame.svg'>", "<source src='figures/frame.svg'>")
+        expected = expected.replace("<audio src='_media/figures/frame.svg'>", "<audio src='figures/frame.svg'>")
+        expected = expected.replace("<iframe src='_media/figures/frame.svg'>", "<iframe src='figures/frame.svg'>")
+        self.assertEqual((self.destination / 'index.html').read_text(), expected)
+
+    def test_public_file_may_be_a_generated_output(self):
+        self.resource('evidence/report.html')
+        self.public.add('evidence/report.html')
+        self.put(self.generated, 'evidence/report.html', '<p>Report</p>')
+        self.put(self.generated, 'index.html',
+                 '<a href="https://source/report" data-repo-path="evidence/report.html">Report</a>')
+        self.export()
+        self.assertEqual((self.destination / 'index.html').read_text(), '<a href="evidence/report.html">Report</a>')
+        self.assertEqual((self.destination / 'evidence/report.html').read_text(), '<p>Report</p>')
 
     def test_only_explicit_pages_are_rewritten(self):
-        self.put(self.generated, 'index.html', '<a href="index.html">Active</a>')
-        original = '<a href="index.html">Historical</a><script>"index.html"</script>'
+        self.resource('fig.svg', public=True)
+        self.put(self.generated, 'index.html', '<img src="_media/fig.svg">')
+        original = '<img src="../_media/fig.svg"><script>"_media/fig.svg"</script>'
         self.put(self.generated, 'evidence/nested.html', original)
         self.export()
+        self.assertEqual((self.destination / 'index.html').read_text(), '<img src="fig.svg">')
         self.assertEqual((self.destination / 'evidence/nested.html').read_text(), original)
 
     def test_replacement_requires_explicit_permission(self):
         self.put(self.generated, 'index.html', '<p>New</p>')
         self.put(self.generated, 'asset.txt', 'New asset')
-        self.put(self.destination, 'overview.html', '<p>Old</p>')
+        self.put(self.destination, 'index.html', '<p>Old</p>')
         with self.assertRaisesRegex(ValueError, 'overwrite'):
             self.export()
         self.assertFalse((self.destination / 'asset.txt').exists())
-        self.assertEqual((self.destination / 'overview.html').read_text(), '<p>Old</p>')
-        self.export(replace=('overview.html',))
+        self.assertEqual((self.destination / 'index.html').read_text(), '<p>Old</p>')
+        self.export(replace=('index.html',))
         # Identical reruns are safe without replacement permission.
         self.export()
-        self.assertEqual((self.destination / 'overview.html').read_text(), '<p>New</p>')
+        self.assertEqual((self.destination / 'index.html').read_text(), '<p>New</p>')
 
-    def test_invalid_paths_and_route_collisions_do_not_write(self):
+    def test_invalid_paths_do_not_write(self):
         self.put(self.generated, 'index.html', '<p>Page</p>')
-        for target in ('../escape.html', '/escape.html', 'x/../escape.html', 'x//a.html', r'x\a.html', 'x.html?query'):
-            with self.subTest(target=target), self.assertRaisesRegex(ValueError, 'Invalid publication path'):
-                self.export(page_routes={'index.html': target}, pages=(target,))
-        self.put(self.generated, 'overview.html', '<p>Other page</p>')
-        with self.assertRaisesRegex(ValueError, 'route collision'):
-            self.export()
+        for name in ('../escape.html', '/escape.html', 'x/../escape.html', 'x//a.html', r'x\a.html', 'x.html?query'):
+            for option in ('pages', 'replace', 'public_files', 'tracked'):
+                with self.subTest(name=name, option=option), self.assertRaisesRegex(ValueError, 'Invalid publication path'):
+                    self.export(**{option: (name,)})
         self.assertEqual(list(self.destination.iterdir()), [])
 
-    def test_route_and_existing_parent_file_directory_collisions(self):
-        self.put(self.generated, 'index.html', '<p>Page</p>')
+    def test_existing_parent_file_directory_collision(self):
+        self.put(self.generated, 'reader/page.html', '<p>Page</p>')
         self.put(self.generated, 'asset.txt', 'Other')
-        with self.assertRaisesRegex(ValueError, 'file/directory collision'):
-            self.export(page_routes={'index.html': 'reader', 'asset.txt': 'reader/file.txt'}, pages=())
         self.put(self.destination, 'reader', 'Existing file')
         with self.assertRaisesRegex(ValueError, 'file/directory collision'):
-            self.export(page_routes={'index.html': 'reader/page.html'}, pages=('reader/page.html',))
+            self.export(pages=('reader/page.html',))
         self.assertFalse((self.destination / 'asset.txt').exists())
+        self.assertEqual((self.destination / 'reader').read_text(), 'Existing file')
 
-    def test_invalid_page_and_missing_route_or_replacement(self):
+    def test_invalid_page_or_replacement(self):
         self.put(self.generated, 'index.html', '<p>Page</p>')
-        for options in ({'pages': ('absent.html',)}, {'pages': ('asset.json',)},
-                        {'page_routes': {'missing.html': 'overview.html'}}, {'replace': ('absent.html',)}):
+        self.put(self.generated, 'asset.json', '{}')
+        for options in ({'pages': ('absent.html',)}, {'pages': ('asset.json',)}, {'replace': ('absent.html',)}):
             with self.subTest(options=options), self.assertRaises(ValueError):
                 self.export(**options)
         self.assertEqual(list(self.destination.iterdir()), [])
 
-    def test_public_file_mapping_requires_tracked_present_contained_files(self):
+    def test_public_files_require_tracked_present_available_files(self):
         self.put(self.generated, 'index.html', '<p>Page</p>')
         self.put(self.root, 'untracked.svg')
         self.put(self.destination, 'untracked.svg')
         with self.assertRaisesRegex(ValueError, 'tracked, present'):
-            self.export(public_files={'untracked.svg': 'untracked.svg'})
+            self.export(public_files=('untracked.svg',))
         self.tracked.add('missing.svg')
+        self.put(self.destination, 'missing.svg')
         with self.assertRaisesRegex(ValueError, 'tracked, present'):
-            self.export(public_files={'missing.svg': 'untracked.svg'})
-        self.resource('tracked.svg')
+            self.export(public_files=('missing.svg',))
+        self.resource('unpublished.svg')
         with self.assertRaisesRegex(ValueError, 'tracked, present'):
-            self.export(public_files={'tracked.svg': 'absent.svg'})
+            self.export(public_files=('unpublished.svg',))
         with self.assertRaisesRegex(ValueError, 'Invalid publication path'):
-            self.export(public_files={'tracked.svg': '../outside.svg'})
-        self.assertEqual(set(path.name for path in self.destination.iterdir()), {'untracked.svg'})
+            self.export(public_files=('../outside.svg',))
+        self.assertEqual(set(path.name for path in self.destination.iterdir()), {'untracked.svg', 'missing.svg'})
 
     def test_generated_media_requires_tracked_repository_file(self):
         self.put(self.generated, 'index.html', '<img src="_media/private.svg">')
@@ -271,27 +269,31 @@ class PublicationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'symlink'):
             self.export()
         (self.generated / 'asset.txt').unlink()
-        (self.destination / 'overview.html').symlink_to(outside)
+        (self.destination / 'index.html').symlink_to(outside)
         with self.assertRaisesRegex(ValueError, 'symlink'):
-            self.export(replace=('overview.html',))
+            self.export(replace=('index.html',))
         self.assertEqual(outside.read_text(), 'Do not overwrite')
 
     def test_directory_and_repository_symlinks_are_rejected(self):
         outside = self.base / 'outside'
         outside.mkdir()
         self.put(outside, 'asset.svg')
-        self.put(self.generated, 'index.html', '<p>Page</p>')
+        self.put(self.generated, 'linked/page.html', '<p>Page</p>')
         (self.destination / 'linked').symlink_to(outside, target_is_directory=True)
         with self.assertRaisesRegex(ValueError, 'symlink'):
-            self.export(page_routes={'index.html': 'linked/page.html'}, pages=('linked/page.html',))
+            self.export(pages=('linked/page.html',))
+        (self.generated / 'linked/page.html').unlink()
+        (self.generated / 'linked').rmdir()
+        self.put(self.generated, 'index.html', '<p>Page</p>')
         (self.root / 'assets').symlink_to(outside, target_is_directory=True)
         self.tracked.add('assets/asset.svg')
         with self.assertRaisesRegex(ValueError, 'symlink'):
-            self.export(public_files={'assets/asset.svg': 'linked/asset.svg'})
+            self.export(public_files=('assets/asset.svg',))
         alias = self.base / 'alias'
         alias.symlink_to(self.destination, target_is_directory=True)
         with self.assertRaisesRegex(ValueError, 'symlink'):
-            export_pages(self.generated, alias / 'child', root=self.root, tracked=(), page_routes={}, pages=(), public_files={})
+            export_pages(self.generated, alias / 'child', root=self.root, tracked=(), pages=(), public_files=())
+        self.assertFalse((outside / 'page.html').exists())
 
     def test_escaping_repository_metadata_is_rejected(self):
         self.put(self.generated, 'index.html', '<a href="https://source" data-repo-path="../outside">Label</a>')
@@ -309,7 +311,7 @@ class PublicationTests(unittest.TestCase):
         self.put(self.generated, 'index.html', '<p>Page</p>')
         with self.assertRaisesRegex(ValueError, 'must not overlap'):
             export_pages(self.generated, self.generated / 'nested', root=self.root,
-                         tracked=(), page_routes={}, pages=(), public_files={})
+                         tracked=(), pages=(), public_files=())
 
 
 if __name__ == '__main__':

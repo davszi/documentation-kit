@@ -55,6 +55,11 @@ file = "migrate-1-1-0.html"
 group = "releases"
 
 [[nav]]
+label = "Migrate to the next release"
+file = "migrate-next.html"
+group = "releases"
+
+[[nav]]
 label = "About this website"
 file = "website.html"
 group = "kit development"
@@ -321,6 +326,11 @@ description = "What each version changes for consumers and the 1.x compatibility
 source = "docs/topics/releases/migrations/1.1.0.md"
 slug = "migrate-1-1-0"
 description = "Move an existing consumer from 1.0.0 to 1.1.0."
+
+[[source_pages]]
+source = "docs/topics/releases/migrations/next.md"
+slug = "migrate-next"
+description = "Move an existing consumer from 1.1.0 to the next release."
 
 [[source_pages]]
 source = "docs/topics/website/website.md"

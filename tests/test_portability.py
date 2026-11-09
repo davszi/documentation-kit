@@ -361,5 +361,21 @@ def verify(root, *, require_all_manifests=False): raise ValueError("project evid
         self.assertIn('160000 ' + revision, index)
 
 
+class LocalArtifactsManifestTest(unittest.TestCase):
+    def test_old_project_location_is_not_used(self):
+        sys.path.insert(0, str(KIT / 'tooling'))
+        import site_paths
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            old = root / 'docs/project/local-artifacts.json'
+            old.parent.mkdir(parents=True)
+            old.write_text('{}')
+            self.assertIsNone(site_paths.local_artifacts_manifest(root, site={}))
+            current = root / 'docs/evidence/local-artifacts.json'
+            current.parent.mkdir(parents=True)
+            current.write_text('{}')
+            self.assertEqual(site_paths.local_artifacts_manifest(root, site={}), current.resolve())
+
+
 if __name__ == '__main__':
     unittest.main()

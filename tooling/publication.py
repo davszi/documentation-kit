@@ -1,9 +1,9 @@
 """Copy an existing generated bundle into a consumer-owned publication tree.
 
 This optional overlay does not build pages, discover repository resources or
-choose source URLs. Consumers supply routes, admitted public files, private-file
-policy and the exact existing outputs that may be replaced. HTML changes use
-source spans; scripts, JSON, labels and unrelated attributes remain opaque.
+choose source URLs. Consumers supply admitted public files, private-file policy
+and the exact existing outputs that may be replaced. HTML changes use source
+spans; scripts, JSON, labels and unrelated attributes remain opaque.
 """
 from __future__ import annotations
 
@@ -74,9 +74,8 @@ def _opening(markup: str, node, changes: Mapping[str, str | None]) -> str:
     return original
 
 
-def _rewrite(markup: str, *, page: str, source: str, root: Path,
-             tracked: set[str], routes: Mapping[str, str], public_files: Mapping[str, str],
-             available, private_suffixes: tuple[str, ...], private_prefixes: tuple[str, ...],
+def _rewrite(markup: str, *, page: str, root: Path,
+             tracked: set[str], public_files: set[str], private_suffixes: tuple[str, ...], private_prefixes: tuple[str, ...],
              local_notice: tuple[str, str]) -> str:
     edits = []
     structure = Structure(markup)
@@ -91,20 +90,10 @@ def _rewrite(markup: str, *, page: str, source: str, root: Path,
                     if url.scheme or url.netloc or not url.path.startswith('_media/'):
                         continue
                     repository_path = unquote(url.path[len('_media/'):])
-                    if repository_path in tracked and repository_path in public_files:
-                        public = public_files[repository_path]
-                        if available(public):
-                            changes[attr] = _relative(page, public) + value[len(url.path):]
+                    # Validated public files are tracked and available at this path.
+                    if repository_path in public_files:
+                        changes[attr] = _relative(page, repository_path) + value[len(url.path):]
             elif node.tag == 'a':
-                href = node.attrs.get('href') or ''
-                url = urlsplit(href)
-                if url.path and not url.scheme and not url.netloc and not url.path.startswith('/'):
-                    logical = posixpath.normpath(posixpath.join(posixpath.dirname(source), unquote(url.path)))
-                    if logical in routes and (routes[logical] != logical
-                                              or posixpath.dirname(page) != posixpath.dirname(source)):
-                        # Leave original spelling/entities alone when neither end
-                        # of this relative link changes its directory or target.
-                        changes['href'] = _relative(page, routes[logical]) + href[len(url.path):]
                 repository_path = node.attrs.get('data-repo-path')
                 if repository_path:
                     local = _contained(root, repository_path)
@@ -117,14 +106,12 @@ def _rewrite(markup: str, *, page: str, source: str, root: Path,
                         edits.extend(((node.start, node.opening_end, opening),
                                       (node.closing_start, node.end, '</span>')))
                         continue
-                    if (repository_path in tracked and repository_path in public_files
+                    if (repository_path in public_files
                             and not repository_path.endswith(private_suffixes)
                             and not repository_path.startswith(private_prefixes)):
-                        public = public_files[repository_path]
-                        if available(public):
-                            fragment = node.attrs.get('data-repo-fragment', '')
-                            changes.update({'href': _relative(page, public) + ('#' + fragment if fragment else ''),
-                                            'data-repo-path': None, 'data-repo-fragment': None})
+                        fragment = node.attrs.get('data-repo-fragment', '')
+                        changes.update({'href': _relative(page, repository_path) + ('#' + fragment if fragment else ''),
+                                        'data-repo-path': None, 'data-repo-fragment': None})
             if changes:
                 updated = _opening(markup, node, changes)
                 if updated != markup[node.start:node.opening_end]:
@@ -135,18 +122,19 @@ def _rewrite(markup: str, *, page: str, source: str, root: Path,
 
 
 def export_pages(generated_root: Path, destination: Path, *, root: Path,
-                 tracked: Iterable[str], page_routes: Mapping[str, str], pages: Iterable[str],
-                 public_files: Mapping[str, str], replace: Iterable[str] = (),
+                 tracked: Iterable[str], pages: Iterable[str],
+                 public_files: Iterable[str], replace: Iterable[str] = (),
                  private_suffixes: tuple[str, ...] = (), private_prefixes: tuple[str, ...] = (),
                  local_notice: tuple[str, str] = ('local-evidence', 'Local evidence file; not published')) -> tuple[str, ...]:
     """Export generated files and rewrite only explicitly selected output pages.
 
-    ``page_routes`` maps generated paths to publication paths (others keep their
-    names). ``pages`` names publication paths to rewrite. ``public_files`` maps
-    tracked repository paths to already-published files; it never copies source
-    files or chooses GitHub links. ``replace`` explicitly authorizes replacing
-    existing destination files; byte-identical files need no authorization.
-    Validation and rewriting finish before any destination file is written.
+    Every generated file is published under its generated path. ``pages`` names
+    generated HTML files to rewrite. ``public_files`` names tracked repository
+    paths that are published at the same path, either already in the destination
+    or among the generated outputs. The exporter never copies source files or
+    chooses source links. ``replace`` authorizes replacing existing destination
+    files; byte-identical files need no authorization. Validation and rewriting
+    finish before any destination file is written.
     """
     for directory in (generated_root, destination, root):
         directory = Path(directory).absolute()
@@ -159,10 +147,9 @@ def export_pages(generated_root: Path, destination: Path, *, root: Path,
     if generated_root.is_relative_to(destination) or destination.is_relative_to(generated_root):
         raise ValueError('Generated and publication directories must not overlap')
     tracked = {_name(name) for name in tracked}
-    routes = {_name(source): _name(target) for source, target in page_routes.items()}
     pages, replace = {_name(name) for name in pages}, {_name(name) for name in replace}
-    public_files = {_name(source): _name(target) for source, target in public_files.items()}
-    outputs, sources = {}, {}
+    public_files = {_name(name) for name in public_files}
+    outputs = {}
     for path in sorted(generated_root.rglob('*')):
         name = path.relative_to(generated_root).as_posix()
         regular = _contained(generated_root, name)
@@ -170,40 +157,31 @@ def export_pages(generated_root: Path, destination: Path, *, root: Path,
             continue
         if not regular.is_file():
             raise ValueError(f'Generated output is not a regular file: {name}')
-        target = routes.get(name, name)
-        if target in outputs:
-            raise ValueError(f'Publication route collision: {target}')
         if name.startswith('_media/'):
             repository_path = name[len('_media/'):]
             if repository_path not in tracked or not _contained(root, repository_path).is_file():
                 raise ValueError(f'Generated media is not a tracked repository file: {repository_path}')
-        outputs[target], sources[target] = regular.read_bytes(), name
-    if set(routes) - set(sources.values()):
-        raise ValueError('Publication routes name missing generated files')
+        outputs[name] = regular.read_bytes()
     if pages - outputs.keys() or any(not name.endswith('.html') for name in pages):
         raise ValueError('Publication pages must name generated HTML outputs')
     if replace - outputs.keys():
         raise ValueError('Publication replacements must name generated outputs')
 
-    def available(name):
-        path = _contained(destination, name)
-        return name in outputs or path.is_file()
-
-    for source, target in public_files.items():
-        if source not in tracked or not _contained(root, source).is_file() or not available(target):
-            raise ValueError(f'Public file must be a tracked, present repository resource: {source}')
-    effective_routes = {source: target for target, source in sources.items()}
+    for name in sorted(public_files):
+        if (name not in tracked or not _contained(root, name).is_file()
+                or not (name in outputs or _contained(destination, name).is_file())):
+            raise ValueError(f'Public file must be a tracked, present repository resource: {name}')
     for page in pages:
-        outputs[page] = _rewrite(outputs[page].decode('utf-8'), page=page, source=sources[page], root=root,
-                                 tracked=tracked, routes=effective_routes, public_files=public_files, available=available,
+        outputs[page] = _rewrite(outputs[page].decode('utf-8'), page=page, root=root,
+                                 tracked=tracked, public_files=public_files,
                                  private_suffixes=tuple(private_suffixes), private_prefixes=tuple(private_prefixes),
                                  local_notice=local_notice).encode('utf-8')
     for name, data in outputs.items():
         target = _contained(destination, name)
         parent = PurePosixPath(name).parent
         while parent != PurePosixPath('.'):
-            if parent.as_posix() in outputs or (_contained(destination, parent.as_posix()).exists()
-                                               and not _contained(destination, parent.as_posix()).is_dir()):
+            existing = _contained(destination, parent.as_posix())
+            if existing.exists() and not existing.is_dir():
                 raise ValueError(f'Publication file/directory collision: {name}')
             parent = parent.parent
         if target.exists() and (not target.is_file() or (name not in replace and target.read_bytes() != data)):
