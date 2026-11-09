@@ -2,6 +2,15 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Publish the kit website on GitHub Pages
+
+- deivid decided to publish the site publicly. Pages was already enabled
+  with GitHub Actions as its source, but the repository had no workflow, so
+  https://davszi.github.io/documentation-kit/ returned 404.
+  `.github/workflows/pages.yml` now builds the site from `main`, runs strict
+  lint and deploys `.build/docs`. The website record's hosting section and
+  the open-work route are updated.
+
 ## 2026-11-09 — Redesign the home page
 
 - The hero repeated the page links as three numbered text cards, the step

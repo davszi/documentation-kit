@@ -45,10 +45,9 @@ Build from the kit root with `python docsite.py build --project .`; the output
 is `.build/docs/`. [Project context](../../KIT_CONTEXT.md) lists the full
 check sequence, which builds and lints this site beside the starter.
 
-## Open decision: hosting and audience
+## Hosting
 
-The website has been built and reviewed locally only. Before any deployment,
-deivid chooses the hosting destination and whether the audience is public or
-private. The repository is private and GitHub Pages is disabled as of
-2026-11-07. Source and edit links point to `gh_repo` and therefore work only for
-readers with repository access.
+The site is public on GitHub Pages at <https://davszi.github.io/documentation-kit/>,
+decided by deivid on 2026-11-09. `.github/workflows/pages.yml` builds it from
+`main` on every push, runs strict lint and deploys `.build/docs`. The repository
+is public, so source and edit links work for every reader.

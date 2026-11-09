@@ -1,0 +1,45 @@
+name: Publish the kit website
+
+# Builds the kit's own reference site from main and deploys it to GitHub Pages.
+# Strict lint gates the deploy; the full test suite stays in tests/run_checks.sh.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out the kit
+        uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install documentation dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Build the site
+        run: python docsite.py build
+      - name: Lint strictly
+        run: python docsite.py lint --strict
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: .build/docs
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
