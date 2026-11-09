@@ -814,6 +814,8 @@ def gather_assets(site: dict, *, origins: dict[str, str] | None = None) -> dict[
         for p in sorted(KATEX_SRC.rglob("*")):
             if p.is_file():
                 assets[f"assets/katex/{p.relative_to(KATEX_SRC).as_posix()}"] = p.read_bytes()
+    # A built site contains the kit's styles and scripts, so its license notice goes with them.
+    assets["assets/documentation-kit/LICENSE"] = (KIT_SITE.parent / "LICENSE").read_bytes()
     extra = site.get('extra_assets', {})
     if not isinstance(extra, dict):
         raise ValueError('extra_assets must map asset names to project files')

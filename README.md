@@ -221,4 +221,6 @@ research results or historical evidence collections.
 The kit's own rules, tooling, theme and starter are under the
 [MIT License](LICENSE). Bundled fonts and KaTeX keep their own licenses: vendor
 licenses and source notes are retained beside their assets; see
-[third-party notices](THIRD_PARTY.md).
+[third-party notices](THIRD_PARTY.md). Every built site carries the kit's
+license at `html/assets/documentation-kit/LICENSE`, beside the vendor licenses
+under `html/assets/fonts/` and `html/assets/katex/`.

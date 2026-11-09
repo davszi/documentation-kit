@@ -27,6 +27,22 @@ class SiteContract(unittest.TestCase):
         subprocess.run(['git', 'add', 'docs', 'AGENTS.md', 'CLAUDE.md'], cwd=self.root, check=True)
         return invoke('build', '--project', self.root)
 
+    def test_built_site_carries_the_kit_license_beside_vendor_licenses(self):
+        result = self.build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        assets = self.root / '.build/docs/html/assets'
+        self.assertEqual((assets / 'documentation-kit/LICENSE').read_bytes(), (KIT / 'LICENSE').read_bytes())
+        self.assertTrue((assets / 'katex/LICENSE').is_file())
+
+    def test_project_asset_cannot_replace_the_kit_license(self):
+        site = self.root / 'docs/site/site.toml'
+        notice = self.root / 'docs/site/notice.txt'
+        notice.write_text('other terms\n')
+        site.write_text(site.read_text() + '\n[extra_assets]\n"documentation-kit/LICENSE" = "docs/site/notice.txt"\n')
+        result = self.build()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('would overwrite a shared asset', result.stdout + result.stderr)
+
     def test_included_fragments_may_include_others(self):
         (self.fragments / 'outer.html').write_text('<p id="outer-part">outer</p>\n<!-- include: fragments/inner.html -->\n')
         (self.fragments / 'inner.html').write_text('<p id="inner-part">inner</p>\n')

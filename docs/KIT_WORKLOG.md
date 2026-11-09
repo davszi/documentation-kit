@@ -2,6 +2,18 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Ship the kit's license in every built site
+
+- deivid asked that built sites carry the kit's license. A built site holds
+  the kit's styles and scripts, and the MIT License asks that its notice go
+  with copies; the build already copied the vendor licenses but not the kit's
+  own. `gather_assets` now writes `html/assets/documentation-kit/LICENSE`.
+- A project `extra_assets` entry with that output name fails the build through
+  the existing shared-asset collision check; a test covers it.
+- The README License section, the 2.1.0 release notes and the 2.1.0 migration
+  guide name the new file.
+- Checks: `tests/run_checks.sh` (148 tests) and strict lint pass.
+
 ## 2026-11-09 — License the kit under MIT
 
 - deivid chose the MIT License for the kit's own files. The repository was
