@@ -6,15 +6,17 @@ A consuming project pins an exact commit or tag and upgrades deliberately, follo
 release changes for consumers and how to move to it. Chronology stays in the
 [worklog](../../KIT_WORKLOG.md); consumer adoption status stays in each consuming project.
 
-## Unreleased — source pages, kit website and experiment guides
+## 2.0.0 — source pages, kit website, configured publication and compatibility removals
 
-These changes are on `main` after 1.1.0 and are not yet tagged. Most add to the
-1.x surface. Two remove compatibility forms under
-[refactoring over compatibility](../../../rules/engineering/code.md#refactoring-over-compatibility):
-the exporter's page renaming and file relocation, and the old local-artifact
-manifest location. Consumers that use either follow the
-[migration guide](migrations/next.md), which also adds one router row for
-every consumer. The release number is not yet decided.
+2.0.0 is a major release because it breaks the 1.x contract in two places,
+under [refactoring over compatibility](../../../rules/engineering/code.md#refactoring-over-compatibility):
+the exporter no longer renames or relocates files, and the old local-artifact
+manifest location is no longer read. `docsite.py lint` also fails a project
+whose pinned kit commit is on no remote branch of the kit. Everything else adds
+to the 1.x surface. Every consumer follows the
+[2.0.0 migration guide](migrations/2.0.0.md); a consumer that uses neither
+removed form only adds one router row. The 1.0.0 stable and provisional
+interfaces below still apply to 2.x, apart from these removals. The release number is not yet decided.
 
 | Area | Consumer change | Owning contract |
 |---|---|---|
@@ -39,8 +41,10 @@ every consumer. The release number is not yet decided.
 | Kit website | The kit builds its own reference site from the repository root | [Website record](../website/website.md) |
 | Experiment guides | New shared guides: experiments are investigations or qualifications, start small and state a budget; a pre-stated bar and verdict are required for confirmatory investigations and qualifications; terms for learned or fitted models, such as final runs, are scoped to their own section; claim-scoped verification and regression gates; routes added to the starter's `AGENTS.md` | [Workflow](../../../rules/experiments/workflow.md), [verification](../../../rules/experiments/verification.md) |
 
-The starter's generated pages are byte-identical to 1.1.0 output; only
-`assets/base.css` and `site-build.json` differ. Validation is recorded in the
+When the kit website was added, the starter's generated pages were
+byte-identical to 1.1.0 output, with only `assets/base.css` and
+`site-build.json` differing; later 2.0.0 changes were not compared byte for
+byte. Validation is recorded in the
 [worklog](../../KIT_WORKLOG.md#2026-11-07--build-the-kits-reference-website).
 
 ## 1.1.0 — focused engineering and documentation guides

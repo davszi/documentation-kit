@@ -43,8 +43,9 @@ shared independent-comparison component.
 ## Evidence and chronology
 
 [Releases and upgrades](topics/releases/releases.md) owns version changes and
-stable interfaces. The [1.1.0 migration guide](topics/releases/migrations/1.1.0.md)
-routes existing consumers through policy, layout and adapter changes.
+stable interfaces. The [2.0.0 migration guide](topics/releases/migrations/2.0.0.md)
+moves 1.1.0 consumers to the current release; the
+[1.1.0 guide](topics/releases/migrations/1.1.0.md) covers the earlier step.
 
 The extraction record, policy map, source hashes and initial receipts remain at
 the [`v1.1.0` tag](https://github.com/davszi/documentation-kit/tree/v1.1.0).

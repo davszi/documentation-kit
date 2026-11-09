@@ -129,7 +129,7 @@ git add .docs-kit
 The kit is versioned in `VERSION` and tagged `v<version>`. [Releases and
 upgrades](docs/topics/releases/releases.md) lists what each version changes for
 consumers and the migration steps; 1.0.0 is the first stable version.
-The current 1.1.0 release has a focused [consumer migration guide](docs/topics/releases/migrations/1.1.0.md).
+The current 2.0.0 release has a [consumer migration guide](docs/topics/releases/migrations/2.0.0.md); the [1.1.0 guide](docs/topics/releases/migrations/1.1.0.md) covers the earlier step.
 
 Review changed human pages at wide and narrow widths before committing the
 pointer and any consumer adaptations together. Share common changes upstream;

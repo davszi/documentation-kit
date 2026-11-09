@@ -2,6 +2,14 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Release 2.0.0
+
+- The changes after 1.1.0 become 2.0.0. It is a major release because the
+  exporter's renaming and relocation and the old local-artifact manifest
+  location are removed, and lint now fails an unpushed kit pin. `VERSION` is
+  `2.0.0`, the migration guide is `migrations/2.0.0.md` and consumers pin
+  tag `v2.0.0`.
+
 ## 2026-11-09 — Port configured publication and guard the kit pin
 
 - adapt pinned kit commit `101cea4`, made inside its `.docs-kit` folder and

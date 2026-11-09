@@ -34,8 +34,10 @@ owns the shared panel switcher's authoring, behavior and extraction checks.
 
 [Releases and upgrades](topics/releases/releases.md) owns version notes and
 consumer migration steps; `VERSION` holds the current version.
-The [1.1.0 migration guide](topics/releases/migrations/1.1.0.md) covers focused
-policy owners, optional project layout changes and compatibility adapters.
+The [2.0.0 migration guide](topics/releases/migrations/2.0.0.md) covers the
+removed compatibility forms, configured publication and the kit-pin check; the
+[1.1.0 guide](topics/releases/migrations/1.1.0.md) covers focused policy owners,
+optional project layout changes and adapters.
 
 The [website record](topics/website/website.md) owns the kit's own site.
 Build it from the kit root with `python docsite.py build --project .`.
