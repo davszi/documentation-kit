@@ -48,6 +48,8 @@ check sequence, which builds and lints this site beside the starter.
 ## Hosting
 
 The site is public on GitHub Pages at <https://davszi.github.io/documentation-kit/>,
-decided by deivid on 2026-11-09. `.github/workflows/pages.yml` builds it from
-`main` on every push, runs strict lint and deploys `.build/docs`. The repository
-is public, so source and edit links work for every reader.
+decided by deivid on 2026-11-09. On every push to `main`,
+`.github/workflows/pages.yml` first runs `tests/run_checks.sh` with the browser
+suites required, then builds the site, runs strict lint and deploys
+`.build/docs`. A failed check publishes nothing. The repository is public, so
+source and edit links work for every reader.

@@ -185,27 +185,36 @@ The independent-consumer tests create disposable Git repositories. Build output
 stays under each consumer's `.build/docs/`; tools never infer the consumer from
 where the kit happens to be installed.
 
-Optional real-browser review uses Playwright and Chromium supplied by the
-development environment:
+The script then checks that every shared script parses and runs the four
+real-browser suites when Playwright resolves. Playwright and Chromium come from
+the development environment:
 
 ```bash
-DOCS_PLAYWRIGHT=/path/to/playwright DOCS_CHROMIUM=/path/to/chromium node tests/visual_review.cjs
-DOCS_PLAYWRIGHT=/path/to/playwright DOCS_CHROMIUM=/path/to/chromium node tests/test_browser_checks.cjs
-DOCS_PLAYWRIGHT=/path/to/playwright DOCS_CHROMIUM=/path/to/chromium node tests/test_panel_switcher.cjs
-DOCS_PLAYWRIGHT=/path/to/playwright DOCS_CHROMIUM=/path/to/chromium node tests/own_site_review.cjs
+DOCS_PLAYWRIGHT=/path/to/playwright DOCS_CHROMIUM=/path/to/chromium DOCS_NODE=/path/to/node22 bash tests/run_checks.sh
 ```
 
-Run each suite under a memory cap with no swap, and set
+Without Playwright the script prints that the browser suites were skipped.
+`DOCS_REQUIRE_BROWSER=1` turns that into a failure. The Pages workflow sets it,
+so a push to `main` publishes only when every check passes, browser suites
+included.
+
+The suites are `tests/visual_review.cjs`, `tests/test_browser_checks.cjs`,
+`tests/test_panel_switcher.cjs` and `tests/own_site_review.cjs`; together they
+take about two minutes. The script gives each a 280-second limit, sets
 `DBUS_SESSION_BUS_ADDRESS=unix:path=/nonexistent-docs-kit-review` so Chromium
-does not reach the desktop session:
+does not reach the desktop session, and uses a 4G memory cap without swap when
+`systemd-run --user` is available. To run one suite alone, keep the same
+containment:
 
 ```bash
 systemd-run --user --scope --quiet -p MemoryMax=4G -p MemorySwapMax=0 timeout 280 node tests/own_site_review.cjs
 ```
 
-It starts an owned loopback server, checks desktop/phone and paired layouts,
-mobile table scrolling and no-JavaScript reading, then closes browser and server.
-Screenshots stay under `.build/visual-review/`.
+Each suite starts an owned loopback server, checks desktop/phone and paired
+layouts, mobile table scrolling and no-JavaScript reading, then closes browser
+and server. Screenshots stay under `.build/visual-review/`. Passing suites do
+not replace the [by-eye review](rules/site/validation.md#validation-and-review)
+of a visual change.
 
 ## Provenance
 

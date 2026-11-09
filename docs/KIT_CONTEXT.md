@@ -46,6 +46,9 @@ Build it from the kit root with `python docsite.py build --project .`.
 
 Development checks use Python 3.12, the pinned root `requirements.txt` and Node
 22. Run `bash tests/run_checks.sh` with `DOCS_PYTHON` selecting that interpreter;
-it checks the starter and builds and strictly lints the kit's own website.
-Browser review additionally uses Playwright/Chromium as documented in README.
+it checks the starter, builds and strictly lints the kit's own website, checks
+that every shared script parses and runs the browser suites when
+`DOCS_PLAYWRIGHT` resolves, as documented in README. `DOCS_NODE` selects the
+Node binary. The Pages workflow runs the same script with the browser suites
+required before it deploys.
 No application runtime or simulator is needed.

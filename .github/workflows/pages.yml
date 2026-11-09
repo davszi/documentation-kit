@@ -1,7 +1,8 @@
 name: Publish the kit website
 
 # Builds the kit's own reference site from main and deploys it to GitHub Pages.
-# Strict lint gates the deploy; the full test suite stays in tests/run_checks.sh.
+# tests/run_checks.sh gates the deploy: unit tests, strict lint, script syntax
+# and the real-browser suites. A failed check publishes nothing.
 on:
   push:
     branches: [main]
@@ -32,6 +33,21 @@ jobs:
           python-version: '3.12'
       - name: Install documentation dependencies
         run: python -m pip install -r requirements.txt
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - name: Install Playwright and Chromium for the browser suites
+        run: |
+          npm install --prefix "$RUNNER_TEMP/browser" playwright@1.62.1
+          "$RUNNER_TEMP/browser/node_modules/.bin/playwright" install --with-deps chromium
+          echo "DOCS_PLAYWRIGHT=$RUNNER_TEMP/browser/node_modules/playwright" >> "$GITHUB_ENV"
+      - name: Run the kit checks
+        # Test fixtures commit in disposable repositories, so Git needs an identity.
+        # GITHUB_SHA is unset so the checks build with the same links as a local run.
+        run: |
+          git config --global user.name "Kit checks"
+          git config --global user.email "kit-checks@example.invalid"
+          env -u GITHUB_SHA DOCS_PYTHON=python DOCS_REQUIRE_BROWSER=1 bash tests/run_checks.sh
       - name: Build the site
         run: python docsite.py build
       - name: Lint strictly

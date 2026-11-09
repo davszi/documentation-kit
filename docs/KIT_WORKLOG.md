@@ -2,6 +2,29 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Gate checks and the Pages deploy on the browser suites
+
+- deivid chose a local and a CI gate for the shared scripts. The four browser
+  suites passed but ran only by hand, and the Pages workflow ran no tests: a
+  push to `main` published the site even with failing unit tests.
+- `tests/run_checks.sh` now runs `node --check` on 22 shared scripts and then
+  the four browser suites when Playwright resolves; otherwise it prints that
+  they were skipped. `DOCS_REQUIRE_BROWSER=1` makes a missing Playwright fail.
+  `DOCS_NODE` selects the Node binary. Each suite gets a 280-second limit and,
+  where `systemd-run --user` works, the 4G cap without swap.
+- `.github/workflows/pages.yml` installs Node 22 and Playwright 1.62.1 with
+  Chromium, runs the script with the browser suites required and deploys only
+  after it passes. It unsets `GITHUB_SHA` for the checks: with it set,
+  `test_source_origin_routes_media_and_literal_markers` fails because source
+  links then pin the commit instead of `main`.
+- Measured here on Node 22.23.3: the suites take 6.6 s, 2.2 s, 0.8 s and
+  100.8 s; the whole script takes 121 s with them and about 11 s without.
+- Checks: the script passes with the suites (148 tests, strict lint, 22
+  scripts, four suites), passes with a skip message without Playwright, and
+  exits 1 when the suites are required but Playwright is missing. Not checked:
+  the workflow itself, which runs only after a push; the suites have not run
+  on a GitHub runner.
+
 ## 2026-11-09 — Ship the kit's license in every built site
 
 - deivid asked that built sites carry the kit's license. A built site holds
