@@ -2,6 +2,18 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — License the kit under MIT
+
+- deivid chose the MIT License for the kit's own files. The repository was
+  public without a first-party license, so nobody else could legally reuse it,
+  while the README invites projects to add it as a submodule. `LICENSE` is
+  added; the README gains a License section in place of the sentence that no
+  license was selected; `THIRD_PARTY.md` says the MIT License does not cover
+  the bundled fonts and KaTeX.
+- Not checked: whether anyone besides deivid holds rights to the kit. All 55
+  commits before this one have deivid as author.
+- Checks: `tests/run_checks.sh` (146 tests) and strict lint pass.
+
 ## 2026-11-09 — State what a version number promises; add the 2.1.0 migration guide
 
 - deivid decided the untagged work after 2.0.0 becomes 2.1.0, a minor release,

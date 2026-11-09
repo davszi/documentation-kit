@@ -216,6 +216,9 @@ initial check receipts were removed after 1.1.0; they remain at the
 repository contains shared rules and presentation code, not simulator code,
 research results or historical evidence collections.
 
-Vendor licenses and source notes are retained beside their assets; see
-[third-party notices](THIRD_PARTY.md). A first-party license has not been
-selected for this initial local repository.
+## License
+
+The kit's own rules, tooling, theme and starter are under the
+[MIT License](LICENSE). Bundled fonts and KaTeX keep their own licenses: vendor
+licenses and source notes are retained beside their assets; see
+[third-party notices](THIRD_PARTY.md).

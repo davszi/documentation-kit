@@ -1,6 +1,8 @@
 # Third-party assets
 
-The bundled assets retain their original license and source records:
+The kit's own files are under the [MIT License](LICENSE). That license does not
+cover the bundled assets below, which retain their original license and source
+records:
 
 | Asset | License record | Source record |
 |---|---|---|
