@@ -317,6 +317,46 @@ SITE_MAP_MARKER = "<!-- site-map -->"
 _IMAGE_RE = re.compile(r'<img[^>]+src="([^"]+\.(?:svg|png|jpe?g|webp|gif))"|!\[[^\]]*\]\(([^)\s]+\.(?:svg|png|jpe?g|webp|gif))\)', re.I)
 
 
+_BRAND_MARKS: dict[str, str] = {}
+
+
+def brand_mark_html(site: dict) -> str:
+    """The project's mark beside its name in the sidebar.
+
+    `brand_mark` in site.toml is up to three characters or a tracked `.svg`
+    file; without it the mark is the initials of the site title. Each setting
+    is resolved once per build, so a bad value is reported once.
+    """
+    key = repr((site.get("brand_mark"), site.get("title")))
+    if key not in _BRAND_MARKS:
+        _BRAND_MARKS[key] = _resolve_brand_mark(site)
+    return _BRAND_MARKS[key]
+
+
+def _resolve_brand_mark(site: dict) -> str:
+    mark = site.get("brand_mark")
+    if mark is None:
+        words = site.get("title", "Documentation").split()
+        mark = "".join(word[0] for word in words[:2]).upper()
+    elif not isinstance(mark, str) or not mark.strip():
+        err("brand_mark must be up to three characters or a tracked .svg path")
+        return ""
+    elif mark.endswith(".svg"):
+        try:
+            svg = local_resource(REPO / mark).read_text().strip()
+        except (ValueError, OSError) as problem:
+            err(f"brand_mark: {problem}")
+            return ""
+        if not svg.startswith("<svg"):
+            err(f"brand_mark: {mark} is not an SVG file")
+            return ""
+        return f'<span class="brand-mark brand-mark-svg" aria-hidden="true">{svg}</span>'
+    elif len(mark) > 3:
+        err("brand_mark must be up to three characters or a tracked .svg path")
+        return ""
+    return f'<span class="brand-mark" aria-hidden="true">{html.escape(mark)}</span>'
+
+
 def site_map_html(site: dict) -> str:
     """Home-page cards for every visible page, grouped as in the navigation.
 
@@ -338,7 +378,7 @@ def site_map_html(site: dict) -> str:
         found = _IMAGE_RE.search(body)
         image = meta.get("thumbnail") or ((found.group(1) or found.group(2)) if found else None)
         thumb = (f'<span class="map-thumb"><img src="{html.escape(image)}" alt="" data-decorative loading="lazy"></span>'
-                 if image else '<span class="map-thumb map-thumb-empty" aria-hidden="true">∿</span>')
+                 if image else f'<span class="map-thumb map-thumb-empty" aria-hidden="true">{brand_mark_html(site)}</span>')
         card = (f'<a class="map-card" href="{entry["file"]}">{thumb}<span class="map-text">'
                 f'<strong>{html.escape(entry["label"])}</strong>'
                 f'<span>{html.escape(meta.get("description") or meta.get("brand_sub", ""))}</span></span></a>')
@@ -656,8 +696,13 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
         if n_entry.get("hidden", False) or n_entry["file"] == "index.html":
             continue  # the sidebar brand already links the home page
         group = n_entry.get("group")
-        if group and group != last_group:
-            crossnav_lines.append(f'    <span class="nav-group" data-group="{html.escape(group)}">{html.escape(group)}</span>')
+        if group != last_group:
+            # Each group is one section: its label, then its pages.
+            if last_group:
+                crossnav_lines.append('    </div>')
+            if group:
+                crossnav_lines.append(f'    <div class="nav-section" data-group="{html.escape(group)}">')
+                crossnav_lines.append(f'    <span class="nav-group" data-group="{html.escape(group)}">{html.escape(group)}</span>')
             last_group = group
         attrs = ' class="xpage current" aria-current="page"' if current else ' class="xpage"'
         if group:
@@ -666,6 +711,8 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
         if short != n_entry["label"]:
             attrs += f' title="{html.escape(n_entry["label"], quote=True)}"'
         crossnav_lines.append(f'    <a{attrs} href="{n_entry["file"]}">{html.escape(short)}</a>')
+    if last_group:
+        crossnav_lines.append('    </div>')
     crossnav = "\n".join(crossnav_lines)
     toc = toc_html(meta.get("toc", []), name, id_to_panel)
     if site.get("nested_nav") and "chapter-reader" not in comps:
@@ -703,7 +750,7 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
     page = shell.replace("<body>", '<body' + body_class + ' data-site-home-label="' + html.escape(site.get("home_label", site.get("title", "Documentation")), quote=True) + '">')
     for k, v in {
         "{{TITLE}}": html.escape(meta.get("title", "")),
-        "{{BRAND}}": html.escape(meta.get("brand", slug)),
+        "{{BRAND}}": brand_mark_html(site) + '<span class="brand-name">' + html.escape(meta.get("brand", slug)) + "</span>",
         "{{BRAND_SUB}}": html.escape(meta.get("brand_sub", "")),
         "{{TOC}}": toc,
         "{{CROSSNAV}}": crossnav,

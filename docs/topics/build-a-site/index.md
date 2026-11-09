@@ -117,7 +117,7 @@ toc = []
 <div class="bs-checks r32">
 <div class="bs-check"><span class="bs-badge bs-ok">try</span><h3>Move</h3><p>Press <kbd>→</kbd> and <kbd>←</kbd>, or the arrows in the top bar. Each chapter remembers where you stopped.</p></div>
 <div class="bs-check"><span class="bs-badge bs-ok">try</span><h3>Choose the layout</h3><p><b>One chapter</b>, <b>Two chapters</b> side by side, or <b>All chapters</b> as one long scroll.</p></div>
-<div class="bs-check"><span class="bs-badge bs-ok">try</span><h3>Dock the menu</h3><p>On screens wider than 900 px the menu starts docked. <code>«</code> hides it; <code>☰</code> brings it back docked. Each page remembers your choice.</p></div>
+<div class="bs-check"><span class="bs-badge bs-ok">try</span><h3>Dock the menu</h3><p>On screens wider than 900 px the menu starts docked. <code>«</code> hides it; <code>☰</code> brings it back docked. The choice holds across the site.</p></div>
 <div class="bs-check"><span class="bs-badge bs-ok">try now</span><h3>Pin a reference</h3><p>Choose <b>Two chapters</b>, press <code>⌖</code> on this chapter's header, then press <kbd>→</kbd>: this chapter stays, the other column moves.</p></div>
 <div class="bs-check"><span class="bs-badge bs-ok">try now</span><h3>Open a layer</h3><p>The buttons under this heading open every fold of one kind: Math, Experiments, Code or Alternatives. Each column keeps its own choice.</p></div>
 </div>

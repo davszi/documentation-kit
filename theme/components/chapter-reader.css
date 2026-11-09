@@ -301,7 +301,6 @@ body.topic-deck {overflow:hidden;}
 /* One navigation tree: home, site groups and pages, this page's chapters nested under it. */
 .reader-home {display:flex;align-items:center;gap:9px;min-height:44px;padding:0 6px;border-radius:9px;color:var(--bright);font-weight:650;font-size:15px;text-decoration:none;}
 .reader-home:hover {background:rgba(57,210,192,.06);}
-.reader-home-mark {color:var(--adp);font:22px var(--mono);text-shadow:0 0 12px rgba(57,210,192,.45);}
 .reader-enabled .sidebar {display:flex;flex-direction:column;}
 .reader-enabled .sidebar .toc {flex:1;min-height:0;overflow-y:auto;padding:6px 0 18px;border-top:1px solid var(--border);margin-top:6px;}
 .reader-enabled .toc .nav-group {padding:16px 10px 4px;font:700 10px var(--mono);letter-spacing:.14em;color:var(--muted);opacity:1;}
@@ -317,8 +316,6 @@ body.topic-deck {overflow:hidden;}
 /* Chapter track: numbered pills on a thin rail, coloured per chapter group;
    visited chapters tint, the active one fills and glows. */
 .reader-enabled .sidebar {background:radial-gradient(ellipse at 0 0,rgba(110,231,197,.06),transparent 55%),radial-gradient(ellipse at 100% 100%,rgba(182,156,255,.05),transparent 55%),#080c13;}
-.reader-progress {position:relative;height:2px;margin:2px 4px 0;border-radius:2px;overflow:hidden;background:rgba(148,178,214,.12);}
-.reader-progress i {display:block;height:100%;width:100%;transform-origin:left;transform:scaleX(0);background:linear-gradient(90deg,#6ee7c5,#5cc8ff,#b69cff);box-shadow:0 0 12px rgba(110,231,197,.7);transition:transform .35s ease;}
 .reader-enabled .toc .reader-chapter-list {position:relative;margin:4px 0 12px 6px;padding-left:0;border-left:0;}
 .reader-enabled .toc .reader-chapter-list::before {content:"";position:absolute;left:22px;top:8px;bottom:8px;width:1px;background:rgba(148,178,214,.2);}
 .reader-enabled .toc .reader-chapter-list [data-part="0"] {--k:#6ee7c5;}
@@ -344,7 +341,7 @@ body.topic-deck {overflow:hidden;}
 .reader-enabled .toc .nav-group {color:color-mix(in srgb,var(--g,#8394a7) 70%,transparent);letter-spacing:.16em;}
 .reader-enabled .toc a.xpage:hover {border-left-color:color-mix(in srgb,var(--g,#6ee7c5) 60%,transparent);}
 .reader-enabled .toc a.xpage.current {border-left-color:var(--g,#6ee7c5);background:linear-gradient(90deg,color-mix(in srgb,var(--g,#6ee7c5) 14%,transparent),transparent);}
-@media (prefers-reduced-motion:reduce) {.reader-progress i,.reader-chapter-list a::before {transition:none;}}
+@media (prefers-reduced-motion:reduce) {.reader-chapter-list a::before {transition:none;}}
 
 /* Readability: brighter body text, larger sidebar text, full-strength group
    labels and prose lines capped near 75 characters (figures keep full width). */
@@ -360,9 +357,6 @@ body.topic-deck {overflow:hidden;}
 
 /* Sidebar refinements: one hide control, readable progress, compact nested
    track in the page's colour, hover tints only (the bar marks the current page). */
-.reader-progress-row {display:flex;align-items:center;gap:10px;margin:4px 6px 2px;}
-.reader-progress-row .reader-progress {flex:1;margin:0;height:3px;background:rgba(148,178,214,.18);}
-.reader-progress-count {flex:none;font:600 10.5px var(--mono);color:#8394a7;letter-spacing:.04em;}
 .reader-enabled .reader-drawer-close {font-size:18px!important;}
 .reader-enabled .toc a.xpage:hover {border-left-color:transparent;background:rgba(148,178,214,.07);}
 .reader-enabled .toc .reader-chapter-list {margin:2px 0 10px 16px;}

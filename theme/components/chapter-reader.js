@@ -52,7 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
   topics[0].section.parentNode.insertBefore(stage, topics[0].section);
   let active = 0, activeColumn = 0, full = false, paired = false, pair = [0, Math.min(1, topics.length - 1)], pinned = null, routedHash = null;
   let drawerTab = 'chapters', drawerTrigger = null, drawerPinned = false;
-  const drawerPreferenceKey = 'reader-nav-pin:' + location.pathname;
+  // One choice for the whole site: hiding the menu on one page hides it on the next.
+  const drawerPreferenceKey = 'reader-nav-pin:' + (document.body.dataset.siteHomeLabel || '');
   // Wide screens open docked navigation until the reader closes it; phones start closed.
   drawerPinned = true;
   try { const saved = localStorage.getItem(drawerPreferenceKey); if (saved !== null) drawerPinned = saved === 'true'; } catch (_) {}
@@ -182,7 +183,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const railButtons = [];
   const drawerHead = make('div', 'reader-drawer-head');
   const home = make('a', 'reader-home'); home.href = 'index.html';
-  home.appendChild(make('span', 'reader-home-mark', '∿')); home.appendChild(make('span', '', document.body.dataset.siteHomeLabel || 'Documentation'));
+  // The drawer header repeats the sidebar brand: the project's mark and name.
+  const brand = sidebar.querySelector('.brand');
+  const brandMark = brand?.querySelector('.brand-mark');
+  if (brandMark) home.appendChild(brandMark.cloneNode(true));
+  home.appendChild(make('span', 'reader-home-name', brand?.querySelector('.brand-name')?.textContent || document.body.dataset.siteHomeLabel || 'Documentation'));
   drawerHead.appendChild(home);
   const drawerTools = make('div', 'reader-drawer-tools'); drawerHead.appendChild(drawerTools);
   const pinDrawerButton = button('reader-drawer-pin', '⌖ Pin', 'Pin navigation');
@@ -230,11 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const currentPage = toc.querySelector('a.xpage.current') || toc.querySelector('.repo-tree a[aria-current="page"]');
   if (currentPage) { currentPage.after(chapterList); if (currentPage.dataset.group) chapterList.dataset.group = currentPage.dataset.group; }
   else toc.prepend(chapterList);
-  const progressRow = make('div', 'reader-progress-row'); progressRow.setAttribute('aria-hidden', 'true');
-  const progress = make('div', 'reader-progress'); const progressBar = make('i'); progress.appendChild(progressBar);
-  const progressCount = make('span', 'reader-progress-count');
-  progressRow.appendChild(progress); progressRow.appendChild(progressCount);
-  sidebar.insertBefore(drawerHead, toc); sidebar.insertBefore(progressRow, toc);
+  sidebar.insertBefore(drawerHead, toc);
   sidebar.setAttribute('aria-label', 'Documentation drawer'); sidebar.inert = true;
   const backdrop = document.getElementById('backdrop');
   backdrop?.addEventListener('click', () => closeDrawer());
@@ -289,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ['Compare two chapters', 'Two chapters shows two equal columns. Arrows move both until you pin one. Select an unpinned column before choosing its chapter from the navigation drawer.'],
     ['Choose how much to read', 'Story is always visible. The layer buttons under each chapter heading combine Math, Experiments, Code and Alternatives independently for each column. On narrow columns, scroll the row sideways. You can still open individual folds.'],
     ['Hold a reference', 'Pin the button on a column header to hold that chapter while the other moves. Purple marks the pinned column; its own scrolling and layer buttons still work.'],
-    ['Keep navigation handy', 'On wide screens the navigation docks beside the page. Hide it with « and bring it back with ☰; each page remembers the choice. Reading stays interactive and chapter links keep the sidebar open. On narrow screens, navigation opens over the page and closes after choosing a chapter.']
+    ['Keep navigation handy', 'On wide screens the navigation docks beside the page. Hide it with « and bring it back with ☰; the choice holds across the site. Reading stays interactive and chapter links keep the sidebar open. On narrow screens, navigation opens over the page and closes after choosing a chapter.']
   ];
   const readerWords = text => text.replace(/chapters/g, plural).replace(/chapter/g, unit);
   helpItems.forEach(([title, text]) => { const card = make('div', 'reader-help-card'); card.appendChild(make('h4', '', readerWords(title))); card.appendChild(make('p', '', readerWords(text))); help.appendChild(card); });
@@ -448,8 +449,6 @@ document.addEventListener('DOMContentLoaded', () => {
       topic.pin.setAttribute('aria-label', topic.pin.title); topic.pin.setAttribute('aria-pressed', String(held));
     });
     syncJumpSelection(); followActiveLink();
-    progressBar.style.transform = `scaleX(${(active + 1) / topics.length})`;
-    progressCount.textContent = `${String(active + 1).padStart(2, '0')} / ${String(topics.length).padStart(2, '0')}`;
     prev.disabled = navigation(-1) === null; next.disabled = navigation(1) === null;
     prev.setAttribute('aria-label', prev.disabled ? 'Start of ' + plural : paired && !full ? 'Previous ' + unit + ' in the unpinned columns' : `Previous ${unit}: ${topics[active - 1].label}`);
     next.setAttribute('aria-label', next.disabled ? 'End of ' + plural : paired && !full ? 'Next ' + unit + ' in the unpinned columns' : `Next ${unit}: ${topics[active + 1].label}`);

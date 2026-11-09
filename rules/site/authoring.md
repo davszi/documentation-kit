@@ -57,6 +57,14 @@ and `hidden`. TOML assigns every key written after a table header to that table,
 so keep top-level settings such as `extra_components` above the first `[[nav]]`;
 the build rejects any other key inside a nav entry.
 
+`brand_mark` sets the project's mark beside its name in the sidebar: up to three
+characters, such as `brand_mark = "∿"`, or a tracked SVG file, such as
+`brand_mark = "docs/site/brand-mark.svg"`, drawn with `currentColor`. Without it
+the mark is the initials of `title`. Each project uses its own mark.
+
+Navigation groups take their colour from `--g` in project CSS; a group without
+one gets the next shared tone in order.
+
 `nested_nav = true` folds each navigation group into a native disclosure,
 opens the current page's group (the first group on a page outside every
 group) and places the current page's sections directly under its entry. It

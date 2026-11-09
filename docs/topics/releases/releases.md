@@ -9,7 +9,8 @@ release changes for consumers and how to move to it. Chronology stays in the
 ## Unreleased — repository files in the sidebar
 
 These changes are on `main` after 2.0.0 and are not yet tagged. They add to the
-2.x surface; no consumer migration is required. Build-sheet flows now stack
+2.x surface; no consumer migration is required. A project that wants to keep the
+∿ sidebar mark sets `brand_mark = "∿"`. Build-sheet flows now stack
 vertically when their chapter card or page is narrow; grids, checks and
 chapter headlines follow the card's width; box lists use dashes and tinted code
 chips, and code keeps its case inside uppercase titles.
@@ -18,6 +19,7 @@ chips, and code keeps its case inside uppercase titles.
 |---|---|---|
 | Sidebar | A site with at least one `[[source_pages]]` entry gets a **Reference** section after its navigation: records with `pinned = true` listed first, then a **Browse by folder** tree of every registered file, closed on pages for people. Sites without registered files are unchanged | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
 | Assets | Pages load shared assets with a content-hash query, `assets/<file>?v=<hash>`, so browsers fetch a changed stylesheet or script after a rebuild; unchanged assets stay cached | [Authoring and configuration](../../../rules/site/authoring.md) |
+| Sidebar header | The ∿ mark is no longer shared: optional `brand_mark` sets a project's own mark (up to three characters or a tracked SVG); without it the mark is the title's initials. To keep ∿, set `brand_mark = "∿"`. The reader drawer shows the same mark and name as other pages and no longer shows a chapter counter; hiding the menu applies across the site instead of per page. Groups without a CSS colour get tones in order | [Authoring and configuration](../../../rules/site/authoring.md) |
 | Configuration | A registered source page no longer needs a `[[nav]]` entry; topic pages still do. `[[source_pages]]` accepts optional `pinned = true` | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
 
 ## 2.0.0 — source pages, kit website, configured publication and compatibility removals

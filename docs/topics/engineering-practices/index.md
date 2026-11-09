@@ -5,7 +5,7 @@ brand_sub = "code · execution · delivery · Git"
 description = "Why the kit's six engineering guides exist, what each requires, and what following them looks like."
 components = ["toc", "nav", "code", "filelinks"]
 page_css = ["build-sheet.css"]
-toc = [["Routes", "#routes"], ["Code", "#code"], ["Efficiency", "#performance"], ["Claims", "#performance-claims"], ["Execution", "#execution"], ["Cleanup", "#supervision"], ["Delivery", "#delivery"], ["Decisions", "#decisions"], ["Handoffs", "#handoffs"], ["Git", "#git"], ["Shared checkout", "#shared-checkout"]]
+toc = [["Routes", "#routes"], ["Code", "#code"], ["Compatibility", "#compatibility"], ["Efficiency", "#performance"], ["Claims", "#performance-claims"], ["Execution", "#execution"], ["Cleanup", "#supervision"], ["Delivery", "#delivery"], ["Decisions", "#decisions"], ["Handoffs", "#handoffs"], ["Git", "#git"], ["Shared checkout", "#shared-checkout"]]
 +++
 
 # Engineering practices

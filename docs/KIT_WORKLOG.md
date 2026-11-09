@@ -2,6 +2,25 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Redesign the sidebar navigation
+
+- Each navigation group is now a section styled like the Reference block:
+  a tinted top gradient and sans label in the group's tone, light page rows,
+  and the current page marked by a tone bar. Groups without a CSS colour get
+  tones in order from `nav.js`. Page rows outrank the current page's chapter
+  list, which is a smaller muted sub-list with small outlined numbers.
+- The ∿ mark was ADP's and had spread to every project. `brand_mark` in
+  `site.toml` sets a project's own mark (up to three characters or a tracked
+  SVG); without it the mark is the title's initials. The kit uses a layered
+  SVG. The reader drawer shows the same mark and name as other pages and no
+  longer shows a chapter counter.
+- Hiding the menu was remembered per page, so a page could open with it
+  hidden while the previous page had it docked. The choice now holds across
+  the site.
+- The Compatibility chapter gains its short menu label.
+- Checks: 135 tests, strict lint, all four browser suites; sidebar captures at
+  1400 and 390 reviewed by eye; dock choice verified across three pages.
+
 ## 2026-11-09 — List releases in the menu; rename the records section
 
 - Release notes and migration guides matter to every reader, so they form a

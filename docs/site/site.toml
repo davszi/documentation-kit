@@ -6,6 +6,7 @@ home_label = "Kit"
 gh_repo = "https://github.com/davszi/documentation-kit"
 gh_ref = "main"
 chapter_reader = true
+brand_mark = "docs/site/brand-mark.svg"
 # The kit's own chronology and open work use KIT_ names so they are never
 # mistaken for a consuming project's docs/worklog.md or docs/open/OPEN.md.
 worklog = "docs/KIT_WORKLOG.md"
