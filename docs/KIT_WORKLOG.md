@@ -2,6 +2,25 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-09 — Keep the worklog and state why it repeats commit messages
+
+- Measured: this worklog has one entry per commit, 62 and 62, and an entry
+  repeats its commit message. Over the last 12 commits the messages hold 2,051
+  words and the entries 2,236, and 81% of a message's vocabulary also appears
+  in its entry. ADP's worklog is 10,611 lines and 777 KB.
+- deivid decided to keep the worklog as it is. The cost is small: a second
+  write per commit, and rare link repairs. The file reads without Git,
+  survives squashed or rebased history and holds probes and decisions that
+  belong to no single commit.
+- `rules/documentation.md` now states that the overlap is deliberate, gives
+  those reasons and names when to reconsider: a worklog that becomes slow to
+  lint or awkward to search. The worklog fold on Documentation and writing
+  says the same in its own words.
+- Node 22 was listed as a concern earlier today. It is void: Node 22.23.3 is
+  installed here under nvm, and only the default shell uses Node 20.
+- Checks: `tests/run_checks.sh` with the browser suites passes (148 tests,
+  strict lint, 22 scripts, four suites).
+
 ## 2026-11-09 — Remove the router stub headings; the pending release becomes 3.0.0
 
 - deivid decided to remove the stub headings from `rules/writing.md` and

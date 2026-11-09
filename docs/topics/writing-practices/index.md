@@ -303,7 +303,9 @@ Documentation loses information in quiet ways: a deleted figure, a rewritten log
 
 <!-- fold: code Worklog entries and probe lines -->
 
-The worklog is append-only and newest-first. A pending entry may say the hash is assigned by its landing commit; resolve it through version history rather than rewriting dated entries.
+New entries go on top, and old entries are never edited. An entry written before its commit exists may say that the hash comes with the landing commit; later, look the hash up in version history instead of going back to fill it in.
+
+An entry says much the same as its commit message, and that is intended. The worklog is one file you can read without Git. It survives history that was squashed or rebased, and it has room for what no commit carries: probes, and decisions or events that belong to no single commit. Write the entry and the commit message in the same step, so the two agree. The duplication is worth reconsidering only if a worklog becomes slow to lint or awkward to search.
 
 A probe is recorded in one line:
 
