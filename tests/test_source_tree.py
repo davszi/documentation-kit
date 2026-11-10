@@ -14,6 +14,11 @@ class ListedRecordTest(unittest.TestCase):
         self.assertNotIn('aria-current', listed)
         self.assertIn('repo-tree-file current', listed)
 
+    def test_a_pinned_record_listed_in_navigation_is_announced_once(self):
+        pinned = [TreeFile('README.md', 'readme.html', 'README', None, True)]
+        self.assertNotIn('aria-current', tree_html(pinned, 'readme.html', listed=True))
+        self.assertEqual(tree_html(pinned, 'readme.html').count('aria-current="page"'), 1)
+
     def test_unlisted_record_opens_all_files(self):
         self.assertIn('<details class="repo-tree-all" open>', tree_html(FILES, 'git.html'))
 

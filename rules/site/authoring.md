@@ -65,10 +65,14 @@ the mark is the initials of `title`. Each project uses its own mark.
 Navigation groups take their colour from `--g` in project CSS; a group without
 one gets the next shared tone in order.
 
-`page_number_notes = true` turns on lint notes for numbers in a topic page's
-prose that none of the page's linked records state, as
+`page_number_notes = true` turns on lint notes, for the whole site, for numbers
+in a topic page's prose that none of the page's linked records state, as
 [rendered pages are for people](../documentation.md#rendered-pages-are-for-people-records-stay-markdown)
-describes. The default is off.
+describes. The default is off. Like every top-level setting it goes above the
+first `[[nav]]` table. The check does not read frontmatter, comments, code,
+inline SVG, HTML attributes, link targets, version numbers, dates, ratios such
+as 16:9 or labels such as "Figure 3", and it skips a page that links no record.
+Show a literal value as code to keep it out of the notes.
 
 `nested_nav = true` folds each navigation group into a native disclosure,
 opens the current page's group (the first group on a page outside every

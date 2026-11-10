@@ -16,15 +16,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  publish:
+  # Checks and build run without deploy rights: this job installs and runs
+  # third-party code.
+  check:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Check out the kit
         uses: actions/checkout@v6
@@ -43,11 +38,10 @@ jobs:
           echo "DOCS_PLAYWRIGHT=$RUNNER_TEMP/browser/node_modules/playwright" >> "$GITHUB_ENV"
       - name: Run the kit checks
         # Test fixtures commit in disposable repositories, so Git needs an identity.
-        # GITHUB_SHA is unset so the checks build with the same links as a local run.
         run: |
           git config --global user.name "Kit checks"
           git config --global user.email "kit-checks@example.invalid"
-          env -u GITHUB_SHA DOCS_PYTHON=python DOCS_REQUIRE_BROWSER=1 bash tests/run_checks.sh
+          DOCS_PYTHON=python DOCS_REQUIRE_BROWSER=1 bash tests/run_checks.sh
       - name: Build the site
         run: python docsite.py build
       - name: Lint strictly
@@ -56,6 +50,18 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           path: .build/docs
+
+  # Only this job may publish, and it runs nothing but the deploy action.
+  publish:
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

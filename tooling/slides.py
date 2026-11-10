@@ -150,7 +150,7 @@ def build_deck(selection, *, title: str) -> tuple[str, list[str]]:
                 f'<section class="deck-frame" id="{html.escape(slug + "--" + chapter["id"], quote=True)}" '
                 f'aria-label="{html.escape(number + " " + chapter["title"], quote=True)}">\n{face}\n'
                 f'<a class="deck-source" href="{SITE_PREFIX}{html.escape(source, quote=True)}">{html.escape(chapter["title"])} · full chapter</a>\n</section>')
-    if "assets/slide-face.css" not in sheets:
+    if not any(sheet.partition("?")[0] == "assets/slide-face.css" for sheet in sheets):
         sheets.append("assets/slide-face.css")
     head = "".join(f'<link rel="stylesheet" href="{SITE_PREFIX}{html.escape(s, quote=True)}">\n' for s in sheets)
     deck_css = (KIT_SITE / "components" / "slide-deck.css").read_text()

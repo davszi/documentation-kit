@@ -194,7 +194,8 @@ DOCS_PLAYWRIGHT=/path/to/playwright DOCS_CHROMIUM=/path/to/chromium DOCS_NODE=/p
 ```
 
 Without Playwright the script prints that the browser suites were skipped.
-`DOCS_REQUIRE_BROWSER=1` turns that into a failure. The Pages workflow sets it,
+`DOCS_REQUIRE_BROWSER=1` turns that into a failure, and a `DOCS_PLAYWRIGHT` that
+does not load is always a failure. The Pages workflow sets it,
 so a push to `main` publishes only when every check passes, browser suites
 included.
 

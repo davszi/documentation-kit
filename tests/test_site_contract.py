@@ -54,6 +54,30 @@ class SiteContract(unittest.TestCase):
         self.assertIn('After the fold: <a href="guide.html">the guide</a> and <strong>bold</strong>.', page)
         self.assertNotIn('[the guide](guide.html)', page)
 
+    def test_a_paragraph_glued_to_a_closing_fold_renders_as_markdown(self):
+        self.guide.write_text(self.guide.read_text() + (
+            '\n<!-- fold: code Fold without a blank line after it -->\n\nInside.\n\n<!-- /fold -->\n'
+            'Glued to the fold: [the guide](guide.html).\n'))
+        result = self.build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        page = (self.root / '.build/docs/html/guide.html').read_text()
+        self.assertIn('Glued to the fold: <a href="guide.html">the guide</a>.', page)
+
+    def test_lint_prints_page_number_notes_when_the_site_turns_them_on(self):
+        site = self.root / 'docs/site/site.toml'
+        text = site.read_text()
+        self.assertEqual(self.build().returncode, 0)
+        self.assertNotIn('shows numbers', invoke('lint', '--project', self.root).stdout)
+        site.write_text(text.replace('[[nav]]', 'page_number_notes = true\n\n[[nav]]', 1))
+        self.assertEqual(self.build().returncode, 0)
+        result = invoke('lint', '--project', self.root, '--strict')
+        self.assertIn('shows numbers that none of its linked records state', result.stdout)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        site.write_text(text.replace('[[nav]]', 'page_number_notes = "yes"\n\n[[nav]]', 1))
+        result = self.build()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('page_number_notes must be true or false', result.stdout + result.stderr)
+
     def test_included_fragments_may_include_others(self):
         (self.fragments / 'outer.html').write_text('<p id="outer-part">outer</p>\n<!-- include: fragments/inner.html -->\n')
         (self.fragments / 'inner.html').write_text('<p id="inner-part">inner</p>\n')

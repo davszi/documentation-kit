@@ -54,7 +54,8 @@
     if (order.indexOf(group) < 0) order.push(group);
   });
   order.forEach(function(group, i){
-    var members = document.querySelectorAll('.toc [data-group="' + group.replace(/"/g, '\\"') + '"], .map-group[data-group="' + group.replace(/"/g, '\\"') + '"]');
+    var name = window.CSS && CSS.escape ? CSS.escape(group) : group.replace(/["\\]/g, '\\$&');
+    var members = document.querySelectorAll('.toc [data-group="' + name + '"], .map-group[data-group="' + name + '"]');
     members.forEach(function(el){
       if (getComputedStyle(el).getPropertyValue('--g').trim()) return;
       el.style.setProperty('--g', tones[i % tones.length]);

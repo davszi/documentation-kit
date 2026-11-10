@@ -91,7 +91,9 @@ def folds_to_html(chunk: str, name: str) -> str:
                 f"{html.escape(title)}</summary>\n")
 
     chunk = _FOLD_OPEN_RE.sub(open_sub, chunk)
-    return _FOLD_CLOSE_RE.sub("</details>", chunk)
+    # The newline after the closing tag ends the HTML block, so the next line is
+    # read as Markdown even when the author left no blank line after the marker.
+    return _FOLD_CLOSE_RE.sub("</details>\n", chunk)
 
 
 # Slide faces: one 16:9 summary slide at the top of a chapter.
@@ -346,7 +348,9 @@ def _resolve_brand_mark(site: dict) -> str:
         return ""
     elif mark.endswith(".svg"):
         try:
-            svg = local_resource(REPO / mark).read_text().strip()
+            svg = local_resource(REPO / mark).read_text()
+            # Editors export an XML prolog, a doctype or a comment before the root element.
+            svg = re.sub(r"^(?:\s*(?:<\?xml.*?\?>|<!DOCTYPE[^>]*>|<!--.*?-->))*\s*", "", svg, flags=re.S).strip()
         except (ValueError, OSError) as problem:
             err(f"brand_mark: {problem}")
             return ""

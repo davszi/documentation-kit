@@ -26,7 +26,7 @@ expands. These routes grant no execution or publication permission.
 | Staging, committing or rewriting Git history | `rules/engineering/git.md` and repository validation requirements |
 | Writing or changing a record: a guide, topic record, plan, worklog or open-work entry | `rules/records.md`, and in `rules/documentation.md` the sections from **Record first, page on request** through **Rules for changes and chronology** |
 | Creating, moving, splitting or retiring a document | `rules/documentation.md` |
-| Making a new page for people, only when a person asked for one, or changing an existing page | **Record first, page on request** and **Rendered pages are for people** in `rules/documentation.md`; the page author reads the applicable focused guides linked from `rules/writing.md` and `rules/maintenance.md` |
+| Making a new page for people, only when a person asked for one, or page work on an existing page beyond a small sync | **Record first, page on request** and **Rendered pages are for people** in `rules/documentation.md`; the page author reads the applicable focused guides linked from `rules/writing.md` and `rules/maintenance.md` |
 | Building, checking, reviewing rendered output, publishing or changing the site or reader | The applicable focused guides linked from `rules/maintenance.md` and the checks in `docs/KIT_CONTEXT.md` |
 
 `docsite.py` owns the consumer entrypoint, `tooling/` implements rendering and

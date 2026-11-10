@@ -80,6 +80,8 @@ def _diff_path(raw: str) -> str | None:
     raw = raw.rstrip("\n")
     if raw.startswith('"') and raw.endswith('"'):
         raw = codecs.escape_decode(raw[1:-1].encode())[0].decode("utf-8", "replace")
+    else:
+        raw = raw.split("\t", 1)[0]  # Git ends an unquoted name that contains a space with a tab
     if raw == "/dev/null":
         return None
     return raw[2:] if raw[:2] in ("a/", "b/") else raw
@@ -106,18 +108,21 @@ def changed_lines(root: Path, since: str | None = None) -> dict[str, list[int] |
         return {}
     changes: dict[str, list[int] | None] = {}
     old = new = None
+    header = False  # file names are read only between "diff --git" and the first hunk
     for line in result.stdout.splitlines():
         if line.startswith("diff --git "):
             old = new = None
-        elif line.startswith("--- "):
+            header = True
+        elif header and line.startswith("--- "):
             old = _diff_path(line[4:])
-        elif line.startswith("+++ "):
+        elif header and line.startswith("+++ "):
             new = _diff_path(line[4:])
             if new is None and old is not None:
                 changes[old] = None
             elif new is not None:
                 changes.setdefault(new, [])
         elif new is not None and (match := HUNK_RE.match(line)):
+            header = False
             start, count = int(match.group(1)), int(match.group(2) or 1)
             positions = changes[new]
             if count:
@@ -258,9 +263,10 @@ def _chapter_at(events, position: int) -> str | None:
 def page_links(root: Path, page: Path, records: set[str], routes: dict[str, str], slugify) -> list[RecordLink]:
     """Links from a topic page to records, by file path or by built route."""
     root = Path(root)
-    text = masked(page.read_text(errors="replace"))
+    raw = page.read_text(errors="replace")
+    page_end = raw.find(PAGE_END)  # read before masking, which blanks the marker with every comment
+    text = masked(raw)
     events = _chapter_index(text, slugify)
-    page_end = text.find(PAGE_END)
     html = root / "docs/html"
     links = []
     found = [(m.start(), m.group(1)) for m in MARKDOWN_LINK_RE.finditer(text)]

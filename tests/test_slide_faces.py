@@ -150,6 +150,20 @@ class DeckExport(unittest.TestCase):
         finally:
             page.unlink()
 
+    def test_a_versioned_slide_face_stylesheet_is_not_added_again(self):
+        html_dir = slides.OUTPUT_ROOT / "html"
+        page = html_dir / "slide-test-versioned.html"
+        html_dir.mkdir(parents=True, exist_ok=True)
+        page.write_text(PAGE.replace('<link rel="stylesheet" href="assets/page.css">',
+                                     '<link rel="stylesheet" href="assets/page.css">'
+                                     '<link rel="stylesheet" href="assets/slide-face.css?v=0123456789">'))
+        try:
+            deck, problems = slides.build_deck([("slide-test-versioned", None)], title="Deck")
+            self.assertEqual(problems, [])
+            self.assertEqual(deck.count('slide-face.css'), 1)
+        finally:
+            page.unlink()
+
     def test_starter_guide_faces_survive_the_build(self):
         built = (slides.OUTPUT_ROOT / "html" / "guide.html").read_text()
         found = [c for c in slides.chapters(built) if c["face"]]

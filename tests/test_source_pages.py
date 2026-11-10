@@ -36,8 +36,11 @@ Back to [the shared rule](rule.md#first-part).
 
 
 def invoke(*args):
+    # A CI run sets GITHUB_SHA, which pins source links to that commit; these
+    # tests expect the configured branch unless a test sets the variable itself.
+    env = {name: value for name, value in os.environ.items() if name != 'GITHUB_SHA'}
     return subprocess.run([sys.executable, str(KIT / 'docsite.py'), *map(str, args)],
-                          capture_output=True, text=True)
+                          capture_output=True, text=True, env=env)
 
 
 class SourcePages(unittest.TestCase):

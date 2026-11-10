@@ -31,17 +31,21 @@ echo "Syntax: ${#scripts[@]} scripts parse."
 # kit's own site. They run when Playwright resolves. DOCS_REQUIRE_BROWSER=1
 # makes a missing Playwright fail instead of skipping, as the Pages workflow does.
 if "$DOCS_NODE" -e "require(process.env.DOCS_PLAYWRIGHT || 'playwright')" 2>/dev/null; then
-  # Keep Chromium away from the desktop session.
-  export DBUS_SESSION_BUS_ADDRESS="unix:path=/nonexistent-docs-kit-review"
   cap=()
   if systemd-run --user --scope --quiet -p MemoryMax=4G -p MemorySwapMax=0 true 2>/dev/null; then
     cap=(systemd-run --user --scope --quiet -p MemoryMax=4G -p MemorySwapMax=0)
   fi
+  # Only the suite gets the unreachable bus address, which keeps Chromium away
+  # from the desktop session; systemd-run itself still needs the real one.
   for suite in visual_review test_browser_checks test_panel_switcher own_site_review; do
-    ${cap[@]+"${cap[@]}"} timeout 280 "$DOCS_NODE" "tests/$suite.cjs"
+    ${cap[@]+"${cap[@]}"} env DBUS_SESSION_BUS_ADDRESS="unix:path=/nonexistent-docs-kit-review" \
+      timeout 280 "$DOCS_NODE" "tests/$suite.cjs"
   done
 elif [ "${DOCS_REQUIRE_BROWSER:-0}" = 1 ]; then
   echo "ERROR: browser suites are required, but Playwright does not resolve. Set DOCS_PLAYWRIGHT." >&2
+  exit 1
+elif [ -n "${DOCS_PLAYWRIGHT:-}" ]; then
+  echo "ERROR: DOCS_PLAYWRIGHT is set to '$DOCS_PLAYWRIGHT', but Playwright does not load from there." >&2
   exit 1
 else
   echo "SKIPPED: browser suites (starter reader, layout helpers, panel switcher, own site)."

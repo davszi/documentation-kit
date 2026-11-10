@@ -46,21 +46,22 @@ Other Markdown must have a defined role: a subject record, log, experiment contr
 
 ## Record first, page on request
 
+In these rules a page means a page for people, a topic's `index.md`. A [registered source page](site/authoring.md#registered-source-pages) is a record shown whole; editing it is editing a record.
+
 Document work in this order:
 
 1. The agent that did the work writes or updates the record, following [writing records](records.md). It holds the facts: what changed, what was measured and why.
-2. A new page for people, or a new chapter on one, is made only when a person asked for it.
-3. A page that exists stays true to its record. When a record changes, update the pages that explain it in the same change; that needs no new request. [Rendered pages are for people](#rendered-pages-are-for-people-records-stay-markdown) says how lint lists those pages.
-4. The size of the page work decides who does it. A small sync, a sentence or two that a record edit made stale, stays with the agent that edited the record. Anything larger goes to a separate agent where the runtime supports delegation, with the finished record as its brief; follow [delegating a page for people](engineering/delivery.md#delegating-a-page-for-people). Without delegation, do the page as a separate step after the record.
+2. A new page is made only when a person asked for it.
+3. A page that exists stays true to its record. When a record changes, update the pages that explain it in the same deliverable, after the record; that needs no new request, also when the page gains or loses a chapter because the record did. [Rendered pages are for people](#rendered-pages-are-for-people-records-stay-markdown) says how lint lists those pages.
+4. The size of the page work decides who does it. A small sync changes a sentence or two that a record edit made stale; it needs no page guides and stays with the agent that edited the record. Anything larger, or anything that needs layout, a figure or a new block, goes to a separate agent where the runtime supports delegation; follow [delegating a page for people](engineering/delivery.md#delegating-a-page-for-people) for its brief. Without delegation, do the page as a separate step after the record.
 
 The page author reads the applicable [page guides](writing.md) and [site guides](maintenance.md). The record author needs them only for what [excerpts, formulas and figures](records.md#excerpts-formulas-and-figures) names.
 
 ## Rendered pages are for people; records stay Markdown
 
 Every topic has a record; [writing records](records.md#one-record-per-topic) says
-how it is named and written. Add `index.md` when a person asked for a page and
-has something to learn or act on; the page explains the record in its own words
-and links its sections.
+how it is named and written. Add `index.md` when a person asked for a page; the page explains the record in
+its own words and links its sections.
 
 A page and its record cover the same subject for different readers, so their
 overlap is expected, not duplication to remove. The record holds the exact
@@ -80,15 +81,15 @@ that link to that section; a link to the whole record is listed only when its
 opening text changes. Reread each listed page and update its explanation in the
 same change. `--since <rev>` compares with an older commit; notes never fail lint.
 
-On a site that sets `page_number_notes = true`, lint also lists the numbers in a
-page's prose that none of its linked records state. State such a number in its
+`page_number_notes = true` is one setting for the whole site. With it, lint also
+lists the numbers in a page's prose that none of its linked records state. State such a number in its
 record, show it as code when it is a literal value, or take it off the page.
 The check reads prose only and does not judge whether the record's number is
 right; [numbers and staleness](records.md#numbers-and-staleness) owns that.
-These notes never fail lint either. The setting suits pages that explain
-Markdown records. Pages that report measurements from experiment data show
-rounded or derived numbers that match no text; such a project keeps its own
-ledger check.
+These notes never fail lint either. Turn the setting on for a site whose pages
+explain Markdown records. Leave it off for a site with pages that report
+measurements from experiment data: those numbers are rounded or derived, match
+no text, and need the project's own ledger check.
 
 A rendered page explains current conclusions, accepted specifications, demonstrated behavior with its evidence scope, useful figures and the decisions needed next. Contracts, handoff/resume state, readiness boards, bookkeeping and long run chronology stay in records. Link to those records instead of reproducing them.
 

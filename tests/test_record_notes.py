@@ -6,7 +6,7 @@ import tempfile
 import unittest
 
 import lint
-from record_changes import record_change_notes
+from record_changes import changed_lines, record_change_notes
 from topic_structure import topic_structure_problems
 
 KIT = Path(__file__).resolve().parents[1]
@@ -124,6 +124,20 @@ class RecordChangeNotes(unittest.TestCase):
         text = path.read_text()
         self.assertIn(old, text)
         path.write_text(text.replace(old, new, 1))
+
+    def test_a_record_whose_name_contains_a_space_is_found(self):
+        self.write('rules/my rule.md', '# My rule\n\n## Limits\n\nOld.\n')
+        git(self.root, 'add', '-A')
+        git(self.root, 'commit', '-q', '-m', 'Add a rule with a space')
+        self.write('rules/my rule.md', '# My rule\n\n## Limits\n\nNew.\n')
+        self.assertEqual(set(changed_lines(self.root)), {'rules/my rule.md'})
+
+    def test_a_content_line_that_looks_like_a_diff_header_is_content(self):
+        self.write('rules/code.md', RECORD.replace('Remove the old form once the owner decides.',
+                                                   '++ a line that starts like a header').replace('Log text.', 'Log text, changed.'))
+        changes = changed_lines(self.root)
+        self.assertEqual(set(changes), {'rules/code.md'})
+        self.assertEqual(len(changes['rules/code.md']), 2)
 
     def notes(self, since=None):
         return record_change_notes(self.root, lint.slugify, since)

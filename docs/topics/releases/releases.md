@@ -12,8 +12,8 @@ The [stable and provisional interfaces](#100--first-stable-version) list what a
 project may rely on. From 3.0.0 the version number means this:
 
 - A **major** release removes or renames a stable interface, including a
-  section anchor under `rules/`, or adds a lint error that fails without
-  `--strict`.
+  section anchor under `rules/`, or adds a lint error or build failure that
+  stops a project that passed before.
 - A **minor** release adds to the stable interfaces. It may also add lint
   warnings, which fail `--strict`, change how the shared theme looks, and change
   or remove a provisional interface.
@@ -28,9 +28,13 @@ shows the new warnings.
 Not tagged yet: these changes are on `main` after 2.0.0, and `VERSION` changes
 when the release is tagged. It is a major release under
 [what a version number promises](#what-a-version-number-promises) for one
-reason: it removes section anchors under `rules/`. `rules/writing.md` and `rules/maintenance.md` lose their
-section anchors, and record rules move into the new `rules/records.md`, so a
-project that links to the old locations fails lint until it repoints the links. No command, configuration key, marker or adapter signature is removed.
+reason: it removes section anchors under `rules/`. `rules/writing.md` and
+`rules/maintenance.md` lose their section anchors, sections move out of
+`rules/documentation.md` and `rules/writing/explanations.md`, and
+`rules/writing/evidence.md` is removed. Lint fails on a Markdown link to an old
+location until the project repoints it; links written as HTML `<a href>` are
+not checked. No command, configuration key, marker or adapter signature is
+removed.
 Follow the [3.0.0 migration guide](migrations/3.0.0.md).
 One check can fail a strict lint run: a topic page without a record
 must add one or declare `page_only`. Two provisional tooling modules that no
@@ -53,10 +57,12 @@ chips, and code keeps its case inside uppercase titles.
 | Configuration | A registered source page no longer needs a `[[nav]]` entry; topic pages still do. `[[source_pages]]` accepts optional `pinned = true` | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
 | Rules | Removed: the stub headings in `rules/writing.md` and `rules/maintenance.md`, which only forwarded old links. Both files are now plain indexes of the focused guides. A link to one of their former anchors must point at the focused guide's own section; links to the files without an anchor still work | [Router anchors](migrations/3.0.0.md#router-anchors) |
 | Rules | Records and pages are documented in a fixed order: the working agent writes the record first, and a page for people is made on request, by a separate agent where the runtime supports delegation. New guide `rules/records.md` gathers what a record needs; `rules/writing/` now covers pages; its rules about what a code excerpt, a formula or an experiment visual may claim still apply to records. `rules/writing/evidence.md` is removed and six sections moved, so links to them must be repointed. The starter router has three documentation rows in place of two | [Record first, page on request](../../../rules/documentation.md#record-first-page-on-request), [sections that moved](migrations/3.0.0.md#sections-that-moved) |
+| Theme | Sidebar groups are toned sections, wrapped in `div.nav-section` in the built HTML. The home hero (`.home-hero`) lays out in two columns with a larger headline. Numbered steps in build-sheet boxes show their number in the box's tone | [Shared reading layout](../../../rules/site/reader.md#shared-reading-layout) |
+| Rules | The Git guide now says what the pin check always did: it counts the kit's remote branches, not tags | [The shared kit submodule](../../../rules/engineering/git.md#the-shared-kit-submodule) |
 | Rules | Every visual change is reviewed by eye before it is reported done, from whole-element captures at each supported width and reader view | [Validation and review](../../../rules/site/validation.md#validation-and-review) |
 | Rules | A worklog entry and its commit message cover the same landing on purpose and are written in the same step. `OPEN.md` format, which lint already checked, is now stated | [Rules for changes and chronology](../../../rules/documentation.md#rules-for-changes-and-chronology), [open work](../../../rules/documentation.md#from-open-work-to-subject-knowledge) |
 | Starter | The home page links `../PROJECT_CONTEXT.md`; the 2.0.0 starter linked a file that does not exist. The reading index has three documentation rows in place of two | [Starter home link](migrations/3.0.0.md#starter-home-link), [reading index](migrations/3.0.0.md#reading-index) |
-| Build fix | A paragraph that directly follows a fold now renders as Markdown. Before, the closing fold marker swallowed the blank line after it, and the paragraph, typically a "Full guide" line with links, appeared as raw text. Pages with such paragraphs change in the built output | [Story and reading layers](../../../rules/writing/explanations.md#story-and-reading-layers) |
+| Build fix | A paragraph that follows a fold now renders as Markdown, with or without a blank line after the closing marker. Before, the paragraph, typically a "Full guide" line with links, appeared as raw text. Pages with such paragraphs change in the built output | [Story and reading layers](../../../rules/writing/explanations.md#story-and-reading-layers) |
 | License | The kit's own rules, tooling, theme and starter are under the MIT License; bundled fonts and KaTeX keep their own licenses. Earlier versions granted no license. Every built site gains one file, `html/assets/documentation-kit/LICENSE`; a project asset with that output name fails the build | [License](../../../README.md#license) |
 | Tooling | Removed: `tooling/number_ledger.py` and `tooling/verbatim_blocks.py`, both provisional since 1.0.0. The rule that a redesign records number sources in a ledger and locks kept blocks stays; each project keeps its own ledger format and checks. `tooling/svg_figures.py` stays | [Numbers and staleness](../../../rules/records.md#numbers-and-staleness) |
 

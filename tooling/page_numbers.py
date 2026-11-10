@@ -29,18 +29,19 @@ from pathlib import Path
 
 from record_changes import PAGE_END, _chapter_at, _chapter_index, _git, masked, page_links, source_routes, topic_pages
 
-NUMBER_RE = re.compile(r"(?<![\w.,#/-])\d[\d,]*(?:\.\d+)?(?![\w/-])")
+# The atomic group keeps a number whole: "2.5x" is no number at all, not a "2".
+NUMBER_RE = re.compile(r"(?<![\w.,#/-])(?>\d[\d,]*(?:\.\d+)?)(?![\w/-])")
 RECORD_NUMBER_RE = re.compile(r"\d[\d,]*(?:\.\d+)?")
 # Blanked before numbers are read: each pattern covers text that is not a stated quantity.
 NOT_PROSE = (
     re.compile(r"<(svg|pre|code|script|style)\b[\s\S]*?</\1\s*>", re.I),
-    re.compile(r"<[^>]+>"),
+    re.compile(r"<[A-Za-z/!][^<>]*>"),                          # tags, never a "<" in prose
     re.compile(r"\]\([^)\n]*\)"),
     re.compile(r"&#?\w+;"),
     re.compile(r"\b\d+(?:\.\d+){2,}\b"),                      # versions, addresses
     re.compile(r"\b\d{4}-\d{2}-\d{2}\b"),                     # dates
     re.compile(r"\b\d+(?::\d+)+\b"),                         # ratios such as 16:9, times
-    re.compile(r"\b(?:Figure|Fig\.|Table|Step|Chapter|Section|Part)\s+\d+\b", re.I),
+    re.compile(r"\b(?:Figure|Fig\.|Table|Step|Chapter|Section|Part)[ \t]+\d+\b", re.I),
 )
 
 
@@ -50,8 +51,8 @@ def _blank(text: str, pattern: re.Pattern) -> str:
 
 def prose(text: str) -> str:
     """Page text of the same length with everything that is not prose blanked."""
+    end = text.find(PAGE_END)  # read before masking, which blanks the marker with every comment
     text = masked(text)
-    end = text.find(PAGE_END)
     if end >= 0:
         text = text[:end] + re.sub(r"[^\n]", " ", text[end:])
     for pattern in NOT_PROSE:
@@ -107,7 +108,9 @@ def page_number_notes(root: Path, slugify) -> list[str]:
     root = Path(root)
     if not enabled(root):
         return []
-    records, routes = _records(root), source_routes(root)
+    records = _records(root)
+    routes = {slug: source for slug, source in source_routes(root).items() if source in records}
+    inside = root.resolve()
     notes = []
     for page in topic_pages(root):
         text = page.read_text(errors="replace")
@@ -116,8 +119,11 @@ def page_number_notes(root: Path, slugify) -> list[str]:
             continue
         stated: set[str] = set()
         for record in linked:
+            path = root / record
+            if path.is_symlink() or not path.resolve().is_relative_to(inside):
+                continue  # only files of the project are read
             try:
-                stated |= stated_numbers((root / record).read_text(errors="replace"))
+                stated |= stated_numbers(path.read_text(errors="replace"))
             except OSError:
                 continue  # lint reports the missing link target
         events = _chapter_index(masked(text), slugify)

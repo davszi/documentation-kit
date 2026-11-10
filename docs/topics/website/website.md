@@ -49,7 +49,8 @@ check sequence, which builds and lints this site beside the starter.
 
 The site is public on GitHub Pages at <https://davszi.github.io/documentation-kit/>,
 decided by deivid on 2026-11-09. On every push to `main`,
-`.github/workflows/pages.yml` first runs `tests/run_checks.sh` with the browser
-suites required, then builds the site, runs strict lint and deploys
-`.build/docs`. A failed check publishes nothing. The repository is public, so
+`.github/workflows/pages.yml` runs two jobs. The first has no deploy rights: it
+runs `tests/run_checks.sh` with the browser suites required, builds the site,
+runs strict lint and uploads `.build/docs`. The second only deploys what the
+first uploaded. A failed check publishes nothing. The repository is public, so
 source and edit links work for every reader.

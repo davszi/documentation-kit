@@ -12,7 +12,8 @@ their owner instead of changing them in the same deliverable.
 
 ## Checklist
 
-1. **Pin.** `.docs-kit` is at a pushed release tag, and
+1. **Pin.** `.docs-kit` is at a commit on one of the kit's remote branches,
+   normally the commit of a release tag, and
    `python .docs-kit/docsite.py lint --project . --strict` passes **(lint:
    pin, links, worklog and open-work format, topic structure)**. Follow
    [the shared kit submodule](engineering/git.md#the-shared-kit-submodule).
@@ -24,8 +25,9 @@ their owner instead of changing them in the same deliverable.
    commands, thresholds and resource profiles, and link to the kit guide for
    the shared rule. Remove a copied rule only after its project parts have a
    linked home.
-4. **Canonical homes.** `docs/PROJECT_CONTEXT.md`, `docs/index.md`, the
-   worklog and open work exist where `docs/site/site.toml` says. Follow
+4. **Canonical homes.** `docs/PROJECT_CONTEXT.md` and `docs/index.md` exist,
+   and the worklog and open work exist where `docs/site/site.toml` names them
+   or at their default paths. Follow
    [canonical homes](documentation.md#canonical-homes).
 5. **Topics.** Every topic page has a record in its folder or declares
    `page_only` with a reason **(lint)**. No subject record is named `README.md` ([writing records](records.md#one-record-per-topic)).

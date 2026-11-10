@@ -83,11 +83,12 @@ def _folder_html(folder: _Folder, current: str, listed: bool) -> str:
     return '<ul class="repo-tree-list">' + "".join(items) + "</ul>"
 
 
-def _pinned_html(files: list[TreeFile], current: str) -> str:
+def _pinned_html(files: list[TreeFile], current: str, listed: bool) -> str:
+    """A pinned file listed in the navigation is announced there, so here it is only styled."""
     links = []
     for item in files:
         here = item.route == current
-        attrs = ' class="repo-tree-pin current" aria-current="page"' if here else ' class="repo-tree-pin"'
+        attrs = ' class="repo-tree-pin' + (' current"' if here else '"') + (' aria-current="page"' if here and not listed else '')
         links.append(f'<li><a{attrs} href="{html.escape(item.route, quote=True)}" title="{_hint(item, item.path)}">'
                      f'{html.escape(item.title)}</a></li>')
     return '<ul class="repo-tree-pinned" aria-label="Pinned files">' + "".join(links) + "</ul>"
@@ -102,7 +103,7 @@ def tree_html(files: list[TreeFile], current: str, *, listed: bool = False) -> s
     opened = not listed and any(item.route == current and not item.pinned for item in files)
     return (f'    <div class="repo-tree" role="group" aria-labelledby="{TREE_LABEL_ID}">\n'
             f'    <span class="repo-tree-label" id="{TREE_LABEL_ID}">{TREE_LABEL}</span>\n'
-            + (f'    {_pinned_html(pinned, current)}\n' if pinned else "")
+            + (f'    {_pinned_html(pinned, current, listed)}\n' if pinned else "")
             + f'    <details class="repo-tree-all"{" open" if opened else ""}><summary>'
             f'<span class="repo-tree-name">Browse by folder</span>{_count(len(files))}</summary>\n'
             f'    {_folder_html(_folder_tree(files), current, listed)}\n'

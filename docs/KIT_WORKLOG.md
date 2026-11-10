@@ -2,6 +2,56 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Fix what the two pre-tag reviews found
+
+- Before the release tag, two independent reviewers looked at `b806c5d`, each in
+  its own clone. One reviewed the code changed since `v2.0.0`. The other built
+  a simulated 2.0.0 consumer, moved it to `b806c5d` and followed the 3.0.0
+  migration guide cold. Both ran the full gate and it passed. Neither found a
+  defect that blocks a consumer; the release reviewer noted that `VERSION` and
+  the "not tagged yet" text still need the release commit. Every finding below
+  was confirmed against the files first.
+- Code, each with a test that fails without the fix:
+  - The page-end marker was never found, because comments were blanked before
+    the search. Numbers below the marker were read, and links in the notes
+    tail resolved against the wrong folder. The earlier test passed for the
+    wrong reason.
+  - A page number such as `2.5x` was read as `2`; numbers are now read whole.
+  - A "<" in prose blanked everything up to the next ">".
+  - A changed record whose name contains a space, and a content line that
+    starts with `++ `, were lost from the record-change notes.
+  - `docsite.py slides` loaded `slide-face.css` twice once asset links carried
+    a version query.
+  - A pinned record that is also in the navigation was marked current twice.
+  - A brand-mark SVG that starts with an XML prolog or a comment was rejected.
+  - The page-number note read a registered route that points outside the
+    project.
+- Also in code: a paragraph glued to a closing fold, with no blank line, now
+  renders too; the group selector in `nav.js` is escaped with `CSS.escape`; one
+  source-page test no longer depends on `GITHUB_SHA`, so the workflow stops
+  unsetting it; `tests/run_checks.sh` fails when `DOCS_PLAYWRIGHT` is set but
+  does not load, and gives the unreachable bus address to the suites only.
+- `.github/workflows/pages.yml` is split into two jobs. The job that installs
+  and runs third-party code has no deploy rights; the second job only deploys.
+- Rules: a page means a page for people; a new page needs a request, and an
+  existing page follows its record also when it gains or loses a chapter; a
+  small sync needs no page guides; a gap or contradiction a page agent finds
+  goes back to the delegating agent; the conformance pin item matches the Git
+  guide; `page_number_notes` is described as one setting for the whole site,
+  with what it does not read.
+- 3.0.0 guide and release notes: lint checks Markdown links only, so the
+  searches must be worked through; the topic-record steps name the deletion
+  approval first and say what "exact" means; landing steps are linked; theme
+  changes and the Git-guide correction are listed; the version promise covers
+  new build failures.
+- Open work added: lint does not check HTML links to repository files.
+- Not fixed, by choice: anchors removed from the kit's own pages are not listed
+  in the release notes; hard-coded group names for colours remain in
+  `base.css` and `chapter-reader.css` from before 2.0.0; flat navigation no
+  longer scrolls the current entry into view.
+- Checks: `tests/run_checks.sh` with the browser suites passes, also with
+  `GITHUB_SHA` set as on a runner.
+
 ## 2026-11-10 — Take the guide and chapter counts off the Get started cards
 
 - The three practice cards on Get started were labelled with counts such as
