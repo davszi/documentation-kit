@@ -2,6 +2,30 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-11 — Separate experiment retention from exact copies of superseded documents
+
+- ADP asked whether its sentence "retain the smallest set of files that lets
+  a reader check a named finding" conflicts with the kit. The kit's own text
+  invited the question: `rules/records.md` lists what an experiment keeps,
+  and `rules/documentation.md` said "preserve exact evidence only when its
+  identity has a concrete purpose" in a bullet about removing superseded
+  documents. Neither named its scope.
+- deivid approved two wording changes. The documentation rule now speaks of
+  a byte-exact copy of a superseded document and says that it does not
+  shorten what an experiment retains. The record rule gains the principle
+  that repository size decides where material is stored, not whether it is
+  kept, and that material outside Git is located and identified from the
+  experiment directory.
+- A first draft pointed to the local-artifact manifest. deivid questioned
+  it: the manifest only covers files that documents link to, so the sentence
+  names no mechanism and leaves storage to the project.
+- deivid approved this "for now". Whether a project may narrow the kit's
+  list for size reasons is not decided; ADP's choice between scoping its
+  sentence to Git and a recorded exception is still open in ADP.
+- The page for people that repeats the documentation rule is brought in
+  step, and the 3.2.1 notes list the change.
+- Checks: strict lint of the kit site.
+
 ## 2026-11-10 — Let pages carry invariant markers, as the build already renders them
 
 - ADP's topic-record work was about to remove 35 `INVARIANT` and `DON'T-REDO`

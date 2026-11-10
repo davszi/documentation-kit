@@ -39,6 +39,14 @@ rule text, changes no tooling, and needs no migration step.
   statement in its own paragraph. A marker inside a sentence or a list item
   still shows the raw label, so that statement gets its own paragraph. ADP
   met the disagreement: 28 of its 35 markers already rendered as cards.
+- Two sentences used "evidence" for different things, and together they read
+  as a contradiction. [Rules for changes and chronology](../../../rules/documentation.md#rules-for-changes-and-chronology)
+  now says that its limit concerns byte-exact copies of superseded documents
+  and does not shorten what an experiment retains.
+  [Numbers and staleness](../../../rules/records.md#numbers-and-staleness)
+  gains the principle behind it: repository size decides where an
+  experiment's material is stored, not whether it is kept, and material held
+  outside Git is located and identified from the experiment directory.
 
 ## 3.2.0 — topic group folders and folded navigation groups
 

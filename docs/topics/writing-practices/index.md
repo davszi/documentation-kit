@@ -412,7 +412,7 @@ A page may carry drafts that belong to its topic below a <code>&lt;!-- page-end 
 
 <!-- fold: dead-end Why there is no archive staging layer -->
 
-An archive folder for superseded files feels cautious. In practice it becomes one more place where facts live on without an owner. The guide skips that step: once the removal of a superseded source is approved, it goes in the same commit that lands its replacement. Exact evidence is kept only when its identity serves a concrete purpose.
+An archive folder for superseded files feels cautious. In practice it becomes one more place where facts live on without an owner. The guide skips that step: once the removal of a superseded source is approved, it goes in the same commit that lands its replacement. A byte-exact copy of a superseded document is kept only when a check or a citation needs those exact bytes. That limit is about superseded documents; what an experiment retains is a separate list in the record rules.
 
 A related point concerns labels. The invariants of a project live in the owning records and in cross-cutting conventions. A page may still show one as a marked statement: `**INVARIANT:**` for a constraint that must survive edits, `**DON'T-REDO:**` for a settled decision. At the start of its own paragraph the marker becomes a labelled card. Inside a sentence or a list item the raw label would show on the page, so such a statement gets its own paragraph.
 

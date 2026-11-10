@@ -127,7 +127,7 @@ Plans distinguish investigation readiness from implementation readiness. A works
 - Current invariants live in owning records and cross-cutting conventions. A page may show one as a marked statement: `**INVARIANT:**` for a constraint that must survive edits, `**DON'T-REDO:**` for a settled decision. Put the marker at the start of its own paragraph; the build renders that paragraph as a labelled card, and `lint --registry` lists every marker. A marker inside a sentence or a list item shows the raw label on the page, so give that statement its own paragraph.
 - Measured claims follow [numbers and staleness](records.md#numbers-and-staleness).
 - A page may keep topic-owned drafts below `<!-- page-end -->`. Only content above is rendered. Chronology still belongs in the worklog; owed work still needs an `OPEN.md` route to its owner. Do not leave unreachable notes tails.
-- Remove approved superseded sources in the landing commit. Do not add an archive staging layer. Preserve exact evidence only when its identity has a concrete purpose.
+- Remove approved superseded sources in the landing commit. Do not add an archive staging layer. Keep a byte-exact copy of a superseded document only when a check or a citation needs those exact bytes. This does not shorten what an experiment retains; [numbers and staleness](records.md#numbers-and-staleness) lists that.
 
 ## Agent entrypoints: import versus point
 
