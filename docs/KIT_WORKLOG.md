@@ -2,6 +2,30 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Clarify three steps of the 3.2.0 guide after ADP's trial
+
+- ADP tried kit commit `d7a9d2d` on a local branch that was never pushed. It
+  moved four topics into `docs/topics/parked/`, two of them renamed on
+  deivid's decision, and folded the "Parked" group. Its report: the build
+  gives the same 24 pages apart from the two renamed ones, lint has no dead
+  link and only the expected error for the unpushed pin, and the folded group
+  behaves as designed, wide and at 375 px. Checked here: the trial branch
+  pins `d7a9d2d` and holds the four folders. ADP's twelve checks were not
+  rerun here.
+- ADP found no kit defect. Its own code needed two changes, both outside the
+  kit's sight: an evidence validator that accepted a topic path only at one
+  depth, and a test that listed the folders under `docs/topics/`.
+- Three guide steps were unclear and are corrected: the search step now names
+  code that checks the shape or depth of a topic path; the frozen-file step
+  says to update the recorded path before any bulk edit, because a bulk
+  replacement rewrote ADP's frozen file and only its evidence check caught
+  it; the comparison step says that a folder renamed on purpose changes its
+  address.
+- Open observation from the trial, not from 3.2.0: at 375 px ADP saw the
+  reader drawer clipped at its left edge, on the published 3.1.0 site as well.
+  The kit's own captures at 390 px show the drawer in place. Not reproduced
+  here yet.
+
 ## 2026-11-10 — Topic group folders and folded navigation groups
 
 - deivid asked, through ADP's topic-record work, for a folder of folders under
