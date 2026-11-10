@@ -27,8 +27,7 @@ shows the new warnings.
 
 ## 3.1.0 — one site name in the sidebar header, two lint warnings relaxed
 
-Not tagged yet: these changes are on `main` after 3.0.0, and `VERSION` changes
-when the release is tagged. It is a minor release under
+3.1.0 is a minor release under
 [what a version number promises](#what-a-version-number-promises): the header
 change alters how the shared theme looks, every key still parses and no project
 that built before fails. One stable key loses its effect, as the first item

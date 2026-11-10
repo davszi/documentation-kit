@@ -2,6 +2,18 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Release 3.1.0
+
+- deivid approved the release after the pre-tag review and its corrections.
+  `VERSION` is `3.1.0`. The release notes no longer say that the release is
+  untagged, and the README, project context and index name 3.1.0 as the
+  current release with its guide first.
+- The tag `v3.1.0` goes on the commit of `main` whose Pages workflow passes.
+- Not read by an independent reviewer: the review corrections (`7bea608`), the
+  name decision record (`119c0ec`) and this commit.
+- Checks: `tests/run_checks.sh` with the browser suites passes (172 tests,
+  strict lint, 22 scripts, four suites).
+
 ## 2026-11-10 — Record the open decision on the kit's name
 
 - deivid asked whether "Documentation kit" is still the right name. About a

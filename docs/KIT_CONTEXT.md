@@ -34,10 +34,11 @@ owns the shared panel switcher's authoring, behavior and extraction checks.
 
 [Releases and upgrades](topics/releases/releases.md) owns version notes and
 consumer migration steps; `VERSION` holds the current version.
-The [3.0.0 migration guide](topics/releases/migrations/3.0.0.md) covers the
-current release: the removed router anchors, the new `rules/records.md` with
-record first and page on request, topic records, the sidebar mark and the
-removed ledger modules. The
+The [3.1.0 migration guide](topics/releases/migrations/3.1.0.md) covers the
+current release: one site name in the sidebar header and two relaxed lint
+warnings. The [3.0.0 guide](topics/releases/migrations/3.0.0.md) covers the
+removed router anchors, the new `rules/records.md` with record first and page
+on request, topic records, the sidebar mark and the removed ledger modules. The
 [2.0.0 guide](topics/releases/migrations/2.0.0.md) covers the removed
 compatibility forms, configured publication and the kit-pin check; the
 [1.1.0 guide](topics/releases/migrations/1.1.0.md) covers focused policy owners,
