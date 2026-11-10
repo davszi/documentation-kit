@@ -2,6 +2,18 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Release 3.2.0
+
+- deivid chose to release after ADP's trial. The trial passed without a kit
+  defect, so `VERSION` is `3.2.0`. The release notes no longer say that the
+  release is untagged, and the README, project context and index name 3.2.0 as
+  the current release with its guide first.
+- The tag `v3.2.0` goes on the commit of `main` whose Pages workflow passes.
+- Not read by an independent reviewer: the corrections made after the review
+  of the two settings, the three clarified guide steps and this commit.
+- Checks: `tests/run_checks.sh` with the browser suites passes (179 tests,
+  strict lint, 22 scripts, four suites).
+
 ## 2026-11-10 — Clarify three steps of the 3.2.0 guide after ADP's trial
 
 - ADP tried kit commit `d7a9d2d` on a local branch that was never pushed. It

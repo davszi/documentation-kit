@@ -27,7 +27,7 @@ shows the new warnings.
 
 ## 3.2.0 — topic group folders and folded navigation groups
 
-3.2.0 is prepared on `main` and not yet tagged. It is a minor release under
+3.2.0 is a minor release under
 [what a version number promises](#what-a-version-number-promises): it adds two
 optional settings to the stable interfaces, and a project that sets neither
 builds the same pages, addresses and sidebar as before. The
