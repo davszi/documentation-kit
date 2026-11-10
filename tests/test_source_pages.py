@@ -118,6 +118,13 @@ class SourcePages(unittest.TestCase):
         lint = invoke('lint', '--project', self.root, '--strict')
         self.assertEqual(lint.returncode, 0, lint.stdout + lint.stderr)
 
+    def test_source_page_header_names_the_site(self):
+        config = self.root / 'docs/site/site.toml'
+        config.write_text(config.read_text().replace('[[nav]]', 'home_label = "Short name"\n\n[[nav]]', 1))
+        self.assertEqual(self.build().returncode, 0)
+        self.assertIn('<span class="brand-name">Short name</span>', self.page('shared-rule'))
+        self.assertIn('<span class="brand-name">Short name</span>', self.page('guide'))
+
     def test_site_map_lists_source_pages(self):
         home = self.root / 'docs/topics/home/index.md'
         self.assertIn('<!-- site-map -->', home.read_text())

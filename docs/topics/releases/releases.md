@@ -30,15 +30,23 @@ shows the new warnings.
 Not tagged yet: these changes are on `main` after 3.0.0, and `VERSION` changes
 when the release is tagged. It is a minor release under
 [what a version number promises](#what-a-version-number-promises): the header
-change alters how the shared theme looks. The
-[3.1.0 migration guide](migrations/3.1.0.md) gives the one step.
+change alters how the shared theme looks, every key still parses and no project
+that built before fails. One stable key loses its effect, as the first item
+says. The [3.1.0 migration guide](migrations/3.1.0.md) gives the steps.
 
 - The sidebar header shows the site's name on every page: `home_label`, or
-  `title` when `home_label` is not set. Until 3.0.0 it showed each page's
-  `brand` frontmatter, so a project whose pages set different values got a
-  header that named the current page while linking to the home page. `brand`
-  is still accepted and no longer read. A project whose `home_label` is not the
-  name it wants in the header changes or deletes it.
+  `title` when `home_label` is not set or blank. Up to 2.0.0 a page with the
+  chapter reader showed `home_label` in its drawer and a page without the
+  reader showed its own `brand` frontmatter. 3.0.0 showed the page's `brand`
+  everywhere, so a project whose pages set different values got a header that
+  named the current page while linking to the home page. 3.1.0 returns to one
+  name for the site and applies it to every page.
+- The page frontmatter key `brand` is deprecated. It is still accepted and has
+  no effect; there is no per-page replacement. Registered source pages, which
+  showed `title`, now show `home_label` too when it is set.
+- The browser stores a reader's open navigation groups and pinned drawer under
+  the site's name. A project that changes or removes `home_label` resets those
+  two saved preferences once for its readers.
 - A one-character `brand_mark` is drawn larger. At the size meant for two or
   three characters it was faint in its tile.
 - A link to a file that the local-artifact manifest lists under
@@ -59,7 +67,8 @@ change alters how the shared theme looks. The
   guide that the anchor table names.
 
 The starter no longer sets `home_label`, and neither the starter pages nor the
-kit's own pages set `brand`.
+kit's own pages set `brand`. [What a version number promises](#what-a-version-number-promises)
+gains the patch level.
 
 ## 3.0.0 — router anchors removed, topic records and repository files in the sidebar
 

@@ -2,6 +2,31 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Correct the 3.1.0 changes after the pre-tag review
+
+- An independent reviewer read everything since `v3.0.0` before the tag. It
+  found no blocker and ten findings; all are addressed here.
+- A blank `home_label` built in 3.0.0, and the new validation made it fail,
+  which the version promise counts as a major change. A blank value now counts
+  as unset; only a value that is not text is rejected, and that already failed
+  in 3.0.0 with a traceback.
+- The 3.1.0 guide said `home_label` was not shown anywhere before 3.1.0. That
+  holds only for 3.0.0: up to 2.0.0 the reader drawer showed it. The guide and
+  the release notes now give that history, name `brand` as deprecated without
+  a replacement, say that source pages show `home_label` too, and say that
+  changing the name resets two saved browser preferences once.
+- The 3.0.0 guide routed regression gates to the experiment workflow guide;
+  they live in the verification guide. The 2.0.0 guide said every consumer adds
+  three router rows; only a project that runs experiments adds the two
+  experiment rows.
+- Correction to the entry below: it counts three new tests. Its commit added
+  two. This commit adds one more, for the source-page header, and extends two:
+  the declared local artifact is now also checked in built HTML, and blank and
+  non-text `home_label` values are covered. Not covered by a test: the note for
+  a missing image or script resource, because the build fails first.
+- Checks: `tests/run_checks.sh` with the browser suites passes (172 tests,
+  strict lint, 22 scripts, four suites).
+
 ## 2026-11-10 — Name the site once in the sidebar header
 
 - deivid chose this over changing ADP's pages. The sidebar header now shows

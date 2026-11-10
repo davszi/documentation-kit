@@ -327,8 +327,12 @@ def site_name(site: dict) -> str:
     """The site's name in the sidebar header: `home_label`, else `title`.
 
     Every page shows the same name, because the header links to the home page.
+    A blank `home_label` counts as unset.
     """
-    return site.get("home_label") or site.get("title") or "Documentation"
+    label = site.get("home_label")
+    if isinstance(label, str) and label.strip():
+        return label.strip()
+    return site.get("title") or "Documentation"
 
 
 _BRAND_MARKS: dict[str, str] = {}
@@ -911,8 +915,8 @@ def main() -> int:
         ap.error("site.toml: nested_nav must be true or false")
     if not isinstance(site.get("page_number_notes", False), bool):
         ap.error("site.toml: page_number_notes must be true or false")
-    if "home_label" in site and (not isinstance(site["home_label"], str) or not site["home_label"].strip()):
-        ap.error("site.toml: home_label must be a non-empty name")
+    if not isinstance(site.get("home_label", ""), str):
+        ap.error("site.toml: home_label must be text")
     global KNOWN_COMPONENTS
     extra = site.get("extra_components", [])
     if not isinstance(extra, list) or any(not isinstance(c, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", c) or c in KNOWN_COMPONENTS for c in extra) or len(set(extra)) != len(extra):

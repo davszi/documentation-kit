@@ -96,10 +96,14 @@ class SiteContract(unittest.TestCase):
         site.write_text(text.replace('title = "Long project title"', 'title = "Long project title"\nhome_label = "Short"'))
         self.assertEqual(self.sidebar_names(), ['Short', 'Short'])
         self.assertIn('data-site-home-label="Short"', (self.root / '.build/docs/html/guide.html').read_text())
-        site.write_text(text.replace('title = "Long project title"', 'title = "Long project title"\nhome_label = ""'))
+        # A blank label counts as unset, as it built before; only a non-text value is rejected.
+        for blank in ('""', '"  "'):
+            site.write_text(text.replace('title = "Long project title"', 'title = "Long project title"\nhome_label = ' + blank))
+            self.assertEqual(self.sidebar_names(), ['Long project title', 'Long project title'])
+        site.write_text(text.replace('title = "Long project title"', 'title = "Long project title"\nhome_label = 3'))
         result = self.build()
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn('home_label must be a non-empty name', result.stdout + result.stderr)
+        self.assertIn('home_label must be text', result.stdout + result.stderr)
 
     def test_one_character_mark_is_sized_as_a_glyph(self):
         site = self.root / 'docs/site/site.toml'
@@ -124,6 +128,18 @@ class SiteContract(unittest.TestCase):
         self.assertIn('NOTE: docs/PROJECT_CONTEXT.md: artifact retained locally, omitted from push: ../experiments/run/data.jsonl', result.stdout)
         self.assertNotIn('WARN', result.stdout)
         self.assertIn('lint clean (0 warning(s))', result.stdout)
+        # A declared file inside the site's own tree, linked from a page body: the
+        # build keeps that link relative, so the check of the built HTML reports it.
+        context.write_text(original)
+        manifest.write_text('{"omitted_files": ["docs/figures/kept.png"]}\n')
+        guide = self.guide.read_text()
+        self.guide.write_text(guide + '\n<p>The run kept <a href="../figures/kept.png">a figure</a> locally.</p>\n')
+        self.assertEqual(self.build().returncode, 0)
+        result = invoke('lint', '--project', self.root, '--strict')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn('guide.html: artifact retained locally, omitted from push: ../figures/kept.png', result.stdout)
+        self.assertNotIn('WARN', result.stdout)
+        self.guide.write_text(guide)
         # A missing file that the manifest does not list stays an error.
         context.write_text(original + '\nThe run lost [its data](../experiments/run/other.jsonl).\n')
         self.assertEqual(self.build().returncode, 0)
