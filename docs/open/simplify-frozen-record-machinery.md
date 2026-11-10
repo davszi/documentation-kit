@@ -70,6 +70,26 @@ Verified, and not judged a problem: the figure-manifest check
 `DON'T-REDO` marker check (64 markers in 17 files). Both do nothing in a project
 without a manifest or markers.
 
+## Couplings found by ADP's upgrade to 3.0.0
+
+Verified on 2026-11-10 in ADP at its commit `1b7e0087`. They can break at an
+upgrade even when the kit's adapter hooks stay unchanged:
+
+- ADP's `tools/docs/_kit.py` loads the kit's build and lint modules, and two
+  ADP test modules use the private names `_errors`, `_check_chunk_links` and
+  `_evidence`.
+- Four ADP Node checks read kit theme sources from `.docs-kit/theme`. One of
+  them matched exact kit HTML and failed in the 3.0.0 upgrade.
+- ADP's navigation group names are hard-coded in four kit stylesheets:
+  `theme/components/base.css`, `theme/components/chapter-reader.css`,
+  `theme/assets/home.css` and `theme/assets/build-sheet.css`. The accent
+  variable is named `--adp`.
+
+deivid decided on 2026-11-10 to keep ADP's five compatibility layers until the
+choice below is made. ADP's record
+`docs/open/documentation-compatibility-layers.md` holds their sizes, their
+dependents and the order of work.
+
 ## Already removed
 
 Two shared modules that no project imported are gone; the

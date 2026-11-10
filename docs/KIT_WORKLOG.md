@@ -2,6 +2,16 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Add ADP's couplings to the simplification record
+
+- The [simplification record](open/simplify-frozen-record-machinery.md) gains
+  three couplings that ADP's upgrade showed: tests that use private kit names,
+  Node checks that read kit theme sources, and ADP's group names and `--adp`
+  in four kit stylesheets. deivid decided to keep ADP's five compatibility
+  layers until the frozen-record shape is chosen; ADP's own open-work record
+  holds their sizes.
+- Checks: strict lint of the kit site.
+
 ## 2026-11-10 — Add the missing router step to the upgrade findings
 
 - A fifth gap from ADP's upgrade: kit 2.0.0 added the two experiment guides and
