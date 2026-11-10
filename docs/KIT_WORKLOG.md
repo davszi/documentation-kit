@@ -2,6 +2,27 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Let pages carry invariant markers, as the build already renders them
+
+- ADP's topic-record work was about to remove 35 `INVARIANT` and `DON'T-REDO`
+  labels from seven pages, because the rule said such markers must not appear
+  on rendered pages. deivid asked to change the rule instead.
+- The rule and the tooling disagreed. `markers_to_callouts` in
+  `tooling/build.py` turns a marker at the start of its own paragraph into a
+  card with a reader label, and lint says the declarations belong on pages.
+  On ADP's built pages 28 of the 35 markers are cards and 7 show the raw
+  label; those 7 sit inside a sentence or a list item (counted by ADP's
+  session; three pages checked here and they match).
+- deivid approved this wording: a page may show a marked statement in its own
+  paragraph; a marker inside a sentence or a list item gets its own paragraph.
+  The record still owns the rule. He chose this over rendering inline markers
+  as a chip, which would have needed new build code.
+- The page for people that repeats the rule, Documentation and writing, is
+  brought in step. The release notes gain a 3.2.1 section, not yet tagged.
+- Not read by an independent reviewer yet; three more wording fixes are
+  queued and the review covers them together.
+- Checks: strict lint of the kit site.
+
 ## 2026-11-10 — Withdraw the 375 px drawer observation
 
 - The entry on ADP's trial recorded an open observation: the reader drawer

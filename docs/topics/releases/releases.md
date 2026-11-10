@@ -25,6 +25,21 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## 3.2.1 — rule wording corrected
+
+3.2.1 is prepared on `main` and not yet tagged. It is a patch release under
+[what a version number promises](#what-a-version-number-promises): it corrects
+rule text, changes no tooling, and needs no migration step.
+
+- [Rules for changes and chronology](../../../rules/documentation.md#rules-for-changes-and-chronology)
+  said that `INVARIANT` and `DON'T-REDO` markers must not appear on rendered
+  pages. The build renders a marker at the start of its own
+  paragraph as a labelled card, and lint says that such declarations belong on
+  pages. The rule now says what the tooling does: a page may carry a marked
+  statement in its own paragraph. A marker inside a sentence or a list item
+  still shows the raw label, so that statement gets its own paragraph. ADP
+  met the disagreement: 28 of its 35 markers already rendered as cards.
+
 ## 3.2.0 — topic group folders and folded navigation groups
 
 3.2.0 is a minor release under
