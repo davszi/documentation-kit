@@ -25,8 +25,7 @@ shows the new warnings.
 
 ## 3.0.0 — router anchors removed, topic records and repository files in the sidebar
 
-Not tagged yet: these changes are on `main` after 2.0.0, and `VERSION` changes
-when the release is tagged. It is a major release under
+3.0.0 is a major release under
 [what a version number promises](#what-a-version-number-promises) for one
 reason: it removes section anchors under `rules/`. `rules/writing.md` and
 `rules/maintenance.md` lose their section anchors, sections move out of

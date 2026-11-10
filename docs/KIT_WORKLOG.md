@@ -2,6 +2,20 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Release 3.0.0
+
+- deivid approved the release after the pre-tag review. `VERSION` is `3.0.0`.
+  The release notes and the 3.0.0 migration guide no longer say that the
+  release is untagged, and the README, project context and index name 3.0.0 as
+  the current release with its guide first.
+- The tag `v3.0.0` goes on the commit of `main` whose Pages workflow passes.
+  This push is the first run of the workflow's split into a check job without
+  deploy rights and a publish job.
+- Not read by an independent reviewer: the review fixes (`59cb1e8`), the page
+  sync (`71e66e6`) and this commit.
+- Checks: `tests/run_checks.sh` with the browser suites passes (167 tests,
+  strict lint, 22 scripts, four suites).
+
 ## 2026-11-10 — Bring the pages in step with the pre-tag rule changes
 
 - The rule changes from the pre-tag reviews were more than a small sync, so
