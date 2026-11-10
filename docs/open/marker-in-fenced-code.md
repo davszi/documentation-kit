@@ -31,6 +31,19 @@ block.
 its bold form, including a mention inside inline code or a code block. It
 over-counts and misses no marker on a page.
 
+## A second case: a record that names the markers gets a lint warning
+
+Reported by ADP on 2026-11-11 after it pinned 3.2.1. A line in its adoption
+record named the two markers in code spans, in a sentence that also held bold
+text, and lint warned `marker-ish line not in **INVARIANT:** / **DON'T-REDO:**
+form`. `check_markers` in `tooling/lint.py` warns on any line that contains
+`**` and one of the two words, wherever they stand. Code spans are not
+excluded. ADP reworded its sentence to avoid the words.
+
+So a record that describes the marker rule cannot name the markers on a line
+with bold text. Like the first case, the check reads raw lines and does not
+know about code.
+
 ## Next step
 
 Decide whether to make the conversion skip code fences, or to do it after
