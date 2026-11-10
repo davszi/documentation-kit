@@ -1,6 +1,5 @@
 +++
 title = "Get started"
-brand = "Documentation kit"
 brand_sub = "what it provides · how it works · set up · adopt"
 description = "What the kit provides, how a project routes contributors to its rules, the three practice areas, how to set it up and which adoption route fits."
 components = ["toc", "nav", "code", "filelinks"]

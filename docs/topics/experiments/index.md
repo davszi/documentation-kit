@@ -1,6 +1,5 @@
 +++
 title = "Experiments"
-brand = "Documentation kit"
 brand_sub = "small · bounded · proportionate"
 description = "How the kit's two experiment guides keep experiments small, choose their purpose, state their content and match verification to the claim, with the reason for each rule and an illustrative case."
 components = ["toc", "nav", "code", "filelinks"]

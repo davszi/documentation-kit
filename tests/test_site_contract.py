@@ -1,5 +1,6 @@
 """Version 1.0 site contract: nested includes, strict navigation tables and site-map cards."""
 from pathlib import Path
+import re
 import subprocess
 import sys
 import tempfile
@@ -77,6 +78,38 @@ class SiteContract(unittest.TestCase):
         result = self.build()
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('page_number_notes must be true or false', result.stdout + result.stderr)
+
+    def sidebar_names(self):
+        self.assertEqual(self.build().returncode, 0)
+        pages = [self.root / '.build/docs/html/index.html', self.root / '.build/docs/html/guide.html']
+        return [re.search(r'<span class="brand-name">([^<]*)</span>', page.read_text()).group(1) for page in pages]
+
+    def test_sidebar_header_names_the_site_on_every_page(self):
+        site = self.root / 'docs/site/site.toml'
+        text = re.sub(r'^title = ".*"$', 'title = "Long project title"', site.read_text(), flags=re.M)
+        site.write_text(text)
+        # A page's own brand is no longer read, so two pages cannot disagree.
+        home = self.root / 'docs/topics/home/index.md'
+        home.write_text(home.read_text().replace('+++\n', '+++\nbrand = "home page"\n', 1))
+        self.guide.write_text(self.guide.read_text().replace('+++\n', '+++\nbrand = "guide page"\n', 1))
+        self.assertEqual(self.sidebar_names(), ['Long project title', 'Long project title'])
+        site.write_text(text.replace('title = "Long project title"', 'title = "Long project title"\nhome_label = "Short"'))
+        self.assertEqual(self.sidebar_names(), ['Short', 'Short'])
+        self.assertIn('data-site-home-label="Short"', (self.root / '.build/docs/html/guide.html').read_text())
+        site.write_text(text.replace('title = "Long project title"', 'title = "Long project title"\nhome_label = ""'))
+        result = self.build()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('home_label must be a non-empty name', result.stdout + result.stderr)
+
+    def test_one_character_mark_is_sized_as_a_glyph(self):
+        site = self.root / 'docs/site/site.toml'
+        text = site.read_text()
+        site.write_text(text.replace('[[nav]]', 'brand_mark = "∿"\n\n[[nav]]', 1))
+        self.assertEqual(self.build().returncode, 0)
+        self.assertIn('<span class="brand-mark brand-mark-glyph" aria-hidden="true">∿</span>', (self.root / '.build/docs/html/guide.html').read_text())
+        site.write_text(text.replace('[[nav]]', 'brand_mark = "AD"\n\n[[nav]]', 1))
+        self.assertEqual(self.build().returncode, 0)
+        self.assertIn('<span class="brand-mark" aria-hidden="true">AD</span>', (self.root / '.build/docs/html/guide.html').read_text())
 
     def test_declared_local_artifact_is_a_note_that_strict_lint_accepts(self):
         context = self.root / 'docs/PROJECT_CONTEXT.md'

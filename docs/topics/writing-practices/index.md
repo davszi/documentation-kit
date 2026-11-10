@@ -1,6 +1,5 @@
 +++
 title = "Documentation and writing"
-brand = "Documentation kit"
 brand_sub = "homes · records · pages · figures"
 description = "Where each kind of documentation belongs, why the record is written before any page, what a record must say, and how the page guides shape explanations, figures, math and code, with illustrative examples."
 components = ["toc", "nav", "code", "filelinks"]

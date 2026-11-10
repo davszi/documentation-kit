@@ -1,7 +1,6 @@
 +++
 title = "A clear path from source to reader"
 slug = "index"
-brand = "documentation kit"
 brand_sub = "one source of truth · shared visual language"
 reader = false
 raw = true

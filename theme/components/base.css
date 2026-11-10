@@ -461,5 +461,6 @@ body.reader-enabled .sidebar .toc .reader-chapter-list a.active::before{color:va
   font:700 12px/1 var(--mono);letter-spacing:.04em;color:var(--adp);text-shadow:0 0 10px rgba(57,210,192,.5);
   background:linear-gradient(135deg,rgba(57,210,192,.20),rgba(182,156,255,.14));
   box-shadow:inset 0 0 0 1px rgba(57,210,192,.35),0 0 18px rgba(57,210,192,.16)}
+.sidebar .brand-mark-glyph{font-size:21px;letter-spacing:0}
 .sidebar .brand-mark svg{width:18px;height:18px;filter:drop-shadow(0 0 6px rgba(57,210,192,.45))}
 body:not(.reader-enabled) .sidebar .brand small{padding-left:41px}

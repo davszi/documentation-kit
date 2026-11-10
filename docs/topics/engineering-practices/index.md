@@ -1,6 +1,5 @@
 +++
 title = "Engineering practices"
-brand = "Documentation kit"
 brand_sub = "code · execution · delivery · Git"
 description = "Why the kit's six engineering guides exist, what each requires, and what following them looks like."
 components = ["toc", "nav", "code", "filelinks"]

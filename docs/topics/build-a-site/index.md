@@ -1,6 +1,5 @@
 +++
 title = "Build a site"
-brand = "Documentation kit"
 brand_sub = "how it works · pages · reader · commands"
 description = "How the kit turns tracked Markdown into a checked website: writing a topic page, what readers get, figures and slides, publishing Markdown you already have, and every command from build to upgrade."
 components = ["toc", "nav", "code", "filelinks", "lightbox", "carousel", "panel-switcher"]
@@ -129,9 +128,8 @@ Long technical pages fail readers in two ways: the point scrolls away under deta
 
 A chapter is a `##` heading, or an explicit `<section class="card" id="…">` when you want control over its contents. The frontmatter `toc` gives each chapter its short label in the toolbar. A layer is a typed fold: `<!-- fold: math Title -->` … `<!-- /fold -->`, with `experiment`, `code` or `dead-end` (shown as Alternatives) in place of `math`. These lines in this site's configuration turn the reader on for every page that does not opt out:
 
-```toml source=docs/site/site.toml#L4-L8
+```toml source=docs/site/site.toml#L4-L7
 title = "Documentation kit"
-home_label = "Kit"
 gh_repo = "https://github.com/davszi/documentation-kit"
 gh_ref = "main"
 chapter_reader = true

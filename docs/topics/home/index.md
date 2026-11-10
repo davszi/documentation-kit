@@ -1,7 +1,6 @@
 +++
 title = "Documentation kit"
 slug = "index"
-brand = "Documentation kit"
 brand_sub = "shared practices · reader · site toolchain"
 reader = false
 components = ["nav", "filelinks"]

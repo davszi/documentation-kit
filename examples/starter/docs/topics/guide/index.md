@@ -1,7 +1,6 @@
 +++
 toc = []
 title = "A shared kit keeps each project in control"
-brand = "authoring guide"
 brand_sub = "source ownership · evidence · optional depth"
 components = ["toc", "nav", "code", "filelinks", "lightbox"]
 page_css = ["build-sheet.css"]
@@ -125,7 +124,7 @@ A resource used in both sets appears once. This is set notation for packaging, n
 
 `init` writes the title and source repository into the first lines of `docs/site/site.toml` (`--title`, `--repository`); the home label is a project choice. The two lines after them are a real source excerpt: the revision that source links use, and the switch that turns on the chapter reader.
 
-```toml source=docs/site/site.toml#L4-L5
+```toml source=docs/site/site.toml#L3-L4
 gh_ref = "main"
 chapter_reader = true
 ```

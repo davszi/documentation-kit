@@ -35,7 +35,7 @@ class Consumers(unittest.TestCase):
         result = invoke('build', '--project', self.root, cwd=Path('/tmp'))
         self.assertEqual(result.returncode, 0, result.stderr)
         page = (self.root / '.build/docs/html/guide.html').read_text()
-        self.assertIn('data-site-home-label="Docs"', page)
+        self.assertIn(f'data-site-home-label="{self.root.name}"', page)
         self.assertIn('assets/build-sheet.css', page)
         self.assertIn('chapter-reader', page)
         self.assertNotIn('ADP docs', page)
@@ -248,7 +248,7 @@ def verify(root, *, require_all_manifests=False): raise ValueError("project evid
 
     def test_title_and_source_links_belong_to_the_consumer(self):
         config = self.root / 'docs/site/site.toml'
-        config.write_text(re.sub(r'^title = ".*"$', 'title = "Second project"', config.read_text(), flags=re.M).replace('home_label = "Docs"', 'home_label = "Second"'))
+        config.write_text(re.sub(r'^title = ".*"$', 'title = "Second project"\nhome_label = "Second"', config.read_text(), flags=re.M))
         self.track()
         result = invoke('build', '--project', self.root)
         self.assertEqual(result.returncode, 0, result.stderr)

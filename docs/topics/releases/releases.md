@@ -25,12 +25,22 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
-## 3.0.1 — two lint warnings that a project could not clear
+## 3.1.0 — one site name in the sidebar header, two lint warnings relaxed
 
 Not tagged yet: these changes are on `main` after 3.0.0, and `VERSION` changes
-when the release is tagged. It is a patch release: lint only becomes less
-strict, and no project needs a migration step.
+when the release is tagged. It is a minor release under
+[what a version number promises](#what-a-version-number-promises): the header
+change alters how the shared theme looks. The
+[3.1.0 migration guide](migrations/3.1.0.md) gives the one step.
 
+- The sidebar header shows the site's name on every page: `home_label`, or
+  `title` when `home_label` is not set. Until 3.0.0 it showed each page's
+  `brand` frontmatter, so a project whose pages set different values got a
+  header that named the current page while linking to the home page. `brand`
+  is still accepted and no longer read. A project whose `home_label` is not the
+  name it wants in the header changes or deletes it.
+- A one-character `brand_mark` is drawn larger. At the size meant for two or
+  three characters it was faint in its tile.
 - A link to a file that the local-artifact manifest lists under
   `omitted_files` now gets a note when the file is absent. It was a warning,
   so `lint --strict` failed on a state the project had declared on purpose.
@@ -40,19 +50,16 @@ strict, and no project needs a migration step.
   entry, and an append-only worklog could never clear its old hits. The rule
   that a landing records its commit stays in
   [rules for changes and chronology](../../../rules/documentation.md#rules-for-changes-and-chronology).
+- Two migration guides gain an instruction that ADP's upgrade showed was
+  missing. The [2.0.0 guide](migrations/2.0.0.md#experiment-guides) tells a
+  project to add the router rows for the two experiment guides and to compare
+  its router with the starter's. The
+  [3.0.0 guide](migrations/3.0.0.md#router-anchors) says that a link about the
+  experiment floor goes to the experiment workflow guide, not to the figures
+  guide that the anchor table names.
 
-A project whose only remaining warnings were of these two kinds now passes
-`lint --strict`.
-
-Two migration guides gain an instruction that ADP's upgrade showed was
-missing. A project that has already upgraded checks both:
-
-- The [2.0.0 guide](migrations/2.0.0.md#experiment-guides) now tells a project
-  to add the router rows for the two experiment guides and to compare its
-  router with the starter's.
-- The [3.0.0 guide](migrations/3.0.0.md#router-anchors) now says that a link
-  about the experiment floor goes to the experiment workflow guide, not to the
-  figures guide that the anchor table names.
+The starter no longer sets `home_label`, and neither the starter pages nor the
+kit's own pages set `brand`.
 
 ## 3.0.0 — router anchors removed, topic records and repository files in the sidebar
 

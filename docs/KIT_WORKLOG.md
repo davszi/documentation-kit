@@ -2,6 +2,31 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Name the site once in the sidebar header
+
+- deivid chose this over changing ADP's pages. The sidebar header now shows
+  `home_label`, or `title` when `home_label` is not set, on every page. It
+  used to show each page's `brand` frontmatter. The kit and adapt copied their
+  site name onto every page; ADP wrote page names there, so its header read
+  "track-geometry" while linking to the home page. `brand` is still accepted
+  and no longer read.
+- Before this change `home_label` was not shown anywhere in 3.0.0. The kit's
+  own `home_label = "Kit"` and the starter's `home_label = "Docs"` are removed,
+  so both show their title. The `brand` lines are removed from the kit's six
+  pages and the starter's two.
+- A one-character `brand_mark` gets the class `brand-mark-glyph` and is drawn
+  at 21 px instead of 12 px. An independent reviewer of ADP's upgrade had
+  judged ∿ faint.
+- The header change alters the shared look, so the pending release is 3.1.0,
+  not 3.0.1 as the entry below says. It has a
+  [migration guide](topics/releases/migrations/3.1.0.md) with one step. The
+  open-work record for ADP's upgrade findings is removed: all five gaps are
+  fixed. Two worklog links to it now point at the release notes; their wording
+  is unchanged.
+- Three new tests fail on the old code and pass now. Checks:
+  `tests/run_checks.sh` with the browser suites passes (171 tests, strict lint,
+  22 scripts, four suites).
+
 ## 2026-11-10 — Add two instructions that ADP's upgrade showed were missing
 
 - The 2.0.0 guide gains a section for the experiment guides: add the two router
@@ -52,7 +77,7 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
 - A fifth gap from ADP's upgrade: kit 2.0.0 added the two experiment guides and
   their starter router rows, but the 2.0.0 migration guide has no step that
   adds the rows to an existing project. ADP added them in its commit
-  `1b7e0087`. The gap is in [open work](open/adp-upgrade-findings.md).
+  `1b7e0087`. The gap is in [open work](topics/releases/releases.md#310--one-site-name-in-the-sidebar-header-two-lint-warnings-relaxed).
 - Correction: the reviewer of ADP's upgrade reported the missing rows as older
   than the upgrade. `rules/experiments/` does not exist at `v1.1.0`.
 - Checks: strict lint of the kit site.
@@ -63,7 +88,7 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   12 validation commands pass, and all 35 pages keep their chapter, fold,
   figure, formula and link counts against the 1.1.0 build.
 - The upgrade showed four gaps in the kit, now in
-  [open work](open/adp-upgrade-findings.md): the 3.0.0 guide maps one anchor to
+  [open work](topics/releases/releases.md#310--one-site-name-in-the-sidebar-header-two-lint-warnings-relaxed): the 3.0.0 guide maps one anchor to
   a guide that only forwards the experiment floor; the reader header shows each
   page's `brand`, which ADP sets per page; strict lint cannot pass in ADP; the
   ∿ mark is faint in its box. No kit code changed.

@@ -62,6 +62,13 @@ characters, such as `brand_mark = "∿"`, or a tracked SVG file, such as
 `brand_mark = "docs/site/brand-mark.svg"`, drawn with `currentColor`. Without it
 the mark is the initials of `title`. Each project uses its own mark.
 
+The sidebar header shows the site's name beside the mark on every page and
+links to the home page. The name is `title`; set `home_label` when the header
+needs a shorter name. A page cannot change it: the `brand` frontmatter key is
+accepted and not read. `brand_sub` stays a page's own line. It appears under the
+name on a page without the chapter reader and on the page's site-map card when
+the page has no `description`.
+
 Navigation groups take their colour from `--g` in project CSS; a group without
 one gets the next shared tone in order.
 

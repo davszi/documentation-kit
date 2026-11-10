@@ -48,6 +48,7 @@ from site_bundle import SiteBundle, validate_resources
 COMPONENTS = KIT_SITE / "components"
 KATEX_SRC = KIT_SITE / "assets" / "vendor" / "katex"
 
+# `brand` is accepted and not read: the sidebar header names the site (site_name).
 FRONTMATTER_KEYS = {"title", "slug", "brand", "brand_sub", "body_class", "math", "components", "page_css", "toc", "raw", "ongoing", "reader",
                     "description", "thumbnail", "page_only"}
 # A [[nav]] table accepts only these keys. TOML assigns every key written after a table header to that
@@ -322,6 +323,14 @@ SITE_MAP_MARKER = "<!-- site-map -->"
 _IMAGE_RE = re.compile(r'<img[^>]+src="([^"]+\.(?:svg|png|jpe?g|webp|gif))"|!\[[^\]]*\]\(([^)\s]+\.(?:svg|png|jpe?g|webp|gif))\)', re.I)
 
 
+def site_name(site: dict) -> str:
+    """The site's name in the sidebar header: `home_label`, else `title`.
+
+    Every page shows the same name, because the header links to the home page.
+    """
+    return site.get("home_label") or site.get("title") or "Documentation"
+
+
 _BRAND_MARKS: dict[str, str] = {}
 
 
@@ -361,7 +370,9 @@ def _resolve_brand_mark(site: dict) -> str:
     elif len(mark) > 3:
         err("brand_mark must be up to three characters or a tracked .svg path")
         return ""
-    return f'<span class="brand-mark" aria-hidden="true">{html.escape(mark)}</span>'
+    # One character has room for a larger size than two or three.
+    glyph = " brand-mark-glyph" if len(mark) == 1 else ""
+    return f'<span class="brand-mark{glyph}" aria-hidden="true">{html.escape(mark)}</span>'
 
 
 def site_map_html(site: dict) -> str:
@@ -639,7 +650,7 @@ def build_source_page(page, routes: dict[str, str], site: dict, shell: str) -> t
         err(f"{name}: a source page needs a level-one heading or a registered title")
         return None
     meta = {"title": title, "slug": page.slug, "toc": [], "math": page.math, "body_class": "source-page reference-page",
-            "brand": site.get("title", "Documentation"), "page_css": ["build-sheet.css"]}
+            "page_css": ["build-sheet.css"]}
     renderer = DocsRenderer(math_enabled=page.math)
     content = mistune.create_markdown(renderer=renderer, plugins=["table", "math"])(text)
     content, problems = rewrite_links(wrap_tables(content), page, routes, REPO, exists_in(REPO, resolve_legacy_path))
@@ -754,10 +765,10 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
         scripts += katex_scripts()
 
     body_class = ' class="' + html.escape(meta['body_class'], quote=True) + '"' if meta.get('body_class') else ''
-    page = shell.replace("<body>", '<body' + body_class + ' data-site-home-label="' + html.escape(site.get("home_label", site.get("title", "Documentation")), quote=True) + '">')
+    page = shell.replace("<body>", '<body' + body_class + ' data-site-home-label="' + html.escape(site_name(site), quote=True) + '">')
     for k, v in {
         "{{TITLE}}": html.escape(meta.get("title", "")),
-        "{{BRAND}}": brand_mark_html(site) + '<span class="brand-name">' + html.escape(meta.get("brand", slug)) + "</span>",
+        "{{BRAND}}": brand_mark_html(site) + '<span class="brand-name">' + html.escape(site_name(site)) + "</span>",
         "{{BRAND_SUB}}": html.escape(meta.get("brand_sub", "")),
         "{{TOC}}": toc,
         "{{CROSSNAV}}": crossnav,
@@ -900,6 +911,8 @@ def main() -> int:
         ap.error("site.toml: nested_nav must be true or false")
     if not isinstance(site.get("page_number_notes", False), bool):
         ap.error("site.toml: page_number_notes must be true or false")
+    if "home_label" in site and (not isinstance(site["home_label"], str) or not site["home_label"].strip()):
+        ap.error("site.toml: home_label must be a non-empty name")
     global KNOWN_COMPONENTS
     extra = site.get("extra_components", [])
     if not isinstance(extra, list) or any(not isinstance(c, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", c) or c in KNOWN_COMPONENTS for c in extra) or len(set(extra)) != len(extra):
