@@ -2,6 +2,20 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-11 — Record the kit gaps that adaptation's upgrade met
+
+- Adaptation, the second consumer, moved from 1.1.0 with an unpushed kit pin
+  to 3.2.0 in its own session and published. Its session reports that the
+  build, strict lint, publication and its site checks pass.
+- It reported six cases where a migration guide, the release notes or the
+  tooling did not cover what it met: publication keys from the unpushed kit
+  commit, an old pin that cannot be fetched, versioned asset names in project
+  checks, `assets/home.css` no longer in every bundle, the tooling imported
+  as a library from a subfolder, and pages whose content a project locks.
+  They are in [open work](open/adaptation-upgrade-findings.md) with what was
+  checked here. Nothing is fixed.
+- Checks: strict lint of the kit site.
+
 ## 2026-11-11 — Release 3.2.1
 
 - deivid approved the release after the pre-tag review and its corrections.
