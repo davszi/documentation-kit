@@ -2,6 +2,15 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Record the open decision on the kit's name
+
+- deivid asked whether "Documentation kit" is still the right name. About a
+  quarter of the rule text is engineering and experiment practice, and the kit
+  names itself two ways. Six candidates were proposed; deivid is not happy with
+  any of them. The question, the candidates and the cost of each rename layer
+  are in [open work](open/kit-name.md). Nothing is renamed.
+- Checks: strict lint of the kit site.
+
 ## 2026-11-10 — Correct the 3.1.0 changes after the pre-tag review
 
 - An independent reviewer read everything since `v3.0.0` before the tag. It
