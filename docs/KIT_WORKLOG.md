@@ -2,6 +2,19 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-11 — Record the decision to remove the migration guides
+
+- deivid asked whether the migration guides can go, since ADP and adaptation
+  are the only consumers and both are being moved to 3.2.x. He decided: all
+  guides at once, after ADP's `main` is on 3.2.x. The guides stay at tag
+  `v3.2.1`.
+- The trigger, the kit files that change and the steps each consumer takes
+  are in [open work](open/remove-migration-guides.md). Consumers link to the
+  guides through the starter's router row and through their adoption
+  records, so the removal needs a version decision.
+- Nothing is removed.
+- Checks: strict lint of the kit site.
+
 ## 2026-11-11 — Record the kit gaps that adaptation's upgrade met
 
 - Adaptation, the second consumer, moved from 1.1.0 with an unpushed kit pin
