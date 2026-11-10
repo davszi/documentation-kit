@@ -1,8 +1,8 @@
 # Findings from ADP's upgrade to 3.0.0
 
 Open work. ADP moved from kit 1.1.0 to 3.0.0 on 2026-11-10, on its branch
-`upgrade-kit-3.0.0` (commits `05b3b110`, `9123c3ce`, `b44a55d2`). The upgrade
-passed ADP's checks. It also showed four gaps in the kit. The evidence is
+`upgrade-kit-3.0.0` (first commit `05b3b110`). The upgrade
+passed ADP's checks. It also showed five gaps in the kit. The evidence is
 verified in ADP's upgrade record,
 `docs/topics/documentation-site/documentation-site.md`; no fix is decided.
 
@@ -20,6 +20,18 @@ found it.
 
 Next step: say in the guide that a link about the experiment floor goes to the
 experiment workflow guide.
+
+## The 2.0.0 guide has no step for the experiment router rows
+
+Kit 2.0.0 added `rules/experiments/workflow.md` and
+`rules/experiments/verification.md`, and the starter router has a row for each.
+The [2.0.0 migration guide](../topics/releases/migrations/2.0.0.md) does not
+tell an existing project to add those rows. ADP had neither row after following
+the guide; the conformance check found them, and they were added in ADP's
+commit `1b7e0087`.
+
+Next step: add the step to the 2.0.0 guide, or have the conformance check name
+router rows as something every upgrade adds.
 
 ## The reader header shows each page's `brand`
 

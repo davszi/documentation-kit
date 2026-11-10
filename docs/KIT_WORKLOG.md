@@ -2,6 +2,16 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Add the missing router step to the upgrade findings
+
+- A fifth gap from ADP's upgrade: kit 2.0.0 added the two experiment guides and
+  their starter router rows, but the 2.0.0 migration guide has no step that
+  adds the rows to an existing project. ADP added them in its commit
+  `1b7e0087`. The gap is in [open work](open/adp-upgrade-findings.md).
+- Correction: the reviewer of ADP's upgrade reported the missing rows as older
+  than the upgrade. `rules/experiments/` does not exist at `v1.1.0`.
+- Checks: strict lint of the kit site.
+
 ## 2026-11-10 — Record what ADP's upgrade to 3.0.0 showed about the kit
 
 - ADP was upgraded from 1.1.0 to 3.0.0 on its own branch, not yet merged. Its
