@@ -2,6 +2,18 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Withdraw the 375 px drawer observation
+
+- The entry on ADP's trial recorded an open observation: the reader drawer
+  looked clipped at 375 px. ADP withdrew it after tracing it. The cascade is
+  correct: `.reader-enabled.reader-nav-open .sidebar {transform:none}` wins.
+  The computed transform stayed at its start value because the browser pane
+  used for the check was hidden, so the page ran in the background and the
+  transition never advanced.
+- No kit change. The kit's captures at 390 px, taken in a visible headless
+  page, show the drawer in place.
+- Checks: strict lint of the kit site.
+
 ## 2026-11-10 — Release 3.2.0
 
 - deivid chose to release after ADP's trial. The trial passed without a kit
