@@ -54,6 +54,15 @@ rule text, changes no tooling, and needs no migration step.
   experiment directory records the pin, the command and the input identities.
   Uncommitted code, or code outside the repository, is kept as a copy or a
   diff. A project need not copy its source into every run folder.
+- [Rendered pages are for people](../../../rules/documentation.md#rendered-pages-are-for-people-records-stay-markdown)
+  told a project to preserve a hidden stub while dated or frozen links depend
+  on a removed page, while
+  [refactoring over compatibility](../../../rules/engineering/code.md#refactoring-over-compatibility)
+  leaves such a choice to the owner and tells it to add no redirects when
+  compatibility is not needed. The first rule now defers to the second: the
+  owner chooses between a hidden stub, which keeps the published address, and
+  the project's path adapter, which keeps the links resolving for lint and
+  lets the address go.
 
 ## 3.2.0 — topic group folders and folded navigation groups
 

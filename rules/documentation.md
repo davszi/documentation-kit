@@ -100,7 +100,7 @@ A rendered page explains current conclusions, accepted specifications, demonstra
 
 A site may also render a whole record as a [registered source page](site/authoring.md#registered-source-pages). The Markdown file stays the record and its only editable copy; the page adds no content of its own.
 
-When a page becomes predominantly agent-facing, move that material into records and retain its human-facing core in a page. Removing it from navigation or publication follows the deletion gate. Preserve a hidden stub and former anchors while dated or frozen links still depend on them.
+When a page becomes predominantly agent-facing, move that material into records and retain its human-facing core in a page. Removing it from navigation or publication follows the deletion gate. When dated or frozen links still point to a removed page, the owner decides under [refactoring over compatibility](engineering/code.md#refactoring-over-compatibility) how they keep resolving: a hidden stub with the former anchors, which also keeps the published address, or the project's [path adapter](site/resources.md#resource-closure-and-evidence), which maps the old path for lint and lets the address go. Lint rejects a frozen or dated link that neither covers.
 
 ## From open work to subject knowledge
 

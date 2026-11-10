@@ -2,6 +2,23 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-11 — Let the owner choose how links to a removed page keep resolving
+
+- Two rules disagreed. The documentation rule said to preserve a hidden stub
+  and the former anchors while dated or frozen links depend on a removed
+  page. Refactoring over compatibility leaves the choice to the owner and
+  says to add no redirects when compatibility is not needed.
+- ADP met it. On deivid's decision it removed eleven stub pages; three had
+  frozen or dated links, which now resolve through rows in ADP's location
+  map. The coordinator advised that without having read the stub sentence.
+- deivid chose "owner decides". The sentence now names both ways and what
+  each costs: a hidden stub also keeps the published address; the path
+  adapter keeps the links resolving for lint and lets the address go. Lint
+  already rejects a frozen or dated link that neither covers.
+- The page for people that repeats the sentence is brought in step, and the
+  3.2.1 notes list the change.
+- Checks: strict lint of the kit site.
+
 ## 2026-11-11 — Say when a source pin stands for producing code
 
 - ADP's experiment folders carry a source copy per run, and its open record

@@ -321,7 +321,7 @@ Coding agents read a repository's entry file before they act. The guide keeps th
 
 <!-- fold: dead-end When a page drifts toward agents -->
 
-When a page becomes predominantly agent-facing, its agent material moves into records and its human-facing core stays in a page. Removing the page from navigation or publication follows the deletion gate. A hidden stub and the former anchors are preserved while dated or frozen links still depend on them.
+When a page becomes predominantly agent-facing, its agent material moves into records and its human-facing core stays in a page. Removing the page from navigation or publication follows the deletion gate. When dated or frozen links still point to a removed page, the owner decides how they keep resolving. A hidden stub with the former anchors also keeps the published address. The project's path adapter maps the old path for lint and lets the address go. Lint rejects a frozen or dated link that neither covers.
 
 <!-- /fold -->
 
