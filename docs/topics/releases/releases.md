@@ -27,7 +27,7 @@ shows the new warnings.
 
 ## 3.2.1 — rule wording corrected
 
-3.2.1 is prepared on `main` and not yet tagged. It is a patch release under
+3.2.1 is a patch release under
 [what a version number promises](#what-a-version-number-promises): it corrects
 rule text, changes no tooling, and needs no migration step.
 

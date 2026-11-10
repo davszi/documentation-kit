@@ -49,7 +49,8 @@ shared independent-comparison component.
 [Releases and upgrades](topics/releases/releases.md) owns version changes,
 stable interfaces and what a version number promises. The
 [3.2.0 migration guide](topics/releases/migrations/3.2.0.md)
-moves 3.1.0 consumers to the current release; the
+moves 3.1.0 consumers to 3.2.0, and the current patch release 3.2.1 needs no
+further step; the
 [3.1.0 guide](topics/releases/migrations/3.1.0.md), the
 [3.0.0 guide](topics/releases/migrations/3.0.0.md), the
 [2.0.0 guide](topics/releases/migrations/2.0.0.md) and the

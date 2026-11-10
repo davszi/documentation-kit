@@ -2,6 +2,19 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-11 — Release 3.2.1
+
+- deivid approved the release after the pre-tag review and its corrections.
+  `VERSION` is `3.2.1`. The release notes no longer say that the release is
+  untagged. The README, project context and index name 3.2.1 as the current
+  release; it is a patch with no migration step, so the 3.2.0 guide stays the
+  newest guide.
+- The tag `v3.2.1` goes on the commit of `main` whose Pages workflow passes.
+- Not read by an independent reviewer: the corrections made after the review
+  and this commit.
+- Checks: `tests/run_checks.sh` with the browser suites passes (179 tests,
+  strict lint, 22 scripts, four suites).
+
 ## 2026-11-11 — Correct the four rule changes after the pre-tag review
 
 - An independent reviewer read everything since `v3.2.0` before the 3.2.1

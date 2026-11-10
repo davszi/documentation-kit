@@ -34,8 +34,9 @@ owns the shared panel switcher's authoring, behavior and extraction checks.
 
 [Releases and upgrades](topics/releases/releases.md) owns version notes and
 consumer migration steps; `VERSION` holds the current version.
-The [3.2.0 migration guide](topics/releases/migrations/3.2.0.md) covers the
-current release: topic group folders and folded navigation groups. The
+The current release is 3.2.1, a patch that corrects rule wording and needs no
+migration step. The [3.2.0 migration guide](topics/releases/migrations/3.2.0.md)
+covers topic group folders and folded navigation groups. The
 [3.1.0 guide](topics/releases/migrations/3.1.0.md) covers one site name in the
 sidebar header and two relaxed lint warnings. The [3.0.0 guide](topics/releases/migrations/3.0.0.md) covers the
 removed router anchors, the new `rules/records.md` with record first and page
