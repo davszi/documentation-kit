@@ -2,6 +2,18 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Record what ADP's upgrade to 3.0.0 showed about the kit
+
+- ADP was upgraded from 1.1.0 to 3.0.0 on its own branch, not yet merged. Its
+  12 validation commands pass, and all 35 pages keep their chapter, fold,
+  figure, formula and link counts against the 1.1.0 build.
+- The upgrade showed four gaps in the kit, now in
+  [open work](open/adp-upgrade-findings.md): the 3.0.0 guide maps one anchor to
+  a guide that only forwards the experiment floor; the reader header shows each
+  page's `brand`, which ADP sets per page; strict lint cannot pass in ADP; the
+  ∿ mark is faint in its box. No kit code changed.
+- Checks: strict lint of the kit site.
+
 ## 2026-11-10 — Release 3.0.0
 
 - deivid approved the release after the pre-tag review. `VERSION` is `3.0.0`.
