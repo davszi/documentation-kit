@@ -2,7 +2,8 @@
 
 Open work. ADP moved from kit 1.1.0 to 3.0.0 on 2026-11-10, on its branch
 `upgrade-kit-3.0.0` (first commit `05b3b110`). The upgrade
-passed ADP's checks. It also showed five gaps in the kit. The evidence is
+passed ADP's checks. It also showed gaps in the kit; four are open here. A
+fifth, that strict lint could not pass in ADP, is fixed in 3.0.1. The evidence is
 verified in ADP's upgrade record,
 `docs/topics/documentation-site/documentation-site.md`; no fix is decided.
 
@@ -47,17 +48,6 @@ guide defines `brand`.
 Open choice, for deivid: the header names the site, from `home_label` or
 `title`, and page `brand` goes away; or `brand` stays and the guides define it
 as the project name.
-
-## Strict lint cannot pass in ADP
-
-The [conformance check](../../rules/conformance.md) asks that
-`lint --strict` passes. In ADP it fails on 19 worklog entries without a commit
-hash and on 2 registered local-artifact notices, apart from the topic pages
-without a record. The worklog is append-only, so those 19 entries cannot be
-changed, and the 2 notices report an intended state.
-
-Next step: decide whether intended notices should count as warnings, and how a
-project accepts historical worklog entries.
 
 ## The ∿ mark is faint in its box
 

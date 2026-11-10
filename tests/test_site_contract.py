@@ -78,6 +78,36 @@ class SiteContract(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('page_number_notes must be true or false', result.stdout + result.stderr)
 
+    def test_declared_local_artifact_is_a_note_that_strict_lint_accepts(self):
+        context = self.root / 'docs/PROJECT_CONTEXT.md'
+        manifest = self.root / 'docs/evidence/local-artifacts.json'
+        manifest.parent.mkdir(parents=True, exist_ok=True)
+        manifest.write_text('{"omitted_files": ["experiments/run/data.jsonl"]}\n')
+        original = context.read_text()
+        context.write_text(original + '\nThe run kept [its data](../experiments/run/data.jsonl) locally.\n')
+        self.assertEqual(self.build().returncode, 0)
+        result = invoke('lint', '--project', self.root, '--strict')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn('NOTE: docs/PROJECT_CONTEXT.md: artifact retained locally, omitted from push: ../experiments/run/data.jsonl', result.stdout)
+        self.assertNotIn('WARN', result.stdout)
+        self.assertIn('lint clean (0 warning(s))', result.stdout)
+        # A missing file that the manifest does not list stays an error.
+        context.write_text(original + '\nThe run lost [its data](../experiments/run/other.jsonl).\n')
+        self.assertEqual(self.build().returncode, 0)
+        result = invoke('lint', '--project', self.root)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('other.jsonl', result.stderr)
+
+    def test_worklog_entry_without_a_commit_hash_passes_strict_lint(self):
+        worklog = self.root / 'docs/worklog.md'
+        text = worklog.read_text()
+        first = text.index('\n## ')
+        worklog.write_text(text[:first] + '\n## 2999-01-01\n\n- **Landing.** Changed the build without naming a commit.\n' + text[first:])
+        self.assertEqual(self.build().returncode, 0)
+        result = invoke('lint', '--project', self.root, '--strict')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn('commit hash', result.stdout)
+
     def test_included_fragments_may_include_others(self):
         (self.fragments / 'outer.html').write_text('<p id="outer-part">outer</p>\n<!-- include: fragments/inner.html -->\n')
         (self.fragments / 'inner.html').write_text('<p id="inner-part">inner</p>\n')

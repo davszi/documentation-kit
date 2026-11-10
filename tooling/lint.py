@@ -14,8 +14,7 @@ Checks (the shared guides under rules/ are the spec):
      (--registry dumps the marker registry and exits)
   6. OPEN.md format: every bullet links its owning doc; no strikethrough /
      checkboxes / DONE markers (lines get deleted, not struck)
-  7. worklog format: ## YYYY-MM-DD sections newest-first; probe-line shape;
-     landing entries without a commit hash = warning
+  7. worklog format: ## YYYY-MM-DD sections newest-first; probe-line shape
   8. .build/docs/html freshness (`build.py --check`)
   9. built html loads no external resources (external <a> navigation is fine)
  10. relocated evidence records retain their manifest bytes and identities
@@ -29,6 +28,8 @@ Notes (never fail, not even under --strict): a changed record section
 it, so someone rereads them.
 A topic page also gets a note for each number in its prose that none of its
 linked records state; values shown as code are not checked.
+A link to a file that the local-artifact manifest lists under `omitted_files`
+gets a note when the file is absent: the project declared that state.
 
 Exit 0 clean (warnings print unless --strict fails them), 1 on errors.
 """
@@ -58,6 +59,14 @@ def error(msg: str) -> None:
 
 def warn(msg: str) -> None:
     warnings.append(msg)
+
+
+notices: list[str] = []
+
+
+def notice(msg: str) -> None:
+    """A declared state worth showing; it never fails, not even under --strict."""
+    notices.append(msg)
 
 
 def retained_locally(dest: Path) -> bool:
@@ -298,7 +307,7 @@ def _check_chunk_links(f: Path, text: str, base: Path) -> None:
                     continue
             if not dest.exists():
                 if retained_locally(dest):
-                    warn(f"{rel}: artifact retained locally, omitted from push: {target}")
+                    notice(f"{rel}: artifact retained locally, omitted from push: {target}")
                 else:
                     error(f"{rel}: dead link {target}")
                 continue
@@ -325,7 +334,7 @@ def check_html() -> None:
                 continue
             if not resolve_path(DOCS / "html" / path_part).exists():
                 if retained_locally(resolve_path(DOCS / "html" / path_part)):
-                    warn(f"{rel}: artifact retained locally, omitted from push: {href}")
+                    notice(f"{rel}: artifact retained locally, omitted from push: {href}")
                 else:
                     error(f"{rel}: dead relative href {href}")
         # external resource loads (navigation <a> is allowed, resources are not)
@@ -339,7 +348,7 @@ def check_html() -> None:
                     resource = resolve_path(DOCS / "html" / target.partition("#")[0].partition("?")[0])
                     if not resource.is_file():
                         if retained_locally(resource):
-                            warn(f"{rel}: artifact retained locally, omitted from push: {target}")
+                            notice(f"{rel}: artifact retained locally, omitted from push: {target}")
                         else:
                             error(f"{rel}: dead {tag} resource {target}")
         for m in re.finditer(r"url\(\s*['\"]?(https?:)?//", text):
@@ -507,17 +516,6 @@ def check_worklog() -> None:
     for i, line in enumerate(f.read_text().splitlines(), 1):
         if re.match(r"^- probed\b", line) and "→" not in line:
             error(f"worklog.md:{i}: probe line missing '→ verdict'")
-        if re.match(r"^- \*\*", line) and not re.search(r"\b[0-9a-f]{7}\b", line):
-            # landing bullets usually open with their hashes on the same line
-            entry_ok = False
-            # allow hash on the following 3 lines of the same entry
-            lines = f.read_text().splitlines()
-            for j in range(i, min(i + 3, len(lines))):
-                if re.search(r"\b[0-9a-f]{7}\b", lines[j]):
-                    entry_ok = True
-                    break
-            if not entry_ok:
-                warn(f"worklog.md:{i}: landing without a commit hash nearby")
 
 
 def check_tails() -> None:
@@ -604,6 +602,8 @@ def main() -> int:
 
     for w in warnings:
         print(f"WARN: {w}")
+    for n in notices:
+        print(f"NOTE: {n}")
     for note in notes:
         print(note)
     for e in errors:

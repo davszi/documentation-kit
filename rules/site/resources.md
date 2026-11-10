@@ -13,6 +13,10 @@ is absent, the project has no manifest. An explicitly configured missing file
 fails. This setting changes the inventory location, not its schema or the
 project's evidence requirements.
 
+A link to a file that the manifest lists under `omitted_files` is a declared
+state. When the file is absent, lint prints a note, which never fails, not even
+under `--strict`. A missing file that the manifest does not list is an error.
+
 Projects with existing historical-path or evidence schemas can register local
 Python adapters using `path_resolver = "tools/docs/site_paths.py"` and
 `evidence_validator = "tools/docs/evidence_documents.py"` in `site.toml`.

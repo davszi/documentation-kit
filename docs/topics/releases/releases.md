@@ -17,11 +17,32 @@ project may rely on. From 3.0.0 the version number means this:
 - A **minor** release adds to the stable interfaces. It may also add lint
   warnings, which fail `--strict`, change how the shared theme looks, and change
   or remove a provisional interface.
+- A **patch** release corrects a defect or relaxes a check. A project that
+  passed before still passes, and it needs no migration step.
 
 The release notes list every such change, and the version's migration guide
 gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
+
+## 3.0.1 — two lint warnings that a project could not clear
+
+Not tagged yet: these changes are on `main` after 3.0.0, and `VERSION` changes
+when the release is tagged. It is a patch release: lint only becomes less
+strict, and no project needs a migration step.
+
+- A link to a file that the local-artifact manifest lists under
+  `omitted_files` now gets a note when the file is absent. It was a warning,
+  so `lint --strict` failed on a state the project had declared on purpose.
+  A missing file that the manifest does not list is still an error.
+- Lint no longer warns about a worklog entry without a commit hash. The check
+  recognised only entries written as a bold bullet, so it skipped every other
+  entry, and an append-only worklog could never clear its old hits. The rule
+  that a landing records its commit stays in
+  [rules for changes and chronology](../../../rules/documentation.md#rules-for-changes-and-chronology).
+
+A project whose only remaining warnings were of these two kinds now passes
+`lint --strict`.
 
 ## 3.0.0 — router anchors removed, topic records and repository files in the sidebar
 

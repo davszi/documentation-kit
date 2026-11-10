@@ -2,6 +2,27 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Let strict lint pass where a project declared the state
+
+- ADP could never pass `lint --strict`: 2 warnings reported files that its
+  local-artifact manifest lists as kept locally on purpose, and 19 reported old
+  worklog entries without a commit hash, which an append-only worklog cannot
+  change. deivid approved both changes.
+- A link to a file listed under `omitted_files` now gets a note when the file
+  is absent. Notes never fail. A missing file that is not listed stays an
+  error.
+- The worklog hash check is removed. It recognised only bold-bullet entries, so
+  it checked neither the kit's own worklog nor ADP's newer entries. The written
+  rule that a landing records its commit is unchanged.
+- The version promise gains the patch level: a patch corrects a defect or
+  relaxes a check and needs no migration step. The release notes carry these
+  changes as 3.0.1, not tagged yet.
+- Two new tests fail on the old code and pass now. Checks:
+  `tests/run_checks.sh` with the browser suites passes (169 tests, strict lint,
+  22 scripts, four suites). ADP's branch `upgrade-kit-3.0.0` linted with this
+  code reports 24 warnings, down from 45, all of them topic pages without a
+  record.
+
 ## 2026-11-10 — Add ADP's couplings to the simplification record
 
 - The [simplification record](open/simplify-frozen-record-machinery.md) gains
