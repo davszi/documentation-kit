@@ -19,7 +19,8 @@ Checks (the shared guides under rules/ are the spec):
   9. built html loads no external resources (external <a> navigation is fine)
  10. relocated evidence records retain their manifest bytes and identities
  11. the project's pinned kit commit is on a remote branch of the kit
- 12. topic structure: each docs/topics/<topic>/ page has a record beside it
+ 12. topic structure: each topic page, docs/topics/<topic>/index.md or one level
+     deeper in a folder named by `topic_group_folders`, has a record beside it
      (another .md outside evidence/) or declares `page_only = "<reason>"`;
      an empty page_only is an error, an unneeded one a warning; home exempt
 
@@ -540,8 +541,10 @@ def check_build() -> None:
 
 
 def check_topic_structure() -> None:
-    from topic_structure import topic_structure_problems
+    from topic_structure import topic_structure_problems, undeclared_nested_pages
     found_errors, found_warnings = topic_structure_problems(REPO)
+    for note in undeclared_nested_pages(REPO):
+        notice(note)
     errors.extend(found_errors)
     warnings.extend(found_warnings)
 

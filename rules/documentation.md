@@ -37,6 +37,10 @@ This guide owns where a document lives, the order in which documentation is writ
 | `.build/docs/` | Ignored generated site; never hand-edit or commit |
 | `README.md` | Bounded human landing summary, with links to canonical homes |
 
+A project may keep topic folders one level deeper, inside a
+[topic group folder](site/authoring.md#topic-group-folders); the `docs/topics/<topic>/`
+paths above then gain the group folder's name.
+
 These are canonical roles for new projects. Existing projects may keep explicit
 local destinations; follow [refactoring over compatibility](engineering/code.md#refactoring-over-compatibility)
 before keeping old routes. Create a directory or document only

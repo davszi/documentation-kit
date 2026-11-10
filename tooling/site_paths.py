@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import tomllib
 from project_extensions import load_extension
+import topic_structure as _topics
 
 REPO = Path(os.environ.get("DOCSITE_PROJECT_ROOT", Path.cwd())).resolve()
 DOCS = REPO / "docs"
@@ -13,6 +14,7 @@ OUTPUT_ROOT = REPO / ".build" / "docs"
 HTML = OUTPUT_ROOT / "html"
 _config_path = SITE / "site.toml"
 _config = tomllib.loads(_config_path.read_text()) if _config_path.is_file() else {}
+_TOPIC_GROUPS = _topics.topic_group_folders(REPO)
 _project_paths = load_extension(REPO, 'path_resolver')
 if _project_paths is not None and not callable(getattr(_project_paths, 'resolve_legacy_path', None)):
     raise ValueError('path_resolver must export resolve_legacy_path')
@@ -24,16 +26,17 @@ for old, new in LEGACY_FILES.items():
         raise ValueError("legacy_files paths must stay inside the project")
 
 
+def _topic_groups(root):
+    # The running project's configuration is already loaded; other roots are read on demand.
+    return _TOPIC_GROUPS if Path(root) == REPO else _topics.topic_group_folders(root)
+
+
 def topic_pages(root=REPO):
-    return sorted((Path(root) / "docs/topics").glob("*/index.md"))
+    return _topics.topic_pages(root, _topic_groups(root))
 
 
 def is_topic_page(path, root=REPO):
-    try:
-        relative = Path(path).relative_to(Path(root) / "docs/topics")
-    except ValueError:
-        return False
-    return len(relative.parts) == 2 and relative.name == "index.md"
+    return _topics.is_topic_page(path, root, _topic_groups(root))
 
 
 def local_artifacts_manifest(root=REPO, *, site=None):

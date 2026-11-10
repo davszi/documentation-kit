@@ -2,6 +2,53 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Topic group folders and folded navigation groups
+
+- deivid asked, through ADP's topic-record work, for a folder of folders under
+  `docs/topics/` and for one sidebar group that folds. ADP keeps four parked
+  topics and wants them apart from its current ones in the source tree and in
+  the sidebar.
+- `topic_group_folders` names folders under `docs/topics/` that hold topic
+  folders. Discovery is now one function, `topic_pages` in
+  `tooling/topic_structure.py`; `site_paths`, `record_changes`, `source_pages`
+  and the topic structure check all use it. The setting is explicit because a
+  topic folder may already hold a file named `index.md` two levels down, and
+  guessing would turn such a file into a page.
+- The page's address stays `<topic>.html`. The build already took the address
+  from the topic folder's name, and it already rejected a duplicate.
+- `folded_groups` turns a named group of the flat site tree into a native
+  disclosure. It keeps the section's look and gains a chevron. `nav.js` stores
+  the reader's choice with the same code as `nested_nav`.
+- Lint gains a note for a page two levels down in an undeclared folder.
+- The rule text is in `rules/site/authoring.md` and one sentence in
+  `rules/documentation.md`. The [release notes](topics/releases/releases.md)
+  and the [3.2.0 migration guide](topics/releases/migrations/3.2.0.md)
+  describe the change for consumers. `VERSION` stays `3.1.0` until deivid
+  approves the release.
+- An independent reviewer read the working tree before the commit: no blocker,
+  two corrections and six minor points. Corrected: the rule and the guide said
+  that page-body links stay as they are, which is wrong for a link into the
+  moved folder itself; the guide omitted `page_css`, `[[source_pages]]`,
+  `[extra_assets]` and `OPEN.md` paths; a folded group that other entries
+  split is now rejected; the home entry's group no longer counts as a group to
+  fold. Left as they are: a stored group cannot be closed on the page where it
+  is open by default, which `nested_nav` has too, and a page three levels down
+  gets no note.
+- By eye, on a scratch site at 1600×1000 and 390×844: the folded group closed
+  on pages outside it, open with the chapters inside it on its own pages, no
+  horizontal overflow, the reader's choice kept on the next page, and opening
+  without JavaScript.
+- No browser suite covers the folded group; the kit's own site and the starter
+  do not set it.
+- Not checked in a consumer: ADP's four pages, its own code that walks
+  `docs/topics/`, and frozen files inside a moved folder.
+- The pages for people that explain the changed rule sections (Build a site,
+  Get started, Documentation and writing) describe the default layout,
+  `docs/topics/*/index.md`, which is unchanged. They do not mention the two
+  settings.
+- Checks: `tests/run_checks.sh` with the browser suites passes (179 tests,
+  strict lint, 22 scripts, four suites, 40 pages).
+
 ## 2026-11-10 — Release 3.1.0
 
 - deivid approved the release after the pre-tag review and its corrections.

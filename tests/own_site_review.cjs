@@ -101,7 +101,7 @@ const SHOTS = ['index', 'getting-started', 'build-a-site', 'git', 'releases', 'r
       // "Browse by folder" disclosure, closed on pages for people and pinned records,
       // open to an unpinned record.
       const pinnedRoutes = ['readme.html'];
-      const releaseRoutes = ['releases.html', 'migrate-3-1-0.html', 'migrate-3-0-0.html', 'migrate-2-0-0.html', 'migrate-1-1-0.html'];
+      const releaseRoutes = ['releases.html', 'migrate-3-2-0.html', 'migrate-3-1-0.html', 'migrate-3-0-0.html', 'migrate-2-0-0.html', 'migrate-1-1-0.html'];
       for (const [slug, open, folders] of [['index', false, []], ['getting-started', false, []],
                                            ['releases', false, ['docs/', 'topics/', 'releases/']],
                                            ['git', true, ['rules/', 'engineering/']]]) {

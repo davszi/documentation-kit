@@ -147,6 +147,18 @@ class RecordChangeNotes(unittest.TestCase):
         self.assertEqual(self.notes(), [note('rules/code.md › Refactoring over compatibility',
                                              PRACTICE)])
 
+    def test_a_page_in_a_topic_group_folder_is_reminded_like_any_page(self):
+        nested = 'docs/topics/parked/old-practice/index.md'
+        self.write(nested, PRACTICE_PAGE)
+        git(self.root, 'add', '-A')
+        git(self.root, 'commit', '-q', '-m', 'Add a nested page')
+        self.edit('Remove the old form', 'Remove every old form')
+        # Two levels down, the file is not a page until the site names its group folder.
+        self.assertEqual(self.notes(), [note('rules/code.md › Refactoring over compatibility', PRACTICE)])
+        self.write('docs/site/site.toml', 'topic_group_folders = ["parked"]\n' + SITE)
+        self.assertEqual(self.notes(), [note('rules/code.md › Refactoring over compatibility',
+                                             nested + '  (chapter: compatibility)', PRACTICE)])
+
     def test_subsection_change_reaches_links_to_its_enclosing_section(self):
         self.edit('Detail text.', 'Changed detail.')
         self.assertEqual(self.notes(), [note('rules/code.md › Nested detail', PRACTICE)])
@@ -292,6 +304,20 @@ class TopicStructure(unittest.TestCase):
         self.assertEqual(topic_structure_problems(self.root), ([], [
             'docs/topics/alone: page without a record; add docs/topics/alone/alone.md '
             'or declare page_only = "<reason>" in its frontmatter']))
+
+    def test_topic_in_a_group_folder_needs_a_record_like_any_topic(self):
+        site = self.root / 'docs/site/site.toml'
+        site.parent.mkdir(parents=True)
+        site.write_text('topic_group_folders = ["parked"]\n')
+        self.page('parked/alone')
+        self.page('parked/paired')
+        self.record('parked/paired/paired.md')
+        self.assertEqual(topic_structure_problems(self.root), ([], [
+            'docs/topics/parked/alone: page without a record; add docs/topics/parked/alone/alone.md '
+            'or declare page_only = "<reason>" in its frontmatter']))
+        # Without the declaration neither file is a topic page, so the check has nothing to say.
+        site.write_text('')
+        self.assertEqual(topic_structure_problems(self.root), ([], []))
 
     def test_records_anywhere_in_the_folder_except_evidence_count(self):
         self.page('paired')

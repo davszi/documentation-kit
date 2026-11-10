@@ -3,7 +3,8 @@
 
     python .docs-kit/docsite.py build --project . [--check] [--page <slug>]
 
-Sources: docs/topics/*/index.md (TOML frontmatter between +++ fences, markdown
+Sources: docs/topics/*/index.md, or one level deeper in a `topic_group_folders`
+folder (TOML frontmatter between +++ fences, markdown
 body with raw-HTML passthrough and <!-- include: … --> directives), shared
 components in docs/site/components/, vendored assets in docs/site/assets/.
 Site config: docs/site/site.toml.
@@ -710,7 +711,12 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
     # Registered records are listed by the repository tree; pages need a nav entry.
     if fname not in {n["file"] for n in nav_entries} and fname not in {f.route for f in tree}:
         err(f"{name}: {fname} missing from site.toml [[nav]] registry")
-    crossnav_lines, last_group = [], None
+    crossnav_lines, last_group, section_close = [], None, '    </div>'
+    # `folded_groups`: a named group is a native disclosure, closed unless it
+    # holds the current page. It works without JavaScript and with the reader.
+    folded = set(site.get("folded_groups", []))
+    current_group = next((n.get("group") for n in nav_entries
+                          if n["file"] == fname and not n.get("hidden", False) and fname != "index.html"), None)
     # One site tree on every page; the current page stays in place so the
     # chapter reader can nest its chapters under it.
     for n_entry in nav_entries:
@@ -721,10 +727,16 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
         if group != last_group:
             # Each group is one section: its label, then its pages.
             if last_group:
-                crossnav_lines.append('    </div>')
-            if group:
+                crossnav_lines.append(section_close)
+            if group and group in folded:
+                opened = " open data-nav-default" if group == current_group else ""
+                crossnav_lines.append(f'    <details class="nav-section nav-section-fold" data-group="{html.escape(group)}"{opened}>')
+                crossnav_lines.append(f'    <summary class="nav-group" data-group="{html.escape(group)}">{html.escape(group)}</summary>')
+                section_close = '    </details>'
+            elif group:
                 crossnav_lines.append(f'    <div class="nav-section" data-group="{html.escape(group)}">')
                 crossnav_lines.append(f'    <span class="nav-group" data-group="{html.escape(group)}">{html.escape(group)}</span>')
+                section_close = '    </div>'
             last_group = group
         attrs = ' class="xpage current" aria-current="page"' if current else ' class="xpage"'
         if group:
@@ -734,7 +746,7 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
             attrs += f' title="{html.escape(n_entry["label"], quote=True)}"'
         crossnav_lines.append(f'    <a{attrs} href="{n_entry["file"]}">{html.escape(short)}</a>')
     if last_group:
-        crossnav_lines.append('    </div>')
+        crossnav_lines.append(section_close)
     crossnav = "\n".join(crossnav_lines)
     toc = toc_html(meta.get("toc", []), name, id_to_panel)
     if site.get("nested_nav") and "chapter-reader" not in comps:
@@ -917,6 +929,26 @@ def main() -> int:
         ap.error("site.toml: page_number_notes must be true or false")
     if not isinstance(site.get("home_label", ""), str):
         ap.error("site.toml: home_label must be text")
+    from topic_structure import GROUP_FOLDER_NAME
+    group_folders = site.get("topic_group_folders", [])
+    if (not isinstance(group_folders, list) or len(set(map(str, group_folders))) != len(group_folders)
+            or any(not isinstance(name, str) or not GROUP_FOLDER_NAME.fullmatch(name) for name in group_folders)):
+        ap.error("site.toml: topic_group_folders must list distinct folder names under docs/topics, without slashes")
+    folded = site.get("folded_groups", [])
+    if not isinstance(folded, list) or any(not isinstance(name, str) for name in folded) or len(set(folded)) != len(folded):
+        ap.error("site.toml: folded_groups must list distinct navigation group names")
+    # The sidebar lists visible entries except the home page, one section per run of a group.
+    runs: list = []
+    for entry in site.get("nav", []):
+        if entry.get("hidden", False) or entry["file"] == "index.html":
+            continue
+        if not runs or runs[-1] != entry.get("group"):
+            runs.append(entry.get("group"))
+    for name in folded:
+        if name not in runs:
+            ap.error(f"site.toml: folded_groups names {name!r}, which no visible [[nav]] entry uses as its group")
+        if runs.count(name) > 1:
+            ap.error(f"site.toml: folded group {name!r} is split by other [[nav]] entries; keep its entries together")
     global KNOWN_COMPONENTS
     extra = site.get("extra_components", [])
     if not isinstance(extra, list) or any(not isinstance(c, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", c) or c in KNOWN_COMPONENTS for c in extra) or len(set(extra)) != len(extra):
@@ -938,6 +970,15 @@ def main() -> int:
     md_files = topic_pages()
     for flat_source in sorted(PAGES.glob("*.md")):
         err(f"flat topic source {flat_source.name}: use <topic>/index.md")
+    for group in site.get("topic_group_folders", []):
+        folder = PAGES / group
+        if not folder.is_dir():
+            err(f"topic_group_folders: docs/topics/{group} is not a folder")
+            continue
+        # A group folder only groups: its pages and records live in the topic folders inside it.
+        for flat_source in sorted(folder.glob("*.md")):
+            err(f"topic group folder {group} holds {flat_source.name}: a group folder holds only topic folders; "
+                f"use {group}/<topic>/{flat_source.name}")
     if not md_files:
         err(f"no pages found in {PAGES}")
     from source_pages import fragment_problems, load_registry

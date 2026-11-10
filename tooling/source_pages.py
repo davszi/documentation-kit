@@ -22,6 +22,8 @@ import posixpath
 import re
 from urllib.parse import quote, unquote, urlsplit
 
+from topic_structure import is_topic_page, topic_group_folders
+
 SOURCE_KEYS = {"source", "slug", "title", "description", "math", "reader", "pinned"}
 _SLUG = re.compile(r"[a-z0-9][a-z0-9-]*")
 _TAG = re.compile(r"<(a|img|video|audio|source|iframe)\b[^>]*>", re.I)
@@ -49,6 +51,7 @@ def load_registry(site: dict, root: Path, tracked: frozenset[Path]) -> tuple[lis
     """Validate `[[source_pages]]`; return the pages and every problem found."""
     entries = site.get("source_pages", [])
     problems: list[str] = []
+    topic_groups = topic_group_folders(root)
     if not isinstance(entries, list) or any(not isinstance(entry, dict) for entry in entries):
         return [], ["site.toml: source_pages must be a list of [[source_pages]] tables"]
     pages: list[SourcePage] = []
@@ -85,7 +88,7 @@ def load_registry(site: dict, root: Path, tracked: frozenset[Path]) -> tuple[lis
         if path not in tracked or not path.is_file():
             problems.append(f"source page {source}: source must be a tracked file")
             continue
-        if relative.parts[:2] == ("docs", "topics") and len(relative.parts) == 4 and relative.name == "index.md":
+        if is_topic_page(root / relative, root, topic_groups):
             problems.append(f"source page {source}: topic entry pages render through their own frontmatter")
             continue
         if path.read_text().startswith("+++\n"):

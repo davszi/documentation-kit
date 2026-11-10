@@ -25,6 +25,41 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## 3.2.0 — topic group folders and folded navigation groups
+
+3.2.0 is prepared on `main` and not yet tagged. It is a minor release under
+[what a version number promises](#what-a-version-number-promises): it adds two
+optional settings to the stable interfaces, and a project that sets neither
+builds the same pages, addresses and sidebar as before. The
+[3.2.0 migration guide](migrations/3.2.0.md) gives the steps.
+
+- `topic_group_folders = ["parked"]` in `docs/site/site.toml` lets topic
+  folders live one level deeper, at `docs/topics/<group>/<topic>/index.md`.
+  A nested topic counts like any other in the build, in lint, in the
+  record-or-`page_only` check and in the lint notes. Its address stays
+  `<topic>.html`, so moving a topic into a group folder changes no published
+  address. [Topic group folders](../../../rules/site/authoring.md#topic-group-folders)
+  has the rules: one group level, no Markdown file directly in a group folder,
+  and no two topics with the same folder name.
+- `folded_groups = ["parked"]` folds the named navigation groups in the flat
+  site tree, on pages with and without the chapter reader. A folded group is
+  closed unless it holds the current page, remembers a reader's choice in the
+  browser and works without JavaScript.
+  [Authoring paths](../../../rules/site/authoring.md#authoring-paths) describes
+  it beside `nested_nav`, which folds every group and only on pages without
+  the reader.
+- Lint prints a note for a page two levels below `docs/topics/` whose parent
+  folder is not a declared group folder and has no page of its own. Such a
+  page was never built, and before this release nothing said so. The note
+  never fails lint.
+
+`site.toml` has no check for unknown top-level keys, so a project that already
+used a key named `topic_group_folders` or `folded_groups` for something else
+must rename its own key.
+
+ADP asked for both settings, to keep four parked topics apart from its current
+ones in the source tree and in the sidebar.
+
 ## 3.1.0 — one site name in the sidebar header, two lint warnings relaxed
 
 3.1.0 is a minor release under

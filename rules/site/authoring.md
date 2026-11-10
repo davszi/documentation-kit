@@ -5,7 +5,7 @@
 | Location in consuming repository | Responsibility |
 |---|---|
 | `.docs-kit/` | Git submodule at a reviewed commit: shared rules, engine, templates, components, dependencies and checks |
-| `docs/topics/<topic>/index.md` | Editable rendered page, with supporting records beside it |
+| `docs/topics/<topic>/index.md`, or one level deeper in a [topic group folder](#topic-group-folders) | Editable rendered page, with supporting records beside it |
 | `docs/site/site.toml` | Project title, source repository/ref, navigation, reader and project resource configuration |
 | `docs/site/assets/`, `docs/site/fragments/` | Project-owned assets and explicit overrides; do not copy the entire theme |
 | `docs/figures/` | Shared project figures with declared provenance |
@@ -28,7 +28,7 @@ Use `--page <slug>` with build for targeted iteration. Lint supports `--strict` 
 
 ## Authoring paths
 
-Two kinds of page render: topic entry pages at `docs/topics/*/index.md` and [registered source pages](#registered-source-pages). Every new entry page needs frontmatter with `title` and `toc` (an empty list is valid with automatic chapters), plus a corresponding `[[nav]]` entry in `docs/site/site.toml`. The folder supplies its public slug; set `slug = "index"` on the home page. Slugs are lowercase filename stems without directories. Use `hidden = true` for a built, directly reachable page outside navigation, subject to the documentation deletion policy.
+Two kinds of page render: topic entry pages at `docs/topics/*/index.md`, or inside a [topic group folder](#topic-group-folders), and [registered source pages](#registered-source-pages). Every new entry page needs frontmatter with `title` and `toc` (an empty list is valid with automatic chapters), plus a corresponding `[[nav]]` entry in `docs/site/site.toml`. The folder supplies its public slug; set `slug = "index"` on the home page. Slugs are lowercase filename stems without directories. Use `hidden = true` for a built, directly reachable page outside navigation, subject to the documentation deletion policy.
 
 A rendered page body above `<!-- page-end -->` uses the logical public `docs/html/` URL origin, mapped to `.build/docs/html/`. Its source-only notes tail resolves from the actual source folder. Normal Markdown records resolve links from their own folder.
 
@@ -91,6 +91,17 @@ keeps working without JavaScript. Groups a reader opens stay open on later
 pages through browser storage, and open or close with a short transition that
 respects reduced motion. The default is the flat site tree.
 
+`folded_groups = ["parked"]` folds the named navigation groups, one disclosure
+per group, and leaves the other groups as they are. The `[[nav]]` entries of a
+folded group stand together; the build rejects a folded group that other
+entries split. A folded group is closed
+unless it holds the current page. A group the reader opens stays open on later
+pages through browser storage. The setting applies to the flat site tree, so it
+works on pages with the chapter reader, and it keeps working without
+JavaScript. Each name must be the `group` of a visible `[[nav]]` entry. With
+`nested_nav = true`, pages without the chapter reader already fold every group
+and the setting changes nothing there.
+
 Register project-specific script components with `extra_components = ["viewer"]`;
 each uses a tracked `docs/site/components/<name>.js`. For dynamically loaded
 dependencies, `[extra_assets]` maps output names below `html/assets/` to tracked
@@ -108,6 +119,43 @@ Wrap a wide comparison table in `.scroll` with `role="region"`, a useful
 and keyboard arrows inside the table instead of changing chapters. Pages with
 `body_class = "reference-page"` get this region on every Markdown table
 automatically.
+
+### Topic group folders
+
+A project may keep some topic folders one level deeper, inside a group folder:
+`docs/topics/<group>/<topic>/index.md`. Name each group folder in
+`docs/site/site.toml`, above the first `[[nav]]` table:
+
+```toml
+topic_group_folders = ["parked"]
+```
+
+A topic inside a group folder counts like any other topic: its page builds, it
+needs a record or `page_only`, and the lint notes cover it. The page's address
+stays `<topic>.html`. The folder says where the source lives; the `group` of
+the page's `[[nav]]` entry says where a reader finds it. Moving a topic into or
+out of a group folder therefore changes no published address. Two topics with
+the same folder name would share one address, so the build rejects them.
+
+A group folder only groups. It holds topic folders and no Markdown file of its
+own, and there is exactly one group level. A page two levels down in a folder
+that the setting does not name is not built; lint prints a note for it.
+
+Moving a topic changes these paths in the same change:
+
+- Links in the page body, above `<!-- page-end -->`, resolve from the built
+  page. A link to another page or to a shared figure stays as it is. A link
+  into the moved folder itself, such as `../topics/<topic>/<topic>.md`, gains
+  the group folder: `../topics/<group>/<topic>/<topic>.md`.
+- Links in the topic's records, and in notes below `<!-- page-end -->`,
+  resolve from the file, so each relative link that leaves the folder gains or
+  loses one `../`.
+- Paths written from another base name the folder too: a `page_css` entry
+  inside the topic folder, a `[[source_pages]]` `source`, an `[extra_assets]`
+  source, and links from other files such as `docs/open/OPEN.md`.
+
+Lint reports a link it can no longer resolve as a dead link, and the build
+rejects a registered source or stylesheet that is missing.
 
 ### Registered source pages
 

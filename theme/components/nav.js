@@ -8,11 +8,12 @@
   document.querySelectorAll('.toc a').forEach(function(a){ a.addEventListener('click', closeNav); });
 })();
 
-// nested_nav: groups the reader opens stay open across pages (per viewer, best
-// effort). Groups the server opened (the current page's, or the first on the
-// home page) are not stored, so only the reader's own choices persist.
+// nested_nav and folded_groups: groups the reader opens stay open across pages
+// (per viewer, best effort). Groups the server opened (the current page's, or
+// with nested_nav the first on the home page) are not stored, so only the
+// reader's own choices persist.
 (function(){
-  var folds = document.querySelectorAll('.toc details.nav-fold');
+  var folds = document.querySelectorAll('.toc details.nav-fold, .toc details.nav-section-fold');
   if (!folds.length) return;
   var key = 'docsite-nav-open:' + (document.body.getAttribute('data-site-home-label') || '');
   var opened = [];

@@ -372,6 +372,21 @@ body.reference-page .content figure{margin:18px 0}
 .toc .nav-sections a.sub-link{padding-left:22px;font-size:12px}
 .toc .nav-sections a.active{color:var(--adp)}
 @media (prefers-reduced-motion:reduce){.toc details.nav-fold>summary.nav-group,.toc details.nav-fold>summary.nav-group::before,.toc details.nav-fold::details-content{transition:none}}
+/* folded_groups: one group of the flat site tree folds. It keeps the section's
+   look; a chevron at the end of its label shows the state. */
+.toc:has(details.nav-section-fold){interpolate-size:allow-keywords}
+.toc details.nav-section-fold>summary.nav-group{cursor:pointer;list-style:none;border-radius:6px;transition:color .2s}
+.toc details.nav-section-fold>summary.nav-group::-webkit-details-marker{display:none}
+.toc details.nav-section-fold>summary.nav-group::after{content:"";flex:none;width:6px;height:6px;margin:0 6px 2px auto;
+  border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:rotate(-45deg);
+  transition:transform .25s cubic-bezier(.2,.7,.2,1)}
+.toc details.nav-section-fold[open]>summary.nav-group::after{transform:rotate(45deg)}
+.toc details.nav-section-fold>summary.nav-group:hover{color:var(--bright)}
+.toc details.nav-section-fold>summary.nav-group:focus-visible{outline:2px solid var(--adp);outline-offset:1px}
+.toc details.nav-section-fold::details-content{block-size:0;overflow:hidden;opacity:0;
+  transition:block-size .28s cubic-bezier(.2,.7,.2,1),opacity .2s ease,content-visibility .28s allow-discrete}
+.toc details.nav-section-fold[open]::details-content{block-size:auto;opacity:1}
+@media (prefers-reduced-motion:reduce){.toc details.nav-section-fold>summary.nav-group,.toc details.nav-section-fold>summary.nav-group::after,.toc details.nav-section-fold::details-content{transition:none}}
 
 /* ---- repository section: pinned records, then every record by folder in one disclosure ---- */
 /* Follows the navigation in the normal flow; the whole menu scrolls. */

@@ -300,7 +300,8 @@ def page_links(root: Path, page: Path, records: set[str], routes: dict[str, str]
 
 # ------------------------------------------------------------- Project
 def topic_pages(root: Path) -> list[Path]:
-    return sorted((Path(root) / "docs/topics").glob("*/index.md"))
+    from topic_structure import topic_pages as pages
+    return pages(Path(root))
 
 
 def source_routes(root: Path) -> dict[str, str]:
