@@ -44,6 +44,16 @@ strict, and no project needs a migration step.
 A project whose only remaining warnings were of these two kinds now passes
 `lint --strict`.
 
+Two migration guides gain an instruction that ADP's upgrade showed was
+missing. A project that has already upgraded checks both:
+
+- The [2.0.0 guide](migrations/2.0.0.md#experiment-guides) now tells a project
+  to add the router rows for the two experiment guides and to compare its
+  router with the starter's.
+- The [3.0.0 guide](migrations/3.0.0.md#router-anchors) now says that a link
+  about the experiment floor goes to the experiment workflow guide, not to the
+  figures guide that the anchor table names.
+
 ## 3.0.0 — router anchors removed, topic records and repository files in the sidebar
 
 3.0.0 is a major release under

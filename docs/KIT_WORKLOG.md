@@ -2,6 +2,20 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Add two instructions that ADP's upgrade showed were missing
+
+- The 2.0.0 guide gains a section for the experiment guides: add the two router
+  rows, compare the router with the starter's row by row, and repoint sentences
+  about the experiment floor. ADP had followed the guide and had neither row.
+- The 3.0.0 guide says that `#run-visuals-and-experiment-lifecycle` covered two
+  subjects. A link about the experiment floor goes to
+  `rules/experiments/workflow.md#required-content`; the anchor table sent it to
+  the figures guide, which only forwards. Lint cannot tell the two apart.
+- Both gaps leave open work; the reader header and the mark size remain there.
+  ADP already has both corrections, in its commits `b44a55d2` and `1b7e0087`.
+- Checks: `tests/run_checks.sh` with the browser suites passes (169 tests,
+  strict lint, 22 scripts, four suites).
+
 ## 2026-11-10 — Let strict lint pass where a project declared the state
 
 - ADP could never pass `lint --strict`: 2 warnings reported files that its
