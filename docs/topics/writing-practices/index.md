@@ -321,7 +321,7 @@ Coding agents read a repository's entry file before they act. The guide keeps th
 
 <!-- fold: dead-end When a page drifts toward agents -->
 
-When a page becomes predominantly agent-facing, its agent material moves into records and its human-facing core stays in a page. Removing the page from navigation or publication follows the deletion gate. When dated or frozen links still point to a removed page, the owner decides how they keep resolving. A hidden stub with the former anchors also keeps the published address. The project's path adapter maps the old path for lint and lets the address go. Lint rejects a frozen or dated link that neither covers.
+When a page becomes predominantly agent-facing, its agent material moves into records and its human-facing core stays in a page. Removing the page from navigation or publication follows the deletion gate. When dated or frozen links still point to a removed page, the owner decides how they keep resolving. A hidden stub with the former anchors also keeps the published address. The project's path adapter maps the old path for lint and lets the address go. In the files it checks, lint rejects a frozen or dated link that neither covers.
 
 <!-- /fold -->
 
@@ -412,9 +412,9 @@ A page may carry drafts that belong to its topic below a <code>&lt;!-- page-end 
 
 <!-- fold: dead-end Why there is no archive staging layer -->
 
-An archive folder for superseded files feels cautious. In practice it becomes one more place where facts live on without an owner. The guide skips that step: once the removal of a superseded source is approved, it goes in the same commit that lands its replacement. A byte-exact copy of a superseded document is kept only when a check or a citation needs those exact bytes. That limit is about superseded documents; what an experiment retains is a separate list in the record rules.
+An archive folder for superseded files feels cautious. In practice it becomes one more place where facts live on without an owner. The guide skips that step: once the removal of a superseded source is approved, it goes in the same commit that lands its replacement. A byte-exact copy of a superseded document is kept only for a specific citation, source pin or reproduction dependency. That limit is about superseded documents; what an experiment retains is a separate list in the record rules.
 
-A related point concerns labels. The invariants of a project live in the owning records and in cross-cutting conventions. A page may still show one as a marked statement: `**INVARIANT:**` for a constraint that must survive edits, `**DON'T-REDO:**` for a settled decision. At the start of its own paragraph the marker becomes a labelled card. Inside a sentence or a list item the raw label would show on the page, so such a statement gets its own paragraph.
+A related point concerns labels. The invariants of a project live in the owning records and in cross-cutting conventions. A page may still show one as a marked statement: `**INVARIANT:**` for a constraint that must survive edits, `**DON'T-REDO:**` for a settled decision. A marker that starts an unindented paragraph, with a blank line after it, becomes a labelled card. Anywhere else, such as inside a sentence, a list item or a quote, the raw label would show on the page, so such a statement gets an unindented paragraph of its own.
 
 <!-- /fold -->
 
@@ -505,7 +505,7 @@ An edit that changes presentation only may reuse captured results, but only afte
 
 <!-- fold: experiment What stays with the producing work -->
 
-The work that produced a result keeps its own record: protocols, outputs, snapshots, failed attempts, changed settings, what actually happened, the reviews that were really performed and the uncertainty that matters. For an experiment, the experiment directory also holds the producing code, the inputs, the full result tables, the source pins and any independent reviews. Repository size decides where this material is stored, not whether it is kept: bulky files may live outside Git when the experiment directory says where they are and how to identify them. A source pin can stand for the producing code when the run started from a clean tree, the commit stays reachable and the directory records the pin, the command and the input identities; uncommitted code stays as a copy or a diff.
+The work that produced a result keeps its own record: protocols, outputs, snapshots, failed attempts, changed settings, what actually happened, the reviews that were really performed and the uncertainty that matters. For an experiment, the experiment directory also holds the producing code, the inputs, the full result tables, the source pins and any independent reviews. Repository size decides where this material is stored, not whether it is kept: bulky files may live outside Git when the experiment directory says where they are and how to identify them. A source pin can stand for the producing code, so that the directory need not hold a copy of it, when the run started from a clean tree with its submodule pointers committed, the commit stays reachable on a branch or tag that is never rewritten, and the directory records the pin, the command and the input identities. Code that was never committed, or that lives outside the repository, stays as a copy or a diff.
 
 Other documents point there without copying. The page explains what the results establish. The worklog records the landing and its hashes and does not duplicate the tables. Retained measured content falls under the deletion gate like everything else.
 

@@ -2,6 +2,36 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-11 — Correct the four rule changes after the pre-tag review
+
+- An independent reviewer read everything since `v3.2.0` before the 3.2.1
+  tag. No blocker, four corrections, five minor points. deivid approved the
+  four corrections to wording he had approved before.
+- The sentence on byte-exact copies was narrower than the rule it sits
+  beside: it named a check or a citation, while the record rules also allow a
+  source pin or a reproduction dependency. A project that conformed to 3.2.0
+  could have stopped conforming, which a patch release may not cause. The
+  sentence now points to the record rule.
+- "Its own paragraph" was not what the build tests. The pattern matches a
+  marker at the very start of a line, so an indented paragraph in a list item
+  or a quote stays raw, and a marker without a blank line after it pulls the
+  next lines into its card. The reviewer ran the pattern through the
+  renderer. The rule now says an unindented paragraph followed by a blank
+  line.
+- "Lint rejects a frozen or dated link that neither covers" claimed more
+  than lint does. Lint checks files under `docs/`, the entry files and
+  registered pages. The sentence now says "in the files it checks".
+- The source-pin sentence now says what a pin buys: the experiment directory
+  need not hold a copy of that code. The page for people gets the full
+  conditions, which it had shortened. The release notes no longer read as if
+  ADP had 35 markers in total.
+- A defect that predates these changes is recorded in
+  [open work](open/marker-in-fenced-code.md): a marker inside a fenced code
+  block is rendered as a card and breaks the block.
+- Not read by an independent reviewer: these corrections.
+- Checks: strict lint of the kit site. The full suite passed on the state
+  before these corrections (179 tests, four browser suites).
+
 ## 2026-11-11 — Let the owner choose how links to a removed page keep resolving
 
 - Two rules disagreed. The documentation rule said to preserve a hidden stub

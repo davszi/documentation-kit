@@ -36,13 +36,16 @@ rule text, changes no tooling, and needs no migration step.
   pages. The build renders a marker at the start of its own
   paragraph as a labelled card, and lint says that such declarations belong on
   pages. The rule now says what the tooling does: a page may carry a marked
-  statement in its own paragraph. A marker inside a sentence or a list item
-  still shows the raw label, so that statement gets its own paragraph. ADP
-  met the disagreement: 28 of its 35 markers already rendered as cards.
+  statement as an unindented paragraph of its own, followed by a blank line.
+  Anywhere else, such as inside a sentence, a list item or a quote, the raw
+  label still shows. ADP met the disagreement: 28 of the 35 markers on seven
+  of its pages already rendered as cards.
 - Two sentences used "evidence" for different things, and together they read
   as a contradiction. [Rules for changes and chronology](../../../rules/documentation.md#rules-for-changes-and-chronology)
-  now says that its limit concerns byte-exact copies of superseded documents
-  and does not shorten what an experiment retains.
+  now says that its limit concerns byte-exact copies of superseded documents,
+  kept for the purposes that
+  [evidence identity and frozen records](../../../rules/records.md#evidence-identity-and-frozen-records)
+  names, and that it does not shorten what an experiment retains.
   [Numbers and staleness](../../../rules/records.md#numbers-and-staleness)
   gains the principle behind it: repository size decides where an
   experiment's material is stored, not whether it is kept, and material held
@@ -50,8 +53,10 @@ rule text, changes no tooling, and needs no migration step.
 - [Numbers and staleness](../../../rules/records.md#numbers-and-staleness)
   listed "producing code" and "source pins" side by side and did not say when
   one replaces the other. It now does: a pin stands for code in the repository
-  when the run started from a clean tree, the commit stays reachable, and the
-  experiment directory records the pin, the command and the input identities.
+  when the run started from a clean tree with its submodule pointers
+  committed, the commit stays reachable on a branch or tag that is never
+  rewritten, and the experiment directory records the pin, the command and the
+  input identities.
   Uncommitted code, or code outside the repository, is kept as a copy or a
   diff. A project need not copy its source into every run folder.
 - [Rendered pages are for people](../../../rules/documentation.md#rendered-pages-are-for-people-records-stay-markdown)
@@ -62,7 +67,7 @@ rule text, changes no tooling, and needs no migration step.
   compatibility is not needed. The first rule now defers to the second: the
   owner chooses between a hidden stub, which keeps the published address, and
   the project's path adapter, which keeps the links resolving for lint and
-  lets the address go.
+  lets the address go. Lint rejects an uncovered link in the files it checks.
 
 ## 3.2.0 — topic group folders and folded navigation groups
 
