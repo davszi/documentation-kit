@@ -333,7 +333,7 @@ Full guide: [Execution and shared resources](execution.html) · [Attribute failu
 
 A vague assignment leaves the owner guessing where the work stops and where to send the result, and leaves parallel owners guessing whose files are whose. The guide asks whoever assigns delegated or parallel work to define these up front, scaled to the work: a small, self-contained task can use a short brief. In return, routine work within the agreed scope needs no separate coordinator approval, so the owner carries it through to evidence and any required review.
 
-Documentation work adds one recurring assignment: page work for people, handed to a separate page agent once its record is finished. It starts when a person asks for a new page, or when a record change leaves an existing page more than a sentence or two out of date. Its brief and its review follow the same pattern, with page-specific parts described in the fold below.
+Documentation work adds one recurring assignment: page work for people. Where the runtime supports delegation, page work larger than a small sync goes to a separate page agent once its record is finished. It starts when a person asks for a new page, or when a record change leaves an existing page needing more than a sentence or two, for example a new chapter, a figure or new layout. Its brief and its review follow the same pattern, with page-specific parts described in the fold below.
 
 An illustrative example, not taken from a real project:
 
@@ -352,15 +352,15 @@ One hand-over does need names. When changes from several owners must come togeth
 
 <!-- fold: experiment Delegating a page for people -->
 
-Page work for people is a delegated assignment of its own kind. The record already exists, written by the agent that did the work. Either a person has asked for a new page or chapter that explains it, or the record changed and an existing page must follow. The [documentation chapter on record first](writing-practices.html#record-first) shows the whole order; this fold covers the assignment.
+Where the runtime supports delegation, page work larger than a small sync is a delegated assignment of its own kind, and it replaces the working agent's own page writing. The record already exists, written by the agent that did the work. Either a person has asked for a new page that explains it, or the record changed and an existing page must follow, even if that adds or removes a chapter. The [documentation chapter on record first](writing-practices.html#record-first) shows the whole order; this fold covers the assignment.
 
-**What the brief holds.** The finished record, the source of every rule, number and limit the page shows; the person's request, or the record change the page has to follow; the pages and chapters to change; the guides the page author must read before writing, named in the brief because a delegated agent knows only what its brief says; and the completion condition. For a page, done means the site validation that applies to the change has passed, captures at every supported width included.
+**What the brief holds.** The finished record, the source of every rule, number and limit the page shows; the person's request, or the record change the page has to follow; the pages and chapters to change; the guides the page author must read before writing, named in the brief because a delegated agent knows only what its brief says; and the completion condition. For a page, done means the site validation that applies to the change has passed, captures at every supported width and in each reader view included.
 
-**What the page author does.** It reads the page guides and site guides that apply and writes the explanation in its own words. It adds no rule, number or limit that the record lacks. A gap or contradiction it finds goes back to whoever owns the record, who fixes the record first; the page does not paper over it.
+**What the page author does.** It reads the page guides and site guides that apply and writes the explanation in its own words. It adds no rule, number or limit that the record lacks. A gap or contradiction it finds in the record goes back to the delegating agent, who gets the record fixed first; the page does not paper over it.
 
 **What the delegating agent does.** It looks at the captures itself, under the [by-eye review](validation.html#validation-and-review), before it reports the page done. A passing build is not that look.
 
-**Who keeps the work.** Later page work in the same task goes to the same page agent, which already knows the record and the guides. A small sync, a sentence or two that a record edit made stale, is not delegated at all: the agent that edited the record makes it.
+**Who keeps the work.** Later page work in the same task goes to the same page agent, which already knows the record and the guides. A small sync, a sentence or two that a record edit made stale, needs no page guides and is not delegated at all: the agent that edited the record makes it.
 
 <!-- /fold -->
 

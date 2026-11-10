@@ -18,7 +18,7 @@ Routine work within the agreed scope needs no separate coordinator approval.
 
 ## Delegating a page for people
 
-A page for people follows its record, as [record first, page on request](../documentation.md#record-first-page-on-request) describes. Where the runtime supports delegation, page work larger than a small sync is delegated, and this assignment replaces the owner's own page writing:
+A page for people follows its record, as [record first, page on request](../documentation.md#record-first-page-on-request) describes. Where the runtime supports delegation, page work larger than a small sync is delegated, and this assignment replaces the working agent's own page writing:
 
 - The brief holds the finished record, the person's request or the record change the page must follow, the pages and chapters to change, and the completion condition: the [validation](../site/validation.md#validation-and-review) that applies to the change, including captures at the supported widths and reader views.
 - The brief also names the guides the page author must read before writing. A delegated agent knows only what its brief says, so name them: [rendered pages are for people](../documentation.md#rendered-pages-are-for-people-records-stay-markdown), and the applicable [page guides](../writing.md) and [site guides](../maintenance.md).

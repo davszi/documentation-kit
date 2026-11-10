@@ -92,7 +92,7 @@ The full split is in [Ownership](readme.html#ownership); [canonical homes](docum
 | Staging or committing        | `.docs-kit/rules/engineering/git.md` and our validation records       |
 ```
 
-Documentation work has three rows, because three different jobs need different guides. A record writer reads the records guide and the documentation system's sections on order of work and changes. Someone creating, moving or retiring a document reads the documentation system. Page work sends its author to the page and site guides: a new page only when someone asked for it, an existing page whenever its record changes. A record edit therefore no longer pulls in the page guides' layout and presentation rules.
+Documentation work has three rows, because three different jobs need different guides. A record writer reads the records guide and the documentation system's sections on order of work and changes. Someone creating, moving or retiring a document reads the documentation system. Page work sends its author to the page and site guides: a new page only when someone asked for it, and work on an existing page when a record change needs more than a small sync of a sentence or two. A record edit therefore no longer pulls in the page guides' layout and presentation rules.
 
 <div class="bs-grid g2">
 <div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>A topic list</h3><p>"Documentation: see rules/. Git: see git.md." Nothing says when to read which, so an agent either reads everything up front or nothing at the moment it matters.</p></div>

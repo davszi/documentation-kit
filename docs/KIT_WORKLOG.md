@@ -2,6 +2,29 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-10 — Bring the pages in step with the pre-tag rule changes
+
+- The rule changes from the pre-tag reviews were more than a small sync, so
+  they went to the page agent that wrote these pages before. Its brief named
+  the guides to read. It changed Documentation and writing, Engineering and
+  Get started: a new page needs a request while an existing page follows its
+  record, also across added or removed chapters; delegation applies where the
+  runtime supports it; gaps go to the delegating agent; captures cover each
+  supported width and reader view; `page_number_notes` is one setting for the
+  whole site.
+- The page agent reported two record wordings back, and they are fixed here.
+  The record-change paragraph said "in the same change" where the order of
+  work says "in the same deliverable, after the record". The delivery guide
+  said "the owner's own page writing"; it now names the working agent. The
+  documentation guide also says why a chapter links the section it explains:
+  a chapter that links only the whole record is not listed when a section
+  changes. Two page phrases were synced to these by the record's editor.
+- Checks: `tests/run_checks.sh` with the browser suites passes (167 tests,
+  strict lint, 22 scripts, four suites); no fold is 50% or more copied. The
+  page agent captured each changed chapter at 1600 and 390 px, and Record
+  first also in the Two chapters view; the Record first captures in both views
+  were looked at here.
+
 ## 2026-11-10 — Fix what the two pre-tag reviews found
 
 - Before the release tag, two independent reviewers looked at `b806c5d`, each in

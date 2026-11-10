@@ -78,8 +78,9 @@ gains a rule, specification or limit, that part moves into a record.
 
 When a record section changes, `docsite.py lint` prints a note listing the pages
 that link to that section; a link to the whole record is listed only when its
-opening text changes. Reread each listed page and update its explanation in the
-same change. `--since <rev>` compares with an older commit; notes never fail lint.
+opening text changes, so a chapter links the section it explains. Reread each
+listed page and update its explanation in the same deliverable, after the
+record. `--since <rev>` compares with an older commit; notes never fail lint.
 
 `page_number_notes = true` is one setting for the whole site. With it, lint also
 lists the numbers in a page's prose that none of its linked records state. State such a number in its
