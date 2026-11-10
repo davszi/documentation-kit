@@ -2,6 +2,24 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-11 — Say when a source pin stands for producing code
+
+- ADP's experiment folders carry a source copy per run, and its open record
+  on experiment paths proposes a commit pin instead. The record rule listed
+  "producing code" and "source pins" together without saying when a pin is
+  enough.
+- deivid approved the sentence: a pin stands for code in the repository when
+  the run started from a clean tree, the commit stays reachable on a branch
+  or tag that is never rewritten, and the experiment directory records the
+  pin, the command and the input identities. Code that was never committed,
+  or that lives outside the repository, stays as a copy or a diff.
+- How a project keeps a pinned commit reachable is its own choice. A run
+  made from a dirty tree cannot be converted to a pin afterwards.
+- The page for people that restates the retention list, Documentation and
+  writing, gains both this sentence and the storage principle from the entry
+  below, which had not been added to it. The 3.2.1 notes list the change.
+- Checks: strict lint of the kit site.
+
 ## 2026-11-11 — Separate experiment retention from exact copies of superseded documents
 
 - ADP asked whether its sentence "retain the smallest set of files that lets

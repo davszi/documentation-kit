@@ -47,6 +47,13 @@ rule text, changes no tooling, and needs no migration step.
   gains the principle behind it: repository size decides where an
   experiment's material is stored, not whether it is kept, and material held
   outside Git is located and identified from the experiment directory.
+- [Numbers and staleness](../../../rules/records.md#numbers-and-staleness)
+  listed "producing code" and "source pins" side by side and did not say when
+  one replaces the other. It now does: a pin stands for code in the repository
+  when the run started from a clean tree, the commit stays reachable, and the
+  experiment directory records the pin, the command and the input identities.
+  Uncommitted code, or code outside the repository, is kept as a copy or a
+  diff. A project need not copy its source into every run folder.
 
 ## 3.2.0 — topic group folders and folded navigation groups
 

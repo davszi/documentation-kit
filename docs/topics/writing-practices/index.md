@@ -505,7 +505,7 @@ An edit that changes presentation only may reuse captured results, but only afte
 
 <!-- fold: experiment What stays with the producing work -->
 
-The work that produced a result keeps its own record: protocols, outputs, snapshots, failed attempts, changed settings, what actually happened, the reviews that were really performed and the uncertainty that matters. For an experiment, the experiment directory also holds the producing code, the inputs, the full result tables, the source pins and any independent reviews.
+The work that produced a result keeps its own record: protocols, outputs, snapshots, failed attempts, changed settings, what actually happened, the reviews that were really performed and the uncertainty that matters. For an experiment, the experiment directory also holds the producing code, the inputs, the full result tables, the source pins and any independent reviews. Repository size decides where this material is stored, not whether it is kept: bulky files may live outside Git when the experiment directory says where they are and how to identify them. A source pin can stand for the producing code when the run started from a clean tree, the commit stays reachable and the directory records the pin, the command and the input identities; uncommitted code stays as a copy or a diff.
 
 Other documents point there without copying. The page explains what the results establish. The worklog records the landing and its hashes and does not duplicate the tables. Retained measured content falls under the deletion gate like everything else.
 
