@@ -12,6 +12,8 @@ Run checks from the consuming project root using the pinned kit. A complete vali
 
 A page-only build is useful for iteration; it does not validate unrelated output. A freshness check must not mutate output. A strict lint run may treat warnings as errors; document any intentionally retained warning rather than hiding it. A registry listing shows current source declarations; raw searches may also include historical evidence and must not be mistaken for the current registry.
 
+When the project uses the chapter reader, `build --check-reader` renders every topic page with and without the reader and fails when the reader changes its words, links, media, tables, folds, anchors or SVG figures. It writes nothing. Use this command for that check; a project test that imports the kit's build module breaks whenever the kit changes inside.
+
 Tests that compare DOM/structure, content or numerical identities are useful evidence. They do not establish browser pixel inspection. Report results under the [handoff rules](../engineering/handoffs.md#reporting-completion). Never call a layout checked from source inspection alone.
 
 Review every visual change by eye before reporting it done. Capture each element the change touched, whole, at every width the site supports and in each reader view it appears in, such as one or two chapters; `captureElement` with `unclip` captures a reader chapter whole. Look at each capture for alignment, spacing, list markers, typography, colour and overflow, and compare it with the page around it. Passing browser suites do not replace this look. Report which captures were reviewed and what they showed.

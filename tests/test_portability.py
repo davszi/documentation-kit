@@ -44,6 +44,20 @@ class Consumers(unittest.TestCase):
         result = invoke('lint', '--project', self.root, '--strict')
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_reader_content_check_runs_for_a_project_and_writes_nothing(self):
+        self.track()
+        result = invoke('build', '--project', self.root, '--check-reader', cwd=Path('/tmp'))
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn('1 reader pages preserve original text', result.stdout)
+        self.assertFalse((self.root / '.build').exists())
+        config = self.root / 'docs/site/site.toml'
+        text = config.read_text()
+        self.assertIn('chapter_reader = true', text)
+        config.write_text(text.replace('chapter_reader = true', 'chapter_reader = false'))
+        result = invoke('build', '--project', self.root, '--check-reader')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn('chapter_reader is off', result.stdout)
+
     def test_init_writes_entry_templates_under_their_real_names(self):
         # Entry files live in the kit only as *.tmpl, so none is active inside .docs-kit/.
         starter = KIT / 'examples/starter'

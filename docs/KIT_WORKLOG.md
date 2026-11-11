@@ -2,6 +2,32 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-11 — Offer the reader content check as a build command
+
+- ADP kept a copy of the kit test that renders every topic page with and
+  without the chapter reader and compares the content. The copy imported the
+  kit's build module and used its internal names, so a kit change could break
+  ADP's test. deivid decided the kit offers the check as a command and ADP
+  deletes its copy.
+- New `docsite.py build --project . --check-reader`. It renders every topic
+  page both ways, reports by page what the reader changed (text or code,
+  links, media, anchors, tables, SVG figures, folds, a missing or unexpected
+  reader) and writes nothing. Exit status 1 on a difference; with
+  `chapter_reader` off it says so and exits 0.
+- The comparison moved from `tests/test_chapter_layout.py` to
+  `tooling/reader_content.py`; the kit test now calls it, and two tests cover
+  the reported differences and the command.
+- Measured: the command passes on the starter (1 reader page), the kit's own
+  site (5) and a snapshot of ADP's `docs/` at its branch commit `c214372d`
+  (21 reader pages, 5.1 s). The ADP run used a scratch copy, not ADP's
+  checkout or its resource slot.
+- [Validation](../rules/site/validation.md#validation-and-review), the README
+  command list and the build-a-site page name the command.
+- Checks: `bash tests/run_checks.sh` passed, 182 unit tests, browser suites
+  skipped because `DOCS_PLAYWRIGHT` was not set. The new card on the
+  build-a-site page was read by eye at 1600×1000 and 390×844.
+- Not released.
+
 ## 2026-11-11 — Delete finished working documents instead of freezing them
 
 - deivid approved the rule as an exact diff. A plan, decision record, review or

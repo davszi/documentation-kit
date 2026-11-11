@@ -141,6 +141,7 @@ avoid editing a consumer's detached submodule checkout as its only live copy.
 ```bash
 python .docs-kit/docsite.py build --project . --page guide
 python .docs-kit/docsite.py build --project . --check
+python .docs-kit/docsite.py build --project . --check-reader
 python .docs-kit/docsite.py lint --project . --registry
 python .docs-kit/docsite.py slides --project . --select guide --select other#intro,result --out review --title "Review"
 ```

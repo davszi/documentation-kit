@@ -24,6 +24,8 @@ def main():
         if name == 'build':
             command.add_argument('--check', action='store_true')
             command.add_argument('--page')
+            command.add_argument('--check-reader', action='store_true',
+                                 help="verify the chapter reader keeps every topic page's content; write nothing")
         else:
             command.add_argument('--strict', action='store_true')
             command.add_argument('--registry', action='store_true')
@@ -92,8 +94,8 @@ def main():
         for value in args.select:
             deck.extend(('--select', value))
         return subprocess.run(deck, env=env, cwd=project).returncode
-    options = [option for option in ('--check', '--strict', '--registry')
-               if getattr(args, option[2:], False)]
+    options = [option for option in ('--check', '--check-reader', '--strict', '--registry')
+               if getattr(args, option[2:].replace('-', '_'), False)]
     if getattr(args, 'page', None):
         options.extend(('--page', args.page))
     if getattr(args, 'since', None):

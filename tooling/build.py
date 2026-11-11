@@ -2,6 +2,7 @@
 """Render docs/topics/ into .build/docs/html/ (the build output — never hand-edit).
 
     python .docs-kit/docsite.py build --project . [--check] [--page <slug>]
+    python .docs-kit/docsite.py build --project . --check-reader
 
 Sources: docs/topics/*/index.md, or one level deeper in a `topic_group_folders`
 folder (TOML frontmatter between +++ fences, markdown
@@ -11,6 +12,9 @@ Site config: docs/site/site.toml.
 
 Exit codes: 0 built / clean · 1 config or content error · 2 --check found
 generated site stale against a fresh render.
+
+--check-reader renders every topic page with and without the chapter reader,
+reports any content the reader changes and writes nothing (reader_content.py).
 
 Runs on Python 3.12 with the pinned .docs-kit/requirements.txt dependencies.
 No application runtime is needed.
@@ -906,6 +910,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--check", action="store_true", help="verify the generated site is fresh; write nothing")
     ap.add_argument("--page", help="only build this page slug (assets still sync)")
+    ap.add_argument("--check-reader", action="store_true",
+                    help="verify the chapter reader keeps every topic page's content; write nothing")
     args = ap.parse_args()
 
     site = tomllib.loads(local_resource(SRC / "site.toml").read_text())
@@ -958,6 +964,15 @@ def main() -> int:
         if not component_script(name).is_file():
             ap.error(f"local component missing: {name}.js")
     shell = (COMPONENTS / "shell.html").read_text()
+    if args.check_reader:
+        if not site.get("chapter_reader"):
+            print("chapter_reader is off in site.toml; there is nothing to compare")
+            return 0
+        from reader_content import report
+        return report(topic_pages(),
+                      lambda path, reader: (build_page(path, site if reader else dict(site, chapter_reader=False), shell)
+                                            or (None, None))[1],
+                      _errors, root=REPO)
 
     # Edit links need a branch; source links may pin the exact built commit.
     site["_edit_ref"] = site.get("gh_ref", "main")

@@ -249,12 +249,14 @@ One slug belongs to one page; a collision fails the build. [Registered source pa
 <div class="bs-check"><span class="bs-badge bs-ok">writes</span><h3><code>build</code></h3><p>Renders every page into <code>.build/docs/</code> from tracked sources and the pinned kit, and removes obsolete output.</p></div>
 <div class="bs-check"><span class="bs-badge bs-ok">writes</span><h3><code>build --page &lt;slug&gt;</code></h3><p>Renders only that page while you work on it; shared assets still sync.</p></div>
 <div class="bs-check"><span class="bs-badge bs-wait">reads</span><h3><code>build --check</code></h3><p>Renders in memory and fails if the generated site no longer matches its sources. Writes nothing.</p></div>
+<div class="bs-check"><span class="bs-badge bs-wait">reads</span><h3><code>build --check-reader</code></h3><p>Renders every topic page with and without the chapter reader and fails if the reader changes any content. Writes nothing.</p></div>
 </div>
 
 ```bash
 .build/docs-env/bin/python .docs-kit/docsite.py build --project .
 .build/docs-env/bin/python .docs-kit/docsite.py build --project . --page guide
 .build/docs-env/bin/python .docs-kit/docsite.py build --project . --check
+.build/docs-env/bin/python .docs-kit/docsite.py build --project . --check-reader
 ```
 
 The build fails instead of publishing a broken page: untracked or missing media, paths that leave the project, route collisions and wrong anchors into registered pages all stop it. Generated output is never edited; change the source, configuration or generator and rebuild. [How a build works](#how-a-build-works) explains why.

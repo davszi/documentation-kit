@@ -125,7 +125,9 @@ upgrade even when the kit's adapter hooks stay unchanged:
 
 - ADP's `tools/docs/_kit.py` loads the kit's build and lint modules, and two
   ADP test modules use the private names `_errors`, `_check_chunk_links` and
-  `_evidence`.
+  `_evidence`. ADP deleted the chain tests on 2026-11-11. For the
+  remaining module, `tools/docs/test_content.py`, the kit now offers
+  `build --check-reader`, so ADP can delete it and `_kit.py`.
 - Four ADP Node checks read kit theme sources from `.docs-kit/theme`. One of
   them matched exact kit HTML and failed in the 3.0.0 upgrade.
 - ADP's navigation group names are hard-coded in four kit stylesheets:
