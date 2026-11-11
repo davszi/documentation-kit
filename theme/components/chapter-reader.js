@@ -190,11 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
   home.appendChild(make('span', 'reader-home-name', brand?.querySelector('.brand-name')?.textContent || document.body.dataset.siteHomeLabel || 'Documentation'));
   drawerHead.appendChild(home);
   const drawerTools = make('div', 'reader-drawer-tools'); drawerHead.appendChild(drawerTools);
-  const pinDrawerButton = button('reader-drawer-pin', '⌖ Pin', 'Pin navigation');
-  pinDrawerButton.addEventListener('click', () => {
-    drawerPinned = !drawerPinned; persistDrawerPin(); syncDrawer();
-    window.dispatchEvent(new Event('resize'));
-  });
   // One control: hiding the sidebar is remembered; the menu button brings it back.
   const closeDrawerButton = button('reader-icon reader-drawer-close', '«', 'Hide navigation');
   closeDrawerButton.addEventListener('click', () => closeDrawer()); drawerTools.appendChild(closeDrawerButton);
@@ -257,10 +252,6 @@ document.addEventListener('DOMContentLoaded', () => {
     sidebar.inert = !open; content.inert = open && !docked;
     sidebar.setAttribute('role', open && !docked ? 'dialog' : 'navigation');
     if (open && !docked) sidebar.setAttribute('aria-modal', 'true'); else sidebar.removeAttribute('aria-modal');
-    pinDrawerButton.setAttribute('aria-pressed', String(drawerPinned));
-    pinDrawerButton.textContent = drawerPinned ? '⌖ Pinned' : '⌖ Pin';
-    pinDrawerButton.title = drawerPinned ? 'Unpin navigation' : 'Pin navigation · docks on wide screens';
-    pinDrawerButton.setAttribute('aria-label', pinDrawerButton.title);
     [...railButtons, ...nav.querySelectorAll('[data-reader-drawer]')].forEach(node => node.setAttribute('aria-expanded', String(open)));
   }
   function closeDrawer(returnFocus = true, clearPin = true) {

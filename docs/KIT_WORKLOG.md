@@ -2,6 +2,30 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-11 — Remove the pin button the reader built but never showed
+
+- `theme/components/chapter-reader.js` created a button with the class
+  `reader-drawer-pin`, gave it a click handler and updated its pressed state,
+  text and label on every navigation sync, but never added it to the page. A
+  review breakage of its pressed state went unnoticed by the new logic test,
+  which is how it was found. deivid decided to delete it.
+- Removed: the button, its handler and its four update lines in the script,
+  and its two rules in `theme/components/chapter-reader.css`. Docking, its
+  stored choice and the close and menu buttons are unchanged.
+- The open record `docs/open/reader-unused-pin-button.md` is deleted with this
+  landing; it is in Git at `7af628a`.
+- The entry below links that record, and worklog entries are never rewritten.
+  The kit therefore sets `worklog_links_checked_from = "2026-11-12"` in
+  `docs/site/site.toml`, its first use of the setting: lint checks links in
+  worklog entries from that day on. Entries dated today, this one included,
+  are no longer link-checked.
+- Checks: `bash tests/run_checks.sh` passed with Playwright set, so the logic
+  tests and the four browser suites ran and passed on Node v20.20.2; 183 unit
+  tests. The navigation header was read by eye at 1600×1000 and shows the site
+  name and the close button as before. At 390×844 navigation starts closed;
+  that width was covered by the own-site browser suite, not by eye.
+- Not released.
+
 ## 2026-11-11 — Check that a built site ships the kit's component files unchanged
 
 - ADP's cross-check of the ported tests found one assertion left in neither

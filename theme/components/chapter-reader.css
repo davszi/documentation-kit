@@ -39,10 +39,8 @@ body.reader-enabled {--reader-header:56px;--reader-rail:0px;--reader-drawer:288p
 .reader-drawer-head {padding-left:10px;}
 .reader-drawer-head strong {font-size:15px;}
 .reader-drawer-tools {display:flex;gap:4px;}
-.reader-enabled .reader-drawer-pin {min-width:72px;padding:0 9px;font-size:12px;border-color:var(--border);}
 .reader-enabled .reader-drawer-close {color:var(--muted);background:var(--panel)!important;border-color:var(--border)!important;}
 .reader-enabled .reader-drawer-close:hover {color:var(--bright);background:var(--panel2)!important;}
-.reader-drawer-pin[aria-pressed="true"] {color:var(--ada);background:rgba(188,140,255,.1)!important;border-color:rgba(188,140,255,.3)!important;box-shadow:0 0 16px rgba(188,140,255,.08);}
 .reader-nav-group {display:block;padding:14px 10px 7px;font-size:11px;color:var(--muted);letter-spacing:.04em;}
 .reader-enabled .toc a {min-height:44px;display:flex;align-items:center;gap:8px;padding:8px 10px;font-size:12px;line-height:1.45;border-radius:7px;overflow-wrap:anywhere;transition:color .15s,background .15s;}
 .reader-enabled .toc a:hover {background:rgba(255,255,255,.04);}

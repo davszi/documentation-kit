@@ -11,6 +11,8 @@ page_number_notes = true
 # The kit's own chronology and open work use KIT_ names so they are never
 # mistaken for a consuming project's docs/worklog.md or docs/open/OPEN.md.
 worklog = "docs/KIT_WORKLOG.md"
+# Older entries link files that were deleted later; entries are never rewritten.
+worklog_links_checked_from = "2026-11-12"
 open_work = "docs/open/KIT_OPEN.md"
 
 [[nav]]
