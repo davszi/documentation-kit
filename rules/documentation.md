@@ -154,3 +154,5 @@ proceeding with the work it governs.
 ## README is the bounded exception
 
 A human arriving cold may need the project's purpose, installation and run commands in `README.md`, even when those facts have a canonical home elsewhere. Keep repetition short. Sweep the README in the same deliverable when those facts change; the verified canonical owner wins on conflict.
+
+A repository has one `README.md`, at its root. No other folder has one. A folder that needs a guide gets a file named after its subject, such as `experiments/<name>/<name>.md`, so that a search, a link or a file list says which guide it is. Files that arrive with third-party code keep their names.

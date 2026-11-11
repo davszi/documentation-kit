@@ -4,7 +4,7 @@ A record is the Markdown document an agent is routed to: a topic record, a guide
 
 ## One record per topic
 
-Every topic has a record: start it as `docs/topics/<topic>/<topic>.md`. When it grows, split it into descriptively named files; together they are the topic's record. Do not name subject records `README.md`. A page for people follows the record: [rendered pages are for people](documentation.md#rendered-pages-are-for-people-records-stay-markdown) says what a page may add, how pages stay in step when a record changes, and the `page_only` exception.
+Every topic has a record: start it as `docs/topics/<topic>/<topic>.md`. When it grows, split it into descriptively named files; together they are the topic's record. Do not name a record `README.md`; only the repository root has one ([README is the bounded exception](documentation.md#readme-is-the-bounded-exception)). A page for people follows the record: [rendered pages are for people](documentation.md#rendered-pages-are-for-people-records-stay-markdown) says what a page may add, how pages stay in step when a record changes, and the `page_only` exception.
 
 ## Format
 

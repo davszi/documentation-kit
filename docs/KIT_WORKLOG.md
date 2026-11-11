@@ -2,6 +2,23 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-11 — Allow one README.md, at the repository root
+
+- deivid decided: no folder below the root has a `README.md`. ADP holds 109
+  of them, and a search hit, a link or a file list does not say which one is
+  meant. Files that arrive with third-party code keep their names. He applies
+  it to ADP in full, including READMEs whose hash a record names.
+- `rules/documentation.md`, "README is the bounded exception": one new
+  paragraph. A folder that needs a guide gets a file named after its subject,
+  such as `experiments/<name>/<name>.md`.
+- `rules/records.md` and the conformance check now say the same for every
+  record, where they covered only topic records before.
+- The writing-practices page follows in two places.
+- Not enforced by lint: ADP would fail until its renames are done.
+- Checks: `bash tests/run_checks.sh` passed without the browser suites; the
+  page edits are two sentences of text and were not reviewed by eye.
+- Not released.
+
 ## 2026-11-11 — Remove the pin button the reader built but never showed
 
 - `theme/components/chapter-reader.js` created a button with the class

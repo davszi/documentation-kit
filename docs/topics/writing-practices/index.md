@@ -95,6 +95,8 @@ The table lists the homes most projects use; the guide lists every one, includin
 
 "One fact, one home" has a single deliberate exception: `README.md`. Someone arriving cold reads the README first and may need the project's purpose, how to install it and how to run it, even though each of those facts already has a home elsewhere. So the README may repeat them, briefly. The price is a duty: when those facts change, update the README in the same deliverable. If the README and the owning document disagree, check the owning document; it wins.
 
+There is one `README.md`, at the repository root. No other folder gets one: a folder that needs a guide gets a file named after its subject, such as `experiments/<name>/<name>.md`, so a search result, a link or a file list says which guide it is. Files that arrive with third-party code keep their names.
+
 The kit's rules are shared policy and are not copied into a project's entry files. What a project owns is its `docs/PROJECT_CONTEXT.md`: the repository map, the commands, the named documentation routes and the choices specific to that project.
 
 The homes listed in the guide describe new projects. An existing project may keep its own explicit locations; whether an old route may stay is decided under [refactoring over compatibility](code-practices.html#refactoring-over-compatibility). Create a directory or document only when there is content for it, and link it from `docs/index.md`.
@@ -298,7 +300,7 @@ Agents and people need different things from the same knowledge. An agent follow
 
 <!-- fold: code Record format and registered source pages -->
 
-- **One record per topic.** It starts as `docs/topics/<topic>/<topic>.md`; when it grows, split it into files named after what they describe. A subject record is never called `README.md`. Add the page, `index.md`, once a person asks for one. A page with no record says why in its frontmatter, with `page_only = "<reason>"`; otherwise lint warns.
+- **One record per topic.** It starts as `docs/topics/<topic>/<topic>.md`; when it grows, split it into files named after what they describe. No record is called `README.md`; only the repository root has one. Add the page, `index.md`, once a person asks for one. A page with no record says why in its frontmatter, with `page_only = "<reason>"`; otherwise lint warns.
 - **Plain Markdown in records.** Headings, tables, lists, exact file references and links to evidence. Layout HTML stays out; a diagram that a record needs goes into its own file and is linked. Anchors that other documents point to are kept. Both points come from [writing records](records.html#format).
 - **A record can also be shown whole.** A site may render a record as a [registered source page](authoring.html#registered-source-pages). The Markdown file remains the record and the only copy anyone edits; the rendered page adds nothing of its own, so editing it is editing a record, not page work. The guides linked from this page are rendered that way.
 

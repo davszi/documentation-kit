@@ -30,7 +30,7 @@ their owner instead of changing them in the same deliverable.
    or at their default paths. Follow
    [canonical homes](documentation.md#canonical-homes).
 5. **Topics.** Every topic page has a record in its folder or declares
-   `page_only` with a reason **(lint)**. No subject record is named `README.md` ([writing records](records.md#one-record-per-topic)).
+   `page_only` with a reason **(lint)**. No `README.md` exists below the repository root, apart from files that arrive with third-party code ([README is the bounded exception](documentation.md#readme-is-the-bounded-exception)).
    Read each `page_only` reason: if the page states a rule, specification or
    limit, that part belongs in a record. Follow
    [rendered pages are for people](documentation.md#rendered-pages-are-for-people-records-stay-markdown).
