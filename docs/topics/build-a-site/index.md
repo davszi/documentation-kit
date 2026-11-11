@@ -280,7 +280,7 @@ The build fails instead of publishing a broken page: untracked or missing media,
 .build/docs-env/bin/python .docs-kit/docsite.py lint --project . --registry
 ```
 
-Without `--strict`, warnings print but the run passes; with it, any warning fails. `--registry` lists every `INVARIANT` and `DON'T-REDO` marker in the project and exits. A project with established file names sets `worklog` or `open_work` in `site.toml`; see [resources](resources.html).
+Without `--strict`, warnings print but the run passes; with it, any warning fails. `--registry` lists every `INVARIANT` and `DON'T-REDO` marker in the project and exits. A project with established file names sets `worklog` or `open_work` in `site.toml`, and `worklog_links_checked_from` stops link checks in worklog entries older than a date; see [resources](resources.html).
 
 </section>
 

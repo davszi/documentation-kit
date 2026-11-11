@@ -274,6 +274,46 @@ def verify(root, *, require_all_manifests=False): raise ValueError("project evid
         result = invoke('lint', '--project', self.root, '--strict')
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_worklog_links_are_checked_from_the_configured_date(self):
+        config = self.root / 'docs/site/site.toml'
+        original = config.read_text().splitlines(keepends=True)
+        worklog = self.root / 'docs/worklog.md'
+        log = worklog.read_text()
+        old = '\n## 2000-01-01 — Old landing\n\n- Moved [a record](topics/removed/removed.md).\n\n## Notes kept with it\n\n- See [another](topics/removed/other.md).\n'
+        worklog.write_text(log + old)
+        self.track()
+
+        def lint(setting=None):
+            lines = list(original)
+            if setting is not None:
+                lines.insert(5, f'worklog_links_checked_from = {setting}\n')
+            config.write_text(''.join(lines))
+            self.assertEqual(invoke('build', '--project', self.root).returncode, 0)
+            return invoke('lint', '--project', self.root, '--strict')
+
+        result = lint()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('dead link topics/removed/removed.md', result.stderr)
+        # The entry dated before the configured date is no longer link-checked,
+        # including the undated section that belongs to it.
+        result = lint('"2000-01-02"')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        # An entry on the configured date is still checked.
+        result = lint('"2000-01-01"')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('dead link topics/removed/other.md', result.stderr)
+        # Newer entries stay strict.
+        first = log.index('\n## ')
+        worklog.write_text(log[:first] + '\n## 2999-01-01 — New landing\n\n- Lost [a file](topics/lost/lost.md).\n' + log[first:] + old)
+        result = lint('"2000-01-02"')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('dead link topics/lost/lost.md', result.stderr)
+        self.assertNotIn('topics/removed', result.stderr)
+        for invalid in ('"soon"', '20000102'):
+            result = lint(invalid)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('worklog_links_checked_from must be a date written as "YYYY-MM-DD"', result.stderr)
+
     def test_declared_project_assets_are_packaged_without_shared_overwrite(self):
         config = self.root / 'docs/site/site.toml'
         original = config.read_text()

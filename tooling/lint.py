@@ -4,7 +4,8 @@
     python .docs-kit/docsite.py lint --project . [--strict] [--registry] [--since <rev>]
 
 Checks (the shared guides under rules/ are the spec):
-  1. markdown links + anchors resolve (docs/**, AGENTS.md, CLAUDE.md, README.md)
+  1. markdown links + anchors resolve (docs/**, AGENTS.md, CLAUDE.md, README.md);
+     worklog entries dated before `worklog_links_checked_from` are skipped
   2. built-html internal anchors + relative hrefs resolve
   3. snippet drift: fenced blocks tagged `source=<path>#L<a>-L<b>` must appear
      in their source file (error), at the stated lines (warning otherwise)
@@ -45,6 +46,7 @@ import re
 import subprocess
 import sys
 import tomllib
+from datetime import date
 from pathlib import Path
 
 REPO = Path(os.environ.get("DOCSITE_PROJECT_ROOT", Path.cwd())).resolve()
@@ -226,6 +228,8 @@ def check_md_links() -> None:
         # target the output location; the working-notes tail below it is
         # consumed as source (GitHub), so its links resolve from the file.
         text = f.read_text()
+        if is_entry(f, "worklog"):
+            text = link_checked_worklog_text(text)
         chunks = [(text, markdown_origin(f).parent)]
         if _paths.is_topic_page(f, REPO):
             page, _, tail = text.partition("<!-- page-end -->")
@@ -266,6 +270,47 @@ def entry_path(key: str) -> Path | None:
 def is_entry(f: Path, key: str) -> bool:
     path = entry_path(key)
     return path is not None and f.resolve() == path.resolve()
+
+
+def worklog_links_checked_from() -> str | None:
+    """The date of the oldest worklog entry whose links are still checked.
+
+    A project sets `worklog_links_checked_from = "YYYY-MM-DD"` in
+    docs/site/site.toml. Entries are append-only, so a link in an older entry
+    cannot follow a later move or removal of its target.
+    """
+    if "links_from" not in _entry_cache:
+        config = REPO / 'docs/site/site.toml'
+        site = tomllib.loads(config.read_text()) if config.is_file() else {}
+        value = site.get("worklog_links_checked_from")
+        if value is not None:
+            try:
+                value = date.fromisoformat(value).isoformat() if isinstance(value, str) else None
+            except ValueError:
+                value = None
+            if value is None:
+                error('worklog_links_checked_from must be a date written as "YYYY-MM-DD"')
+        _entry_cache["links_from"] = value
+    return _entry_cache["links_from"]
+
+
+def link_checked_worklog_text(text: str) -> str:
+    """The worklog without the dated entries older than the configured date.
+
+    Text before the first dated heading is always kept. Any other `## ` section
+    belongs to the dated heading above it.
+    """
+    first = worklog_links_checked_from()
+    if first is None:
+        return text
+    kept, entry_date = [], None
+    for section in re.split(r"(?m)^(?=## )", text):
+        dated = re.match(r"## (\d{4}-\d{2}-\d{2})", section)
+        if dated:
+            entry_date = dated.group(1)
+        if entry_date is None or entry_date >= first:
+            kept.append(section)
+    return "".join(kept)
 
 
 def _check_chunk_links(f: Path, text: str, base: Path) -> None:

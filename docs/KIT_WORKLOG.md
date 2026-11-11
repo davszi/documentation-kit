@@ -2,6 +2,26 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-11 — Let a project stop link checks in old worklog entries
+
+- deivid decided to delete all 53 exact-byte documents from ADP's tree and
+  cite them from Git. Old worklog entries link to those documents and are never
+  rewritten, so their links would fail lint after the deletion.
+- New optional setting `worklog_links_checked_from = "YYYY-MM-DD"` in
+  `docs/site/site.toml`. Lint checks links only in worklog entries dated on or
+  after that day. Text above the first dated heading is always checked, and an
+  undated `## ` section belongs to the dated heading above it. A value that is
+  not an ISO date is an error. Without the setting nothing changes.
+- [Resources](../rules/site/resources.md#resource-closure-and-evidence)
+  describes the setting. The
+  [open record](open/simplify-frozen-record-machinery.md) holds the decision and
+  the remaining steps. Not released; the forward rule's wording is still a
+  draft for deivid.
+- Checks: `bash tests/run_checks.sh` passed without the browser suites, which
+  were skipped because `DOCS_PLAYWRIGHT` was not set. One sentence on the
+  build-a-site page now names the setting; the page was rebuilt and linted, not
+  reviewed by eye.
+
 ## 2026-11-11 — Record deivid's decision on frozen documents
 
 - This session and ADP's documentation session measured what ADP's

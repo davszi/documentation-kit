@@ -62,4 +62,9 @@ its canonical history path, and `open_work` to name its open-work file. Both
 remain project-owned; configured paths must stay inside the repository. New
 projects use `docs/worklog.md` and `docs/open/OPEN.md`.
 
+A project may set `worklog_links_checked_from = "YYYY-MM-DD"`. Lint then checks
+links only in worklog entries dated on or after that day. Worklog entries are
+append-only, so a link in an older entry cannot follow a later move or removal
+of its target. Text above the first dated heading is always checked.
+
 Validate [generated-figure provenance](../writing/figures.md#figures-and-comparisons) and [frozen-document identities](../records.md#evidence-identity-and-frozen-records) separately from link resolution and presentation. Follow the frozen-record preservation rules when resolving lint failures.

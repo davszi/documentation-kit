@@ -77,10 +77,32 @@ documentation session independently, with matching counts:
   diff. There is no enforcement on the hosting side.
 - The rule also applies backwards: ADP's 53 documents are reviewed one by one.
 
-Not decided: how lint treats links in old worklog entries, which are never
-rewritten. The proposal is to check links only in entries after a recorded
-date. The rule wording in `rules/records.md` and `rules/documentation.md` is not
-drafted yet.
+Later the same day deivid decided the 53 documents in one answer, "delete all",
+to this proposal:
+
+- All 53 are deleted from ADP's tree. None has a dependant that needs the file
+  itself; each needs only the bytes, and Git holds them.
+- Two of them state rules that are in force,
+  `physx-vehicle-sdk-performance-contract.md` and probably
+  `physx-vehicle-sdk-environment-profiles.md`. Their rule text moves into ADP's
+  current record `docs/topics/physx-sdk-runtime-cost/physx-sdk-runtime-cost.md`
+  before the old files go.
+- Links that cite a deleted document become links to the file at its commit.
+- One list of old path, commit and hash for each of the 53 replaces the two
+  location manifests, so a recorded hash can still be traced to its bytes.
+- ADP then removes its path translator, the manifests, the validator and their
+  tests.
+- Lint stops checking links in worklog entries older than a date the project
+  records. Old entries link to these documents and are never rewritten, so
+  without this no document could be deleted.
+
+The worklog date is implemented as `worklog_links_checked_from` in
+`docs/site/site.toml`; [resources](../../rules/site/resources.md) describes it.
+It is not released yet.
+
+Not decided: the wording of the forward rule in `rules/records.md`,
+`rules/documentation.md` and `rules/site/resources.md`. A draft goes to deivid
+for approval.
 
 ## Other kit checks only ADP uses
 
@@ -117,9 +139,12 @@ records it. `tooling/svg_figures.py` stays because adapt and adaptation import i
 
 ## Next step
 
-1. deivid decides each of ADP's 53 documents: remove and cite Git, or keep as a
-   guarded copy.
-2. deivid decides the worklog question.
-3. The rule wording is drafted for his approval, then ADP's session applies the
-   changes in ADP and adapt follows.
-4. The kit removes a hook once neither project names it.
+1. deivid approves the rule wording, and the kit releases it together with
+   `worklog_links_checked_from`.
+2. ADP's session moves the two rules, rewrites the citing links, adds the list
+   and deletes the 53 documents, then removes ADP's translator, manifests,
+   validator and their tests. ADP adopts the release that carries the worklog
+   date before its lint can pass.
+3. adapt follows the same rule for its own frozen documents.
+4. The kit removes a hook once neither project names it, and with it the
+   worklog-specific historical link handling in `tooling/lint.py`.
