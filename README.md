@@ -177,6 +177,9 @@ bash tests/run_checks.sh
 `tests/run_checks.sh` generates the starter with `init` under `.build/starter/`,
 builds and lints it, runs the unit tests against it, then builds and checks the
 kit's own [reference website](docs/topics/website/website.md) and the Node checks.
+The Node checks include `tests/test_reader_logic.cjs` and
+`tests/test_panel_switcher_logic.cjs`, which run the chapter reader, the fold
+controls and the panel switcher in an imitation page and need no browser.
 The kit's own entry files use `KIT_` names (`docs/KIT_CONTEXT.md`,
 `docs/KIT_INDEX.md`, `docs/KIT_WORKLOG.md`, `docs/open/KIT_OPEN.md`) so they are
 never mistaken for a consuming project's files. The kit site renders this README

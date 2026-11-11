@@ -2,6 +2,41 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-11 — Test the reader's logic in the kit, without a browser
+
+- ADP's Node check `experiments/track_geometry/test_road_review_topics.cjs`
+  ran the kit's reader and fold-control scripts in an imitation page. A
+  coverage map of the kit's tests showed that most of that behaviour was
+  tested nowhere in the kit, and `fold-controls.js` not at all. deivid decided:
+  logic checks and source rules move into the kit, layout arithmetic and exact
+  style values are dropped, and ADP keeps only checks of its own content.
+- New `tests/test_reader_logic.cjs` with `tests/reader_harness.cjs`, and
+  `tests/test_panel_switcher_logic.cjs`, ported from ADP at its commit
+  `e21c2e84` onto a synthetic kit page. `tests/run_checks.sh` runs both on
+  every run. Covered: navigation, pins, scroll restore, history, deep links,
+  fold wrapping and key ownership, dialogs, per-column layers and fold caches,
+  presets and their storage, migration of old stored state, the navigation
+  drawer and its keyboard loop, full-page mode, print, reduced motion, pages
+  with separate stored preferences, redirects for moved chapters, jump groups,
+  the fold-controls opt-in and default path, the panel switcher, and the rule
+  that neither script makes a network request.
+- Not ported: the 88% strip width, column-width arithmetic, twelve stylesheet
+  strings and other exact style values. Not ported because they are ADP
+  content: page counts, group names, the list of reader pages, fold placement.
+- An implementer subagent wrote the port. It reports 22 deliberate breakages
+  of the scripts on scratch copies, each failing with a message that names the
+  behaviour. This session ran four more: three failed as intended; the fourth
+  changed a pin button that the script never adds to the page, recorded as
+  [open work](open/reader-unused-pin-button.md). One ADP check could never
+  fail (the fold was already open before its deep link); the port closes the
+  fold first.
+- Measured: the reader test takes 0.94 s, the panel-switcher test under 0.1 s.
+- Checks: `bash tests/run_checks.sh` passed with Playwright set, so the four
+  browser suites ran and passed, on Node v20.20.2: 182 unit tests, 25 scripts
+  parse, own site 40 pages. This run also covers the three earlier commits of
+  this day, whose entries say the browser suites were skipped.
+- Not released.
+
 ## 2026-11-11 — Offer the reader content check as a build command
 
 - ADP kept a copy of the kit test that renders every topic page with and

@@ -21,6 +21,9 @@ DOCSITE_PROJECT_ROOT="$TASK_KIT_ROOT" "$DOCS_PYTHON" docsite.py build --project 
 DOCSITE_PROJECT_ROOT="$TASK_KIT_ROOT" "$DOCS_PYTHON" docsite.py lint --project . --strict
 "$DOCS_NODE" tests/test_math_runtime.cjs
 "$DOCS_NODE" tests/test_site_filelinks.cjs
+# Reader, fold-control and panel-switcher logic in a fake DOM; no browser needed.
+"$DOCS_NODE" tests/test_reader_logic.cjs
+"$DOCS_NODE" tests/test_panel_switcher_logic.cjs
 # Every shared script must parse, even where no browser is available.
 scripts=(theme/components/*.js tooling/*.cjs tests/*.cjs)
 for script in "${scripts[@]}"; do
