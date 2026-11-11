@@ -15,27 +15,88 @@ page_only = "Explains building a site; its records are the site guides in rules/
 
 <!-- slide -->
 <p class="slide-eyebrow">Build a site</p>
-<p class="slide-title">Your Markdown goes in; a checked, self-contained website comes out</p>
-<p class="slide-lead">One command reads your tracked sources through the pinned kit. Nothing extra is installed, and nothing outside the project is published.</p>
-<div class="slide-main"><div class="slide-row"><div class="slide-tile is-term"><h4>You write</h4><p>topic pages and records under docs/ · site.toml</p></div><div class="slide-tile"><h4>The kit renders</h4><p>reader, theme, fonts, math · link and anchor checks</p></div><div class="slide-tile is-held"><span class="slide-tag">generated</span><h4>.build/docs/</h4><p>plain HTML · rebuilt, never edited</p></div></div></div>
-<p class="slide-scope">This card is a slide face: the summary that opens a chapter; docsite.py slides collects faces into a deck</p>
+<p class="slide-title">Tracked Markdown in, a checked self-contained site out</p>
+<p class="slide-lead">One command reads tracked sources through the pinned kit and writes plain HTML.</p>
+<div class="slide-main"><div class="slide-split">
+<figure class="slide-figure">
+<!-- Same drawing as Figure 1 below; change both together. -->
+<svg class="inline-fig" viewBox="0 0 600 400" role="img" aria-label="docsite.py build reads only the project&#x27;s tracked sources, pages, records, site.toml, figures and media, through the pinned kit, which renders them with the reader, theme, fonts and math and checks links. An untracked file is not read. The build writes plain HTML, assets and a manifest into .build/docs. Output never flows back into source.">
+<rect x="8" y="8" width="330" height="140" rx="12" fill="#0f1d22" stroke="#39d2c0" stroke-width="2.5"/>
+<text x="26" y="42" font-size="26" fill="#39d2c0" text-anchor="start" font-weight="600" font-family="'IBM Plex Sans',system-ui,sans-serif">tracked in Git</text>
+<text x="26" y="76" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">pages and records</text>
+<text x="26" y="105" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">site.toml</text>
+<text x="26" y="134" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">figures and media</text>
+<rect x="370" y="8" width="222" height="104" rx="12" fill="none" stroke="#7d8896" stroke-width="2" stroke-dasharray="9 7"/>
+<text x="481" y="48" font-size="25" fill="#a9b4c2" text-anchor="middle" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">untracked file</text>
+<text x="481" y="84" font-size="25" fill="#ff7b72" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',system-ui,sans-serif">not read</text>
+<path d="M481 112V136" stroke="#7d8896" stroke-width="3" stroke-dasharray="6 6"/>
+<circle cx="481" cy="156" r="19" fill="#0d1117" stroke="#ff7b72" stroke-width="3"/><path d="M473 148L489 164M489 148L473 164" stroke="#ff7b72" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M173 148 L173 182" stroke="#a9b4c2" stroke-width="3" fill="none"/><path d="M173 196L180.0 182.0L166.0 182.0Z" fill="#a9b4c2"/>
+<rect x="84" y="196" width="508" height="84" rx="12" fill="#17142a" stroke="#bc8cff" stroke-width="2.5"/>
+<text x="102" y="230" font-size="26" fill="#bc8cff" text-anchor="start" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">docsite.py build</text>
+<text x="102" y="264" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">pinned kit: reader, theme, checks</text>
+<path d="M300 280 L300 301" stroke="#a9b4c2" stroke-width="3" fill="none"/><path d="M300 312L305.5 301.0L294.5 301.0Z" fill="#a9b4c2"/>
+<rect x="130" y="312" width="462" height="84" rx="12" fill="none" stroke="#ffa657" stroke-width="2" stroke-dasharray="9 7"/>
+<text x="150" y="346" font-size="28" fill="#ffa657" text-anchor="start" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">.build/docs/</text>
+<text x="150" y="382" font-size="25" fill="#a9b4c2" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">HTML, assets, manifest</text>
+<path d="M130 354 L40 354 L40 162" stroke="#ff7b72" stroke-width="3" fill="none" stroke-dasharray="10 8"/><path d="M40 148L33.0 162.0L47.0 162.0Z" fill="#ff7b72"/>
+<circle cx="40" cy="238" r="19" fill="#0d1117" stroke="#ff7b72" stroke-width="3"/><path d="M32 230L48 246M48 230L32 246" stroke="#ff7b72" stroke-width="3.5" stroke-linecap="round"/>
+<circle cx="316" cy="30" r="22" fill="#0d1117" stroke="#39d2c0" stroke-width="3"/><text x="316" y="39" font-size="25" fill="#39d2c0" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">01</text>
+<circle cx="570" cy="218" r="22" fill="#0d1117" stroke="#bc8cff" stroke-width="3"/><text x="570" y="227" font-size="25" fill="#bc8cff" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">02</text>
+<circle cx="570" cy="334" r="22" fill="#0d1117" stroke="#ffa657" stroke-width="3"/><text x="570" y="343" font-size="25" fill="#ffa657" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">03</text>
+</svg>
+<figcaption class="slide-legend"><span><b>01–03</b>the points</span><span>× not read, no way back</span><span>View of Figure 1</span></figcaption>
+</figure>
+<ol class="slide-points">
+<li class="is-key"><b>Only tracked files go in</b><p>A stray local file cannot leak onto the site, and a file you forgot to add fails the build.</p></li>
+<li><b>The pinned kit renders</b><p>Reader, theme, fonts and math come from the kit; the site needs no web framework and no JavaScript install.</p></li>
+<li class="is-key"><b>A plain HTML site comes out</b><p>Pages, assets and a manifest land in <code>.build/docs/</code>; <code>build --check</code> confirms nothing is stale.</p></li>
+<li class="is-alert"><b>Never edit the output</b><p>It can always be deleted and rebuilt. Fix the source instead.</p></li>
+</ol>
+</div></div>
+<dl class="slide-facts"><div><dt>Reads</dt><dd>Tracked files only</dd></div><div><dt>Writes</dt><dd>.build/docs/</dd></div><div><dt>Installs</dt><dd>Nothing extra</dd></div><div><dt>Checks</dt><dd>Every link</dd></div></dl>
+<p class="slide-scope">Illustration of the build · no measured results</p>
 <!-- /slide -->
 
 ## One command turns your tracked Markdown into a checked, self-contained site
 
 <p class="bs-lead"><code>docsite.py build</code> reads the project's tracked sources through the pinned kit and writes plain HTML into <code>.build/docs/</code>; that output is never edited.</p>
 
+<div class="bs-grid g2">
 <figure id="fig-build">
-<div class="bs-flow" role="img" aria-label="Tracked project sources and the pinned kit enter docsite.py build. The build writes generated HTML, assets and a build manifest into .build/docs. Lint and the freshness check read that output. Generated output never flows back into source.">
-<div class="bs-node bs-teal"><span class="bs-label">Project sources · tracked</span><b>What you write</b><ul><li><code>docs/topics/*/index.md</code> pages</li><li>registered Markdown records</li><li><code>docs/site/site.toml</code></li><li>figures and media</li></ul></div>
-<div class="bs-arrow"><span>build</span></div>
-<div class="bs-node bs-violet"><span class="bs-label">Pinned kit · <code>.docs-kit/</code></span><b>What renders it</b><ul><li>Markdown, includes, slide faces</li><li>reader, theme, fonts, math</li><li>link rewriting and checks</li></ul></div>
-<div class="bs-arrow"><span>writes</span></div>
-<div class="bs-node bs-orange"><span class="bs-label">Generated · ignored by Git</span><b><code>.build/docs/</code></b><ul><li><code>html/*.html</code>, <code>assets/</code></li><li>media under <code>_media/</code></li><li><code>site-build.json</code></li></ul></div>
-<div class="bs-back"><span>×</span> Output never flows back. Change a source, the configuration or a generator, then rebuild.</div>
-</div>
-<figcaption><b>Figure 1.</b> Follow the arrows from what you write to what readers get. This diagram contains no measured results.</figcaption>
+<svg class="inline-fig" viewBox="0 0 600 400" role="img" aria-label="docsite.py build reads only the project&#x27;s tracked sources, pages, records, site.toml, figures and media, through the pinned kit, which renders them with the reader, theme, fonts and math and checks links. An untracked file is not read. The build writes plain HTML, assets and a manifest into .build/docs. Output never flows back into source.">
+<rect x="8" y="8" width="330" height="140" rx="12" fill="#0f1d22" stroke="#39d2c0" stroke-width="2.5"/>
+<text x="26" y="42" font-size="26" fill="#39d2c0" text-anchor="start" font-weight="600" font-family="'IBM Plex Sans',system-ui,sans-serif">tracked in Git</text>
+<text x="26" y="76" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">pages and records</text>
+<text x="26" y="105" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">site.toml</text>
+<text x="26" y="134" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">figures and media</text>
+<rect x="370" y="8" width="222" height="104" rx="12" fill="none" stroke="#7d8896" stroke-width="2" stroke-dasharray="9 7"/>
+<text x="481" y="48" font-size="25" fill="#a9b4c2" text-anchor="middle" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">untracked file</text>
+<text x="481" y="84" font-size="25" fill="#ff7b72" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',system-ui,sans-serif">not read</text>
+<path d="M481 112V136" stroke="#7d8896" stroke-width="3" stroke-dasharray="6 6"/>
+<circle cx="481" cy="156" r="19" fill="#0d1117" stroke="#ff7b72" stroke-width="3"/><path d="M473 148L489 164M489 148L473 164" stroke="#ff7b72" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M173 148 L173 182" stroke="#a9b4c2" stroke-width="3" fill="none"/><path d="M173 196L180.0 182.0L166.0 182.0Z" fill="#a9b4c2"/>
+<rect x="84" y="196" width="508" height="84" rx="12" fill="#17142a" stroke="#bc8cff" stroke-width="2.5"/>
+<text x="102" y="230" font-size="26" fill="#bc8cff" text-anchor="start" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">docsite.py build</text>
+<text x="102" y="264" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">pinned kit: reader, theme, checks</text>
+<path d="M300 280 L300 301" stroke="#a9b4c2" stroke-width="3" fill="none"/><path d="M300 312L305.5 301.0L294.5 301.0Z" fill="#a9b4c2"/>
+<rect x="130" y="312" width="462" height="84" rx="12" fill="none" stroke="#ffa657" stroke-width="2" stroke-dasharray="9 7"/>
+<text x="150" y="346" font-size="28" fill="#ffa657" text-anchor="start" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">.build/docs/</text>
+<text x="150" y="382" font-size="25" fill="#a9b4c2" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">HTML, assets, manifest</text>
+<path d="M130 354 L40 354 L40 162" stroke="#ff7b72" stroke-width="3" fill="none" stroke-dasharray="10 8"/><path d="M40 148L33.0 162.0L47.0 162.0Z" fill="#ff7b72"/>
+<circle cx="40" cy="238" r="19" fill="#0d1117" stroke="#ff7b72" stroke-width="3"/><path d="M32 230L48 246M48 230L32 246" stroke="#ff7b72" stroke-width="3.5" stroke-linecap="round"/>
+<circle cx="316" cy="30" r="22" fill="#0d1117" stroke="#39d2c0" stroke-width="3"/><text x="316" y="39" font-size="25" fill="#39d2c0" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">01</text>
+<circle cx="570" cy="218" r="22" fill="#0d1117" stroke="#bc8cff" stroke-width="3"/><text x="570" y="227" font-size="25" fill="#bc8cff" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">02</text>
+<circle cx="570" cy="334" r="22" fill="#0d1117" stroke="#ffa657" stroke-width="3"/><text x="570" y="343" font-size="25" fill="#ffa657" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">03</text>
+</svg>
+<figcaption><b>Figure 1.</b> Follow the arrows from what you write to what readers get: only tracked sources are read, and output never flows back. This illustrative SVG diagram is authored in the page source and contains no measured results.</figcaption>
 </figure>
+<div class="bs-part bs-teal"><span class="bs-label">Read the figure</span><h3>Tracked sources in, a generated site out</h3><ol>
+<li>the build reads <code>docs/topics/*/index.md</code> pages, registered Markdown records, <code>docs/site/site.toml</code>, figures and media, and only when Git tracks them</li>
+<li>the pinned kit renders them: Markdown, includes and slide faces; reader, theme, fonts and math; link rewriting and checks</li>
+<li>it writes <code>html/*.html</code>, <code>assets/</code>, media under <code>_media/</code> and <code>site-build.json</code> into <code>.build/docs/</code>, which Git ignores</li>
+</ol><p>The crosses mark what never happens: an untracked file is not read, and output never flows back. Change a source, the configuration or a generator, then rebuild.</p></div>
+</div>
 
 [Figure 1](#fig-build) is the whole pipeline. Because the output is generated, it can always be deleted and rebuilt, and a reviewer only has to look at sources. Because only tracked files are read, what you publish is exactly what is in Git: a stray local file cannot leak onto the site, and a file you forgot to add fails the build instead of producing a page with a broken image. The site needs no web framework and no JavaScript install; the reader, theme, fonts and math come from the pinned kit.
 
@@ -161,7 +222,7 @@ A single scroll is still available as **All chapters**, and it is what print and
 
 ## Figures come from the page source; slide faces turn chapters into a deck
 
-<p class="bs-lead">Diagrams are HTML written in the page, images are tracked files, and the summary card that opens a chapter doubles as a presentation slide.</p>
+<p class="bs-lead">Diagrams are HTML or SVG written in the page, images are tracked files, and a chapter that has something to show can open with a slide built around its figure.</p>
 
 <div class="bs-grid g2">
 <figure id="fig-captures">
@@ -173,13 +234,16 @@ A single scroll is still available as **All chapters**, and it is what print and
 </figure>
 <div class="bs-grid g1">
 <div class="bs-part bs-teal"><span class="bs-label">Figures</span><h3>Built from the page, checked by the build</h3><ul>
-<li>flows and diagrams are HTML blocks with a text alternative, like Figures 1 and 2</li>
+<li>flows and diagrams are HTML or SVG blocks with a text alternative, like Figures 1 and 2</li>
 <li>images are tracked files; the build packages them and fails on a missing one</li>
 <li>images and SVG figures open full screen</li>
+<li>a section that needs a figure and has none gets one: the page author draws it from the data, code or geometry that exists, never from invented numbers</li>
 </ul></div>
-<div class="bs-part bs-orange"><span class="bs-label">Slides</span><h3>A chapter's summary is its slide</h3><ul>
-<li>write a face between <code>&lt;!-- slide --&gt;</code> and <code>&lt;!-- /slide --&gt;</code> at the start of a chapter</li>
-<li>the first chapter of this page opens with one</li>
+<div class="bs-part bs-orange"><span class="bs-label">Slides</span><h3>A slide shows the chapter's figure</h3><ul>
+<li>added last: build the chapters, then ask the person, and add faces only after a yes</li>
+<li>the chapter's own figure takes about half the canvas, its parts numbered; beside it, numbered points each give a bold claim and a sentence or two, and a closing row lists the facts a reader asks for next (<code>slide-points</code>, <code>slide-facts</code>)</li>
+<li>boxes of text alone are not a visual: a chapter with nothing to show gets no face</li>
+<li>write a face between <code>&lt;!-- slide --&gt;</code> and <code>&lt;!-- /slide --&gt;</code> at the start of a chapter; the first chapter of this page opens with one</li>
 <li>every fact on a slide is also in its chapter</li>
 </ul></div>
 </div>

@@ -243,7 +243,9 @@ Write a chapter's slide face between standalone `<!-- slide -->` and `<!-- /slid
 | `slide-equation`, `slide-column`, `slide-op`, `slide-note` | Terms of a formula with variants listed under each term |
 | `slide-factors`, `slide-chip` (`is-key`, `is-alt`, `is-warm`, `is-alert`, `is-held`, `is-mono`) | Labelled rows of options |
 | `slide-split` (`is-wide-side`), `slide-figure`, `slide-stats`, `slide-stat` (`is-alt`, `is-warm`, `is-alert`, `is-plain`), `slide-big` | Figure or grid beside headline numbers |
-| `slide-legend` | Line and border keys |
+| `slide-points` (`li.is-key`, `li.is-alert`) | Ruled points beside a visual: a bold claim and one or two explaining sentences per `li`, numbered 01, 02 … to match markers on the figure; `is-key` tints the points the title names, `is-alert` marks a warning with a cross |
+| `slide-facts` | Closing row of facts, a `dl` of `<div><dt>label</dt><dd>value</dd></div>` |
+| `slide-legend` | Line and border keys; on the `figcaption` of a `slide-figure`, the figure's keyed caption |
 
 The outer face is the size container and every size inside the canvas is a container unit of it, so a face fits identically at every width or not at all. Below 720 px a CSS container query stacks the canvas into a readable column, without JavaScript. Canvas declarations are marked `!important` so page-wide element rules (for example an id-scoped `p` style) cannot change the fixed layout; local slide classes must do the same. Open a page with `?slide-check` to outline faces that do not fit; the deck always shows the outline. Projects add local classes for domain diagrams under the same rule. In the reader, the first heading after the face becomes the chapter's bridge title; an eyebrow immediately before it stays only for assistive technology. A Continue/Back control moves between the slide and the full chapter.
 

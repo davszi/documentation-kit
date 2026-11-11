@@ -62,8 +62,23 @@ One `bs-board` holds current status: Done, Decided, Passed, Open or Parked. Use 
 
 A chapter may open with one slide face: a 16:9 summary that states the chapter's takeaway with one visual. The full chapter follows it and remains the complete, end-to-end readable source. A reader skimming slides sees the argument; a reader continuing sees every definition, qualification and piece of evidence.
 
+Slide faces are added when a person wants them. Build the page's chapters first. Then ask the person whether the page should get slide faces, and add none without a yes. A delegated page author hands the question to the delegating agent with its completion report.
+
+A face earns its place by its visual. Make each one a slide worth presenting on its own: one finding, a visual that fills the canvas and shows that finding, and labels a person can read from the back of a room.
+
+Compose the face from top to bottom so that no band of the canvas is left over:
+
+- A label row names the subject. The title states the finding. One lead sentence says what the visual shows.
+- The body holds the visual and three to five points beside or below it. Each point is a short claim in bold with one or two sentences that explain it. A point that is only a label belongs on the visual, not in a box.
+- Emphasis follows the title. Mark only the points and the parts of the visual that the title names; leave the others plain, separated by a thin rule and without a box of their own.
+- A closing row gives the facts a person would ask for next, each as a small label over a value, when the chapter states them. The scope line ends the face.
+- Use few type roles and keep them the same on every face: small capitals for labels, bold for claims, regular for explanations.
+
 - The title states the finding as a sentence, not a topic. The eyebrow names the subject without a chapter number; the reader card and extracted deck supply numbers.
-- Use one visual built from the shared slide vocabulary (tiles, factor grids, equation terms, numbered steps, a figure beside headline numbers) or a project-local diagram. Reuse the chapter's own figure assets rather than drawing a second version of the same data.
+- Use one visual that shows the finding: the chapter's figure, plot or diagram, a figure beside headline measurements, or a project-local drawing. Reuse the chapter's own figure assets rather than drawing a second version of the same data. When the chapter has no figure yet, [make one](figures.md#figures-and-comparisons) for the chapter first.
+- Text and text boxes belong on a face beside the visual: tiles, chips, numbered steps and short notes explain it, name its parts and carry its numbers. Compose them with the visual as on a professional slide, in one clear layout. Boxes do not replace the visual: a face whose main area only repeats the title and lead in boxes is removed. The arrangement of boxes is itself the visual in two cases: the terms of a formula the chapter explains, and a grid that compares options factor by factor.
+- A chapter with nothing to show gets no face. A page may have faces on some chapters and none on others.
+- The visual and its text fill the canvas below the lead. A face that is half empty has a visual that is too small or does not need to exist. Draw the eye to the finding: the accent marks the result, everything else stays neutral, and labels sit on the parts they name.
 - End with a scope line saying what the numbers cover and what remains unmeasured. Caveats that change a claim's meaning belong on the slide, not only in the chapter.
 - No fact exists only on a slide. Every number and claim on it is stated, with its evidence, in the chapter below; update both in the same edit. This is the one sanctioned repetition of a fact: the slide is a view of the chapter, never its owner.
 - Keep the canvas uncrowded. A face that does not fit 16:9 has too much content for one slide; move detail into the chapter instead of shrinking type. Below 720 px the face stacks into a readable column.

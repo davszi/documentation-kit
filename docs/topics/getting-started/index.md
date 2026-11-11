@@ -14,10 +14,57 @@ page_only = "Explains the kit as a whole; its records are README.md and the guid
 
 <!-- slide -->
 <p class="slide-eyebrow">Documentation kit</p>
-<p class="slide-title">Shared rules, pinned once, read right before each action</p>
-<p class="slide-lead">A project adds the kit as one submodule and routes each kind of action to its guide. Building a website from the same Markdown is optional.</p>
-<div class="slide-main"><div class="slide-row"><div class="slide-tile is-term"><h4>Pin</h4><p>.docs-kit submodule · its commit is your version</p></div><div class="slide-tile"><h4>Route</h4><p>one AGENTS.md row per action · kit guide + your record</p></div><div class="slide-tile is-held"><span class="slide-tag">optional</span><h4>Build a site</h4><p>the same Markdown as a checked website</p></div></div></div>
-<p class="slide-scope">Summary of this page · no measured results</p>
+<p class="slide-title">Rules live once in the kit; each project pins its revision</p>
+<p class="slide-lead">Add one submodule; keep your content and decide when to upgrade.</p>
+<div class="slide-main"><div class="slide-split">
+<figure class="slide-figure">
+<!-- Same drawing as Figure 1 below; change both together. -->
+<svg class="inline-fig" viewBox="0 0 600 400" role="img" aria-label="Two projects share one kit. The kit repository is a line of revisions; a rule fix lands there once. Each project holds the kit as a .docs-kit submodule pinned to the revision it chose, next to its own records, pages, commands and exceptions. Project A is still pinned to an older revision; project B moved its pin and has the fix.">
+<text x="8" y="30" font-size="25" fill="#bc8cff" text-anchor="start" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">KIT REPOSITORY</text>
+<path d="M20 70H584" stroke="#bc8cff" stroke-width="3" opacity=".55"/>
+<circle cx="60" cy="70" r="9" fill="#0d1117" stroke="#bc8cff" stroke-width="3"/>
+<circle cx="170" cy="70" r="9" fill="#0d1117" stroke="#bc8cff" stroke-width="3"/>
+<circle cx="280" cy="70" r="9" fill="#0d1117" stroke="#bc8cff" stroke-width="3"/>
+<circle cx="390" cy="70" r="12" fill="#39d2c0" stroke="#39d2c0" stroke-width="3"/>
+<circle cx="520" cy="70" r="9" fill="#0d1117" stroke="#bc8cff" stroke-width="3"/>
+<text x="390" y="110" font-size="25" fill="#39d2c0" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',system-ui,sans-serif">rule fix lands once</text>
+<rect x="8" y="130" width="286" height="266" rx="16" fill="none" stroke="#2f3b4a" stroke-width="2"/>
+<text x="24" y="162" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="600" font-family="'IBM Plex Sans',system-ui,sans-serif">project A</text>
+<rect x="24" y="176" width="254" height="84" rx="10" fill="#17142a" stroke="#bc8cff" stroke-width="2.5"/>
+<text x="40" y="210" font-size="28" fill="#bc8cff" text-anchor="start" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">.docs-kit/</text>
+<text x="40" y="246" font-size="25" fill="#a9b4c2" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">older pin</text>
+<rect x="24" y="272" width="254" height="110" rx="10" fill="#0f1d22" stroke="#39d2c0" stroke-width="2.5"/>
+<text x="40" y="304" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">own records,</text>
+<text x="40" y="333" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">pages, commands,</text>
+<text x="40" y="362" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">exceptions</text>
+<path d="M170 82V176" stroke="#bc8cff" stroke-width="3" stroke-dasharray="7 6"/>
+<circle cx="170" cy="176" r="6" fill="#bc8cff"/>
+<rect x="306" y="130" width="286" height="266" rx="16" fill="none" stroke="#2f3b4a" stroke-width="2"/>
+<text x="322" y="162" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="600" font-family="'IBM Plex Sans',system-ui,sans-serif">project B</text>
+<rect x="322" y="176" width="254" height="84" rx="10" fill="#17142a" stroke="#bc8cff" stroke-width="2.5"/>
+<text x="338" y="210" font-size="28" fill="#bc8cff" text-anchor="start" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">.docs-kit/</text>
+<text x="338" y="246" font-size="25" fill="#39d2c0" text-anchor="start" font-weight="600" font-family="'IBM Plex Sans',system-ui,sans-serif">moved its pin</text>
+<rect x="322" y="272" width="254" height="110" rx="10" fill="#0f1d22" stroke="#39d2c0" stroke-width="2.5"/>
+<text x="338" y="304" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">own records,</text>
+<text x="338" y="333" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">pages, commands,</text>
+<text x="338" y="362" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">exceptions</text>
+<path d="M520 82V176" stroke="#bc8cff" stroke-width="3" stroke-dasharray="7 6"/>
+<circle cx="520" cy="176" r="6" fill="#bc8cff"/>
+<circle cx="262" cy="24" r="22" fill="#0d1117" stroke="#bc8cff" stroke-width="3"/><text x="262" y="33" font-size="25" fill="#bc8cff" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">01</text>
+<circle cx="274" cy="278" r="22" fill="#0d1117" stroke="#39d2c0" stroke-width="3"/><text x="274" y="287" font-size="25" fill="#39d2c0" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">02</text>
+<circle cx="574" cy="182" r="22" fill="#0d1117" stroke="#39d2c0" stroke-width="3"/><text x="574" y="191" font-size="25" fill="#39d2c0" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">03</text>
+</svg>
+<figcaption class="slide-legend"><span><b>01–03</b>the points</span><span>View of Figure 1</span></figcaption>
+</figure>
+<ol class="slide-points">
+<li class="is-key"><b>One home for shared rules</b><p>The kit supplies the rules, the reader, the site tools and the starter. A common rule changes in the kit, once.</p></li>
+<li><b>Specifics stay with the project</b><p>Commands, thresholds and exceptions are facts about one project, so they stay in its own records, where its contributors look.</p></li>
+<li class="is-key"><b>Each project moves its own pin</b><p>Project A is still pinned to an older kit revision; project B moved its pin and has the rule fix.</p></li>
+<li class="is-alert"><b>A copied rule is cut off</b><p>A guide pasted into a project and edited there never receives the next kit fix, and nobody can tell which sentences are shared.</p></li>
+</ol>
+</div></div>
+<dl class="slide-facts"><div><dt>Install</dt><dd>One submodule</dd></div><div><dt>Needed to use the rules</dt><dd>Router rows</dd></div><div><dt>Site build</dt><dd>Optional</dd></div></dl>
+<p class="slide-scope">Illustration of the ownership split · no measured results</p>
 <!-- /slide -->
 
 ## One pinned submodule gives a project shared rules and tools
@@ -25,6 +72,45 @@ page_only = "Explains the kit as a whole; its records are README.md and the guid
 <p class="bs-lead">The kit supplies rules, a reader and a site toolchain. Your project keeps its content, its specifics and the decision when to upgrade.</p>
 
 <div class="bs-grid g2">
+<figure id="fig-kit-pin">
+<svg class="inline-fig" viewBox="0 0 600 400" role="img" aria-label="Two projects share one kit. The kit repository is a line of revisions; a rule fix lands there once. Each project holds the kit as a .docs-kit submodule pinned to the revision it chose, next to its own records, pages, commands and exceptions. Project A is still pinned to an older revision; project B moved its pin and has the fix.">
+<text x="8" y="30" font-size="25" fill="#bc8cff" text-anchor="start" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">KIT REPOSITORY</text>
+<path d="M20 70H584" stroke="#bc8cff" stroke-width="3" opacity=".55"/>
+<circle cx="60" cy="70" r="9" fill="#0d1117" stroke="#bc8cff" stroke-width="3"/>
+<circle cx="170" cy="70" r="9" fill="#0d1117" stroke="#bc8cff" stroke-width="3"/>
+<circle cx="280" cy="70" r="9" fill="#0d1117" stroke="#bc8cff" stroke-width="3"/>
+<circle cx="390" cy="70" r="12" fill="#39d2c0" stroke="#39d2c0" stroke-width="3"/>
+<circle cx="520" cy="70" r="9" fill="#0d1117" stroke="#bc8cff" stroke-width="3"/>
+<text x="390" y="110" font-size="25" fill="#39d2c0" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',system-ui,sans-serif">rule fix lands once</text>
+<rect x="8" y="130" width="286" height="266" rx="16" fill="none" stroke="#2f3b4a" stroke-width="2"/>
+<text x="24" y="162" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="600" font-family="'IBM Plex Sans',system-ui,sans-serif">project A</text>
+<rect x="24" y="176" width="254" height="84" rx="10" fill="#17142a" stroke="#bc8cff" stroke-width="2.5"/>
+<text x="40" y="210" font-size="28" fill="#bc8cff" text-anchor="start" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">.docs-kit/</text>
+<text x="40" y="246" font-size="25" fill="#a9b4c2" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">older pin</text>
+<rect x="24" y="272" width="254" height="110" rx="10" fill="#0f1d22" stroke="#39d2c0" stroke-width="2.5"/>
+<text x="40" y="304" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">own records,</text>
+<text x="40" y="333" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">pages, commands,</text>
+<text x="40" y="362" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">exceptions</text>
+<path d="M170 82V176" stroke="#bc8cff" stroke-width="3" stroke-dasharray="7 6"/>
+<circle cx="170" cy="176" r="6" fill="#bc8cff"/>
+<rect x="306" y="130" width="286" height="266" rx="16" fill="none" stroke="#2f3b4a" stroke-width="2"/>
+<text x="322" y="162" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="600" font-family="'IBM Plex Sans',system-ui,sans-serif">project B</text>
+<rect x="322" y="176" width="254" height="84" rx="10" fill="#17142a" stroke="#bc8cff" stroke-width="2.5"/>
+<text x="338" y="210" font-size="28" fill="#bc8cff" text-anchor="start" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">.docs-kit/</text>
+<text x="338" y="246" font-size="25" fill="#39d2c0" text-anchor="start" font-weight="600" font-family="'IBM Plex Sans',system-ui,sans-serif">moved its pin</text>
+<rect x="322" y="272" width="254" height="110" rx="10" fill="#0f1d22" stroke="#39d2c0" stroke-width="2.5"/>
+<text x="338" y="304" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">own records,</text>
+<text x="338" y="333" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">pages, commands,</text>
+<text x="338" y="362" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">exceptions</text>
+<path d="M520 82V176" stroke="#bc8cff" stroke-width="3" stroke-dasharray="7 6"/>
+<circle cx="520" cy="176" r="6" fill="#bc8cff"/>
+<circle cx="262" cy="24" r="22" fill="#0d1117" stroke="#bc8cff" stroke-width="3"/><text x="262" y="33" font-size="25" fill="#bc8cff" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">01</text>
+<circle cx="274" cy="278" r="22" fill="#0d1117" stroke="#39d2c0" stroke-width="3"/><text x="274" y="287" font-size="25" fill="#39d2c0" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">02</text>
+<circle cx="574" cy="182" r="22" fill="#0d1117" stroke="#39d2c0" stroke-width="3"/><text x="574" y="191" font-size="25" fill="#39d2c0" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">03</text>
+</svg>
+<figcaption><b>Figure 1.</b> Two projects share one kit. A rule fix lands in the kit once; each project picks it up when it moves its pin. This illustrative SVG diagram is authored in the page source and contains no measured results.</figcaption>
+</figure>
+<div class="bs-grid g1">
 <div class="bs-part bs-violet"><span class="bs-label">The kit supplies · <code>.docs-kit/</code></span><h3>Shared and pinned</h3><ul>
 <li><code>rules/</code>: engineering, documentation, record, page-writing and experiment guides your router points to</li>
 <li><code>theme/</code>: chapter reader, build-sheet layout, fonts and math (<a href="build-a-site.html#the-reader">the reader</a>)</li>
@@ -39,8 +125,9 @@ page_only = "Explains the kit as a whole; its records are README.md and the guid
 <li>when to adopt a reviewed kit revision</li>
 </ul></div>
 </div>
+</div>
 
-A rule that several projects share has one home: the kit. Without that, each project keeps its own copy, a fix lands in one copy and the others drift. The split also works the other way: a project's commands, thresholds and exceptions are facts about that project, so they stay in its own records, where its contributors look. Changing a common rule means changing the kit; a project picks the change up when it moves its pin.
+[Figure 1](#fig-kit-pin) shows the split with two projects; its numbers mark the shared kit (01), the project's own content (02) and the pin each project moves (03). Each holds the kit as a `.docs-kit` submodule next to its own records, pages, commands and exceptions. Project A is still pinned to an older kit revision; project B moved its pin and has the rule fix. A rule that several projects share has one home: the kit. Without that, each project keeps its own copy, a fix lands in one copy and the others drift. The split also works the other way: a project's commands, thresholds and exceptions are facts about that project, so they stay in its own records, where its contributors look. Changing a common rule means changing the kit; a project picks the change up when it moves its pin.
 
 <div class="bs-specs"><div><span class="bs-label">Install</span><b>One submodule</b></div><div><span class="bs-label">Needed to use the rules</span><b>Router rows</b></div><div><span class="bs-label">Site build</span><b>Optional</b></div></div>
 
@@ -78,10 +165,10 @@ The full split is in [Ownership](readme.html#ownership); [canonical homes](docum
 <div class="bs-arrow"><span>read</span></div>
 <div class="bs-node bs-orange"><span class="bs-label">Step 3 · every time</span><b>Read both, then act</b><ul><li>shared rule + project specifics</li><li>nothing is copied</li></ul></div>
 </div>
-<figcaption><b>Figure 1.</b> Adoption is a pointer, not a copy: one router row joins a shared rule with the project's own specifics. This diagram contains no measured results.</figcaption>
+<figcaption><b>Figure 2.</b> Adoption is a pointer, not a copy: one router row joins a shared rule with the project's own specifics. This diagram contains no measured results.</figcaption>
 </figure>
 
-[Figure 1](#fig-routing) is the whole mechanism. The router is triggered by the action, not the topic: an agent about to commit reads the Git guide, not every guide. That keeps each task's reading short and makes it hard to skip the rule that applies. Read the orientation and the rules that apply to every task once at the start; route the rest by action, and recheck the routes when the task grows. Reading a route grants no permission to run or publish anything.
+[Figure 2](#fig-routing) is the whole mechanism. The router is triggered by the action, not the topic: an agent about to commit reads the Git guide, not every guide. That keeps each task's reading short and makes it hard to skip the rule that applies. Read the orientation and the rules that apply to every task once at the start; route the rest by action, and recheck the routes when the task grows. Reading a route grants no permission to run or publish anything.
 
 ```markdown
 | Before…                      | Read…                                                                 |
@@ -163,7 +250,7 @@ The [writing](writing.html) and [site maintenance](maintenance.html) entrypoints
 <div class="bs-arrow"><span>track</span></div>
 <div class="bs-node bs-orange"><span class="bs-label">Git</span><b>Track the sources</b><ul><li>the build publishes tracked files only</li><li>add <code>.build/</code> to <code>.gitignore</code></li></ul></div>
 </div>
-<figcaption><b>Figure 2.</b> Setup in three steps. This diagram contains no measured results.</figcaption>
+<figcaption><b>Figure 3.</b> Setup in three steps. This diagram contains no measured results.</figcaption>
 </figure>
 
 ```bash

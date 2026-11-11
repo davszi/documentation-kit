@@ -13,6 +13,8 @@ implementation inventories in linked records.
 
 Every mechanism needs a diagram; every geometric/spatial claim needs a picture; every measured claim needs a plot or table. This is a completion gate. Budget visual production before declaring a section done. Figures, tables and headings alone should convey the story.
 
+A missing figure is work to do. When neither the record nor the repository has a figure for a claim that needs one, the page author makes it from what exists: measured data and run outputs for a plot, code and configuration for a structure or flow diagram, geometry and inputs for a picture. Record its generator and inputs like any generated figure. A number the figure shows must be in the record; a number computed for the figure goes into the record first. Leave a claim without its figure only when nothing true can be drawn, because the data was never recorded or the claim is not measured yet. Then say in the completion report which figure is missing and what would be needed to make it. Never draw invented data, and never draw a sketch that reads as a measurement.
+
 Every included figure has:
 
 - A stable HTML anchor and visible numbered caption. Use page-wide numbers or a named sequence such as P1; numbers are unique and follow reading order within a sequence.

@@ -14,8 +14,20 @@ math = true
 <!-- slide -->
 <p class="slide-eyebrow">Ownership</p>
 <p class="slide-title">The project owns its content; the kit is a pinned tool</p>
-<p class="slide-lead">Pages, configuration and evidence stay in the project. One reviewed kit revision supplies rules, theme and reader.</p>
-<div class="slide-main"><div class="slide-row"><div class="slide-tile is-term"><h4>Project owns</h4><p>topic records and pages · navigation and local assets · evidence and review</p></div><div class="slide-tile"><h4>Pinned submodule</h4><p>rules and templates · build-sheet theme · reader and validation</p></div><div class="slide-tile is-held"><span class="slide-tag">generated</span><h4>Ready to read</h4><p>HTML and local resources · rebuilt, never edited</p></div></div><div class="slide-legend"><span><i></i>authored source</span><span><i class="is-held"></i>generated output; changes flow from source only</span></div></div>
+<p class="slide-lead">Content stays in the project; one reviewed kit revision supplies the tools.</p>
+<div class="slide-main"><div class="slide-split">
+<figure class="slide-figure">
+<!-- include: fragments/ownership.html -->
+<figcaption class="slide-legend"><span><b>01–03</b>the steps</span><span>× no way back</span><span>View of Figure 1</span></figcaption>
+</figure>
+<ol class="slide-points">
+<li class="is-key"><b>Pin a kit revision</b><p>The project chooses which reviewed revision of rules, theme and reader to use, and when to move it.</p></li>
+<li class="is-key"><b>Write in the project</b><p>Topic records and pages, navigation, local assets, evidence and review stay in its own repository.</p></li>
+<li><b>Build</b><p>One command reads both folders and writes the site, with stable public anchors and source links.</p></li>
+<li class="is-alert"><b>Never edit the output</b><p>Generated pages do not flow back into source. Change the source, then rebuild.</p></li>
+</ol>
+</div></div>
+<dl class="slide-facts"><div><dt>Shared rules</dt><dd>One pinned revision</dd></div><div><dt>Project content</dt><dd>Local ownership</dd></div><div><dt>Generated site</dt><dd>Rebuilt from source</dd></div></dl>
 <p class="slide-scope">Illustration of ownership · no measured results</p>
 <!-- /slide -->
 
@@ -23,19 +35,19 @@ math = true
 
 <p class="bs-lead">A project chooses its shared-kit revision while keeping its pages and configuration in its own repository.</p>
 
-[Figure 1](#fig-pipeline) separates what a project authors from what the kit supplies. The arrows carry inputs into a generated site; editing output does not update either source.
+[Figure 1](#fig-pipeline) separates what a project authors from what the kit supplies. Follow the numbers: the project pins a kit revision, writes its own content, and builds a site from both. The dashed red path is the one that does not exist: editing output does not update either source.
 
+<div class="bs-grid g2">
 <figure id="fig-pipeline">
-<div class="bs-flow" role="img" aria-label="Project pages and configuration enter the pinned shared kit. The kit generates the website. Generated output never becomes source.">
-<div class="bs-node bs-teal"><span class="bs-label">Project owns</span><b>Content and choices</b><ul><li>Topic records and pages</li><li>Navigation and local assets</li><li>Evidence and review</li></ul></div>
-<div class="bs-arrow"><span>inputs</span></div>
-<div class="bs-node bs-violet"><span class="bs-label">Pinned submodule</span><b>Shared documentation kit</b><ul><li>Rules and templates</li><li>Build-sheet theme</li><li>Reader and validation</li></ul></div>
-<div class="bs-arrow"><span>build</span></div>
-<div class="bs-node bs-orange"><span class="bs-label">Generated</span><b>Ready to read</b><ul><li>HTML and local resources</li><li>Stable public anchors</li><li>Source links</li></ul></div>
-<div class="bs-back"><span>×</span> Generated pages do not flow back into source. Change the record, page, configuration or generator, then rebuild.</div>
-</div>
-<figcaption><b>Figure 1.</b> Follow the arrows from authored inputs to output. This source-authored HTML diagram illustrates ownership; it contains no measured results.</figcaption>
+<!-- include: fragments/ownership.html -->
+<figcaption><b>Figure 1.</b> The project folder holds what the project writes and the pinned kit; the build writes generated output outside both. This hand-authored SVG diagram illustrates ownership; it contains no measured results.</figcaption>
 </figure>
+<div class="bs-part bs-teal"><span class="bs-label">Read the figure</span><h3>Three steps, one way</h3><ol>
+<li><b>Pin a kit revision.</b> The <code>.docs-kit</code> submodule holds rules and templates, the build-sheet theme, the reader and validation. The project chooses the reviewed revision and when to move it.</li>
+<li><b>Write in the project.</b> Topic records and pages, navigation, local assets, evidence and review stay in its repository.</li>
+<li><b>Build.</b> One command reads both folders and writes the site: HTML and local resources, stable public anchors and source links.</li>
+</ol><p><b>Never edit the output.</b> Generated pages do not flow back into source. Change the record, page, configuration or generator, then rebuild.</p></div>
+</div>
 
 <div class="bs-specs"><div><span class="bs-label">Shared rules</span><b>One pinned revision</b></div><div><span class="bs-label">Project content</span><b>Local ownership</b></div><div><span class="bs-label">Generated site</span><b>Rebuilt from source</b></div></div>
 
@@ -138,16 +150,45 @@ chapter_reader = true
 <!-- slide -->
 <p class="slide-eyebrow">Slide faces</p>
 <p class="slide-title">Open a chapter with one slide, then read on</p>
-<p class="slide-lead">A slide states the takeaway with one visual. The full chapter follows below it and must stand on its own.</p>
-<div class="slide-main"><div class="slide-split is-wide-side"><dl class="slide-factors"><dt>Title<small>the finding</small></dt><dd><span class="slide-chip is-key">a sentence, not a topic</span></dd><dt>Visual</dt><dd><span class="slide-chip">tiles</span><span class="slide-chip">factor grid</span><span class="slide-chip">figure and numbers</span><span class="slide-chip">equation terms</span></dd><dt>Scope line</dt><dd><span class="slide-chip is-alt">what the numbers cover</span></dd><dt>Canvas</dt><dd><span class="slide-chip is-mono">16:9</span><span class="slide-chip">stacks below 720 px</span></dd></dl><div class="slide-stats"><div class="slide-stat"><b>1</b><span>slide per chapter, at most</span></div><div class="slide-stat is-alt"><b>0</b><span>facts that exist only on the slide</span></div></div></div></div>
-<p class="slide-scope">Extract any set of slides with docsite.py slides</p>
+<p class="slide-lead">A face shows the finding with one real visual; the full chapter follows it.</p>
+<div class="slide-main"><div class="slide-split">
+<figure class="slide-figure">
+<!-- include: fragments/slide-anatomy.html -->
+<figcaption class="slide-legend"><span><b>01–04</b>the parts of a face</span><span>View of Figure 4</span></figcaption>
+</figure>
+<ol class="slide-points">
+<li><b>The title states the finding</b><p>A sentence, not a topic. The label row above it names the subject.</p></li>
+<li class="is-key"><b>The chapter's figure fills the canvas</b><p>Drawn large, with its parts numbered. A chapter without a figure gets one first, never with invented data.</p></li>
+<li><b>Text explains beside it</b><p>Each point is a claim and a sentence or two. Boxes that only repeat the title are not a visual.</p></li>
+<li class="is-key"><b>The chapter follows in full</b><p>Every fact on the face is also stated, with its evidence, in the chapter below.</p></li>
+</ol>
+</div></div>
+<dl class="slide-facts"><div><dt>Added</dt><dd>After the chapters</dd></div><div><dt>Needs</dt><dd>The person's yes</dd></div><div><dt>Nothing to show</dt><dd>No face</dd></div><div><dt>Canvas</dt><dd>16:9</dd></div></dl>
+<p class="slide-scope">Wireframe of a face · no measured results</p>
 <!-- /slide -->
 
 ## Open a chapter with one slide, then read on
 
-<p class="bs-lead">A slide face summarises its chapter; the chapter remains the complete, readable source of every claim.</p>
+<p class="bs-lead">A slide face shows its chapter's finding with one real visual; the chapter remains the complete, readable source of every claim.</p>
 
-Write the face between `<!-- slide -->` and `<!-- /slide -->` at the start of a chapter. The reader shows it as a 16:9 slide at the top of the card, followed by the full chapter. `python docsite.py slides --project . --select guide --out guide` collects the faces into a deck that can be presented or printed.
+[Figure 4](#fig-slide-anatomy) shows the parts of a face and where its content comes from. Follow the numbers: the title states the finding (01), the chapter's figure fills most of the canvas (02), text beside it explains the figure (03), and the full chapter follows (04).
+
+<div class="bs-grid g2">
+<figure id="fig-slide-anatomy">
+<!-- include: fragments/slide-anatomy.html -->
+<figcaption><b>Figure 4.</b> A face is a 16:9 view of its chapter: the finding as the title, one visual taken from the chapter's figure, text that explains it and a scope line. A chapter with nothing to show gets no face. This hand-authored SVG wireframe contains no measured results.</figcaption>
+</figure>
+<div class="bs-part bs-orange"><span class="bs-label">Read the figure</span><h3>What a face holds</h3><ol>
+<li><b>The title states the finding.</b> A sentence, not a topic. The label row above it names the subject.</li>
+<li><b>The chapter's figure fills the canvas.</b> Drawn large, with its parts numbered. When the chapter has no figure yet, make one for the chapter first from what exists; never draw invented data.</li>
+<li><b>Text explains beside it.</b> Each point is a short claim in bold and a sentence or two that explain it, separated by thin rules. Only the points the title names are emphasised, and a closing row gives the facts a reader would ask for next. Boxes that only repeat the title and lead are not a visual.</li>
+<li><b>The chapter follows in full.</b> Every fact on the face is also stated, with its evidence, in the chapter below.</li>
+</ol></div>
+</div>
+
+**Faces come last.** Build the chapters first, so each one is complete before any slide exists. Then ask the person whether the page should get faces, and add them only after a yes. A chapter with nothing to show gets no face; on this page only the first chapter and this one have faces.
+
+Write the face between `<!-- slide -->` and `<!-- /slide -->` at the start of a chapter. The reader shows it as a 16:9 slide at the top of the card, followed by the full chapter. Both faces here include the same SVG fragment as their chapter's figure, so the slide and the figure cannot drift apart. `python docsite.py slides --project . --select guide --out guide` collects the faces into a deck that can be presented or printed. The <a href="../topics/guide/guide.md#slide-faces">agent record</a> lists these rules.
 
 </section>
 

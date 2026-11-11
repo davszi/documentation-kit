@@ -19,7 +19,19 @@ This topic owns the starter's illustrative documentation architecture and accept
 
 ## Diagram sources
 
-The numbered HTML flows on the guide are authored directly in `index.md`. They depict ownership and information direction; they contain no measured quantities. Their page source is their generator. Changes require wide/narrow rendered inspection and reference/anchor checks. No remote media or fonts are required.
+The numbered figures on the guide are authored by hand in the page source. Figures 2 and 3 are HTML flows written directly in `index.md`. Figures 1 and 4 are SVG drawings in `docs/site/fragments/ownership.html` and `docs/site/fragments/slide-anatomy.html`; `index.md` includes each fragment twice, in the numbered figure and in its chapter's slide face, so the slide cannot drift from the figure. The fragments carry no ids, so they can appear twice on one page. All four depict ownership, information direction or page structure; they contain no measured quantities. Their source files are their generators. Changes require wide/narrow rendered inspection and reference/anchor checks. No remote media or fonts are required.
+
+## Slide faces
+
+The guide demonstrates slide faces on two chapters, following `.docs-kit/rules/writing/pages.md` (Slide faces):
+
+- Faces come after the chapters. Build the chapters first, then ask the person whether the page should get faces; add none without a yes.
+- A face shows one finding with a real visual: the chapter's own figure, drawn large enough to fill most of the canvas below the lead, with its parts numbered 01, 02 and so on.
+- Beside the figure, three to five numbered points (`slide-points`) each give a short claim in bold and a sentence or two that explain it, separated by thin rules. Only the points the title names are emphasised (`is-key`); a warning point carries a cross (`is-alert`). A closing row (`slide-facts`) gives facts the chapter states, each as a small label over a value, and the scope line ends the face.
+- Boxes of text are not a visual. A face whose main area only repeats the title and lead in boxes is removed, and a chapter with nothing to show gets no face.
+- When a chapter needs a figure and has none, make the figure for the chapter first, from what exists; never draw invented data.
+- No fact exists only on a slide: every statement on a face is also in its chapter.
+- Text in a slide figure stays at least 11 px at a 390 px wide viewport; the drawings use 25 user units in a 600-unit-wide view box for their smallest labels.
 
 ## Acceptance checklist
 

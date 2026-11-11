@@ -2,6 +2,41 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-12 — Require a real visual on slide faces and rebuild the examples
+
+- deivid reported two problems. Slide faces were often a title over three text
+  boxes on an empty canvas, and a page author gave up on a figure when none
+  existed yet. The kit's own examples showed exactly that slide: all six faces
+  in the kit pages, the starter and Tempo were text boxes only.
+- `rules/writing/pages.md`, "Slide faces": faces are added after the chapters
+  are built and the person said yes. A face needs a visual that shows the
+  finding; text and boxes sit beside it and do not replace it; a chapter with
+  nothing to show gets no face. A new list says how a face is composed from top
+  to bottom. deivid named his deck "CORE — Cognitive Software (Klinikum)" as
+  the level to reach; the list describes its structure in the kit's words.
+- `rules/writing/figures.md`: a missing figure is work to do. The page author
+  makes it from data, run outputs, code or geometry, and leaves a claim without
+  one only when nothing true can be drawn, saying so in the completion report.
+- `theme/components/slide-face.css` gains `slide-points`, `slide-facts` and a
+  keyed `figcaption.slide-legend` inside `slide-figure`. No existing rule
+  changed. `rules/site/authoring.md` lists them.
+- The four example faces are rebuilt on the layout deivid chose from three
+  variants: getting-started, build-a-site and the starter's two. Three chapters
+  had no figure and got one first. The starter's two figures live in
+  `examples/starter/docs/site/fragments/`. The writing-practices and
+  build-a-site pages follow the rule text.
+- `tests/test_site_contract.py`: the page-number-note test relied on numbers
+  that only the old starter slide showed. It now adds its own unstated number
+  and also asserts that the clean starter prints no note.
+- Checks: `bash tests/run_checks.sh` with the four browser suites passed, run
+  by the page author after the last edit. All four faces fit at 1600 × 1000 and
+  stack at 390 × 844 with text of at least 11 px; three captures were reviewed
+  by eye by the kit owner and all four by deivid.
+- Not done: the extracted deck and print were not rendered. The shared label,
+  scope and caption sizes are smaller than in the reference deck and were left,
+  because raising them changes other projects' faces.
+- Not released.
+
 ## 2026-11-11 — Allow one README.md, at the repository root
 
 - deivid decided: no folder below the root has a `README.md`. ADP holds 109
