@@ -105,11 +105,24 @@ The worklog date is `worklog_links_checked_from` in `docs/site/site.toml`;
 describes it.
 
 State on 2026-11-11: ADP's documentation session applied all of this on its
-branch `claude/topic-records-1786aa`, ending at its commit `ad94c7f5`, not
-pushed. It reports strict lint clean against kit `9e3836b`; against kit 3.2.1
-ADP's lint fails on 85 links in old worklog entries. Neither the kit setting nor
-the rule wording is released. deivid wants further kit changes before a
-release; they are not listed yet.
+branch `claude/topic-records-1786aa`, not pushed. The branch ends at ADP's
+commit `54bcf9a0`. Since the deletion it also holds, each decided by deivid:
+
+- The five compatibility layers are gone: two delegate commands, 47 forwarding
+  stubs, 21 unused link ids, `tools/docs/test_content.py` with `_kit.py`, and
+  the kit-logic part of the Node checks.
+- 100 guides named `README.md` below the root are renamed to
+  `<folder>/<folder>.md`. Six that run records pin by hash still carry the old
+  name.
+- Each experiment keeps its stored data in its own `data/` folder. ADP's
+  central store `docs/evidence/artifacts.json` went from 228 rows to 1. Checked
+  from the kit session for the last 170 files: each unpacks to the size and
+  hash its old row recorded.
+
+ADP reports that its lint fails on 97 links against kit 3.2.1, and only on the
+link to the renamed kit section against the kit's unreleased `main`. Neither
+the kit setting nor the rule wording is released. deivid holds the release
+until more of ADP's cleanup is done.
 
 ## Other kit checks only ADP uses
 
@@ -127,9 +140,11 @@ upgrade even when the kit's adapter hooks stay unchanged:
   ADP test modules use the private names `_errors`, `_check_chunk_links` and
   `_evidence`. ADP deleted the chain tests on 2026-11-11. For the
   remaining module, `tools/docs/test_content.py`, the kit now offers
-  `build --check-reader`, so ADP can delete it and `_kit.py`.
+  `build --check-reader`; ADP deleted it and `_kit.py` on its branch.
 - Four ADP Node checks read kit theme sources from `.docs-kit/theme`. One of
-  them matched exact kit HTML and failed in the 3.0.0 upgrade.
+  them matched exact kit HTML and failed in the 3.0.0 upgrade. The kit now
+  tests that logic itself, and ADP's checks on its branch cover only ADP
+  content.
 - ADP's navigation group names are hard-coded in four kit stylesheets:
   `theme/components/base.css`, `theme/components/chapter-reader.css`,
   `theme/assets/home.css` and `theme/assets/build-sheet.css`. The accent
@@ -148,7 +163,9 @@ records it. `tooling/svg_figures.py` stays because adapt and adaptation import i
 
 ## Next step
 
-1. deivid names the further changes he wants before a release.
+1. ADP finishes the cleanup deivid wants before a release. Open on its branch:
+   the hash pins, the six pinned `README.md` files, and the deletion of the old
+   store's tools and its last row.
 2. The kit releases the rule wording together with
    `worklog_links_checked_from`, after an independent review of the rule
    change.
