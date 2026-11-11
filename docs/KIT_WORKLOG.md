@@ -2,6 +2,18 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-11 — Check that a built site ships the kit's component files unchanged
+
+- ADP's cross-check of the ported tests found one assertion left in neither
+  repository: its road check compared the built `assets/chapter-reader.js`
+  with the kit source byte for byte. The kit compared only the panel switcher.
+- `tests/test_portability.py` now builds the starter and compares every
+  component script and stylesheet in the built `assets/` with its source in
+  `theme/components`, and requires `chapter-reader.js` and `fold-controls.js`
+  to be among them. A source with `{{placeholders}}`, such as `filelinks.js`,
+  is filled in by the build and is left out.
+- Checks: the `tests/test_portability.py` module passed.
+
 ## 2026-11-11 — Test the reader's logic in the kit, without a browser
 
 - ADP's Node check `experiments/track_geometry/test_road_review_topics.cjs`

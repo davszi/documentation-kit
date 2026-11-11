@@ -144,6 +144,21 @@ private_prefixes = ["configs/"]
         self.assertIn('Private source cannot be published: configs/policy.css', result.stderr)
         self.assertFalse(destination.exists())
 
+    def test_built_component_files_equal_their_kit_sources(self):
+        self.track()
+        result = invoke('build', '--project', self.root)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        assets = self.root / '.build/docs/html/assets'
+        sources = [path for pattern in ('*.js', '*.css') for path in sorted((KIT / 'theme/components').glob(pattern))]
+        # A source with {{placeholders}}, such as filelinks.js, is filled in by the build.
+        built = [source for source in sources
+                 if (assets / source.name).is_file() and b'{{' not in source.read_bytes()]
+        # The logic tests run the kit sources; this ties what a site ships to them.
+        self.assertIn('chapter-reader.js', [source.name for source in built])
+        self.assertIn('fold-controls.js', [source.name for source in built])
+        for source in built:
+            self.assertEqual((assets / source.name).read_bytes(), source.read_bytes(), source.name)
+
     def test_shared_panel_switcher_needs_no_local_extension(self):
         guide = self.root / 'docs/topics/guide/index.md'
         guide.write_text(guide.read_text().replace('components = ["toc",', 'components = ["panel-switcher", "toc",'))
