@@ -2,6 +2,22 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-11 — Record deivid's decision on frozen documents
+
+- This session and ADP's documentation session measured what ADP's
+  frozen-record chain serves, on ADP `origin/main` at `7d85f2a4`. The counts
+  agree: 164 of 3,946 links need the path adapter, all in exact-byte documents
+  or the worklog, and Git returns the exact bytes of 52 of the 53 documents.
+- deivid decided: a replaced document is deleted by default and cited from
+  Git; a copy stays in the tree only with his approval per file; a kept copy is
+  guarded by its recorded hash and changes only with an approved diff. The
+  rule applies backwards to ADP's 53 documents.
+- The measurements, the decision and the open points are in
+  [open work](open/simplify-frozen-record-machinery.md). The worklog question
+  and the rule wording are open.
+- No rule, tool or consumer file changed.
+- Checks: strict lint of the kit site.
+
 ## 2026-11-11 — Record the decision to remove the migration guides
 
 - deivid asked whether the migration guides can go, since ADP and adaptation

@@ -50,18 +50,37 @@ be removed before ADP and adapt stop using them: their builds would fail at the
 next kit upgrade. The target shape is decided first and carried out during each
 project's migration to the current kit.
 
-## Open choices
+## What the chain serves, measured on 2026-11-11
 
-Proposals, not accepted:
+Verified on ADP `origin/main` at `7d85f2a4`, by this session and by ADP's
+documentation session independently, with matching counts:
 
-- Cite a frozen document by commit hash and path, since Git already keeps its
-  exact bytes, and remove the copy from the live tree.
-- Keep frozen documents in a folder that lint skips, without translating their
-  links.
-- Keep the chain as it is.
+- Lint checks 3,946 Markdown links that leave their own file. 164 need a row of
+  ADP's path adapter: 96 in 25 exact-byte documents and 68 in the worklog. No
+  current document needs one.
+- ADP holds 53 exact-byte documents. Git returns the exact bytes of 52 at the
+  recorded commit and original path; the 53rd entered Git only as its copy.
+- The files that record a document's hash name its original path, not the copy.
+- No ADP record states why the copies are kept as live files or why their links
+  are checked. The only stated purpose, from 2026-10-17, is to reproduce source
+  hashes and to interpret frozen review links.
 
-Not yet known: why ADP needs byte-exact copies inside the tree with live link
-checks. That reason decides which choice is possible.
+## Decided by deivid on 2026-11-11
+
+- A replaced document is deleted by default. Whatever needs it cites the commit
+  and path in Git.
+- A copy kept in the tree needs deivid's approval for that file, with the named
+  thing that depends on it.
+- A kept copy is guarded, not untouchable. Its recorded hash stays and a change
+  fails the check. The check passes again only when the recorded hash changes
+  in the same commit, and that happens only after deivid approved the exact
+  diff. There is no enforcement on the hosting side.
+- The rule also applies backwards: ADP's 53 documents are reviewed one by one.
+
+Not decided: how lint treats links in old worklog entries, which are never
+rewritten. The proposal is to check links only in entries after a recorded
+date. The rule wording in `rules/records.md` and `rules/documentation.md` is not
+drafted yet.
 
 ## Other kit checks only ADP uses
 
@@ -86,7 +105,7 @@ upgrade even when the kit's adapter hooks stay unchanged:
   variable is named `--adp`.
 
 deivid decided on 2026-11-10 to keep ADP's five compatibility layers until the
-choice below is made. ADP's record
+frozen-record choice was made. ADP's record
 `docs/open/documentation-compatibility-layers.md` holds their sizes, their
 dependents and the order of work.
 
@@ -98,5 +117,9 @@ records it. `tooling/svg_figures.py` stays because adapt and adaptation import i
 
 ## Next step
 
-deivid chooses the target shape for frozen documents. The reason ADP needs
-in-tree copies is checked in ADP's records before that choice.
+1. deivid decides each of ADP's 53 documents: remove and cite Git, or keep as a
+   guarded copy.
+2. deivid decides the worklog question.
+3. The rule wording is drafted for his approval, then ADP's session applies the
+   changes in ADP and adapt follows.
+4. The kit removes a hook once neither project names it.
