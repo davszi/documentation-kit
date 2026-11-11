@@ -27,7 +27,7 @@ page_only = "Explains the documentation and writing guides; they are the records
 <li>one record per topic, in plain Markdown</li>
 <li>one name per object; claims scoped to their evidence</li>
 <li>measured numbers with their full provenance</li>
-<li>frozen evidence and shelved work</li>
+<li>finished working documents and shelved work</li>
 <li>claim rules for excerpts, formulas and figures</li>
 </ul></div>
 <div class="bs-part bs-violet"><span class="bs-label">How a page presents it · page guides</span><h3>Pages for people</h3><ul>
@@ -209,21 +209,17 @@ Plans also keep two kinds of readiness apart: ready to investigate is not the sa
 
 <!-- /fold -->
 
-<!-- fold: experiment Evidence identity and frozen records -->
+<!-- fold: experiment Finished working documents -->
 
-Sometimes a document must be kept exactly as it was, byte for byte, because something cites it, pins it as a source or needs it to reproduce a result. Keep exact originals only for such a concrete purpose.
+A plan, a decision record, a review or a coordination note exists to get one piece of work done. Once that work has landed and whatever still matters from the document is written into the record that owns the subject, the document is deleted.
 
-**What is recorded.** A location manifest lists, for each frozen document, its original logical path, source revision, byte count and cryptographic hash, together with the references needed to follow it. A document that comes from a different revision than the rest of its collection gets its own revision entry. The manifest says what a document is and where it lives. It is an index, not a second home for the content.
+**Nothing is lost.** Git keeps the deleted document. Where something still needs it, cite the commit and path. A hash that a run recorded for the document stays valid, because Git returns the same bytes.
 
-**What is never done.** Frozen links are not rewritten, originals get no banners, and missing bytes are not quietly replaced. Current prose links to current knowledge or to an explicit evidence location.
+**What is not done.** A finished working document is not kept in the tree as an unedited file, and it is not moved into an evidence folder. A rule that is in force lives in a current record, not in an old plan.
 
-**Reading old links.** A project may resolve the links inside frozen documents to where files live today. If it does, only origins and records that were explicitly registered are translated; current links and missing targets stay strict. A reading view shows which files are exact originals and which are current files that may still change. A symlink is neither a frozen source nor write protection, and is not described as one.
+**What never ends this way.** Topic records and guides are edited in place, and the worklog is append-only, so neither leaves an old file behind. An experiment keeps what [numbers and staleness](records.html#numbers-and-staleness) lists.
 
-**Restoring.** Put an original back only where nothing exists yet. If a newer live file is in the way, keep it separately, and do not overwrite unrelated pending work.
-
-**Where the manifest is described.** The [resources guide](resources.html#resource-closure-and-evidence) explains the location manifest and the path adapters a project may register for frozen records.
-
-**What this proves.** Relocating sources, verifying hashes and offering a reading view establish that a document is intact. They do not show that an old procedure still qualifies at runtime, and they give no permission to execute it.
+**Old worklog links.** A worklog entry is never rewritten, so its links can break when a target is later moved or deleted. A project then sets `worklog_links_checked_from`, and lint checks links only in entries from that date on; see the [resources guide](resources.html#resource-closure-and-evidence).
 
 <!-- /fold -->
 
@@ -235,7 +231,7 @@ A shelved page can stay reachable through its direct link with `hidden = true`. 
 
 <!-- /fold -->
 
-Full guide: [from open work to subject knowledge](documentation-system.html#from-open-work-to-subject-knowledge), [evidence identity and frozen records](records.html#evidence-identity-and-frozen-records) and [shelved investigations](records.html#shelved-investigations).
+Full guide: [from open work to subject knowledge](documentation-system.html#from-open-work-to-subject-knowledge), [finished working documents](records.html#finished-working-documents) and [shelved investigations](records.html#shelved-investigations).
 
 </section>
 

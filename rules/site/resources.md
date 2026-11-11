@@ -17,6 +17,10 @@ A link to a file that the manifest lists under `omitted_files` is a declared
 state. When the file is absent, lint prints a note, which never fails, not even
 under `--strict`. A missing file that the manifest does not list is an error.
 
+The adapters below exist only for projects that already keep unedited old
+documents whose links name old paths. New projects do not register them, and
+the kit removes each hook once no project names it.
+
 Projects with existing historical-path or evidence schemas can register local
 Python adapters using `path_resolver = "tools/docs/site_paths.py"` and
 `evidence_validator = "tools/docs/evidence_documents.py"` in `site.toml`.
@@ -67,4 +71,4 @@ links only in worklog entries dated on or after that day. Worklog entries are
 append-only, so a link in an older entry cannot follow a later move or removal
 of its target. Text above the first dated heading is always checked.
 
-Validate [generated-figure provenance](../writing/figures.md#figures-and-comparisons) and [frozen-document identities](../records.md#evidence-identity-and-frozen-records) separately from link resolution and presentation. Follow the frozen-record preservation rules when resolving lint failures.
+Validate [generated-figure provenance](../writing/figures.md#figures-and-comparisons) and the identities of documents listed in an evidence manifest separately from link resolution and presentation.

@@ -2,6 +2,32 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-11 — Delete finished working documents instead of freezing them
+
+- deivid approved the rule as an exact diff. A plan, decision record, review or
+  coordination note is deleted once its work has landed and its lasting content
+  is in the owning record; whatever still needs it cites the commit and path in
+  Git. No unedited copy stays in the tree. He first considered a kept copy
+  guarded by its recorded hash and dropped it the same day.
+- `rules/records.md`: the section "Evidence identity and frozen records" is
+  replaced by [finished working documents](../rules/records.md#finished-working-documents),
+  so its anchor changes. The source-pin paragraph now also covers a plan,
+  protocol or review document that a run recorded by hash.
+- `rules/documentation.md`: the deletion bullet names the new rule, a new
+  bullet covers links in old worklog entries, and "dated reviews" leaves the
+  role of `docs/topics/<topic>/evidence/`.
+- `rules/site/resources.md`: the path and evidence adapters are marked as
+  existing only for projects that already keep such documents.
+- Pages synced: the fold in writing practices and one line in getting started.
+  Release notes and the 1.1.0 and 3.0.0 migration guides now link the old
+  section at the `v3.2.1` tag.
+- Checks: `bash tests/run_checks.sh` passed, 180 unit tests, browser suites
+  skipped because `DOCS_PLAYWRIGHT` was not set. The changed fold was read by
+  eye at 1600×1000 and 390×844; the other page edits are single lines of text
+  and were not.
+- Not released. deivid wants further changes before a release. The independent
+  review of the rule change is owed before the release tag.
+
 ## 2026-11-11 — Let a project stop link checks in old worklog entries
 
 - deivid decided to delete all 53 exact-byte documents from ADP's tree and

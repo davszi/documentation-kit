@@ -12,7 +12,7 @@ This guide owns where a document lives, the order in which documentation is writ
 | `docs/index.md` | Documentation reading index: routes to development guidance, topics, evidence, sessions and open work |
 | `docs/development/`, including conventions when needed | Project-specific engineering choices, commands and current repository invariants |
 | `.docs-kit/rules/documentation.md` | Documentation placement, order of work, lifecycle and agent routing |
-| `.docs-kit/rules/records.md` | What a record says and how it is written: format, honest claims, measured numbers and frozen evidence |
+| `.docs-kit/rules/records.md` | What a record says and how it is written: format, honest claims, measured numbers and finished working documents |
 | `.docs-kit/rules/writing.md` and `writing/` | Index and focused guides for pages written for people: page design, explanations, figures, mathematics and code |
 | `.docs-kit/rules/maintenance.md` and `site/` | Index and focused authoring, reader, resources, validation and publication guides, including page review and the publishing gate |
 | `.docs-kit/rules/engineering/code.md` | Logging, consumed program output and generated-file practices |
@@ -29,7 +29,7 @@ This guide owns where a document lives, the order in which documentation is writ
 | Named unfinished plans/decision records | Unfinished delivery, prospective acceptance, unresolved choices and their owners |
 | `docs/worklog.md` | Append-only chronology: landed work, reasons, measured effects and probes |
 | Producing experiment directory | Protocol, producing code, inputs, raw results, failures, source pins, reviews and reproduction instructions |
-| `docs/topics/<topic>/evidence/` | Topic-owned supporting sources and dated reviews retained for a concrete citation or reproduction purpose |
+| `docs/topics/<topic>/evidence/` | Topic-owned supporting sources retained for a concrete citation or reproduction purpose |
 | `docs/evidence/`, when needed | Supporting evidence spanning topics, with an explicit owner and concrete citation or reproduction purpose |
 | `docs/sessions/`, when needed | Dated temporary coordination, assignments and resume state; current requirements and results remain in their owning records |
 | `docs/site/` | Consumer configuration, local assets/fragments and explicit overrides |
@@ -127,7 +127,8 @@ Plans distinguish investigation readiness from implementation readiness. A works
 - Current invariants live in owning records and cross-cutting conventions. A page may show one as a marked statement: `**INVARIANT:**` for a constraint that must survive edits, `**DON'T-REDO:**` for a settled decision. Start an unindented paragraph with the marker and leave a blank line after it; the build renders that paragraph as a labelled card, and `lint --registry` lists the markers. Anywhere else, such as inside a sentence, a list item or a quote, the raw label shows on the page, so give that statement an unindented paragraph of its own.
 - Measured claims follow [numbers and staleness](records.md#numbers-and-staleness).
 - A page may keep topic-owned drafts below `<!-- page-end -->`. Only content above is rendered. Chronology still belongs in the worklog; owed work still needs an `OPEN.md` route to its owner. Do not leave unreachable notes tails.
-- Remove approved superseded sources in the landing commit. Do not add an archive staging layer. Keep a byte-exact copy of a superseded document only for the purposes that [evidence identity and frozen records](records.md#evidence-identity-and-frozen-records) names. This does not shorten what an experiment retains; [numbers and staleness](records.md#numbers-and-staleness) lists that.
+- Delete a finished plan, review or coordination note in the landing commit, with the approval above, and cite it from Git where something still needs it. Do not add an archive staging layer and do not keep an unedited copy; see [finished working documents](records.md#finished-working-documents). This does not shorten what an experiment retains; [numbers and staleness](records.md#numbers-and-staleness) lists that.
+- A link in a worklog entry is correct on the entry's date. When later moves or removals break links in old entries, set [`worklog_links_checked_from`](site/resources.md#resource-closure-and-evidence) instead of rewriting the entries or keeping the old targets.
 
 ## Agent entrypoints: import versus point
 

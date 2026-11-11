@@ -44,7 +44,7 @@ rule text, changes no tooling, and needs no migration step.
   as a contradiction. [Rules for changes and chronology](../../../rules/documentation.md#rules-for-changes-and-chronology)
   now says that its limit concerns byte-exact copies of superseded documents,
   kept for the purposes that
-  [evidence identity and frozen records](../../../rules/records.md#evidence-identity-and-frozen-records)
+  [evidence identity and frozen records](https://github.com/davszi/documentation-kit/blob/v3.2.1/rules/records.md#evidence-identity-and-frozen-records)
   names, and that it does not shorten what an experiment retains.
   [Numbers and staleness](../../../rules/records.md#numbers-and-staleness)
   gains the principle behind it: repository size decides where an

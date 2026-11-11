@@ -1,6 +1,6 @@
 # Writing records
 
-A record is the Markdown document an agent is routed to: a topic record, a guide, a plan or a log. The agent that did the work writes or updates the record first, before any page for people. Exact evidence is kept as records too, but it is preserved, not rewritten; see [evidence identity and frozen records](#evidence-identity-and-frozen-records). The [documentation system](documentation.md) owns where a document lives and how it changes; this guide owns what a record says and how it is written. Page design and reading layers belong to the [page guides](writing.md) and apply only to pages for people.
+A record is the Markdown document an agent is routed to: a topic record, a guide, a plan or a log. The agent that did the work writes or updates the record first, before any page for people. A plan, review or coordination note is deleted once its work has landed; see [finished working documents](#finished-working-documents). The [documentation system](documentation.md) owns where a document lives and how it changes; this guide owns what a record says and how it is written. Page design and reading layers belong to the [page guides](writing.md) and apply only to pages for people.
 
 ## One record per topic
 
@@ -28,7 +28,7 @@ When a redesign restates numbers in new prose, figures or slides, record each nu
 
 Keep protocols, outputs, snapshots, failed attempts, changed settings, actual outcomes, reviews actually performed and relevant uncertainty with the work that produced them. For experiments, also retain producing code, inputs, full result tables, source pins and any independent reviews performed in the experiment directory. Repository size decides where this material is stored, not whether it is kept. A project may hold bulky files outside Git; the experiment directory then records where they are and how to check they are the same files, for example by hash. A page, where one exists, explains what they establish. The worklog records the landing and hashes without duplicating tables. Retained measured content remains subject to the [deletion gate](documentation.md#rules-for-changes-and-chronology).
 
-A source pin stands for producing code that lives in the repository when the run started from a clean tree, so that the pinned commit is the complete producing state, submodule pointers included; when that commit stays reachable on a branch or tag that is never rewritten; and when the experiment directory records the pin, the command and the identities of the inputs. The experiment directory then need not hold a copy of that code. Code that was never committed, or that lives outside the repository, is kept as a copy or a diff in the experiment directory.
+A source pin stands for producing code that lives in the repository when the run started from a clean tree, so that the pinned commit is the complete producing state, submodule pointers included; when that commit stays reachable on a branch or tag that is never rewritten; and when the experiment directory records the pin, the command and the identities of the inputs. The experiment directory then need not hold a copy of that code. The same holds for a plan, protocol or review document that a run recorded by hash: when a record in the repository gives its commit, path and hash, and that commit stays reachable on a branch or tag that is never rewritten, they stand for the document. Code that was never committed, or that lives outside the repository, is kept as a copy or a diff in the experiment directory.
 
 Historical records preserve their original source pins, inputs, runtime, settings, resource limits, deadlines and verdicts where those fields apply.
 
@@ -40,17 +40,15 @@ A record may carry a code excerpt, a formula or a figure. The rules about what s
 - Formulas: the derivation and numerical-verification rules in [mathematical explanation](writing/math.md#mathematical-explanation).
 - Screenshots and experiment visuals: the provenance rules in [run visuals and experiment lifecycle](writing/figures.md#run-visuals-and-experiment-lifecycle).
 
-## Evidence identity and frozen records
+## Finished working documents
 
-Retain exact original bytes only for a specific citation, source pin or reproduction dependency. Preserve the necessary reference closure, original logical path, source revision, byte count and cryptographic hash in a location manifest. Record a per-document source revision when it differs from the collection default.
+A plan, a decision record, a review or a coordination note exists to get a piece of work done. Delete it once that work has landed and its lasting content is in the owning record. [From open work to subject knowledge](documentation.md#from-open-work-to-subject-knowledge) gives the steps and the approval a deletion needs.
 
-Do not rewrite frozen links, add banners to originals or silently replace missing bytes. Current prose links to current knowledge or explicit evidence locations. A manifest indexes identity and location; it is not a second content home.
+Git keeps the deleted document. Where something still needs it, cite the commit and path. A hash recorded for it stays valid, because Git returns the same bytes.
 
-If a project implements historical link resolution, limit rebasing to explicitly registered origins and records. Current links and missing targets remain strict. A reading view must distinguish exact originals from mutable supporting current files. Do not describe a symlink as a frozen source or write protection.
+Do not keep a finished working document in the tree as an unedited file, and do not move it into an evidence folder. A rule that is in force lives in a current record.
 
-Restore an original only into an absent destination. Preserve a newer live file separately; do not overwrite unrelated pending work. Source relocation, hash verification and a reading view establish document integrity, not runtime qualification or permission to execute old procedures.
-
-The [resources guide](site/resources.md#resource-closure-and-evidence) describes the location manifest and the adapters a project may register for these records.
+Topic records and guides are edited in place, and the worklog is append-only, so neither leaves an old file behind. [Numbers and staleness](#numbers-and-staleness) lists what an experiment retains.
 
 ## Shelved investigations
 

@@ -1,8 +1,8 @@
 # Simplify the frozen-record machinery inherited from ADP
 
-Open work. Nothing here is decided except the direction and the removal already
-landed. Statements are labelled as deivid's direction, verified evidence or
-proposal.
+Open work. The rule is decided and ADP's change is applied on a branch; the
+kit release, adapt and the removal of the kit hooks remain. Statements are
+labelled as deivid's direction, verified evidence or proposal.
 
 ## Direction
 
@@ -40,7 +40,7 @@ tree and stay link-checked.
 | adapt | `docs/site/layout_paths.py`, the same pattern | 291 lines |
 | Kit | `tooling/site_paths.py`, `tooling/evidence_documents.py`, `tooling/project_extensions.py` | 180 lines |
 | Kit | Path and evidence resolution in `tooling/lint.py` | about 70 lines |
-| Kit | [Evidence identity and frozen records](../../rules/records.md#evidence-identity-and-frozen-records) | 177 words |
+| Kit | The section "Evidence identity and frozen records" in `rules/records.md`, replaced on 2026-11-11 by [finished working documents](../../rules/records.md#finished-working-documents) | 177 words |
 | Kit | [Resource closure and evidence](../../rules/site/resources.md#resource-closure-and-evidence) | 595 words |
 
 ## Constraint on order
@@ -67,28 +67,32 @@ documentation session independently, with matching counts:
 
 ## Decided by deivid on 2026-11-11
 
-- A replaced document is deleted by default. Whatever needs it cites the commit
-  and path in Git.
-- A copy kept in the tree needs deivid's approval for that file, with the named
-  thing that depends on it.
-- A kept copy is guarded, not untouchable. Its recorded hash stays and a change
-  fails the check. The check passes again only when the recorded hash changes
-  in the same commit, and that happens only after deivid approved the exact
-  diff. There is no enforcement on the hosting side.
-- The rule also applies backwards: ADP's 53 documents are reviewed one by one.
+The rule, as it now stands in the kit:
 
-Later the same day deivid decided the 53 documents in one answer, "delete all",
-to this proposal:
+- A plan, decision record, review or coordination note is deleted once its work
+  has landed and its lasting content is in the owning record. Whatever still
+  needs it cites the commit and path in Git.
+- No finished working document is kept in the tree as an unedited file. deivid
+  first considered a kept copy guarded by its recorded hash and dropped it the
+  same day: Git already keeps every old version with its exact bytes.
+- For a document that a run recorded by hash, the commit, path and hash stand
+  for the document, as a source pin stands for code.
+- Topic records, guides, the worklog and what an experiment retains are not
+  touched by this rule.
 
-- All 53 are deleted from ADP's tree. None has a dependant that needs the file
-  itself; each needs only the bytes, and Git holds them.
-- Two of them state rules that are in force,
-  `physx-vehicle-sdk-performance-contract.md` and probably
-  `physx-vehicle-sdk-environment-profiles.md`. Their rule text moves into ADP's
-  current record `docs/topics/physx-sdk-runtime-cost/physx-sdk-runtime-cost.md`
-  before the old files go.
+[Finished working documents](../../rules/records.md#finished-working-documents)
+and [rules for changes and chronology](../../rules/documentation.md#rules-for-changes-and-chronology)
+hold the wording deivid approved as an exact diff.
+
+The rule applies backwards. To the proposal for ADP's 53 documents deivid
+answered "delete all":
+
+- All 53 leave ADP's tree. None has a dependant that needs the file itself;
+  each needs only the bytes, and Git holds them.
+- A rule still in force moves into a current record before its old document
+  goes. ADP found one, `physx-vehicle-sdk-performance-contract.md`.
 - Links that cite a deleted document become links to the file at its commit.
-- One list of old path, commit and hash for each of the 53 replaces the two
+- One list of old path, commit and hash for each document replaces the two
   location manifests, so a recorded hash can still be traced to its bytes.
 - ADP then removes its path translator, the manifests, the validator and their
   tests.
@@ -96,13 +100,16 @@ to this proposal:
   records. Old entries link to these documents and are never rewritten, so
   without this no document could be deleted.
 
-The worklog date is implemented as `worklog_links_checked_from` in
-`docs/site/site.toml`; [resources](../../rules/site/resources.md) describes it.
-It is not released yet.
+The worklog date is `worklog_links_checked_from` in `docs/site/site.toml`;
+[resources](../../rules/site/resources.md#resource-closure-and-evidence)
+describes it.
 
-Not decided: the wording of the forward rule in `rules/records.md`,
-`rules/documentation.md` and `rules/site/resources.md`. A draft goes to deivid
-for approval.
+State on 2026-11-11: ADP's documentation session applied all of this on its
+branch `claude/topic-records-1786aa`, ending at its commit `ad94c7f5`, not
+pushed. It reports strict lint clean against kit `9e3836b`; against kit 3.2.1
+ADP's lint fails on 85 links in old worklog entries. Neither the kit setting nor
+the rule wording is released. deivid wants further kit changes before a
+release; they are not listed yet.
 
 ## Other kit checks only ADP uses
 
@@ -139,12 +146,12 @@ records it. `tooling/svg_figures.py` stays because adapt and adaptation import i
 
 ## Next step
 
-1. deivid approves the rule wording, and the kit releases it together with
-   `worklog_links_checked_from`.
-2. ADP's session moves the two rules, rewrites the citing links, adds the list
-   and deletes the 53 documents, then removes ADP's translator, manifests,
-   validator and their tests. ADP adopts the release that carries the worklog
-   date before its lint can pass.
-3. adapt follows the same rule for its own frozen documents.
-4. The kit removes a hook once neither project names it, and with it the
+1. deivid names the further changes he wants before a release.
+2. The kit releases the rule wording together with
+   `worklog_links_checked_from`, after an independent review of the rule
+   change.
+3. ADP pins that release, fixes its links to the renamed kit section, and
+   deivid decides in ADP's session when its branch is pushed.
+4. adapt follows the same rule for its own frozen documents.
+5. The kit removes a hook once neither project names it, and with it the
    worklog-specific historical link handling in `tooling/lint.py`.

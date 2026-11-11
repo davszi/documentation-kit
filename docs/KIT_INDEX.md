@@ -27,7 +27,7 @@ and [execution](../rules/engineering/execution.md) retain their separate ownersh
 [Documentation policy](../rules/documentation.md) owns canonical homes, the
 order of work and lifecycle: the record comes first, and a page for people is
 made on request. [Writing records](../rules/records.md) owns what a record
-says: format, honest claims, measured numbers and frozen evidence. The
+says: format, honest claims, measured numbers and finished working documents. The
 [page index](../rules/writing.md) links to the guides for pages written for
 people: page design, explanations, figures, mathematics and code.
 
