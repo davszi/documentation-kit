@@ -20,7 +20,7 @@ Every included figure has:
 - A stable HTML anchor and visible numbered caption. Use page-wide numbers or a named sequence such as P1; numbers are unique and follow reading order within a sequence.
 - An explanatory prose reference linking its number to that anchor. Say what to notice and why it supports the claim; identify relevant panels. Alt text, a title or caption alone is not a prose reference.
 - Clickable references everywhere, including table cells, panel labels and references to other figures inside captions. A caption's own number is its identifying label.
-- Source/provenance and useful alternative text. Generated figures name their generator, source revision, inputs, date and output hash in a manifest or metadata. Preserve provenance for SVG, PNG and interactive data alike.
+- A named source and useful alternative text. A generated figure names its generator and its input data in a manifest or metadata. Git holds the revision, the date and the exact bytes of the figure and of its generator; the manifest does not record them again. This holds for SVG, PNG and interactive data alike.
 
 A plot, diagram, flow, interactive comparison or evidence capture is a figure. An appearance-only image gets a short caption without a number. A deliberate unreferenced figure needs an adjacent source comment: `<!-- unreferenced figure: reason -->`.
 
@@ -40,7 +40,7 @@ Use shared components rather than duplicating handlers. Keep controls visible, l
 
 ## Run visuals and experiment lifecycle
 
-Prefer scripted captures with the same provenance as other figures. An inherently interactive screenshot must state commit, date and scenario/preset; it illustrates appearance, never a quantitative claim. Derive overlays from recorded artifacts rather than screenshots when data exists. Show dynamic behavior through an intentionally packaged short clip or useful frame sequence, with normal captions and provenance. For large local captures, posters/keyframes and their published notices, follow the [local-media packaging rules](../site/resources.md#resource-closure-and-evidence).
+Prefer scripted captures, recorded with their generator and input data like other figures. An inherently interactive screenshot must state commit, date and scenario/preset; it illustrates appearance, never a quantitative claim. Derive overlays from recorded artifacts rather than screenshots when data exists. Show dynamic behavior through an intentionally packaged short clip or useful frame sequence, with normal captions and provenance. For large local captures, posters/keyframes and their published notices, follow the [local-media packaging rules](../site/resources.md#resource-closure-and-evidence).
 
 A live public experiment report uses `ongoing = true`; remove it only when findings and limits are settled. Apply the [experiment retention rules](../records.md#numbers-and-staleness). The owning topic explains scope and links to evidence.
 

@@ -2,6 +2,26 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-12 — Ask a generated figure only for its generator and input data
+
+- deivid decided this after a measurement of ADP's figure records. Its shared
+  manifest held `script`, `caption`, `commit` and `date` for 286 figures. Only
+  `script` was read, by kit lint. 277 of the recorded commits ended in
+  `-dirty`, so they named no state that exists in Git.
+- Offered: record hashes of generator and inputs and let lint warn on a
+  mismatch, or cut the record. deivid chose the cut. Nothing checks whether a
+  figure still matches its generator; a person notices a stale figure, as
+  before.
+- `rules/writing/figures.md`: a generated figure names its generator and its
+  input data. Git holds the revision, the date and the exact bytes of the
+  figure and of its generator, and the manifest does not record them again.
+  The rule for a screenshot that can only be taken by hand is unchanged: it
+  states commit, date and scenario.
+- `docs/topics/writing-practices/index.md` carries the same wording.
+- No tooling changed. Lint read only the generator before and reads only the
+  generator now.
+- Not released. ADP's session cuts its manifests on its own branch.
+
 ## 2026-11-12 — Require a real visual on slide faces and rebuild the examples
 
 - deivid reported two problems. Slide faces were often a title over three text

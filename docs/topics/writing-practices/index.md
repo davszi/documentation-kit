@@ -679,7 +679,7 @@ Full guide: [story and reading layers](explanations.html#story-and-reading-layer
 <div class="bs-check"><span class="bs-badge bs-ok">anchor</span><h3>Number and caption</h3><p>A stable HTML anchor and a visible numbered caption, unique and in reading order.</p></div>
 <div class="bs-check"><span class="bs-badge bs-ok">prose</span><h3>Prose reference</h3><p>Text links the number to the anchor and says what to notice and why it supports the claim. A caption or alt text alone is not enough.</p></div>
 <div class="bs-check"><span class="bs-badge bs-ok">links</span><h3>Clickable references</h3><p>Every reference is a link, including in table cells, panel labels and other captions.</p></div>
-<div class="bs-check"><span class="bs-badge bs-ok">source</span><h3>Provenance and alt text</h3><p>Name the source and give useful alternative text. Generated figures record generator, source revision, inputs, date and output hash.</p></div>
+<div class="bs-check"><span class="bs-badge bs-ok">source</span><h3>Source and alt text</h3><p>Name the source and give useful alternative text. A generated figure records its generator and its input data; Git holds revision, date and bytes.</p></div>
 </div>
 
 Prose alone leaves each reader to build the picture in their head, and different readers build different pictures. The guide treats visuals as a completion gate: budget visual production before declaring a section done, so that figures, tables and headings alone convey the story. It also rules out the opposite failure: a visual must answer an actual understanding or evidence need, so no decorative plot is added because a formula exists. Diagrams show structure, ownership, flow or sequence; tables give exact lookup; plots show patterns, variation or trade-offs. Pair formats when they answer different questions.
@@ -721,7 +721,7 @@ Every included figure carries the four items above.
 <!-- unreferenced figure: reason -->
 ```
 
-**Generated figures.** Each names its generator, source revision, inputs, date and output hash in a manifest or in metadata; this holds for SVG, PNG and interactive data alike. Figures use the project's shared dark-compatible style, never a style invented for one figure. An explicit manifest maps figures to generators and is checked for missing and orphaned resources.
+**Generated figures.** Each names its generator and its input data in a manifest or in metadata; this holds for SVG, PNG and interactive data alike. Git holds the revision, the date and the exact bytes of the figure and of its generator, so the manifest does not record them again. Figures use the project's shared dark-compatible style, never a style invented for one figure. An explicit manifest maps figures to generators and is checked for missing and orphaned resources.
 
 **Flows written in the page source.** HTML flows, like the figures on this page, count as local diagrams. The page source is their generator, and their layout passes the same collision and overflow review.
 
@@ -729,7 +729,7 @@ Every included figure carries the four items above.
 
 <!-- fold: experiment Run visuals and live experiment reports -->
 
-- **Captures.** Prefer captures made by a script, with the same provenance as any other figure. A screenshot that can only be taken interactively states its commit, date and scenario or preset. It shows what something looks like and never supports a quantitative claim.
+- **Captures.** Prefer captures made by a script, recorded with their generator and input data like any other figure. A screenshot that can only be taken interactively states its commit, date and scenario or preset. It shows what something looks like and never supports a quantitative claim.
 - **Overlays and motion.** When recorded data exists, derive overlays from it, not from screenshots. Show behaviour over time with a short clip packaged for the purpose or a useful sequence of frames, captioned and sourced like any figure.
 - **Reports still in progress.** A public report on a live experiment carries `ongoing = true`. The flag comes off only when findings and limits are settled. The owning topic explains the scope and links to the evidence.
 - **Which visuals fit.** Good candidates are quality overlays on the actual geometry, convergence, parity with a reference, timing or scaling, and trade-off plots. Say explicitly when a view does not apply. Topic, worklog and open routing are updated in the same deliverable.
