@@ -392,6 +392,8 @@ An owner's autonomy covers routine work inside the agreement, not the agreement 
 
 Respect explicit stops and required approvals. While a decision is pending, continue independent authorized work where possible.
 
+A question that needs the person's answer must not live only in chat. When the task or turn ends without an answer, the agent writes the question, the options, its recommendation and what waits on it into the project's open work, with a line in `OPEN.md`. Silence is not an answer. Only questions whose answer changes the work are recorded; small, reversible choices are made and reported.
+
 An illustrative example, not taken from a real project:
 
 <div class="bs-grid g2">

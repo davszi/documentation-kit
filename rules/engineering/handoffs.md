@@ -7,7 +7,8 @@ assess and continue the work:
 
 - What changed and where.
 - Checks actually run, their results, and relevant skipped checks.
-- Failures, limitations and unresolved questions.
+- Failures, limitations and unresolved questions. A question the person has
+  not answered also goes into [open work](delivery.md#decisions-and-blockers).
 - Links to the delivered changes and owning records.
 - The next owner and action, when further work remains.
 

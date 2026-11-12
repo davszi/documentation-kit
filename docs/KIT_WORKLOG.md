@@ -2,6 +2,40 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-12 — Store run output with the experiment and record unanswered questions
+
+- Found in ADP on 2026-11-12: the measured series behind its page figures and
+  behind 639 further runs existed only in an untracked build folder on one
+  machine. Git held summary records with numbers only. The kit's rules allowed
+  this: they said to keep outputs, let bulky files live outside Git when the
+  experiment directory names the place and a hash, and named no step that puts
+  run output into the experiment when the work ends.
+- deivid's direction, in his words: "put the runs output into experiment if we
+  need it for a claim otherwise its no experiment at all"; storing bulky files
+  outside Git "should be discussed with me and if i dont react put into open";
+  and an agent that really needs his feedback puts the question into open work
+  when he does not react.
+- `rules/records.md`, "Numbers and staleness": the run output a claim rests on
+  is stored in the experiment directory, in Git, before completion is
+  reported. A claim without it is "not measured". Run output is the measured
+  data, summaries and tables, the run's own records and logs. Caches,
+  environment copies, bytecode and pinned source copies are not stored. A run
+  that no claim rests on is proposed for deletion. Storing run output outside
+  Git is the person's decision. This replaces the sentence, approved by deivid
+  earlier, that repository size decides where material is stored and that a
+  project may hold bulky files outside Git.
+- `rules/experiments/workflow.md`, "Required content": the same step named at
+  the point where an experiment reports.
+- `rules/engineering/delivery.md`, "Decisions and blockers": a question that
+  needs the person's answer goes into open work when the task or turn ends
+  unanswered. Only questions whose answer changes the work are recorded;
+  small, reversible choices are made and reported.
+  `rules/engineering/handoffs.md` points to it.
+- The writing-practices, engineering-practices and experiments pages carry the
+  same wording.
+- No tooling changed. Not released; the independent review of this release's
+  rule changes is still owed.
+
 ## 2026-11-12 — Ask a generated figure only for its generator and input data
 
 - deivid decided this after a measurement of ADP's figure records. Its shared

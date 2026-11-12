@@ -72,6 +72,11 @@ every attempt, failure and changed setting with its reason, never only the best
 one; for exploration, how the interpretation developed; caveats and next step.
 A failed bar is [never lowered](verification.md#respond-to-changes-and-failures).
 
+Before reporting an experiment as complete, store the run output its claims
+rest on in the experiment directory, as
+[numbers and staleness](../records.md#numbers-and-staleness) requires. Output
+left only in an untracked build or scratch folder does not count.
+
 ## Learned or fitted models only
 
 Skip this section unless results depend on a model learned or fitted from data.
