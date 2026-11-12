@@ -2,6 +2,30 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-12 — Align the run-output and unanswered-question wording with its neighbours
+
+- deivid asked for a review of the wording added in the entry below against
+  the lines around it. Problems found and corrected:
+- `rules/records.md`: the sentence above said to keep "outputs" and failed
+  attempts while the new one said some output is not stored and some runs are
+  deleted. Now one term, "run output", is used in both, tied to the "raw
+  result" the section already asks a claim to link. Every attempt keeps its
+  entry; its output counts as run output when a stated number or verdict rests
+  on it. The source-copy clause is gone because the source-pin paragraph
+  already covers it. "Compress large text files" is gone: storage format is
+  the project's choice. "Not measured" links its existing rule. While the
+  outside-Git question is unanswered, the experiment is not complete.
+- `rules/engineering/delivery.md`: no second person, the existing terms "open
+  owner" and "unresolved choice", and "before stopping work or reporting
+  completion" in place of "task or turn". A delegated owner sends its question
+  through the return channel. "One question at a time" is removed as a
+  personal preference, and the silence sentence is removed because
+  `rules/documentation.md` already states it. Routine choices link owner
+  responsibility.
+- `rules/experiments/workflow.md` keeps a pointer only; the rule about
+  untracked folders now stands once, in `rules/records.md`.
+  `rules/engineering/handoffs.md` and the three pages follow.
+
 ## 2026-11-12 — Store run output with the experiment and record unanswered questions
 
 - Found in ADP on 2026-11-12: the measured series behind its page figures and

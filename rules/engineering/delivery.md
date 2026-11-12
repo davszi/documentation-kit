@@ -56,14 +56,14 @@ Respect explicit stops and required approvals. Continue independent authorized
 work where possible. Obtain the relevant decision before reopening deferred
 work.
 
-A question that needs the person's answer must not live only in chat. Ask it
-plainly, one question at a time. When the task or turn ends and the person has
-not answered, write the question into the project's
+A question for the person must not exist only in chat. Before stopping work
+or reporting completion, write each question the person has not answered into
+the open owner as an unresolved choice, under
 [open work](../documentation.md#from-open-work-to-subject-knowledge): the
-question, the options, your recommendation and what waits on the answer, in
-the owning record, with its line in `OPEN.md`. Silence is not an answer and
-not an approval. Delete the entry when the person answers.
+question, the options, the recommendation and what waits on the answer, routed
+from `OPEN.md`. A delegated owner sends such a question through the agreed
+return channel; the agent that reports to the person records it. Delete the
+entry when the person answers.
 
-Record only a question whose answer changes the work. Make small, reversible
-choices yourself and report them. Do not hand the person a list of small
-tasks to confirm.
+Ask only what changes the work. Routine choices within the agreed scope are
+made and reported, as [owner responsibility](#owner-responsibility) states.

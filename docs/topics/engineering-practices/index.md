@@ -392,7 +392,7 @@ An owner's autonomy covers routine work inside the agreement, not the agreement 
 
 Respect explicit stops and required approvals. While a decision is pending, continue independent authorized work where possible.
 
-A question that needs the person's answer must not live only in chat. When the task or turn ends without an answer, the agent writes the question, the options, its recommendation and what waits on it into the project's open work, with a line in `OPEN.md`. Silence is not an answer. Only questions whose answer changes the work are recorded; small, reversible choices are made and reported.
+A question for the person must not exist only in chat. Before stopping work or reporting completion, the agent writes each unanswered question into the open owner as an unresolved choice: the question, the options, the recommendation and what waits on the answer, routed from `OPEN.md`. A delegated owner sends such a question through the return channel, and the agent that reports to the person records it. Only questions that change the work are asked; routine choices within the agreed scope are made and reported.
 
 An illustrative example, not taken from a real project:
 
