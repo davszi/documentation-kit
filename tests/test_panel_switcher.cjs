@@ -17,10 +17,10 @@ const rootClass = legacy ? 'width-lesson' : 'panel-switcher';
 const controlClass = legacy ? 'width-lesson-controls' : 'panel-switcher-controls';
 const fixture = `<!doctype html><html lang="en"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Local comparison controls</title><style>
-:root{--border:#334051;--muted:#bac5d5;--bright:#fff;--adp:#39d2c0;--bg2:#19222d;}
+:root{--border:#334051;--muted:#bac5d5;--bright:#fff;--accent:#39d2c0;--bg2:#19222d;}
 body{margin:0;background:#101720;color:#dce5ef;font:16px/1.6 sans-serif;}
 main{padding:24px;} section{padding:16px;margin-bottom:20px;border:1px solid var(--border);border-radius:12px;min-width:0;}
-[${panelAttribute}]{padding:16px;border-left:3px solid var(--adp);background:var(--bg2);overflow-wrap:anywhere;}
+[${panelAttribute}]{padding:16px;border-left:3px solid var(--accent);background:var(--bg2);overflow-wrap:anywhere;}
 </style><main><h1>Explore each comparison independently</h1>
 ${['left','right'].map(id => `<section id="${id}" class="${rootClass}" ${rootAttribute} ${defaultAttribute}="${id === 'left' ? 'first' : 'second'}">
 <h2>${id === 'left' ? 'Source material' : 'Reading material'}</h2>

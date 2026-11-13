@@ -65,6 +65,9 @@ KNOWN_COMPONENTS = ("toc", "nav", "tabs", "diagram", "code", "filelinks",
                     "fold-controls", "chapter-reader", "slide-face", "page-redirect")  # emission order
 # Vendored font folders under assets/vendor/, published to assets/fonts/<family>/.
 FONT_FAMILIES = ("atkinson-hyperlegible", "saira-condensed", "ibm-plex-sans", "ibm-plex-mono")
+# `[group_colors]` in site.toml becomes this stylesheet; each value is written into a style rule.
+GROUP_COLORS_ASSET = "assets/group-colors.css"
+GROUP_COLOR = re.compile(r"#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})")
 # NOTE: "plot-toggles" must precede "carousel" — it wraps each inline SVG in
 # a .fig-unit that the carousel then treats as one slide.
 
@@ -760,7 +763,8 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
         listed = any(entry.get("file") == fname and not entry.get("hidden") for entry in nav_entries)
         crossnav += "\n" + tree_html(tree, fname, listed=listed)
 
-    head_extra = ""
+    # Before every other stylesheet but base.css, so a page's own CSS can still set --g.
+    head_extra = f'<link rel="stylesheet" href="{GROUP_COLORS_ASSET}">\n' if site.get("group_colors") else ""
     if meta.get("math"):
         if not (KATEX_SRC / "katex.min.js").is_file():
             err(f"{name}: math=true but vendored KaTeX missing at {KATEX_SRC}")
@@ -854,6 +858,8 @@ def gather_assets(site: dict, *, origins: dict[str, str] | None = None) -> dict[
                 assets[f"assets/katex/{p.relative_to(KATEX_SRC).as_posix()}"] = p.read_bytes()
     # A built site contains the kit's styles and scripts, so its license notice goes with them.
     assets["assets/documentation-kit/LICENSE"] = (KIT_SITE.parent / "LICENSE").read_bytes()
+    if site.get("group_colors"):
+        assets[GROUP_COLORS_ASSET] = group_colors_css(site["group_colors"])
     extra = site.get('extra_assets', {})
     if not isinstance(extra, dict):
         raise ValueError('extra_assets must map asset names to project files')
@@ -870,6 +876,23 @@ def gather_assets(site: dict, *, origins: dict[str, str] | None = None) -> dict[
         if origins is not None:
             origins["html/" + destination] = source
     return assets
+
+
+def group_colors_css(colors: dict[str, str]) -> bytes:
+    """Colour each named navigation group through --g, as nav.js reads it.
+
+    The sidebar group header and its page links, the home-page map group and
+    the build-sheet chapter number of a page in the group take the colour.
+    """
+    lines = ["/* Generated from [group_colors] in docs/site/site.toml. */"]
+    for name, color in colors.items():
+        quoted = '"' + "".join(f"\\{ord(c):x} " if c in '"\\' or ord(c) < 32 or ord(c) == 127 else c
+                               for c in name) + '"'
+        lines.append(f".toc [data-group={quoted}],.map-group[data-group={quoted}]{{--g:{color}}}")
+        # The map card's top edge, also outside `.home-map`, as the theme's hard-coded groups had it.
+        lines.append(f".map-group[data-group={quoted}] .map-card{{border-top:2px solid var(--g)}}")
+        lines.append(f"body:has(.xpage.current[data-group={quoted}]){{--bs-number:{color}}}")
+    return ("\n".join(lines) + "\n").encode()
 
 
 def gather_page_css(pages_meta: list[dict], *, origins: dict[str, str] | None = None) -> dict[str, bytes]:
@@ -955,6 +978,16 @@ def main() -> int:
             ap.error(f"site.toml: folded_groups names {name!r}, which no visible [[nav]] entry uses as its group")
         if runs.count(name) > 1:
             ap.error(f"site.toml: folded group {name!r} is split by other [[nav]] entries; keep its entries together")
+    colors = site.get("group_colors", {})
+    if not isinstance(colors, dict):
+        ap.error('site.toml: group_colors must be a [group_colors] table mapping group names to colours, such as "guide" = "#6ee7c5"')
+    visible_groups = {entry.get("group") for entry in site.get("nav", []) if not entry.get("hidden", False)}
+    for name, color in colors.items():
+        if name not in visible_groups:
+            ap.error(f"site.toml: group_colors names {name!r}, which no visible [[nav]] entry uses as its group")
+        if not isinstance(color, str) or not GROUP_COLOR.fullmatch(color):
+            ap.error(f"site.toml: group_colors gives group {name!r} the colour {color!r}; "
+                     "use a hex colour such as \"#6ee7c5\"")
     global KNOWN_COMPONENTS
     extra = site.get("extra_components", [])
     if not isinstance(extra, list) or any(not isinstance(c, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", c) or c in KNOWN_COMPONENTS for c in extra) or len(set(extra)) != len(extra):

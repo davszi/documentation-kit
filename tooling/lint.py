@@ -579,7 +579,8 @@ def check_tails() -> None:
 def check_build() -> None:
     r = subprocess.run([sys.executable, str(Path(__file__).with_name("build.py")), "--check"],
                        capture_output=True, text=True)
-    if r.returncode == 2:
+    # A configuration error also exits with 2; it is reported as a failure, not as staleness.
+    if r.returncode == 2 and "build.py: error:" not in r.stderr:
         error(".build/docs/html is stale — run `python .docs-kit/docsite.py build --project .`")
     elif r.returncode != 0:
         error(f"build.py --check failed:\n{r.stderr.strip()}")

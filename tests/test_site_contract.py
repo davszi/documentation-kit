@@ -260,6 +260,54 @@ class SiteContract(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("folded group 'one' is split by other [[nav]] entries", result.stdout + result.stderr)
 
+    def test_group_colors_become_one_site_wide_stylesheet(self):
+        site = self.root / 'docs/site/site.toml'
+        text = site.read_text()
+        html = self.root / '.build/docs/html'
+        # Without the table no stylesheet is written or linked; nav.js gives the group a shared tone.
+        self.assertEqual(self.build().returncode, 0)
+        self.assertFalse((html / 'assets/group-colors.css').exists())
+        self.assertNotIn('group-colors.css', (html / 'guide.html').read_text())
+        site.write_text(text + '\n[group_colors]\n"guide" = "#FF8597"\n')
+        result = self.build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        css = (html / 'assets/group-colors.css').read_text()
+        self.assertIn('.toc [data-group="guide"],.map-group[data-group="guide"]{--g:#FF8597}', css)
+        self.assertIn('.map-group[data-group="guide"] .map-card{border-top:2px solid var(--g)}', css)
+        self.assertIn('body:has(.xpage.current[data-group="guide"]){--bs-number:#FF8597}', css)
+        for name in ('guide.html', 'index.html'):
+            links = re.findall(r'<link rel="stylesheet" href="assets/([^"?]+)', (html / name).read_text())
+            # Right after base.css, so a page's own stylesheet can still set --g.
+            self.assertEqual(links[:2], ['base.css', 'group-colors.css'], name)
+        lint = invoke('lint', '--project', self.root, '--strict')
+        self.assertEqual(lint.returncode, 0, lint.stdout + lint.stderr)
+        # A group name is quoted for CSS, so any name keeps the rule well formed.
+        guide_nav = 'group = "guide"'
+        site.write_text(text.replace(guide_nav, 'group = "say \\"hi\\" \\\\ now"')
+                        + '\n[group_colors]\n"say \\"hi\\" \\\\ now" = "#abc"\n')
+        self.assertEqual(self.build().returncode, 0)
+        css = (html / 'assets/group-colors.css').read_text()
+        self.assertIn('[data-group="say \\22 hi\\22  \\5c  now"]{--g:#abc}', css)
+        for table, message in (
+                ('"guide" = "red"', "group_colors gives group 'guide' the colour 'red'; use a hex colour"),
+                ('"guide" = "#fff;}body{display:none"', "group_colors gives group 'guide' the colour"),
+                ('"guide" = "#12345"', "group_colors gives group 'guide' the colour '#12345'"),
+                ('"guide" = 3', "group_colors gives group 'guide' the colour 3"),
+                ('"Guide" = "#ffffff"', "group_colors names 'Guide', which no visible [[nav]] entry uses")):
+            site.write_text(text + '\n[group_colors]\n' + table + '\n')
+            result = self.build()
+            self.assertNotEqual(result.returncode, 0, table)
+            self.assertIn(message, result.stdout + result.stderr)
+            # Lint reports the configuration error itself, not a stale site.
+            lint = invoke('lint', '--project', self.root)
+            self.assertNotEqual(lint.returncode, 0, table)
+            self.assertIn(message, lint.stdout + lint.stderr)
+            self.assertNotIn('is stale', lint.stdout + lint.stderr)
+        site.write_text('group_colors = "#ffffff"\n' + text)
+        result = self.build()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('group_colors must be a [group_colors] table', result.stdout + result.stderr)
+
     def test_one_character_mark_is_sized_as_a_glyph(self):
         site = self.root / 'docs/site/site.toml'
         text = site.read_text()
@@ -394,6 +442,20 @@ class SiteContract(unittest.TestCase):
         result = self.build()
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('description must be a non-empty string', result.stdout + result.stderr)
+
+
+class SharedTheme(unittest.TestCase):
+    def test_theme_names_no_project(self):
+        # The theme once carried its first consumer's variables, classes and navigation groups.
+        # A project now colours its groups with [group_colors] and uses the neutral names.
+        old = re.compile(r'--ad[ap]\b|\.(?:badge|card)\.ad[ap]\b|\b(?:band|b)-ad[ap]\b'
+                         r'|data-group="(?:method|road|racing|sim|related work)"')
+        theme = KIT / 'theme'
+        found = [f'{path.relative_to(KIT)}:{number}: {line.strip()[:80]}'
+                 for path in sorted([*theme.rglob('*.css'), *theme.rglob('*.js'), *theme.rglob('*.html')])
+                 if 'vendor' not in path.relative_to(theme).parts
+                 for number, line in enumerate(path.read_text().splitlines(), 1) if old.search(line)]
+        self.assertEqual(found, [])
 
 
 if __name__ == '__main__':

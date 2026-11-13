@@ -71,8 +71,13 @@ is deprecated, accepted and not read. `brand_sub` stays a page's own line. It ap
 name on a page without the chapter reader and on the page's site-map card when
 the page has no `description`.
 
-Navigation groups take their colour from `--g` in project CSS; a group without
-one gets the next shared tone in order.
+Navigation groups take their colour from `--g`. A `[group_colors]` table in
+`site.toml` sets it for the whole site, one hex colour per group, such as
+`"guide" = "#6ee7c5"`: the group's sidebar header and page links, its home-page
+map cards and the build-sheet chapter numbers of its pages take that colour.
+Each name must be the `group` of a visible `[[nav]]` entry, written exactly.
+Project CSS on a page may still set `--g`. A group without a colour gets the
+next shared tone in order.
 
 `page_number_notes = true` turns on lint notes, for the whole site, for numbers
 in a topic page's prose that none of the page's linked records state, as

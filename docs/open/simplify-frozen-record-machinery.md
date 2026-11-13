@@ -145,10 +145,11 @@ upgrade even when the kit's adapter hooks stay unchanged:
   them matched exact kit HTML and failed in the 3.0.0 upgrade. The kit now
   tests that logic itself, and ADP's checks on its branch cover only ADP
   content.
-- ADP's navigation group names are hard-coded in four kit stylesheets:
-  `theme/components/base.css`, `theme/components/chapter-reader.css`,
-  `theme/assets/home.css` and `theme/assets/build-sheet.css`. The accent
-  variable is named `--adp`.
+- ADP's navigation group names were hard-coded in four kit stylesheets, and
+  the accent variable was named `--adp`. Both are gone from the theme on
+  2026-11-13; a project now colours its groups with `[group_colors]` in
+  `site.toml`. See the
+  [worklog](../KIT_WORKLOG.md#2026-11-13--remove-adp-names-from-the-shared-theme).
 
 deivid decided on 2026-11-10 to keep ADP's five compatibility layers until the
 frozen-record choice was made. ADP's record

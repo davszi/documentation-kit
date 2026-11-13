@@ -2,6 +2,88 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-13 — Remove ADP names from the shared theme
+
+deivid asked to remove the names of the kit's first consumer, ADP, from the
+shared theme before the next release. The theme carried ADP's accent variable
+names, seven class names and the colours of ADP's five navigation groups.
+
+The variables `--adp` and `--ada` are gone. Every theme stylesheet now uses
+`--accent` and `--secondary`, which the two names only pointed to, and the
+panel-switcher browser test fixture sets `--accent`. The classes are renamed
+with the same styling: `.badge.adp` to `.badge.accent`, `.badge.ada` to
+`.badge.secondary`, `.card.ada` to `.card.secondary`, `svg .band-adp` to
+`svg .band-accent`, `svg .band-ada` to `svg .band-secondary`, `svg .b-adp` to
+`svg .b-accent` and `svg .b-ada` to `svg .b-secondary`. No kit page, example or
+rule used the old classes. `docs/open/simplify-frozen-record-machinery.md`
+named the variable and the hard-coded groups as an open coupling; it now says
+they are gone.
+
+The colours of the groups `method`, `road`, `racing`, `sim` and `related work`
+were hard-coded in `theme/components/base.css`,
+`theme/components/chapter-reader.css`, `theme/assets/home.css` and
+`theme/assets/build-sheet.css`. A project could not replace them site-wide,
+because project CSS is loaded per page. They are removed, and a new
+`[group_colors]` table in `site.toml` maps a group name to a hex colour. The
+name follows `folded_groups`, the existing setting for navigation groups. The
+build writes the table to `assets/group-colors.css` and links it on every page,
+right after `base.css`, so a page's own CSS can still set `--g`. The
+stylesheet sets `--g` on the group's sidebar header, section and page links and
+on its home-page map group, gives that group's map cards the same 2 px top edge
+the hard-coded rules gave them, and sets `--bs-number`, the build-sheet chapter
+number colour, on pages in the group. A group without an entry keeps the
+`nav.js` tones. The build rejects a value that is not a table, a colour that is
+not a 3, 4, 6 or 8 digit hex colour, and a name that no visible `[[nav]]` entry
+uses as its group. A group name is written into the stylesheet as an escaped
+CSS string, so any name keeps the rule well formed. The built site still ships
+the kit's component files unchanged, because the generated stylesheet has no
+source in `theme/components`. The build adds no inline style, and no content
+security policy exists in the build that it would need to satisfy.
+
+Lint ran `build.py --check` and read its exit status 2 as a stale site.
+`argparse` also exits with 2 on a configuration error, so lint reported every
+`site.toml` error, such as a wrong `folded_groups` entry, as "stale". Lint now
+reports the build's error message when the output names a `build.py` error.
+
+`rules/site/authoring.md` names the new table. No page under `docs/topics/`
+repeats that sentence; the guide renders as its own reference page. The
+starter's `site.toml` shows no optional settings, so it does not show the
+table either.
+
+The release notes have no section for unreleased changes, so the steps for
+consumers are recorded here until the next release's notes are written:
+
+- Rename `--adp` to `--accent` and `--ada` to `--secondary` in project CSS and
+  inline styles.
+- Rename the seven classes in pages and SVG figures: `badge adp` to
+  `badge accent`, `badge ada` to `badge secondary`, `card ada` to
+  `card secondary`, `band-adp` to `band-accent`, `band-ada` to
+  `band-secondary`, `b-adp` to `b-accent` and `b-ada` to `b-secondary`.
+- Add a `[group_colors]` table for the groups that should keep a fixed colour.
+  ADP's former values are `"method" = "#85b7eb"`, `"road" = "#ffb35c"`,
+  `"racing" = "#6ee7c5"`, `"sim" = "#b69cff"` and
+  `"related work" = "#8394a7"`. A name must match the group exactly: ADP's
+  `site.toml` on 2026-11-13 names the last group `Related work`, which the old
+  lowercase rule never matched, so that page group showed a `nav.js` tone.
+  Without the table, every group takes the `nav.js` tones in order.
+- On the home-page map, the old rules gave the cards of `road`, `racing`,
+  `sim` and `related work` a top edge in `--orange`, the accent, the secondary
+  colour and `--muted`, which differ from the sidebar colours. With the table
+  the cards take the sidebar colour of their group. A project that wants the
+  old edge colours sets them in its home page's own CSS.
+
+Checks: `DOCS_PYTHON=.build/docs-env/bin/python bash tests/run_checks.sh` with
+`DOCS_PLAYWRIGHT`, `DOCS_CHROMIUM` and Node 22 set, so the four browser suites
+ran, each under a 4 GB memory cap. New tests in `tests/test_site_contract.py`
+cover the table when valid, missing and invalid, the escaped group name, the
+lint message, and a scan of the theme for the old variables, classes and group
+names. The kit's own site and the starter were built before and after the
+change and captured at 1600×1000 and 390×844 on the home page, a chapter-reader
+topic page and a build-sheet page. The kit's groups already took the `nav.js`
+tones, and the captures before and after match. A starter built with a
+`[group_colors]` entry showed that colour on the sidebar group, the map card
+and the build-sheet chapter number.
+
 ## 2026-11-13 — Replace the remaining "frozen records" wording
 
 - deivid asked for this before the next release. Finished working documents
