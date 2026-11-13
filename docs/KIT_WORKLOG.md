@@ -2,6 +2,24 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-13 — Replace the remaining "frozen records" wording
+
+- deivid asked for this before the next release. Finished working documents
+  are deleted since the decision on frozen documents, so no rule may still
+  speak of frozen records.
+- `rules/engineering/code.md`: the users of an old name are now "saved data or
+  historical records".
+- `rules/site/resources.md`: the path adapter exists for records that are not
+  edited afterwards, named as old worklog entries and historical experiment
+  records; a project removes it once no such record names an old path.
+- `rules/documentation.md`: "dated or frozen links" is now "dated links, such
+  as those in old worklog entries".
+- Pages synced: `docs/topics/engineering-practices/index.md` (two places) and
+  `docs/topics/writing-practices/index.md` (the link sentence and the table
+  cell that listed "frozen evidence", now "finished working documents").
+- Left as it is: "a run request that is frozen" in the engineering page, which
+  means a fixed run request and not a document.
+
 ## 2026-11-12 — Align the run-output and unanswered-question wording with its neighbours
 
 - deivid asked for a review of the wording added in the entry below against

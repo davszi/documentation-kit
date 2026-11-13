@@ -19,7 +19,7 @@ The project prefers clean refactors to keeping old interfaces working.
 Before changing a name, path, format, API, URL or configuration key that
 something outside the change may still use, ask the project owner. Such users
 include published URLs or packages, other repositories that consume this one,
-saved data or frozen records that refer to it, and running jobs. Give the
+saved data or historical records that refer to it, and running jobs. Give the
 owner what the decision needs:
 
 - what changes and why;

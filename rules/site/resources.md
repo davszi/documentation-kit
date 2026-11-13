@@ -35,10 +35,10 @@ the kit keeps one build/lint engine and uses the adapters consistently.
 
 The path adapter is a kept compatibility layer under
 [refactoring over compatibility](../engineering/code.md#refactoring-over-compatibility).
-It exists because frozen records cannot be edited, yet their links to moved
-files must still resolve and be checked. Live files use current paths, not the
-adapter. A project removes its adapter once no retained frozen record names an
-old path.
+It exists because some records are not edited afterwards, such as old worklog
+entries and historical experiment records, yet their links to moved files
+must still resolve and be checked. Live files use current paths, not the
+adapter. A project removes its adapter once no such record names an old path.
 
 The evidence adapter may also export `document_origin(path, *, root)`. Return
 the registered repository origin for an exact source snapshot, or `None` to
