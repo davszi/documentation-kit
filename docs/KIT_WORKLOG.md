@@ -2,6 +2,15 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-13 — Record the open question about rule proposals
+
+- Five rule proposals drawn from the ADP cleanup were put to deivid in chat and
+  are not answered yet. Under the rule on unanswered questions they are now an
+  unresolved choice in `docs/open/rule-proposals-from-adp-cleanup.md`, routed
+  from `docs/open/KIT_OPEN.md`: the question, the proposals with what ADP met,
+  the recommendation and what waits on the answer.
+- No rule text changed.
+
 ## 2026-11-13 — Remove ADP names from the shared theme
 
 deivid asked to remove the names of the kit's first consumer, ADP, from the
