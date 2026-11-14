@@ -2,6 +2,20 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Withdraw one rule proposal and rework two
+
+- deivid called proposal 5, pictures are chosen and not collected, specific to
+  ADP. It is withdrawn from the kit proposals.
+- He asked for a critical second look at proposal 7. Its first wording, the
+  general rule before the example, is dropped: the explanation order is
+  already a rule, and an explanation may open with an example. What remains
+  is one sentence, that a statement holding for one case names the case.
+- He asked what the problem with proposal 4 is. The record now names three
+  gaps: which reading of the source-pin rule applies, runs that started from
+  uncommitted code, and what counts as one-off.
+- All of this is in `docs/open/rule-proposals-from-adp-cleanup.md`. No rule
+  text changed.
+
 ## 2026-11-14 — Add two rule proposals from a page review
 
 - deivid read ADP's attended-sessions page and corrected two things: the page
