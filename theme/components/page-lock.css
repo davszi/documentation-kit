@@ -1,0 +1,30 @@
+/* Lock page served in place of a locked page; base.css supplies fonts and colours. */
+body.page-lock{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:16px;box-sizing:border-box;background:var(--bg,#0d1117);color:var(--text,#c9d1d9);
+  font:16px/1.6 var(--sans,system-ui,sans-serif)}
+.page-lock-panel{width:100%;max-width:28rem;box-sizing:border-box;padding:28px 28px 22px;
+  background:linear-gradient(160deg,var(--panel,#161b22),var(--bg2,#0f141b));
+  border:1px solid var(--border,#2d333c);border-top:3px solid var(--accent,#39d2c0);border-radius:14px;
+  box-shadow:0 18px 50px rgba(0,0,0,.45),0 0 0 1px rgba(57,210,192,.06)}
+.page-lock-panel h1{margin:0 0 10px;font-size:1.45rem;line-height:1.25;color:var(--bright,#e6edf3)}
+.page-lock-text{margin:0 0 16px}
+.page-lock-form{display:grid;gap:10px}
+.page-lock-form[hidden],.page-lock-text[hidden]{display:none}
+.page-lock-form label{font-weight:600;color:var(--bright,#e6edf3)}
+.page-lock-form input[type=password]{width:100%;box-sizing:border-box;padding:10px 12px;font:inherit;
+  color:var(--bright,#e6edf3);background:var(--bg,#0d1117);border:1px solid var(--border,#2d333c);border-radius:8px;
+  transition:border-color .15s,box-shadow .15s}
+.page-lock-form input[type=password]:focus{outline:none;border-color:var(--accent,#39d2c0);
+  box-shadow:0 0 0 3px rgba(57,210,192,.22)}
+.page-lock-form .page-lock-remember{display:flex;align-items:center;gap:8px;font-weight:400;color:var(--text,#c9d1d9)}
+.page-lock-remember input{width:18px;height:18px;margin:0;accent-color:var(--accent,#39d2c0)}
+.page-lock-form button{justify-self:start;min-height:44px;padding:8px 22px;font:inherit;font-weight:700;
+  color:#0d1117;background:var(--accent,#39d2c0);border:0;border-radius:8px;cursor:pointer;
+  transition:filter .15s,box-shadow .15s}
+.page-lock-form button:hover{filter:brightness(1.1);box-shadow:0 0 18px rgba(57,210,192,.35)}
+.page-lock-form button:focus-visible{outline:2px solid var(--bright,#e6edf3);outline-offset:2px}
+.page-lock-form button:disabled{opacity:.6;cursor:progress}
+.page-lock-status{margin:12px 0 0;color:var(--orange,#f0883e)}
+.page-lock-status:empty{margin:0}
+@media (prefers-reduced-motion:reduce){.page-lock-form input,.page-lock-form button{transition:none}}
+@media print{body.page-lock{display:block;background:#fff;color:#000}.page-lock-panel{box-shadow:none}}

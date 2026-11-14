@@ -22,8 +22,9 @@ private_suffixes = [".md", ".py", ".toml"]
 private_prefixes = ["configs/"]
 ```
 
-All four keys are optional. Any other key fails with an error that names the
-supported keys.
+All keys are optional. Any other key fails with an error that names the
+supported keys. A fifth key, `lock = true`, turns on the
+[page lock](#page-lock).
 
 - `pages` names the generated HTML files whose source links and media are
   rewritten for the public bundle. Every generated file keeps its name.
@@ -77,3 +78,120 @@ bytes remain opaque. The shared source-span parser counts LF exactly as
 URLs, privacy decisions and deployment credentials in the consuming project.
 The generated input is the trusted kit build, not an arbitrary repository
 directory.
+
+## Page lock
+
+The page lock is an optional last step of `publish`. It stores the text of the
+public bundle encrypted, and a reader unlocks it in the browser with a
+password. Local `build` output and `export_pages` stay plain. A project that
+does not turn it on gets the same bundle as before, byte for byte.
+
+The lock is not access control. The encrypted files are public, and anyone who
+has a password can read and pass on everything it opens.
+
+### Turn it on
+
+1. Install the optional dependency wherever `publish` runs:
+   `python -m pip install -r .docs-kit/requirements-lock.txt`. It pins the
+   `cryptography` package. Without it, `publish` fails and names this command.
+2. Set `lock = true` in the `[publication]` table.
+3. Give the `publish` step two passwords as environment variables:
+   - `DOCSITE_GENERAL_PASSWORD` opens the topic pages and every other page.
+   - `DOCSITE_REFERENCE_PASSWORD` opens everything, including the Reference
+     pages and the exported Markdown files.
+
+In GitHub Actions, store both passwords as repository secrets and pass them to
+the publish step only:
+
+```yaml
+- name: Publish the locked bundle
+  env:
+    DOCSITE_GENERAL_PASSWORD: ${{ secrets.DOCSITE_GENERAL_PASSWORD }}
+    DOCSITE_REFERENCE_PASSWORD: ${{ secrets.DOCSITE_REFERENCE_PASSWORD }}
+  run: python .docs-kit/docsite.py publish --project . --out _site
+```
+
+Deploy the `--out` directory. The build output under `.build/docs/` stays
+plain, so deploying it publishes every page unlocked.
+
+The passwords never go into the repository, `site.toml`, the bundle or the
+command output. `publish` fails before it builds when a password is missing,
+when the two are equal, when one is shorter than 20 characters, or when one
+starts or ends with whitespace or holds a character a reader cannot type. The
+length check cannot tell a random passphrase from a guessable one. Generate
+each password, for example with
+`python -c "import secrets; print(secrets.token_urlsafe(24))"`, and give it to
+readers through a separate channel.
+
+### What is locked
+
+- Every HTML file in the bundle, whole: text, sidebar, inline figures and
+  embedded data. A lock page with the title "Locked page" and a `noindex`
+  robots tag is served at its address instead. The reference password is
+  needed for every page the build records as a Reference page: a route in
+  `source_pages` of `site-build.json`, or a page whose body has the class
+  `source-page`. The general password opens every other HTML file, including
+  pages shown in frames.
+- Every Markdown file the bundle exports, under the reference password. The
+  file keeps its address and holds a short notice and the encrypted text. A
+  link to it from an unlocked page opens the text.
+- The kit writes no search index. Navigation and the site map are part of
+  the pages and are locked with them.
+
+Images, plots, videos, stylesheets, scripts, fonts and every other file, such
+as JSON data, stay readable for anyone who has their address. `publish` ends
+with a summary: how many files each password opens, and how many files stay
+readable, by type. Check it for data files that should not be public.
+
+### Reading a locked site
+
+A reader types one password once. The browser keeps the decrypted content keys,
+never the password, in `sessionStorage` for the tab. With "Remember on this
+device" it also keeps them in `localStorage`. A reader with the general password
+who opens a Reference page is told that it needs the reference password. A
+wrong password gives one plain message, whichever password it was meant to be.
+Every publish uses new keys, so readers enter a password again after each
+publish. Unlocking needs JavaScript and a secure connection: HTTPS, `localhost`
+or a local file.
+
+### Keys and parameters
+
+PBKDF2-HMAC-SHA-256 with 600,000 iterations, the recommendation of the OWASP
+Password Storage Cheat Sheet, and a random 16-byte salt for each publish
+derives one key from each password. Each publish also draws a random 256-bit
+content key per password level. The general password's key wraps the general
+content key; the reference password's key wraps both content keys. Each locked
+file is encrypted with AES-256-GCM under its level's content key, with a fresh
+random 96-bit nonce and its path in the bundle as authenticated data.
+`tooling/page_lock.py` encrypts; `theme/components/page-lock.js` decrypts with
+the browser's WebCrypto.
+
+### Limits
+
+- Anyone can download the encrypted files and test password guesses offline,
+  as fast as their hardware allows, with no lockout and no trace. Only a long
+  random passphrase protects the text; the iteration count only makes each
+  guess slower.
+- Each level has one shared password. There is no access per person, no way
+  to shut out one reader and no record of who read what.
+- Anyone with a password can save the decrypted pages and pass them on. The
+  content keys the browser stores open the current publish without the
+  password.
+- The unlock script is not encrypted. Whoever can change the published site
+  or the job that publishes it can replace the script and collect passwords
+  as readers type them.
+- A new password protects only later publishes. Copies downloaded earlier,
+  and earlier public versions kept by caches and web archives, stay readable
+  with the old password or without one.
+- Images, plots, scripts and data files are not locked. Their addresses often
+  follow repository paths, so they can be guessed.
+- A lock page shows the size of the page it holds and which password it
+  needs. Pages opened with the general password list the titles and paths of
+  the Reference pages in their sidebar.
+- Pages need JavaScript. A project script that fetches an HTML or Markdown
+  file from the bundle receives the locked file.
+- Search engines stop listing the site, because they see only lock pages.
+- Remembered keys stay in the browser until the next publish replaces them or
+  the reader clears the site's data. Any page served from the same origin,
+  such as another GitHub Pages site of the same account, can read the stored
+  keys, remembered or not.

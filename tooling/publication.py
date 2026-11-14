@@ -6,7 +6,8 @@ and the exact existing outputs that may be replaced. HTML changes use source
 spans; scripts, JSON, labels and unrelated attributes remain opaque.
 
 ``publish_project`` builds a project and exports a fresh bundle configured by
-the ``[publication]`` table in ``docs/site/site.toml``.
+the ``[publication]`` table in ``docs/site/site.toml``. With ``lock = true``
+it then encrypts the bundle's page text (``page_lock``).
 """
 from __future__ import annotations
 
@@ -24,6 +25,7 @@ from collections.abc import Iterable, Mapping
 from urllib.parse import unquote, urlsplit
 
 from chapter_layout import Structure
+from page_lock import prepare_lock
 
 
 # Applied only to an actual opening tag found by Structure, never page text.
@@ -202,7 +204,7 @@ def export_pages(generated_root: Path, destination: Path, *, root: Path,
     return tuple(outputs)
 
 
-PUBLICATION_KEYS = ('assets_manifest', 'pages', 'private_suffixes', 'private_prefixes')
+PUBLICATION_KEYS = ('assets_manifest', 'pages', 'private_suffixes', 'private_prefixes', 'lock')
 
 
 def _publication_options(config: dict) -> dict:
@@ -244,6 +246,8 @@ def publish_project(root: Path, destination: Path, *, kit: Path) -> None:
         raise ValueError('Generated and publication directories must not overlap')
     config = tomllib.loads((root / 'docs/site/site.toml').read_text())
     options = _publication_options(config)
+    # The optional page lock checks its dependency and passwords before building.
+    lock = prepare_lock(options)
     pages = [_name(page) for page in options.get('pages', [])]
     suffixes = tuple(options.get('private_suffixes', []))
     prefixes = tuple(options.get('private_prefixes', []))
@@ -299,5 +303,8 @@ def publish_project(root: Path, destination: Path, *, kit: Path) -> None:
             shutil.copyfile(source(name), path)
         export_pages(generated, output, root=root, tracked=tracked, pages=pages, public_files=public,
                      private_suffixes=suffixes, private_prefixes=prefixes)
+        locked = lock.apply(output, built.get('source_pages', {})) if lock else ''
         output.rename(destination)
     print(f'Published {len(pages)} configured pages and {len(public)} project resources to {destination}')
+    if locked:
+        print(locked)

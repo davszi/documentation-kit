@@ -52,7 +52,8 @@ optional project layout changes and adapters.
 The [website record](topics/website/website.md) owns the kit's own site.
 Build it from the kit root with `python docsite.py build --project .`.
 
-Development checks use Python 3.12, the pinned root `requirements.txt`, Node
+Development checks use Python 3.12, the pinned root `requirements.txt` and
+`requirements-lock.txt` (the page lock's optional dependency), Node
 22 and the Playwright that the root `package.json` and `package-lock.json` pin,
 installed with `npm ci` into the ignored `node_modules/`. Run
 `bash tests/run_checks.sh` with `DOCS_PYTHON` selecting that interpreter;

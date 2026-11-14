@@ -55,6 +55,8 @@ and run `python .docs-kit/docsite.py publish --project . --out _site`. The kit
 builds and exports the bundle. The project declares its public pages, admitted
 files and private-source policy. See
 [configured publication](rules/site/publication.md#configured-publication).
+The optional [page lock](rules/site/publication.md#page-lock) stores the
+bundle's page text encrypted behind two passwords.
 
 ## Ownership
 
@@ -171,11 +173,18 @@ optional.
 ## Develop the kit
 
 ```bash
-python -m pip install -r requirements.txt
+python -m pip install -r requirements.txt -r requirements-lock.txt
 npm ci
 npx playwright install chromium
 bash tests/run_checks.sh
 ```
+
+`requirements-lock.txt` pins the `cryptography` package, which only the
+optional page lock needs. The page-lock checks need it too:
+`tests/test_page_lock.py`, the WebCrypto cross-check
+`tests/test_page_lock_webcrypto.cjs` and the browser suite
+`tests/test_page_lock_browser.cjs`. Without it the script skips them, and
+`DOCS_REQUIRE_BROWSER=1` turns that into a failure.
 
 `npm ci` installs the Playwright version that `package.json` and
 `package-lock.json` pin into the kit's own `node_modules/`, which Git ignores;
