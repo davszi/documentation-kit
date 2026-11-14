@@ -15,25 +15,32 @@ makes a release major when it "removes or renames a stable interface,
 including a section anchor under `rules/`". The unreleased changes remove the
 anchor `#evidence-identity-and-frozen-records` of `rules/records.md`; the
 section is now "Finished working documents". By that record the release is
-4.0.0. The theme renames alone would allow a minor release, because theme
-class names are a provisional interface.
+4.0.0.
+
+The theme renames alone would allow a minor release for the class names,
+which are a provisional interface. The removed CSS variables `--adp` and
+`--ada` stand in neither column of the interface table.
 
 The same record says each version's migration guide gives the step for every
-such change. deivid decided earlier to
-[remove all migration guides](remove-migration-guides.md) once ADP `main` is
-on 3.2.x. ADP `main` is not there yet.
+such change. deivid decided on 2026-11-11 to
+[remove all migration guides](remove-migration-guides.md) at once, after ADP's
+`main` is on kit 3.2.x. That trigger is met: ADP's `origin/main` pins
+`f34cf63`, which is `v3.2.1`, since ADP commit `e27e1e97` of 2026-11-11.
+Checked on 2026-11-14 against a fetch of 2026-11-12; ADP's local `main`
+branch is older and still pins 3.1.0.
 
 ## Options
 
-- 4.0.0 with a migration guide, as the release record asks today.
-- 4.0.0 with the consumer steps in the release notes only, and the sentence
-  about migration guides changed in the release record in the same release.
+- 4.0.0, with the migration guides removed in the same release as decided,
+  and the consumer steps in the release notes.
+- 4.0.0 with one more migration guide, and the removal in a later release.
 - 3.3.0, which contradicts the version promise.
 
 ## Recommendation
 
-4.0.0 with the consumer steps in the release notes only. It follows the
-version promise and the earlier decision against migration guides.
+4.0.0 with the guides removed in the same release. The removal renames or
+removes pages and anchors of its own, so it needs a major release anyway, and
+this one already is major.
 
 ## What waits on the answer
 

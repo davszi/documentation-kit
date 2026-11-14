@@ -21,8 +21,11 @@ So a fresh clone that follows the [README](../../README.md) gets no browser
 suites, and a local run can use a different Playwright version than the
 workflow.
 
-## Options
+## Question
 
+How does the kit declare Playwright and Chromium for its browser suites?
+
+## Options
 
 - declare Playwright in a `package.json` with a lock file, install it in the
   README's setup steps and let the workflow install from the same file;

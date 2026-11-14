@@ -1,7 +1,9 @@
 # Remove the migration guides once ADP is on 3.2.x
 
 deivid decided on 2026-11-11: remove all migration guides at once, after
-ADP's `main` is on kit 3.2.x. Not done yet.
+ADP's `main` is on kit 3.2.x. The trigger is met since 2026-11-11; the removal
+is not done yet and is proposed for the
+[next release](next-release-version.md).
 
 ## Why
 
@@ -17,8 +19,10 @@ are not visible.
 
 ## Trigger
 
-ADP `main` pins a 3.2.x kit commit. On 2026-11-11 it pins `f970494` (3.1.0);
-the 3.2.0 upgrade is on the local branch `claude/topic-records-1786aa`.
+ADP `main` pins a 3.2.x kit commit. ADP's `origin/main` pins `f34cf63`
+(`v3.2.1`) since ADP commit `e27e1e97` of 2026-11-11, checked on 2026-11-14.
+An earlier version of this record read ADP's stale local `main` branch, which
+still pins `f970494` (3.1.0), and so called the trigger unmet.
 Adaptation is on 3.2.0 and pushed.
 
 ## What changes in the kit

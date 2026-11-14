@@ -38,6 +38,13 @@ say what happens to a caller that is a finished probe.
 
 The narrower form creates no duty to search for old scripts that still run.
 
+One point the wording still has to settle: whether deleting the tracked
+script needs the person's approval. The
+[deletion gate](../../rules/documentation.md#rules-for-changes-and-chronology)
+names documents, figures and content lines, not code, and a full refactor
+already removes old code without a separate approval. The proposal reads the
+deletion as part of the refactor.
+
 ## Options
 
 - Write the two sentences.

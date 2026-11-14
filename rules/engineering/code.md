@@ -19,8 +19,8 @@ install it into the environment. Code does not load a third-party library from
 a path outside the environment, such as an untracked checkout or a folder
 under build output. A copy tracked in the repository is vendored: it carries
 its license and a notice of its source and version. A Git submodule pinned to
-a commit is a declared dependency, and a dependency file inside it counts as
-declared. The environment itself may live in an ignored folder, including one
+a commit is a declared dependency that code may load from its checkout, and a
+dependency file inside it counts as declared. The environment itself may live in an ignored folder, including one
 under build output.
 
 The project's setup guide, followed from a fresh clone, produces the

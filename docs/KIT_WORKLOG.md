@@ -2,6 +2,35 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Close the second review's findings and correct the ADP pin
+
+The same reviewer read the previous landing. It found the rule text ready for
+release, with six minor points and one wrong fact in an open record.
+
+- Wrong fact: `docs/open/next-release-version.md` and
+  `docs/open/remove-migration-guides.md` said ADP's `main` was not on kit
+  3.2.x. ADP's `origin/main` pins `f34cf63` (`v3.2.1`) since 2026-11-11; the
+  records had read ADP's stale local `main` branch. The trigger deivid set for
+  removing the migration guides is therefore met, and the version record now
+  recommends 4.0.0 with the guides removed in the same release.
+- Scratch files: the item that is never scratch is the output of an
+  experiment or measurement run, so that a test's temporary folder is not
+  read as run output. A by-eye capture written into a tool's fixed output
+  folder is still scratch. A kept capture is named in the report, and
+  delegated work counts as this work. The deletion gate calls scratch files
+  "an exception", not "the one exception", because finished open-work lines
+  are also deleted.
+- `rules/records.md` says "temporary folder" where it said "scratch folder".
+  A pinned submodule may be loaded from its checkout. A project that needs
+  `worklog_links_checked_from` does not register its worklog as a source page
+  until the build applies the setting.
+- Pages: three sentences in `docs/topics/engineering-practices/index.md` and
+  `docs/topics/writing-practices/index.md` follow the rule text again.
+- Open records: the Playwright record gained its question sentence, and the
+  rule proposal names the approval point its wording has to settle.
+
+These last edits were not reviewed a third time.
+
 ## 2026-11-14 — Close the findings of the independent review
 
 An independent reviewer read every unreleased change after `v3.2.1`. It found
