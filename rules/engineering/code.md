@@ -49,5 +49,12 @@ uses the old form, refactor fully: update every caller and reference in the
 same change and remove the old form. Add no aliases, shims, fallbacks, redirects
 or deprecation periods.
 
+A caller that is a finished probe or one-time script is deleted in the same
+change instead of updated, when nothing else imports it, no rerun is planned
+and its result is recorded with a
+[source pin](../records.md#numbers-and-staleness) that stands for it. Claims
+that rest on it are historical from then on. The deletion is part of the
+refactor and needs no separate approval.
+
 If the owner decides to keep compatibility, record why it exists and when it
 can be removed.

@@ -91,7 +91,7 @@ Full guide: [Code and repository practices](code-practices.html) · [Logging and
 <div class="bs-node"><span class="bs-label">3b · Keep it</span><h3>Record it</h3><ul><li>Why it exists</li><li>When it can be removed</li></ul></div>
 </div>
 
-The project prefers clean refactors. An alias, fallback or redirect looks cheap when it is added, but every later reader must learn both forms, every check must cover both, and nobody remembers when the old one may go. The guide therefore removes the old form by default. Only the owner can know whether a link went out to people, whether another repository depends on a path, or whether a historical record still names it, so the decision is theirs; the agent's part is to find the users and state what would break. When nothing outside the change uses the old form, no question is needed: the refactor goes ahead.
+The project prefers clean refactors. An alias, fallback or redirect looks cheap when it is added, but every later reader must learn both forms, every check must cover both, and nobody remembers when the old one may go. The guide therefore removes the old form by default. Only the owner can know whether a link went out to people, whether another repository depends on a path, or whether a historical record still names it, so the decision is theirs; the agent's part is to find the users and state what would break. When nothing outside the change uses the old form, no question is needed: the refactor goes ahead. One kind of caller is deleted instead of updated: a finished probe or one-time script that nothing imports and that will not run again, once its result is recorded with a source pin that stands for the code.
 
 An illustrative example, not taken from a real project:
 

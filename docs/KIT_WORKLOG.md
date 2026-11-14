@@ -2,6 +2,25 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — A finished probe script that a refactor breaks is deleted
+
+- deivid accepted the last rule proposal from the ADP cleanup on 2026-11-14
+  ("do proposal 4"). [Refactoring over compatibility](../rules/engineering/code.md#refactoring-over-compatibility)
+  gains one paragraph: a caller that is a finished probe or one-time script is
+  deleted in the same change instead of updated, when nothing else imports it,
+  no rerun is planned and its result is recorded with a source pin that stands
+  for it; claims that rest on it are historical from then on, and the deletion
+  needs no separate approval. [Numbers and staleness](../rules/records.md#numbers-and-staleness)
+  gains one sentence: the pin still stands for the code after the code is
+  deleted from the current tree.
+- A pin stands for code only under the conditions the source-pin paragraph
+  already gives, a clean tree at the start of the run among them. A script
+  whose run had uncommitted code is therefore not deleted this way.
+- The compatibility chapter of the engineering-practices page, the 4.0.0
+  release notes and the 4.0.0 migration guide name the rule. The open record
+  `docs/open/rule-proposals-from-adp-cleanup.md` is deleted; all seven
+  proposals are now answered.
+
 ## 2026-11-14 — Prepare release 4.0.0
 
 - The release notes gain a 4.0.0 section and the new
