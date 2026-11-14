@@ -2,6 +2,58 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Prepare release 4.0.0
+
+- The release notes gain a 4.0.0 section and the new
+  [4.0.0 migration guide](topics/releases/migrations/4.0.0.md) gives each step
+  a consumer takes from `v3.2.1`, in order, with how to check it is done and
+  whether lint or the build enforces it. `VERSION` is `4.0.0`. The guide is a
+  registered source page in `docs/site/site.toml` and listed in the
+  navigation, and `tests/own_site_review.cjs` expects its route. The README,
+  the project context and the reading index name 4.0.0 as the current release.
+- The content comes from `git diff v3.2.1..HEAD` and the entries of 2026-11-11
+  to 2026-11-14. The consumer steps those entries recorded were checked
+  against the diff before they were written. Corrections: the five hard-coded
+  group colours applied only to groups named exactly `method`, `road`,
+  `racing`, `sim` and `related work`, so a project with other group names
+  sees no colour change; a project CSS rule with a weaker selector loses only
+  for a group that `[group_colors]` names, because the generated stylesheet
+  exists only with the table; review captures left from earlier work are
+  proposed for deletion rather than deleted, since the scratch rule covers
+  only what the current work created. Added: the theme names also live in
+  figure generators; a project that set its own `--adp` or `--ada` value sets
+  `--accent` or `--secondary`; the changed shared files that get a new `?v=`
+  query, and `assets/group-colors.css` as the only file a build can gain; an
+  `[extra_assets]` file named `group-colors.css` fails the build with the
+  table; the new keys may collide with a project's own; lint now reports
+  `site.toml` errors instead of a stale site; the new slide-face classes; the
+  tooling modules read the project root from `DOCSITE_PROJECT_ROOT`; the
+  starter router is unchanged.
+- The guide covers the six gaps that adaptation's upgrade met in earlier
+  guides: steps name which projects they affect, the pin is moved straight to
+  the target with advice for an unfetchable old pin, project checks compare
+  asset URL paths without the query, the release notes name every packaged
+  file that changes, importing the tooling is named as unstable with the
+  environment variable it reads, and pages locked by hash get an approved
+  content revision before an edit.
+- probed lint on an old-anchor link and a `badge adp` class → link fails, class passes silently, lint printed `anchor #evidence-identity-and-frozen-records not found` and nothing for the class, 2 min.
+- The release notes state three open defects: the worklog cut-off is not
+  applied by the build to a rendered worklog, the theme's plot labels and
+  font versions, and the undeclared Playwright of the kit's browser suites.
+- Checks: `docsite.py build` and `lint --strict` of the kit site, clean.
+  `bash tests/run_checks.sh` with `DOCS_PLAYWRIGHT` (Playwright 1.62.1),
+  `DOCS_CHROMIUM`, Node v22.23.3 and `DOCS_REQUIRE_BROWSER=1`, under a 4 GB
+  memory cap, passed: 185 unit tests, the Node logic checks, 25 scripts parse,
+  and the four browser suites, the own-site suite on 41 pages. Only this
+  checks line was added after that run; build and strict lint ran again on
+  the final state. The guide page and the changed release notes were looked
+  at by eye at 1600×1000 and 390×844: no page overflow, the tables sit in
+  their labelled scroll regions at 390 px as the older release tables do, and
+  the navigation lists "Migrate to 4.0.0" above the 3.2.0 guide.
+- Not tagged and not pushed; `docs/open/next-release-version.md` keeps the
+  release waiting for deivid's go. The commit hash is assigned by this
+  landing's commit.
+
 ## 2026-11-14 — Keep the migration guides
 
 - deivid withdrew his decision of 2026-11-11 to remove all migration guides.

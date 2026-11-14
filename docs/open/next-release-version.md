@@ -19,6 +19,8 @@ is tagged and pushed.
 ## What waits
 
 deivid's go for the tag and the push. A push to `main` publishes the kit's
-site. Before asking: the release notes and the 4.0.0 migration guide, the
-`VERSION` file, and the full check run with the browser suites on the final
-state.
+site. The release notes, the
+[4.0.0 migration guide](../topics/releases/migrations/4.0.0.md) and `VERSION`
+landed on 2026-11-14; the
+[worklog](../KIT_WORKLOG.md#2026-11-14--prepare-release-400) records the
+checks that ran on that state.

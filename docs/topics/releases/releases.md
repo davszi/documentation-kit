@@ -25,6 +25,81 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## 4.0.0 — finished working documents, neutral theme names and group colours
+
+4.0.0 is a major release under
+[what a version number promises](#what-a-version-number-promises) for one
+reason: it removes a section anchor under `rules/`. `rules/records.md` loses
+`#evidence-identity-and-frozen-records`; its section is replaced by
+[finished working documents](../../../rules/records.md#finished-working-documents),
+which says the opposite: a finished plan, decision record, review or
+coordination note is deleted and cited from Git, not kept as an unedited copy.
+Lint fails on a Markdown link to the old anchor until the project repoints it;
+links written as HTML `<a href>` are not checked. No other anchor under
+`rules/` changed, and no command, flag, configuration key, marker or adapter
+signature is removed. The new `build --check-reader` flag and the new
+`site.toml` settings `worklog_links_checked_from` and `[group_colors]` join the
+stable interfaces. Follow the [4.0.0 migration guide](migrations/4.0.0.md).
+
+Removed or renamed interfaces, with their status under the
+[stable and provisional interfaces](#100--first-stable-version):
+
+- The section anchor `rules/records.md#evidence-identity-and-frozen-records`:
+  stable, removed. This makes the release major.
+- The CSS variables `--adp` and `--ada`: theme internals, never listed as
+  authoring markup, so provisional. Renamed to `--accent` and `--secondary`,
+  which they only pointed to.
+- The classes `badge adp`, `badge ada`, `card ada`, `band-adp`, `band-ada`,
+  `b-adp` and `b-ada`: theme class names outside the documented authoring
+  markup, so provisional. Renamed to `badge accent`, `badge secondary`,
+  `card secondary`, `band-accent`, `band-secondary`, `b-accent` and
+  `b-secondary`, with the same styling.
+- The colours of the navigation groups `method`, `road`, `racing`, `sim` and
+  `related work`, hard-coded in four theme stylesheets: provisional theme
+  styling, removed. `[group_colors]` replaces them.
+- The `reader-drawer-pin` button: a theme class, provisional, removed. The
+  reader built it and never added it to the page.
+
+No lint or build check reports a project that still uses one of the renamed
+theme names; the element only loses its style. The migration guide gives a
+search for each.
+
+| Area | Consumer change | Owning contract |
+|---|---|---|
+| Rules | Removed: the section "Evidence identity and frozen records". New: finished working documents. A plan, decision record, review or coordination note is deleted once its work has landed and its lasting content is in the owning record, with the person's approval; Git keeps it, and whatever still needs it cites the commit and path. No unedited copy stays in the tree or moves into an evidence folder | [Finished working documents](../../../rules/records.md#finished-working-documents), [rules for changes and chronology](../../../rules/documentation.md#rules-for-changes-and-chronology) |
+| Rules | Run output that a stated number or verdict rests on is tracked in the experiment directory before the experiment is reported complete; a claim that rests on output only in an untracked folder is not measured. Keeping run output outside Git is the person's decision, recorded as an unresolved choice until answered. The 3.2.1 sentence that let repository size decide where material is stored is gone | [Numbers and staleness](../../../rules/records.md#numbers-and-staleness) |
+| Rules | Uncommitted code of a run is kept as a diff against the commit the run started from, with new files and submodule changes; a run does not copy the working tree, and an unavoidable copy holds no ignored files. A plan, protocol or review document that a run recorded by hash is identified by its commit, path and hash | [Numbers and staleness](../../../rules/records.md#numbers-and-staleness) |
+| Rules | A question for the person that is not answered before work stops is written into open work as an unresolved choice, routed from `OPEN.md` | [Decisions and blockers](../../../rules/engineering/delivery.md#decisions-and-blockers) |
+| Rules | New section: scratch files. An agent deletes the untracked drafts, review captures and temporary test folders its own work created, without approval; run output is never scratch. A record cites no scratch file by path or hash | [Scratch files](../../../rules/engineering/handoffs.md#scratch-files), [validation and review](../../../rules/site/validation.md#validation-and-review) |
+| Rules | New section: dependencies. Every dependency is declared in the project's dependency file and installed; a pinned Git submodule counts as declared | [Dependencies](../../../rules/engineering/code.md#dependencies) |
+| Rules | A repository has one `README.md`, at its root; any other folder's guide is named after its subject. Not enforced by lint; the conformance check lists it | [README is the bounded exception](../../../rules/documentation.md#readme-is-the-bounded-exception), [conformance](../../../rules/conformance.md) |
+| Rules | A page that explains how something works names the people who do the work by role, not by name | [Page design](../../../rules/writing/pages.md#page-design) |
+| Rules | Slide faces are added only when the person says yes, after the chapters are built. A face shows one finding with a real visual; a face whose main area only repeats its title and lead in boxes is removed. A missing figure is work for the page author, made from what exists | [Slide faces](../../../rules/writing/pages.md#slide-faces), [figures](../../../rules/writing/figures.md#figures-and-comparisons) |
+| Rules | A generated figure names its generator and its input data; the manifest no longer records revision, date or output hash, which Git holds. Lint reads only `script`, as before | [Figures](../../../rules/writing/figures.md#figures-and-comparisons) |
+| Rules | The path and evidence adapters exist only for projects that keep old documents whose links name old paths; a project removes its adapter once no record that is not edited afterwards names an old path. The hooks still work in 4.0.0, and the kit removes each one once no project uses it | [Resources](../../../rules/site/resources.md#resource-closure-and-evidence) |
+| Configuration | New optional `worklog_links_checked_from = "YYYY-MM-DD"`: lint checks links only in worklog entries dated on or after that day. A value that is not an ISO date is an error | [Resources](../../../rules/site/resources.md#resource-closure-and-evidence) |
+| Configuration | New optional `[group_colors]` table: one hex colour per navigation group, written to `assets/group-colors.css` and linked on every page after `base.css`. The build rejects a value that is not a table, a colour that is not a 3, 4, 6 or 8 digit hex colour, and a name no visible `[[nav]]` entry uses. Groups without an entry take the `nav.js` tones | [Authoring paths](../../../rules/site/authoring.md#authoring-paths) |
+| Command | New `docsite.py build --project . --check-reader`: renders every topic page with and without the chapter reader, writes nothing and exits with status 1 when the reader changes a page's content | [Validation and review](../../../rules/site/validation.md#validation-and-review) |
+| Theme | `--adp` and `--ada` renamed to `--accent` and `--secondary`; seven classes renamed, as listed above. The hard-coded colours of five group names are gone, so those groups take `nav.js` tones until the project sets `[group_colors]`; with the table, their home-map card edges take the group colour. The unused pin button is removed | [Authoring paths](../../../rules/site/authoring.md#authoring-paths) |
+| Theme | New slide-face classes `slide-points` and `slide-facts`, and a keyed `figcaption.slide-legend` inside `slide-figure` | [Slide faces and decks](../../../rules/site/authoring.md#slide-faces-and-decks) |
+| Build output | Changed shared files get a new `?v=` query on every page: `base.css`, `chapter-reader.css`, `chapter-reader.js`, `panel-switcher.css`, `slide-face.css`, `home.css`, `build-sheet.css` and three font `SOURCE.txt` notices. A site with `[group_colors]` gains `assets/group-colors.css`; no other built file is added or removed | [Authoring and configuration](../../../rules/site/authoring.md) |
+| Lint | A configuration error in `site.toml` was reported as a stale site; lint now prints the build's error | [Validation and review](../../../rules/site/validation.md#validation-and-review) |
+| Starter | The guide page's two slide faces are rebuilt around SVG figures in two new fragments. The starter router is unchanged | [Slide faces](../../../rules/writing/pages.md#slide-faces) |
+| Kit checks | Node checks of the reader, fold controls and panel switcher run in an imitation page without a browser; a test checks that a built site ships the kit's component files unchanged | [README](../../../README.md#develop-the-kit) |
+
+Known open defects, each recorded under `docs/open/`:
+
+- `worklog_links_checked_from` applies to lint only. A worklog that is also a
+  registered source page still fails the build on a missing link target in
+  any entry. No known consumer registers its worklog.
+  [Record](../../open/worklog-cutoff-not-applied-to-source-pages.md).
+- `theme/components/plot-toggles.js` still holds one project's plot series
+  labels, and the notices of three vendored fonts give no font version.
+  [Record](../../open/shared-theme-leftovers.md).
+- The kit's own browser suites use a Playwright that no dependency file
+  declares, against the new dependencies rule. Consumers are not affected.
+  [Record](../../open/browser-test-dependency-not-declared.md).
+
 ## 3.2.1 — rule wording corrected
 
 3.2.1 is a patch release under
