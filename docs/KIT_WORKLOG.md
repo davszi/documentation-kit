@@ -2,6 +2,17 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Adaptation's redraw under the released rule
+
+- Adaptation's session removed six failing faces and redrew six, on deivid's
+  decision there, under the slide-face rule as released in 4.0.0.
+- The kit owner viewed the six redrawn faces: all six have one arrangement.
+  That and five mechanism gaps the session met are added to
+  `docs/open/upgrade-to-4.0.0-findings.md`.
+- Adaptation pins `v4.0.0`, which holds the old rule. The changed rule of the
+  entry below is local and unreleased, so no project can read it from its pin.
+- Checks: build and strict lint.
+
 ## 2026-11-14 — Slide faces: no prescribed arrangement
 
 - deivid decided that slide faces get no fixed layout: each face is designed

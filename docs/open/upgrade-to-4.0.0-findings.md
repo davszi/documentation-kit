@@ -121,6 +121,32 @@ these; only the first is checked here.
    The session committed the pin first, ran the checks and amended. A note for
    such consumers may help; the cause is ADP's tooling.
 
+## What a redraw under the 4.0.0 rule showed
+
+deivid decided in adaptation's session to redraw six of the failing faces and
+remove six. The session did so on 2026-11-14 in its commit `b6e9431`, under
+the rule as released in 4.0.0, before the change recorded below reached it.
+
+- Checked here by eye on the six redrawn faces: each now shows its chapter's
+  figure, and all six have the same arrangement, a lead, the figure in a box
+  on the left and three numbered points on the right. One figure, a grid of
+  small cells, cannot be read at slide size, and one is itself a drawing of
+  number tiles. The prescribed arrangement produced six faces that look alike.
+- Reported by the session, not checked here:
+  1. "Reuse the chapter's own figure" has no mechanism. A chapter figure
+     carries ids and a face may not, so the session wrote a second fragment
+     through `slide_svg` in the kit's tooling, which the 4.0.0 guide calls not
+     stable.
+  2. A full-width chapter figure drops below 8 px label size in the default
+     `slide-split`. `is-wide-side` keeps it readable, but its narrow column
+     cannot hold a point of one or two sentences.
+  3. A two-line title, a two-line lead, a figure with a legend and three
+     points overflow 16:9. Three of six first drafts overflowed.
+  4. A figure taller than wide fits no shared layout; the project needed its
+     own class.
+  5. Removing a face cost a generator change, a fragment, the expected count
+     of a check and a hash in the project's location manifest.
+
 ## Decided and still owed
 
 deivid decided on 2026-11-14, when asked whether a face with a real visual but
