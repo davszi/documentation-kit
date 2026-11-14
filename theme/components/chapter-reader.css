@@ -378,3 +378,89 @@ body.topic-deck {overflow:hidden;}
    the card's full width. Images narrower than the column are centred.
    One-chapter view caps the card width; cards keep the full stage height. */
 .content[data-topic-layout="deck"]:not([data-topic-view="pair"]) .topic-strip > .topic-card {flex-basis:min(88%,1500px);}
+
+/* Presentation and Slides controls appear only on pages with a slide face. "From start"
+   sits beside Presentation as its quieter companion. */
+.reader-views [data-reader-present-start] {color:var(--muted);}
+.reader-enabled .reader-bar .reader-slides {display:inline-flex;align-items:center;gap:7px;flex:none;padding:0 12px;font-size:12px;white-space:nowrap;border-color:var(--border);}
+.reader-slides::before {content:'';flex:none;width:14px;height:8px;border:1.5px solid currentColor;border-radius:2px;}
+.reader-enabled .reader-bar .reader-slides[aria-pressed="true"] {color:var(--accent);background:rgba(57,210,192,.1);border-color:rgba(57,210,192,.3);}
+.reader-slides[aria-pressed="true"]::before {background:var(--accent);box-shadow:0 0 8px rgba(57,210,192,.6);}
+/* Narrow bars keep the switch as its slide icon; its label stays for assistive technology. */
+@media (max-width:600px) {.reader-enabled .reader-bar .reader-slides {width:44px;justify-content:center;padding:0;} .reader-slides-label {display:none;}}
+@container reader (max-width:600px) {.reader-enabled .reader-bar .reader-slides {width:44px;justify-content:center;padding:0;} .reader-slides-label {display:none;}}
+.reader-slides[hidden],.present-bar[hidden] {display:none!important;}
+/* With Presentation, From start and Slides the view buttons need more room, so
+   these pages switch to the view menu at a wider bar; the narrowest bar in All
+   chapters keeps its controls and drops the page name. */
+@container reader (max-width:980px) {
+  .reader-bar:has([data-reader-view="present"]:not([hidden])) .reader-views {display:none;}
+  .reader-bar:has([data-reader-view="present"]:not([hidden])) .reader-view-select {display:block;}
+}
+@container reader (max-width:440px) {
+  .reader-bar:has(.reader-slides:not([hidden])) .reader-title strong {display:none;}
+}
+
+/* All chapters reads as one document: slide faces and their bridges stay hidden
+   until the Slides switch shows them. Print follows the same choice. */
+.content[data-topic-layout="full"]:not([data-reader-faces="shown"]) :is([data-slide-face],.slide-bridge) {display:none!important;}
+.content[data-topic-layout="full"]:not([data-reader-faces="shown"]) .slide-bridged-eyebrow {position:static!important;width:auto;height:auto;overflow:visible;clip-path:none;white-space:normal;}
+
+/* Presentation: the active chapter fills the window. Its slide (the first slide
+   face, or a run-time title card) is letterboxed at 16:9; the full chapter
+   follows below and scrolls inside the chapter, snapping back to the slide
+   near the top. Below 720px the slide stacks as everywhere else. */
+.present-title-card {display:none;}
+.present-sr {position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
+@media screen {
+  .reader-presenting .layout,.reader-presenting.reader-nav-docked .layout {grid-template-columns:minmax(0,1fr);}
+  .reader-presenting :is(.sidebar,.backdrop,.reader-bar) {display:none!important;}
+  .reader-presenting .content,.reader-presenting.reader-nav-docked .content {grid-column:1;}
+  .reader-presenting.present-idle .content {cursor:none;}
+  .content[data-topic-view="present"] .topic-stage {--topic-gap:0px;width:100%;margin:0;}
+  .content[data-topic-layout="deck"][data-topic-view="present"] .topic-strip > .topic-card {flex:0 0 100%;border:0;border-radius:0;box-shadow:none;background:#070a0f;}
+  .content[data-topic-view="present"] .chapter-header {display:none;}
+  .content[data-topic-view="present"] .chapter-body {padding:0 max(24px,calc((100% - 1180px) / 2)) 96px;scroll-snap-type:y proximity;scrollbar-width:none;scrollbar-gutter:auto;}
+  .content[data-topic-view="present"] .chapter-body::-webkit-scrollbar {display:none;}
+  .content[data-topic-layout="deck"][data-topic-view="present"] .chapter-body .present-slide {
+    --present-w:min(100cqw,177.778dvh);
+    --present-band:max(0px,calc((100dvh - var(--present-w) * .5625) / 2));
+    display:block;width:var(--present-w)!important;max-width:none!important;
+    margin:var(--present-band) calc(50% - var(--present-w) / 2)!important;
+    scroll-snap-align:start;scroll-margin-top:var(--present-band);}
+  .content[data-topic-layout="deck"][data-topic-view="present"] .chapter-body .slide-face.present-slide > .slide-canvas {border:0!important;border-radius:0!important;}
+  .content[data-topic-view="present"] .present-slide + .slide-bridge {margin-top:24px;}
+  .present-title-card {container-type:inline-size;}
+  .present-title-canvas {aspect-ratio:16/9;display:flex;flex-direction:column;justify-content:center;gap:1.4cqi;overflow:hidden;padding:5cqi 8cqi;background:radial-gradient(ellipse at 85% 0%,rgba(57,210,192,.08),transparent 55%),linear-gradient(180deg,#0f1620,#0d1117);font-family:"IBM Plex Sans",system-ui,sans-serif;}
+  .reader-enabled .present-title-canvas p {margin:0;max-width:none;}
+  .reader-enabled .present-title-eyebrow {font:600 1.2cqi/1.2 "IBM Plex Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);}
+  .reader-enabled .present-title-heading {font:600 4.6cqi/1.12 "IBM Plex Sans",system-ui,sans-serif;letter-spacing:-.015em;color:var(--bright);max-width:24em;}
+  .reader-enabled .present-title-lead {font-size:2cqi;line-height:1.45;color:#a9b4c2;max-width:52em;}
+  .present-title-lead code {font-size:.92em;}
+  @container (max-width:719.98px) {
+    .present-title-canvas {aspect-ratio:auto;gap:12px;padding:28px 20px 24px;}
+    .reader-enabled .present-title-eyebrow {font-size:11px;}
+    .reader-enabled .present-title-heading {font-size:26px;}
+    .reader-enabled .present-title-lead {font-size:16px;}
+  }
+  /* A stacked slide starts at the top; there is no 16:9 band to centre. */
+  @container chapter (max-width:719.98px) {
+    .content[data-topic-layout="deck"][data-topic-view="present"] .chapter-body .present-slide {margin-top:0!important;margin-bottom:16px!important;scroll-margin-top:0;}
+    /* The stacked title card would repeat the heading the chapter starts with. */
+    .content[data-topic-layout="deck"][data-topic-view="present"] .chapter-body .present-title-card {display:none!important;}
+    .content[data-topic-layout="deck"][data-topic-view="present"] .chapter-body:has(> .present-title-card) {padding-top:20px;}
+  }
+  .present-bar {position:fixed;left:50%;bottom:max(12px,env(safe-area-inset-bottom));z-index:60;display:flex;align-items:center;gap:2px;max-width:calc(100vw - 24px);padding:4px;border:1px solid rgba(148,178,214,.22);border-radius:999px;background:rgba(8,12,19,.86);backdrop-filter:blur(10px);box-shadow:0 10px 32px rgba(0,0,0,.45);color:var(--text);transform:translateX(-50%);transition:opacity .3s;}
+  body.present-idle .present-bar:not(:has(:focus-visible)) {opacity:0;pointer-events:none;}
+  .present-button {display:inline-grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:1px solid transparent;border-radius:50%;background:transparent;color:var(--text);cursor:pointer;transition:background .2s,color .2s,border-color .2s;}
+  .present-button:hover:not(:disabled) {color:var(--bright);background:rgba(57,210,192,.1);border-color:rgba(57,210,192,.3);}
+  .present-button:focus-visible {outline:2px solid var(--accent);outline-offset:2px;}
+  .present-button:disabled {opacity:.3;cursor:default;}
+  .present-button[aria-pressed="true"] {color:var(--accent);}
+  .present-close {margin-left:4px;}
+  .present-status {display:flex;align-items:baseline;gap:10px;min-width:0;padding:0 10px;white-space:nowrap;}
+  .present-count {font:600 12px var(--mono);color:var(--accent);}
+  .present-label {max-width:34ch;overflow:hidden;text-overflow:ellipsis;font-size:13px;color:var(--text);}
+  @media (max-width:600px) {.present-label {display:none;} .present-status {padding:0 6px;}}
+}
+@media print {.present-bar {display:none!important;}}

@@ -2,6 +2,36 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Presentation view and a Slides switch for All chapters
+
+- deivid asked for a view that shows the slides full screen, with the chapter
+  text reachable by scrolling, started from the first chapter or from the
+  current one, and asked whether All chapters should show the slides.
+- The reader has a fourth view, Presentation, on pages with at least one slide
+  face. The slide fills the window at 16:9; arrow keys, Page Up and Page Down,
+  Home and End change the chapter and land on the slide; scrolling moves only
+  within the chapter, and a small scroll near the top snaps back. "Presentation"
+  starts at the current chapter, "From start" at the first. The address keeps
+  `?view=present` and the chapter. At 720 px and wider a chapter without a
+  face shows a title card built at run time from its headline and lead;
+  narrower it starts at its heading.
+- All chapters hides slide faces and their bridges until its Slides switch
+  shows them. The choice is remembered per page and printing follows it.
+- A page with slide faces switches its view buttons to the view menu at
+  980 px instead of 600 px, because the added buttons overflowed in between.
+  Pages without faces keep their toolbar.
+- Files: `theme/components/chapter-reader.{html,js,css}`,
+  `tests/own_site_review.cjs`, `rules/site/reader.md`, one sentence in
+  `rules/site/authoring.md`, and the layout sentence of the kit's own
+  "Build a site" page.
+- Built by a delegated agent. Its checks on the final state: build, strict
+  lint, `build --check-reader` for 5 pages, and `tests/run_checks.sh` with
+  187 unit tests and four browser suites, exit 0. The kit owner viewed its
+  ten captures at 1600×1000 and 390×844 and reran build, strict lint and
+  `--check-reader` after the page sentence.
+- Not checked: real phones, Firefox, Safari, screen readers, widths between
+  390 and 1600 for the view itself, and a chapter with several faces.
+
 ## 2026-11-14 — Adaptation's redesign under the changed slide-face rule
 
 - deivid asked for all of adaptation's faces to be redesigned under the

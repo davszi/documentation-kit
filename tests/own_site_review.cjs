@@ -6,7 +6,7 @@ const fs = require('node:fs/promises');
 const http = require('node:http');
 const path = require('node:path');
 const assert = require('node:assert/strict');
-const {settle, checkLayout} = require('../tooling/browser_checks.cjs');
+const {settle, checkLayout, setView} = require('../tooling/browser_checks.cjs');
 const kit = path.resolve(__dirname, '..');
 const root = path.join(kit, '.build/docs');
 const output = path.join(kit, '.build/visual-review/own-site');
@@ -23,6 +23,254 @@ const server = http.createServer(async (req,res) => {
   } catch {res.statusCode=404;res.end('Not found');}
 });
 const SHOTS = ['index', 'getting-started', 'build-a-site', 'git', 'releases', 'readme'];
+
+// Presentation view and the All chapters Slides switch on build-a-site, whose
+// first chapter opens with a slide face and whose other chapters have none.
+const PRESENT_PAGE = 'build-a-site';
+const FACE_CHAPTER = 'how-a-build-works';
+const PLAIN_CHAPTERS = ['write-a-topic-page', 'the-reader', 'figures-and-slides', 'existing-markdown'];
+async function presentState(page) {
+  return page.evaluate(() => {
+    const card = document.querySelector('[data-reader-chapter].topic-active');
+    const body = card?.querySelector('.chapter-body'), slide = card?.querySelector('.present-slide');
+    const box = slide?.getBoundingClientRect(), titleCard = card?.querySelector('.present-title-card');
+    return {cardShown: !!titleCard?.getClientRects().length, headingTop: card?.querySelector('.chapter-headline')?.getBoundingClientRect().top,view: document.querySelector('main.content').dataset.topicView, active: card?.id, scroll: body?.scrollTop,
+      search: location.search, hash: location.hash, bar: !!document.querySelector('.present-bar:not([hidden])'),
+      toolbar: getComputedStyle(document.getElementById('chapter-reader')).display,
+      sidebar: getComputedStyle(document.getElementById('sidebar')).display,
+      snap: body && [getComputedStyle(body).scrollSnapType, slide && getComputedStyle(slide).scrollSnapAlign],
+      slide: box && {face: slide.hasAttribute('data-slide-face'), titleCard: slide.classList.contains('present-title-card'),
+        top: box.top, left: box.left, width: box.width, height: box.height, compact: box.width < 720},
+      focus: document.activeElement?.id || document.activeElement?.getAttribute('data-reader-view') || document.activeElement?.className || ''};
+  });
+}
+async function waitPresent(page, id, view = 'present') {
+  await page.waitForFunction(([id, view]) => document.querySelector('main.content')?.dataset.topicView === view
+    && document.querySelector('[data-reader-chapter].topic-active')?.id === id, [id, view], {timeout: 5000});
+  await page.waitForTimeout(50);
+  return presentState(page);
+}
+// The slide fills the window at 16:9, letterboxed and centred; below 720 px it stacks at the top.
+function assertSlideFills(state, viewport, what) {
+  const {slide} = state;
+  assert.ok(slide, what + ': the chapter shows a slide');
+  if (slide.compact) {
+    assert.ok(Math.abs(slide.top) < 1 && Math.abs(slide.width - viewport.width) < 1, what + ': stacked slide at the top ' + JSON.stringify(slide));
+    return;
+  }
+  assert.ok(Math.abs(slide.width / slide.height - 16 / 9) < 0.01, what + ': slide keeps 16:9 ' + JSON.stringify(slide));
+  assert.ok(Math.abs(slide.width - viewport.width) < 1 || Math.abs(slide.height - viewport.height) < 1, what + ': slide fills one window axis');
+  assert.ok(Math.abs(slide.top - (viewport.height - slide.height) / 2) < 1 && Math.abs(slide.left - (viewport.width - slide.width) / 2) < 1,
+    what + ': slide is letterboxed in the centre ' + JSON.stringify(slide));
+}
+async function reviewPresentation(page, origin, viewport, failures) {
+  const url = `${origin}/html/${PRESENT_PAGE}.html`;
+  const checked = [];
+  const select = viewport.width < 900, narrow = viewport.width < 720;
+  const built = await fs.readFile(path.join(root, `html/${PRESENT_PAGE}.html`), 'utf8');
+  assert.ok(!built.includes('present-title-card') && !built.includes('present-slide'), 'title cards exist only at run time');
+
+  // From the current chapter: the view opens on that chapter's slide.
+  await page.goto(`${url}#${PLAIN_CHAPTERS[0]}`, {waitUntil: 'networkidle'});
+  await settle(page);
+  await page.locator('[data-reader-chapter].topic-active .chapter-body').evaluate(node => { node.scrollTop = 400; });
+  await setView(page, 'present');
+  let state = await waitPresent(page, PLAIN_CHAPTERS[0]);
+  assert.equal(state.scroll, 0, 'Presentation opens the chapter on its slide');
+  assert.equal(state.search, '?view=present', 'the address names the view');
+  assert.equal(state.hash, '#' + PLAIN_CHAPTERS[0], 'the address names the chapter');
+  assert.ok(state.bar && state.toolbar === 'none' && state.sidebar === 'none', 'only the presentation controls show: ' + JSON.stringify(state));
+  assert.equal(state.focus, PLAIN_CHAPTERS[0], 'focus moves to the presented chapter');
+  // Proximity is the initial strictness, so the computed value may serialize as plain "y".
+  assert.ok(/^y( proximity)?$/.test(state.snap[0]) && state.snap[1] === 'start', 'the chapter snaps back to its slide near the top: ' + state.snap);
+  // At 720 px and wider a chapter without a face shows a run-time title card
+  // from its headline and lead. Narrower, slides stack and the card would
+  // repeat the heading the chapter starts with, so the chapter starts there.
+  if (narrow) {
+    assert.equal(state.cardShown, false, 'a narrow chapter without a face shows no title card');
+    assert.ok(state.headingTop >= 0 && state.headingTop < 60, 'a narrow chapter without a face starts at its heading: ' + state.headingTop);
+  } else {
+    assert.ok(state.cardShown && state.slide.titleCard && !state.slide.face, 'a chapter without a face shows a title card');
+    const card = await page.locator('[data-reader-chapter].topic-active .present-title-card').evaluate(node => ({
+      face: node.matches('[data-slide-face]') || !!node.querySelector('[data-slide-face]'), hidden: node.getAttribute('aria-hidden'),
+      heading: node.querySelector('.present-title-heading').textContent, lead: node.querySelector('.present-title-lead')?.textContent,
+      expected: [node.closest('[data-reader-chapter]').querySelector('.chapter-headline').textContent.trim(),
+        node.closest('[data-reader-chapter]').querySelector('.bs-lead').textContent]}));
+    assert.equal(card.face, false, 'the title card is not a slide face');
+    assert.equal(card.hidden, 'true', 'the title card repeats the chapter for sight only');
+    assert.deepEqual([card.heading, card.lead], card.expected, 'the title card carries the chapter headline and lead');
+    assertSlideFills(state, viewport, 'title card');
+  }
+  assert.equal(await page.locator('[data-slide-face]').count(), 1, 'title cards add no slide face');
+  checked.push('enter from the current chapter', 'title card');
+
+  // Key navigation always lands on the slide; scrolling stays in the chapter.
+  await page.mouse.move(viewport.width / 2, viewport.height / 3);
+  await page.mouse.wheel(0, 900);
+  await page.waitForFunction(() => document.querySelector('[data-reader-chapter].topic-active .chapter-body').scrollTop > 0);
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Space');
+  await page.waitForTimeout(150);
+  state = await presentState(page);
+  assert.equal(state.active, PLAIN_CHAPTERS[0], 'wheel, ArrowDown and Space never change the chapter');
+  assert.ok(state.scroll > 0, 'scrolling reaches the full chapter below the slide');
+  for (const [key, id] of [['ArrowRight', PLAIN_CHAPTERS[1]], ['PageDown', PLAIN_CHAPTERS[2]], ['PageUp', PLAIN_CHAPTERS[1]], ['ArrowLeft', PLAIN_CHAPTERS[0]]]) {
+    await page.locator('[data-reader-chapter].topic-active .chapter-body').evaluate(node => { node.scrollTop = 300; });
+    await page.keyboard.press(key);
+    state = await waitPresent(page, id);
+    assert.equal(state.scroll, 0, key + ' lands at the top of ' + id);
+    assert.equal(state.hash, '#' + id, key + ' writes the chapter to the address');
+  }
+  await page.keyboard.press('Home');
+  state = await waitPresent(page, FACE_CHAPTER);
+  assert.ok(state.slide.face && !state.slide.titleCard, 'a chapter with a face presents its face');
+  assertSlideFills(state, viewport, 'slide face');
+  await page.keyboard.press('End');
+  await waitPresent(page, 'reference-guides');
+  await page.keyboard.press('Home');
+  await waitPresent(page, FACE_CHAPTER);
+  checked.push('arrow, page and Home/End keys land on the slide', 'scrolling keeps the chapter');
+
+  // Controls inside a chapter keep their keys; the lightbox keeps its own.
+  await page.locator('.present-bar .present-next').click();
+  await waitPresent(page, PLAIN_CHAPTERS[0]);
+  for (let step = 1; step < 4; step++) await page.keyboard.press('ArrowRight');
+  await waitPresent(page, 'existing-markdown');
+  await page.locator('[data-reader-chapter].topic-active [data-panel-choice="page"]').click();
+  await page.keyboard.press('ArrowRight');
+  await page.waitForTimeout(150);
+  assert.equal((await presentState(page)).active, 'existing-markdown', 'a focused panel control keeps ArrowRight');
+  assert.equal(await page.locator('#view-page').isVisible(), true, 'the panel switcher still switches');
+  await page.keyboard.press('Home');
+  await page.waitForTimeout(150);
+  assert.equal((await presentState(page)).active, 'existing-markdown', 'a focused panel control keeps Home');
+  await page.locator('.present-bar .present-restart').click();
+  await waitPresent(page, FACE_CHAPTER);
+  // The slide is still the chapter's focus target after a control kept the focus.
+  await page.locator('[data-reader-chapter].topic-active').focus();
+  await page.locator('[data-reader-chapter].topic-active .present-slide svg.inline-fig').first().click();
+  await page.waitForSelector('.lb-overlay');
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('.lb-overlay', {state: 'detached'});
+  state = await presentState(page);
+  assert.deepEqual([state.view, state.active], ['present', FACE_CHAPTER], 'keys in the lightbox change neither chapter nor view');
+  checked.push('interactive parts keep their keys');
+
+  // Reload and a shared link reopen the same slide in the same view.
+  await page.keyboard.press('ArrowRight');
+  await waitPresent(page, PLAIN_CHAPTERS[0]);
+  await page.reload({waitUntil: 'networkidle'});
+  state = await waitPresent(page, PLAIN_CHAPTERS[0]);
+  assert.equal(state.scroll, 0, 'reload reopens the slide');
+  await page.goto(`${url}?view=present#the-reader`, {waitUntil: 'networkidle'});
+  state = await waitPresent(page, 'the-reader');
+  assert.ok(state.bar && state.cardShown === !narrow, 'a shared link opens Presentation on its chapter');
+  checked.push('reload and shared link');
+
+  // Escape and the close control return to the previous view and chapter.
+  await page.keyboard.press('Escape');
+  state = await waitPresent(page, 'the-reader', 'single');
+  assert.equal(state.search, '', 'leaving removes the view from the address');
+  for (const view of ['pair', 'full']) {
+    await setView(page, view);
+    await page.waitForFunction(view => view === 'full' ? document.querySelector('main.content').dataset.topicLayout === 'full'
+      : document.querySelector('main.content').dataset.topicView === view, view);
+    const before = await page.evaluate(() => document.querySelector('[data-reader-chapter].topic-active').id);
+    await setView(page, 'present');
+    await waitPresent(page, before);
+    await page.locator('.present-bar .present-close').click();
+    await page.waitForFunction(view => view === 'full' ? document.querySelector('main.content').dataset.topicLayout === 'full'
+      : document.querySelector('main.content').dataset.topicView === view, view);
+    state = await presentState(page);
+    assert.equal(state.active, before, `leaving returns to ${view} on the presented chapter`);
+    assert.ok(state.toolbar !== 'none' && !state.bar, 'the reader toolbar returns');
+  }
+  checked.push('exit restores Two chapters and All chapters');
+
+  // From start begins at the first chapter; focus returns to the starting control.
+  await setView(page, 'single');
+  await page.waitForFunction(() => document.querySelector('[data-reader-chapter].topic-active')?.id === 'the-reader');
+  if (select) await page.selectOption('[data-reader-view-select]', 'present-start');
+  else await page.click('[data-reader-present-start]');
+  state = await waitPresent(page, FACE_CHAPTER);
+  assert.equal(state.scroll, 0, 'From start opens the first slide');
+  await page.keyboard.press('Shift+Tab');
+  const close = await page.evaluate(() => ({inBar: !!document.activeElement?.closest('.present-bar'),
+    outline: getComputedStyle(document.activeElement).outlineStyle}));
+  assert.ok(close.inBar && close.outline !== 'none', 'Shift+Tab reaches the visible presentation controls: ' + JSON.stringify(close));
+  await page.keyboard.press('Escape');
+  state = await waitPresent(page, FACE_CHAPTER, 'single');
+  const returned = await page.evaluate(select => {
+    const node = document.activeElement;
+    return select ? !!node?.closest('[data-reader-view-select], [data-reader-chapter].topic-active') : !!node?.matches('[data-reader-present-start]');
+  }, select);
+  assert.ok(returned, 'focus returns to the starting control, or to the chapter when the menu started it');
+  checked.push('From start', 'focus on enter and exit');
+
+  // The controls fade when idle and return on pointer movement; fullscreen is optional.
+  if (!select) {
+    await setView(page, 'present');
+    await waitPresent(page, FACE_CHAPTER);
+    await page.mouse.move(20, 20);
+    await page.waitForFunction(() => document.body.classList.contains('present-idle'), null, {timeout: 6000});
+    await page.mouse.move(60, 60);
+    assert.equal(await page.evaluate(() => document.body.classList.contains('present-idle')), false, 'pointer movement brings the controls back');
+    if (await page.evaluate(() => document.fullscreenEnabled)) {
+      await page.keyboard.press('f');
+      await page.waitForFunction(() => !!document.fullscreenElement, null, {timeout: 3000});
+      assert.equal(await page.getAttribute('.present-bar .present-button[aria-pressed]', 'aria-label'), 'Leave fullscreen');
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(150);
+      assert.equal((await presentState(page)).view, 'present', 'Escape in fullscreen does not leave the view');
+      if (await page.evaluate(() => !!document.fullscreenElement)) await page.keyboard.press('f');
+      await page.waitForFunction(() => !document.fullscreenElement, null, {timeout: 3000});
+      await page.waitForTimeout(600);
+      checked.push('fullscreen');
+    }
+    await page.keyboard.press('Escape');
+    await waitPresent(page, FACE_CHAPTER, 'single');
+    checked.push('idle fade');
+  }
+
+  // All chapters: slide faces are hidden until the Slides switch shows them; the choice is remembered.
+  const faces = () => page.evaluate(() => ({face: getComputedStyle(document.querySelector('[data-slide-face]')).display,
+    bridge: getComputedStyle(document.querySelector('.slide-bridge')).display,
+    pressed: document.querySelector('[data-reader-slides]').getAttribute('aria-pressed'),
+    visible: !!document.querySelector('[data-reader-slides]').getClientRects().length}));
+  let shown = await faces();
+  assert.ok(shown.face !== 'none' && !shown.visible, 'One chapter always shows the face; the switch belongs to All chapters');
+  await setView(page, 'full');
+  shown = await faces();
+  assert.deepEqual(shown, {face: 'none', bridge: 'none', pressed: 'false', visible: true}, 'All chapters hides slides by default');
+  await page.emulateMedia({media: 'print'});
+  assert.equal((await faces()).face, 'none', 'print follows the switch (off)');
+  await page.emulateMedia({media: 'screen'});
+  await page.click('[data-reader-slides]');
+  shown = await faces();
+  assert.deepEqual([shown.face !== 'none', shown.bridge !== 'none', shown.pressed], [true, true, 'true'], 'the switch shows slides');
+  await page.emulateMedia({media: 'print'});
+  assert.notEqual((await faces()).face, 'none', 'print follows the switch (on)');
+  await page.emulateMedia({media: 'screen'});
+  await page.reload({waitUntil: 'networkidle'});
+  await setView(page, 'full');
+  shown = await faces();
+  assert.deepEqual([shown.face !== 'none', shown.pressed], [true, 'true'], 'the switch is remembered for the page');
+  await page.click('[data-reader-slides]');
+  assert.equal((await faces()).face, 'none', 'the switch hides slides again');
+  checked.push('Slides switch off by default, on after the click, remembered, print');
+
+  // A page without slide faces offers neither Presentation nor Slides.
+  await page.goto(`${origin}/html/experiments.html?view=present`, {waitUntil: 'networkidle'});
+  await setView(page, 'full');
+  const plain = await page.evaluate(() => ({controls: [...document.querySelectorAll('[data-reader-view="present"], [data-reader-present-start], [data-reader-slides]')].filter(node => node.getClientRects().length).length,
+    options: document.querySelectorAll('[data-reader-view-select] option[value^="present"]').length, view: document.querySelector('main.content').dataset.topicView,
+    bar: document.querySelectorAll('.present-bar').length, search: location.search}));
+  assert.deepEqual(plain, {controls: 0, options: 0, view: 'single', bar: 0, search: ''}, 'no Presentation without slide faces');
+  checked.push('pages without faces');
+  assert.deepEqual(failures, [], 'browser errors during presentation checks at ' + viewport.width);
+  return checked;
+}
 
 (async () => {
   await fs.mkdir(output,{recursive:true});
@@ -186,6 +434,8 @@ const SHOTS = ['index', 'getting-started', 'build-a-site', 'git', 'releases', 'r
         await page.waitForFunction(() => document.querySelector('.scroll[role="region"]').scrollLeft > 0);
       }
 
+      results.viewports[viewport.width] = {presentation: await reviewPresentation(page, origin, viewport, failures)};
+
       // Print: every adoption route is visible and edit controls are hidden.
       await page.emulateMedia({media:'print'});
       await page.goto(`${origin}/html/getting-started.html`, {waitUntil:'networkidle'});
@@ -194,7 +444,7 @@ const SHOTS = ['index', 'getting-started', 'build-a-site', 'git', 'releases', 'r
       await page.goto(`${origin}/html/git.html`, {waitUntil:'networkidle'});
       assert.equal(await page.locator('.source-origin-edit').isVisible(), false, 'edit link hidden in print');
       await page.emulateMedia({media:'screen'});
-      results.viewports[viewport.width] = {pages: pages.length, visibleImages: images, keyboard: reached.href};
+      Object.assign(results.viewports[viewport.width], {pages: pages.length, visibleImages: images, keyboard: reached.href});
       await context.close();
     }
 
@@ -217,5 +467,5 @@ const SHOTS = ['index', 'getting-started', 'build-a-site', 'git', 'releases', 'r
     server.close();
   }
   await fs.writeFile(path.join(output, 'results.json'), JSON.stringify(results, null, 2) + '\n');
-  console.log(`Own site: ${results.pages} pages contained with visible media at 1600 and 390; deep links, panel hash, keyboard paths, reader chapters, sidebar repository tree, views, docking, pinning and carousel, narrow menu/tree/table scrolling, print and no-JavaScript reading pass.`);
+  console.log(`Own site: ${results.pages} pages contained with visible media at 1600 and 390; deep links, panel hash, keyboard paths, reader chapters, sidebar repository tree, views, docking, pinning and carousel, Presentation and the Slides switch, narrow menu/tree/table scrolling, print and no-JavaScript reading pass.`);
 })().catch(error => { console.error(error); process.exitCode = 1; server.close(); });

@@ -43,6 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const pagination = nav.querySelector('[data-reader-pagination]');
   const viewButtons = [...nav.querySelectorAll('[data-reader-view]')];
   const viewSelect = nav.querySelector('[data-reader-view-select]');
+  // Presentation and the Slides switch exist only on pages with a slide face.
+  const presentable = !!document.querySelector('[data-slide-face]');
+  const presentStart = nav.querySelector('[data-reader-present-start]');
+  const slidesButton = nav.querySelector('[data-reader-slides]');
+  [nav.querySelector('[data-reader-view="present"]'), presentStart].forEach(node => { if (node) node.hidden = !presentable; });
+  if (!presentable) viewSelect?.querySelectorAll('option[value^="present"]').forEach(option => option.parentNode.removeChild(option));
   const overview = document.querySelector('.topic-overview');
   const stage = make('div', 'topic-stage');
   stage.setAttribute('role', 'region');
@@ -51,6 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
   stage.appendChild(strip);
   topics[0].section.parentNode.insertBefore(stage, topics[0].section);
   let active = 0, activeColumn = 0, full = false, paired = false, pair = [0, Math.min(1, topics.length - 1)], pinned = null, routedHash = null;
+  // Presentation is a fourth view; presentReturn is the view it leaves to.
+  let presenting = false, presentReturn = null;
   let drawerTab = 'chapters', drawerTrigger = null, drawerPinned = false;
   // One choice for the whole site: hiding the menu on one page hides it on the next.
   const drawerPreferenceKey = 'reader-nav-pin:' + (document.body.dataset.siteHomeLabel || '');
@@ -73,6 +81,10 @@ document.addEventListener('DOMContentLoaded', () => {
       profiles = [new Set(initial), new Set(initial)];
     }
   } catch (_) {}
+  // All chapters hides slide faces unless the reader turns them on for this page.
+  const slidesKey = 'readerslides:' + location.pathname;
+  let slidesShown = false;
+  try { slidesShown = localStorage.getItem(slidesKey) === 'shown'; } catch (_) {}
   const generations = [0, 0], foldCache = [new Map(), new Map()], positions = new Map();
   topics.forEach((topic, index) => {
     const section = topic.section;
@@ -114,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (heading?.id) section.setAttribute('aria-labelledby', heading.id);
     else section.setAttribute('aria-label', topic.label);
     strip.appendChild(section);
-    Object.assign(topic, {header, body, layerRow, layerButtons, story, all, pin, folds: [...body.querySelectorAll('details.fold')], owner: null, generation: -1});
+    Object.assign(topic, {header, body, heading, layerRow, layerButtons, story, all, pin, folds: [...body.querySelectorAll('details.fold')], owner: null, generation: -1});
     // Legacy chapters without typed folds expose their complete story. Empty
     // layer switches would suggest controls that do not affect their content.
     layerRow.hidden = !topic.folds.length;
@@ -249,7 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function syncDrawer() {
     const open = document.body.classList.contains('reader-nav-open'), docked = drawerDocked();
     document.body.classList.toggle('reader-nav-docked', docked);
-    sidebar.inert = !open; content.inert = open && !docked;
+    // Presentation hides the navigation without changing its remembered state.
+    sidebar.inert = !open || presenting; content.inert = open && !docked && !presenting;
     sidebar.setAttribute('role', open && !docked ? 'dialog' : 'navigation');
     if (open && !docked) sidebar.setAttribute('aria-modal', 'true'); else sidebar.removeAttribute('aria-modal');
     [...railButtons, ...nav.querySelectorAll('[data-reader-drawer]')].forEach(node => node.setAttribute('aria-expanded', String(open)));
@@ -283,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ['Hold a reference', 'Pin the button on a column header to hold that chapter while the other moves. Purple marks the pinned column; its own scrolling and layer buttons still work.'],
     ['Keep navigation handy', 'On wide screens the navigation docks beside the page. Hide it with « and bring it back with ☰; the choice holds across the site. Reading stays interactive and chapter links keep the sidebar open. On narrow screens, navigation opens over the page and closes after choosing a chapter.']
   ];
+  if (presentable) helpItems.push(['Present the slides', 'Presentation shows each chapter\'s slide across the window, starting at the current chapter; From start begins at the first. Left and right arrows or Page Up and Page Down change chapter, Home and End go to the first and last. Scroll, or use the up and down arrows and Space, to read the full chapter below its slide. F switches fullscreen; Escape leaves. All chapters hides the slides until you turn on Slides.']);
   const readerWords = text => text.replace(/chapters/g, plural).replace(/chapter/g, unit);
   helpItems.forEach(([title, text]) => { const card = make('div', 'reader-help-card'); card.appendChild(make('h4', '', readerWords(title))); card.appendChild(make('p', '', readerWords(text))); help.appendChild(card); });
   const aboutHelp = button('reader-text-button', 'Reader help and shortcuts'); aboutHelp.addEventListener('click', () => { dismissDialog(about, false); showDialog(help, nav.querySelector('[data-reader-about]')); }); about.appendChild(aboutHelp);
@@ -309,9 +323,10 @@ document.addEventListener('DOMContentLoaded', () => {
     topic.owner = owner; topic.generation = generations[owner];
   }
   function remember() {
-    shownIndices().forEach(index => { const topic = topics[index]; if (!full) positions.set(topic.section.id, topic.body.scrollTop); cacheFolds(topic); });
+    // Presentation always opens a chapter on its slide; it keeps no reading positions.
+    shownIndices().forEach(index => { const topic = topics[index]; if (!full && !presenting) positions.set(topic.section.id, topic.body.scrollTop); cacheFolds(topic); });
   }
-  function restore() { topics.forEach(topic => { topic.body.scrollTop = positions.get(topic.section.id) || 0; }); }
+  function restore() { topics.forEach((topic, index) => { topic.body.scrollTop = presenting && index === active ? 0 : positions.get(topic.section.id) || 0; }); }
   function captureAnchor(topic, layers) {
     const rect = topic.body.getBoundingClientRect();
     const top = full ? nav.getBoundingClientRect().bottom + topic.header.getBoundingClientRect().height + 12 : rect.top + 12;
@@ -371,9 +386,20 @@ document.addEventListener('DOMContentLoaded', () => {
     return id === 'top' ? topics[0]?.section : document.getElementById(id);
   } catch (_) { return null; } }
   function topicOf(target) { return topics.findIndex(topic => topic.section === target || topic.section.contains(target)); }
+  // Presentation is named in the address (?view=present), so a reload or a
+  // shared link opens the same slide in the same view. Other views leave the
+  // address as it was.
+  function viewInAddress() { return new URL(location.href).searchParams.get('view') === 'present'; }
+  function address(hash) {
+    if (presenting === viewInAddress()) return hash || location.href;
+    const url = new URL(location.href);
+    if (presenting) url.searchParams.set('view', 'present'); else url.searchParams.delete('view');
+    if (hash) url.hash = hash;
+    return url.href;
+  }
   function saveHistory(push, hash = location.hash) {
-    const state = {...history.state, chapterReader: {active, activeColumn, full, paired, pair:[...pair], pinned}};
-    if (push && hash !== location.hash) history.pushState(state, '', hash); else history.replaceState(state, '', hash || location.href);
+    const state = {...history.state, chapterReader: {active, activeColumn, full, paired, pair:[...pair], pinned, present:presenting, presentReturn}};
+    if (push && hash !== location.hash) history.pushState(state, '', address(hash)); else history.replaceState(state, '', address(hash));
     routedHash = location.hash;
     syncJumpSelection();
   }
@@ -392,7 +418,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (![null, 0, 1].includes(state.pinned)) return;
     remember(); active = state.active; full = state.full === true; paired = state.paired === true; pair = [...state.pair]; pinned = state.pinned;
     activeColumn = [0, 1].includes(state.activeColumn) ? state.activeColumn : paired ? Math.max(0, pair.indexOf(active)) : 0;
+    presenting = presentable && state.present === true;
+    if (presenting) { full = false; paired = false; pinned = null; activeColumn = 0; presentReturn = validReturn(state.presentReturn); }
     return true;
+  }
+  function validReturn(value) {
+    if (!value || !['single', 'pair', 'full'].includes(value.view)) return {view:'single', pair:[...pair], pinned:null, activeColumn:0};
+    const pairOk = Array.isArray(value.pair) && value.pair.length === 2 && value.pair.every(i => Number.isInteger(i) && i >= 0 && i < topics.length) && value.pair[0] !== value.pair[1];
+    return {view:value.view, pair:pairOk ? [...value.pair] : [...pair], pinned:pairOk && [0, 1].includes(value.pinned) ? value.pinned : null, activeColumn:value.activeColumn === 1 ? 1 : 0};
   }
   function navigation(step) {
     if (!full && paired) {
@@ -424,8 +457,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   function render(animate = true) {
-    content.dataset.topicLayout = full ? 'full' : 'deck'; content.dataset.topicView = paired ? 'pair' : 'single';
+    content.dataset.topicLayout = full ? 'full' : 'deck'; content.dataset.topicView = presenting ? 'present' : paired ? 'pair' : 'single';
     document.body.classList.toggle('topic-deck', !full);
+    if (presentable) content.dataset.readerFaces = slidesShown ? 'shown' : 'hidden';
     if ('scrollRestoration' in history) history.scrollRestoration = full ? browserScrollMode : 'manual';
     topics.forEach((topic, i) => {
       topic.section.classList.remove('topic-preview-hover');
@@ -449,13 +483,16 @@ document.addEventListener('DOMContentLoaded', () => {
     prev.setAttribute('aria-label', prev.disabled ? 'Start of ' + plural : paired && !full ? 'Previous ' + unit + ' in the unpinned columns' : `Previous ${unit}: ${topics[active - 1].label}`);
     next.setAttribute('aria-label', next.disabled ? 'End of ' + plural : paired && !full ? 'Next ' + unit + ' in the unpinned columns' : `Next ${unit}: ${topics[active + 1].label}`);
     pagination.hidden = !paired && !full;
-    peekButtons.forEach((node, i) => { const peer = i ? next : prev; node.hidden = peer.disabled || full || paired; node.setAttribute('aria-label', peer.getAttribute('aria-label')); node.title = peer.getAttribute('aria-label'); });
+    peekButtons.forEach((node, i) => { const peer = i ? next : prev; node.hidden = peer.disabled || full || paired || presenting; node.setAttribute('aria-label', peer.getAttribute('aria-label')); node.title = peer.getAttribute('aria-label'); });
     count.textContent = !full && paired ? `${pluralTitle} ${pair[0] + 1} and ${pair[1] + 1} of ${topics.length}${pinned === null ? '' : '; ' + (pinned ? 'right' : 'left') + ' pinned'}` : `${unitTitle} ${active + 1} of ${topics.length}`;
-    const view = full ? 'full' : paired ? 'pair' : 'single';
+    const view = currentView();
     viewButtons.forEach(node => { node.setAttribute('aria-pressed', String(node.dataset.readerView === view)); node.disabled = node.dataset.readerView === 'pair' && topics.length < 2; }); viewSelect.value = view;
     const pairOption = viewSelect.querySelector('option[value="pair"]'); if (pairOption) pairOption.disabled = topics.length < 2;
+    if (slidesButton) slidesButton.hidden = !presentable || !full;
     updateReadingButtons(); setOffset(); align(animate);
+    syncPresentation();
   }
+  function currentView() { return presenting ? 'present' : full ? 'full' : paired ? 'pair' : 'single'; }
   // Keyboard, button and scroll navigation move the active chapter; keep its
   // drawer link (with its group heading when it opens a group) in view.
   function followActiveLink() {
@@ -476,9 +513,9 @@ document.addEventListener('DOMContentLoaded', () => {
       target.scrollIntoView({block:'start', behavior:'instant'}); return;
     }
     const topic = topics[topicOf(target)];
-    if (target === topic.section) topic.body.scrollTop = positions.get(topic.section.id) || 0;
+    if (target === topic.section) topic.body.scrollTop = presenting ? 0 : positions.get(topic.section.id) || 0;
     else topic.body.scrollTop += target.getBoundingClientRect().top - topic.body.getBoundingClientRect().top - 12;
-    positions.set(topic.section.id, topic.body.scrollTop);
+    if (!presenting) positions.set(topic.section.id, topic.body.scrollTop);
   }
   function focusChapter(index = active) { topics[index].section.focus({preventScroll:true}); }
   function visit(target, writeHash = false, focus = false, animate = true) {
@@ -499,8 +536,9 @@ document.addEventListener('DOMContentLoaded', () => {
     else visit(topics[target].section, true, true);
   }
   function selectView(view) {
+    if (view === 'present' || view === 'present-start') { startPresentation(view === 'present' ? active : 0, document.activeElement); return; }
     if (topics.length < 2 && view === 'pair') view = 'single';
-    const wasFull = full; remember();
+    const wasFull = full; remember(); presenting = false;
     if (view === 'full') full = true;
     else {
       full = false;
@@ -525,11 +563,172 @@ document.addEventListener('DOMContentLoaded', () => {
     saveHistory(false); window.dispatchEvent(new Event('resize'));
     focusChapter();
   }
+  // ---- Presentation: the active chapter fills the window with its slide on
+  // top; the full chapter follows below and scrolls within the chapter only.
+  // Chapters without a slide face get a run-time title card. It is not a slide
+  // face (no data-slide-face) and never appears in the built HTML.
+  // Focused controls own their keys in every view.
+  const keyOwners = 'input, select, textarea, button, a, summary, svg, canvas, video, audio, iframe, [data-reader-horizontal], [contenteditable]:not([contenteditable="false"]), [role="tab"], [role="tablist"], [role="slider"], [role="spinbutton"], [role="textbox"]';
+  let presentBar = null, presentStatus = null, presentControls = null, presentShown = false, presentTrigger = null, idleTimer = 0, fullscreenLeftAt = -1e9;
+  const icon = path => `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="${path}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const icons = {
+    restart:'M6 5v14M18 6l-8 6 8 6z', previous:'M15 5l-7 7 7 7', next:'M9 5l7 7-7 7',
+    enter:'M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5', leave:'M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5', close:'M6 6l12 12M18 6L6 18',
+  };
+  if (presentable) {
+    presentBar = make('div', 'present-bar'); presentBar.hidden = true;
+    presentBar.setAttribute('role', 'toolbar'); presentBar.setAttribute('aria-label', 'Presentation controls');
+    const control = (name, label, action) => { const node = button('present-button present-' + name, '', label); node.innerHTML = icon(icons[name]); node.addEventListener('click', action); return node; };
+    presentControls = {
+      restart: control('restart', 'Start again from the first ' + unit, () => presentGo(0)),
+      previous: control('previous', 'Previous ' + unit, () => presentGo(active - 1)),
+      next: control('next', 'Next ' + unit, () => presentGo(active + 1)),
+      fullscreen: control('enter', 'Enter fullscreen', () => toggleFullscreen()),
+      close: control('close', 'Leave presentation', () => exitPresentation()),
+    };
+    presentStatus = make('span', 'present-status'); presentStatus.setAttribute('role', 'status'); presentStatus.setAttribute('aria-live', 'polite'); presentStatus.setAttribute('aria-atomic', 'true');
+    presentControls.fullscreen.setAttribute('aria-pressed', 'false');
+    presentControls.fullscreen.hidden = !document.fullscreenEnabled;
+    [presentControls.restart, presentControls.previous, presentStatus, presentControls.next, presentControls.fullscreen, presentControls.close].forEach(node => presentBar.appendChild(node));
+    // First in the document, so Shift+Tab from the slide reaches the controls.
+    document.body.insertBefore(presentBar, document.body.firstChild);
+    ['pointermove', 'pointerdown'].forEach(type => document.addEventListener(type, wake, {passive:true}));
+    presentBar.addEventListener('focusin', wake);
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) fullscreenLeftAt = performance.now();
+      syncFullscreen();
+    });
+  }
+  function syncFullscreen() {
+    if (!presentControls) return;
+    const on = !!document.fullscreenElement, node = presentControls.fullscreen, label = on ? 'Leave fullscreen' : 'Enter fullscreen';
+    node.innerHTML = icon(icons[on ? 'leave' : 'enter']); node.setAttribute('aria-label', label); node.title = label + ' (F)';
+    node.setAttribute('aria-pressed', String(on));
+  }
+  function toggleFullscreen() {
+    const request = document.fullscreenElement ? document.exitFullscreen?.() : document.documentElement.requestFullscreen?.();
+    request?.catch?.(() => {});
+  }
+  // The controls fade when idle and return on pointer movement or a key press.
+  function wake() {
+    if (!presenting) return;
+    document.body.classList.remove('present-idle'); clearTimeout(idleTimer);
+    // Keyboard focus on a control keeps them visible; a mouse click does not.
+    idleTimer = setTimeout(() => { if (presenting && !presentBar.querySelector(':focus-visible')) document.body.classList.add('present-idle'); }, 2600);
+  }
+  function titleCard(topic) {
+    if (topic.slide !== undefined) return;
+    const face = topic.body.querySelector('[data-slide-face]');
+    if (face) { face.classList.add('present-slide'); topic.slide = face; return; }
+    const card = make('div', 'present-title-card present-slide');
+    card.dataset.readerGenerated = ''; card.setAttribute('aria-hidden', 'true');
+    const canvas = make('div', 'present-title-canvas');
+    canvas.appendChild(make('p', 'present-title-eyebrow', pageTitle));
+    canvas.appendChild(make('p', 'present-title-heading', topic.heading?.textContent.trim() || topic.label));
+    const lead = [...topic.body.querySelectorAll('.bs-lead')].find(node => !node.closest('[data-slide-face], details.fold'));
+    if (lead) {
+      const copy = lead.cloneNode(true); copy.className = 'present-title-lead';
+      copy.removeAttribute('id'); copy.querySelectorAll('[id]').forEach(node => node.removeAttribute('id'));
+      canvas.appendChild(copy);
+    }
+    card.appendChild(canvas); topic.body.insertBefore(card, topic.body.firstChild); topic.slide = card;
+  }
+  function syncPresentation() {
+    if (!presentBar) return;
+    presentBar.hidden = !presenting;
+    document.body.classList.toggle('reader-presenting', presenting);
+    if (presenting) {
+      topics.forEach(titleCard);
+      const topic = topics[active];
+      presentStatus.replaceChildren(make('span', 'present-count', `${active + 1} / ${topics.length}`), make('span', 'present-sr', `${unitTitle} ${active + 1} of ${topics.length}: `), make('span', 'present-label', topic.label));
+      presentStatus.querySelector('.present-count').setAttribute('aria-hidden', 'true');
+      presentControls.previous.disabled = active === 0; presentControls.next.disabled = active === topics.length - 1;
+      presentControls.previous.setAttribute('aria-label', active === 0 ? 'Start of ' + plural : `Previous ${unit}: ${topics[active - 1].label}`);
+      presentControls.next.setAttribute('aria-label', active === topics.length - 1 ? 'End of ' + plural : `Next ${unit}: ${topics[active + 1].label}`);
+      [presentControls.previous, presentControls.next].forEach(node => { node.title = node.getAttribute('aria-label'); });
+    }
+    if (presenting === presentShown) return;
+    presentShown = presenting; syncDrawer(); syncFullscreen();
+    if (presenting) wake();
+    else {
+      clearTimeout(idleTimer); document.body.classList.remove('present-idle');
+      if (document.fullscreenElement) document.exitFullscreen?.()?.catch?.(() => {});
+    }
+  }
+  function startPresentation(index, trigger) {
+    if (!presentable) return;
+    if (!presenting) {
+      presentReturn = {view:currentView(), pair:[...pair], pinned, activeColumn};
+      presentTrigger = trigger && nav.contains(trigger) ? trigger : null;
+      if (!drawerDocked()) closeDrawer(false, false);
+    }
+    remember(); presenting = true; full = false; paired = false; pinned = null; activeColumn = 0; active = index;
+    render(false); restore(); window.scrollTo({top:0, behavior:'instant'});
+    saveHistory(false, '#' + topics[active].section.id); window.dispatchEvent(new Event('resize'));
+    focusChapter();
+  }
+  // Every chapter change lands at the top of that chapter, on its slide.
+  function presentGo(index) {
+    if (!presenting || index < 0 || index >= topics.length) return;
+    const keepFocus = presentBar.contains(document.activeElement);
+    if (index === active) { topics[active].body.scrollTo({top:0, behavior:'instant'}); return; }
+    visit(topics[index].section, true, !keepFocus);
+  }
+  function exitPresentation() {
+    if (!presenting) return;
+    const back = presentReturn || validReturn(null);
+    presenting = false; activeColumn = back.activeColumn;
+    if (back.view === 'pair' && back.pair.includes(active)) {
+      pair = [...back.pair]; pinned = back.pinned; paired = true;
+      activeColumn = pair.indexOf(active); if (pinned === activeColumn && pinned !== null) pinned = null;
+    }
+    selectView(back.view);
+    if (presentTrigger?.isConnected && presentTrigger.getClientRects().length) presentTrigger.focus({preventScroll:true});
+    presentTrigger = null;
+  }
+  function presentKey(event) {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || document.querySelector('.lb-overlay')) return;
+    const key = event.key, inBar = presentBar.contains(event.target);
+    if (key === 'Escape') {
+      // The first Escape leaves fullscreen (the browser's own); only a later one leaves the view.
+      if (document.fullscreenElement || performance.now() - fullscreenLeftAt < 500) return;
+      if (event.target?.closest('input, select, textarea, [contenteditable]:not([contenteditable="false"])')) return;
+      event.preventDefault(); exitPresentation(); return;
+    }
+    if (inBar ? [' ', 'Enter'].includes(key) : event.target?.closest(keyOwners)) return;
+    const body = topics[active].body, smooth = reducedMotion?.matches ? 'instant' : 'smooth';
+    const moves = {ArrowRight:active + 1, PageDown:active + 1, ArrowLeft:active - 1, PageUp:active - 1, Home:0, End:topics.length - 1};
+    if (key in moves && !event.shiftKey) { event.preventDefault(); if (!event.repeat) presentGo(moves[key]); return; }
+    // Scrolling stays inside the chapter: it never changes the chapter.
+    if (key === 'ArrowDown' || key === 'ArrowUp') { event.preventDefault(); body.scrollBy({top:key === 'ArrowDown' ? 64 : -64, behavior:smooth}); return; }
+    if (key === ' ') { event.preventDefault(); body.scrollBy({top:(event.shiftKey ? -1 : 1) * body.clientHeight * 0.85, behavior:smooth}); return; }
+    if ((key === 'f' || key === 'F') && !event.shiftKey && !event.repeat) { event.preventDefault(); toggleFullscreen(); }
+  }
+  presentStart?.addEventListener('click', event => startPresentation(0, event.currentTarget));
+  // All chapters: the Slides switch shows or hides slide faces and their bridges.
+  slidesButton?.addEventListener('click', () => {
+    const topic = topics[active], line = nav.getBoundingClientRect().bottom + 12;
+    const anchor = [...topic.body.querySelectorAll('p, h2, h3, h4, li, figure, table, summary')]
+      .filter(node => !node.closest('[data-slide-face], .slide-bridge, .present-title-card'))
+      .find(node => { const box = node.getBoundingClientRect(); return box.height > 0 && box.bottom > line; }) || topic.section;
+    const before = anchor.getBoundingClientRect().top;
+    slidesShown = !slidesShown;
+    try { localStorage.setItem(slidesKey, slidesShown ? 'shown' : 'hidden'); } catch (_) {}
+    syncSlidesButton(); render(false);
+    if (full) window.scrollBy({top:anchor.getBoundingClientRect().top - before, behavior:'instant'});
+  });
+  function syncSlidesButton() {
+    if (!slidesButton) return;
+    const label = (slidesShown ? 'Hide' : 'Show') + ' slide faces in All ' + plural;
+    slidesButton.setAttribute('aria-pressed', String(slidesShown)); slidesButton.setAttribute('aria-label', label); slidesButton.title = label;
+  }
+  syncSlidesButton();
   prev.addEventListener('click', () => move(-1)); next.addEventListener('click', () => move(1));
   viewButtons.forEach(node => node.addEventListener('click', () => selectView(node.dataset.readerView)));
   viewSelect.addEventListener('change', () => selectView(viewSelect.value));
   document.addEventListener('keydown', event => {
     if (about.open || help.open) return;
+    if (presenting) { wake(); presentKey(event); return; }
     if (event.key === 'Escape' && document.body.classList.contains('reader-nav-open')) { event.preventDefault(); closeDrawer(); return; }
     if (document.body.classList.contains('reader-nav-open') && !drawerDocked() && event.key === 'Tab') {
       const nodes = [...sidebar.querySelectorAll('button, a[href], summary')].filter(node => !node.closest('[hidden]') && node.tabIndex !== -1 && node.getClientRects().length > 0);
@@ -541,7 +740,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (full || event.defaultPrevented || event.repeat || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
     if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
     if (about.open || help.open || document.querySelector('.lb-overlay') || document.body.classList.contains('reader-nav-open') && !drawerDocked()) return;
-    if (event.target?.closest('input, select, textarea, button, a, summary, svg, canvas, video, audio, iframe, [data-reader-horizontal], [contenteditable]:not([contenteditable="false"]), [role="tab"], [role="tablist"], [role="slider"], [role="spinbutton"], [role="textbox"]')) return;
+    if (event.target?.closest(keyOwners)) return;
     event.preventDefault(); move(event.key === 'ArrowRight' ? 1 : -1);
   });
   document.addEventListener('click', event => {
@@ -594,6 +793,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.classList.add('reader-enabled'); nav.hidden = false;
   if (drawerPinned && window.innerWidth > 900) document.body.classList.add('reader-nav-open');
   syncDrawer();
+  // A reload or shared link of a presentation opens the same slide in the same view.
+  if (presentable && viewInAddress()) { presenting = true; presentReturn = validReturn(history.state?.chapterReader?.presentReturn); }
   const initial = targetFromHash(location.hash);
   if (!initial || !visit(initial, false, false, false)) render(false);
   routedHash = location.hash; saveHistory(false); window.scrollTo({top:0, behavior:'instant'}); window.dispatchEvent(new Event('resize'));
