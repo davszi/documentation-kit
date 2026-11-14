@@ -2,6 +2,16 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Add two rule proposals from a page review
+
+- deivid read ADP's attended-sessions page and corrected two things: the page
+  named him instead of a role, and a chapter presented one session's step list
+  as what every session requires.
+- Both are added as proposals 6 and 7 to
+  `docs/open/rule-proposals-from-adp-cleanup.md`, with his words and a
+  recommendation to write them into the page rules.
+- No rule text changed.
+
 ## 2026-11-13 — Record the open question about rule proposals
 
 - Five rule proposals drawn from the ADP cleanup were put to deivid in chat and
