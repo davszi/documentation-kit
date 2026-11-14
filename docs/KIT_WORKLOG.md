@@ -2,6 +2,13 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Drop the rule proposal on naming the case
+
+- deivid dropped proposal 7 after its second look. It leaves the open question
+  in `docs/open/rule-proposals-from-adp-cleanup.md`, which keeps his answer
+  and the reasons. Proposals 1, 2, 3, 4 and 6 remain unanswered.
+- No rule text changed.
+
 ## 2026-11-14 — Withdraw one rule proposal and rework two
 
 - deivid called proposal 5, pictures are chosen and not collected, specific to

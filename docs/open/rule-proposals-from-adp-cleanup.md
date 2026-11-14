@@ -7,8 +7,8 @@ answered and the accepted proposals are written into the rules.
 
 ## Question
 
-Which of the proposals below become kit rules? Proposal 5 is withdrawn, so
-six remain.
+Which of the proposals below become kit rules? Proposals 5 and 7 are
+answered and out, so 1, 2, 3, 4 and 6 remain.
 
 Proposals 1 to 5 name what the ADP cleanup of 2026-11-12 and 2026-11-13 met.
 Proposals 6 and 7 come from deivid's reading of an ADP page on 2026-11-14.
@@ -66,38 +66,17 @@ None is written into `rules/` yet.
    - Met in ADP: the attended-sessions page named deivid in its description,
      two chapter titles, three figures and the cost chapter. deivid: "i dont
      like that its written with deivid instead of developer or similar".
-7. **A statement that holds for one case names the case.** Reworked on
-   2026-11-14 after deivid asked for a critical second look ("7 im not sure
-   yet iterate on it think ciritcally").
-   - First wording, now dropped: "The general rule comes before the example,
-     and the example is labelled."
-   - Why it was dropped:
-     - The order is already a rule. [Explanations](../../rules/writing/explanations.md)
-       orders a page as purpose, prerequisites, ingredients, mechanism,
-       examples, evidence and limits. The ADP page did not misorder the
-       mechanism; it left it out.
-     - "Rule first" is wrong as a general demand. An explanation may open
-       with a worked example, and [figures](../../rules/writing/figures.md#figures-and-comparisons)
-       prefers a worked construction.
-     - The caption in ADP did name its case ("an all-parts session"). The
-       chapter title did not: it said "clicks 14 required steps" as if that
-       held for every session.
-   - What remains, as one sentence for
-     [naming and honest claims](../../rules/records.md#naming-and-honest-claims):
-     a heading, lead or caption that holds for one case names that case, and
-     where cases differ the text says what decides the difference.
-   - Against even that: it rests on one page, and a writer who skipped the
-     existing order rule may skip this one too. Dropping proposal 7 entirely
-     is a defensible answer.
-   - Met in ADP: a chapter titled with the 14 steps of the all-parts session.
-     The code composes a session from the parts it needs. deivid: "u give a
-     concrete example which i hopefully dont repeat every time as if it was
-     the general case".
+7. **Dropped.** A statement that holds for one case names the case. deivid on
+   2026-11-14, after a critical second look he had asked for: "Drop it". The
+   reasons: the explanation order is already a rule in
+   [explanations](../../rules/writing/explanations.md), an explanation may
+   open with a worked example, and the proposal rested on one ADP page whose
+   chapter title read as true for every session.
 
 ## Recommendation
 
 Write 1, 2, 3 and 6. Write 4 only together with 3 and with the three gaps
-closed. Write 7 as the one sentence above, or drop it.
+closed.
 
 ## What waits on the answer
 
