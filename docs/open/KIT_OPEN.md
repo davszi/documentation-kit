@@ -8,4 +8,5 @@ Routes only. The linked owner holds the checklist, rationale and evidence.
 - An invariant marker inside a code block is rendered as a card and breaks the block: [defect, workaround and next step](marker-in-fenced-code.md).
 - Six gaps in the migration guides, release notes and tooling that adaptation's upgrade met: [cases with evidence](adaptation-upgrade-findings.md).
 - Remove all migration guides once ADP `main` is on 3.2.x, decided by deivid: [trigger, kit changes and consumer steps](remove-migration-guides.md).
-- Decide which rule proposals from the ADP cleanup become kit rules — deivid's call: [question, proposals and recommendation](rule-proposals-from-adp-cleanup.md).
+- Decide whether one-off probe scripts are deleted after use, the last rule proposal from the ADP cleanup — deivid's call: [question, gaps and recommendation](rule-proposals-from-adp-cleanup.md).
+- The kit's browser suites use a Playwright that no dependency file declares, against the new dependencies rule: [what is wrong and next step](browser-test-dependency-not-declared.md).

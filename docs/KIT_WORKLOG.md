@@ -2,6 +2,51 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Write four rules from the ADP cleanup
+
+deivid accepted proposals 1, 2, 3 and 6 ("Yes, write them"). Each answers
+something the ADP cleanup met.
+
+- **Scratch files**, new section in `rules/engineering/handoffs.md`: before
+  reporting completion an agent deletes the drafts, review captures and
+  temporary test folders its work created, and a record cites no scratch file
+  by path or hash. `rules/site/validation.md` says the by-eye captures are
+  scratch files.
+- **Dependencies**, new section in `rules/engineering/code.md`: every
+  dependency is declared in the dependency file and installed; code loads no
+  third-party library from an untracked checkout or a folder under build
+  output; the setup guide produces the environment the project runs.
+- **Commit and diff**, in `rules/records.md` under numbers and staleness:
+  uncommitted code is kept as a diff against the pinned commit, new files
+  included; a run does not copy the working tree, and an unavoidable copy
+  holds no ignored files. The earlier wording allowed "a copy or a diff".
+- **Roles, not names**, in `rules/writing/pages.md` under page design: a page
+  that explains how something works uses one role word per role; a name
+  appears only where the page states who decided, approved or said something.
+
+The pages that explain these sections are synced: the handoffs and code
+chapters of `docs/topics/engineering-practices/index.md`, the evidence and
+page-design chapters of `docs/topics/writing-practices/index.md`, and the
+preview chapter of `docs/topics/build-a-site/index.md`. Each gained one
+paragraph or sentence of prose; no figure or layout changed.
+
+What a consumer has to do, for the release notes:
+
+- remove citations of review captures by path or hash from its records, and
+  delete the captures;
+- declare any dependency its code loads from a checkout or build folder;
+- change any run tooling that copies the working tree to record the commit
+  and a diff instead;
+- replace a person's name by a role word on pages that explain how something
+  works.
+
+No lint check enforces any of the four.
+
+Still open: the proposal to delete one-off probe scripts, now the only content
+of `docs/open/rule-proposals-from-adp-cleanup.md`. New open item: the kit's own
+browser suites use a Playwright that no dependency file declares,
+`docs/open/browser-test-dependency-not-declared.md`.
+
 ## 2026-11-14 — Drop the rule proposal on naming the case
 
 - deivid dropped proposal 7 after its second look. It leaves the open question

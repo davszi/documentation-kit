@@ -360,7 +360,7 @@ Without `--strict`, warnings print but the run passes; with it, any warning fail
 python3.12 -m http.server 8321 --bind 127.0.0.1 --directory .build/docs
 ```
 
-Open `http://127.0.0.1:8321/html/index.html`. The server exposes only the generated output, not the repository. A successful build, lint and browser suite still need a look by eye: capture each changed element whole, at wide and narrow widths and in each reader view it appears in, and look at the captures before committing or publishing. [Validation](validation.html#validation-and-review) lists what a complete review covers, including the reusable browser checks.
+Open `http://127.0.0.1:8321/html/index.html`. The server exposes only the generated output, not the repository. A successful build, lint and browser suite still need a look by eye: capture each changed element whole, at wide and narrow widths and in each reader view it appears in, and look at the captures before committing or publishing. The captures are [scratch files](handoffs.html#scratch-files): the record states what the review found and cites no capture by path or hash. [Validation](validation.html#validation-and-review) lists what a complete review covers, including the reusable browser checks.
 
 Before reusing a server that is already running, confirm who owns it and which checkout it serves, and stop only servers you started; [local review and browser access](validation.html#local-review-and-browser-access) covers the rest. When a page was written by a delegated page agent, the agent that delegated it looks at these captures itself before reporting the page done.
 

@@ -4,7 +4,7 @@
 
 Give each section one coherent purpose: answer a question, show a construction or compare alternatives. Split when the purpose changes; merge thin sections into their concept. Heading levels do not require separate cards. Use cards, tiles, tabs and callouts for distinct roles, without arbitrary word limits or one-screen constraints.
 
-Titles state the takeaway. A one-sentence `bs-lead` states the claim before the evidence. When reporting on the reader's questions, use each question as a heading, answer directly, then show evidence. Follow the [explanation prerequisites](explanations.md#story-and-reading-layers) and keep a formal, plain human voice. Internal registry tags, bug-hunt narratives, file-routing tables and debugging chronology stay off rendered surfaces.
+Titles state the takeaway. A one-sentence `bs-lead` states the claim before the evidence. When reporting on the reader's questions, use each question as a heading, answer directly, then show evidence. Follow the [explanation prerequisites](explanations.md#story-and-reading-layers) and keep a formal, plain human voice. Internal registry tags, bug-hunt narratives, file-routing tables and debugging chronology stay off rendered surfaces. A page that explains how something works names roles, not people: one role word for each, such as "the developer", throughout the page. A person's name appears only where the page states who decided, approved or said something.
 
 When the purpose of a section is to explain a mechanism or spatial
 relationship, place the figure after the heading or a one-sentence takeaway. Follow it with the

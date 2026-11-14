@@ -15,6 +15,21 @@ assess and continue the work:
 Distinguish work completed from behavior verified. State whether a claim
 comes from an executed check, source inspection or an inference.
 
+## Scratch files
+
+Before reporting completion, delete the scratch files the work created.
+Scratch is what the work made for its own use and what no record, claim or
+person still needs: drafts, captures taken for a review by eye, and the
+temporary folders of its tests and tools. Keep a capture the person is still
+to look at until they have seen it.
+
+Delete only what this work created. Name anything else that looks unneeded in
+the report and propose its deletion.
+[Run output](../records.md#numbers-and-staleness) is never scratch.
+
+A record does not cite a scratch file by path or hash. It states what the
+draft or the review established.
+
 ## Reporting blockers
 
 Send blockers through the agreed return channel. Explain what is blocked,

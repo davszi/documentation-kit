@@ -56,6 +56,8 @@ The guides state shared principles. Each project adds its own concrete controls,
 
 When another program reads stdout or stderr, every line in that stream is input to it. A diagnostic written there corrupts that input, so the guide treats consumed output as an interface and preserves its format unless an interface change is agreed. A generated file has the opposite problem: its content comes from somewhere else. Without changing it at the source or generator, the next regeneration can undo a hand edit and leave the source and its output disagreeing.
 
+A dependency has one declared source in the same way. The guide asks that every dependency the code needs stands in the project's dependency file and is installed into the environment. Code does not load a third-party library from an untracked checkout or a folder under build output; a copy tracked in the repository is vendored and carries its license and a notice of its source and version. The setup guide, followed from a fresh clone, has to produce the environment the project runs, and when the two differ the dependency file or the guide is corrected.
+
 An illustrative example, not taken from a real project:
 
 <div class="bs-grid g2">
@@ -69,7 +71,7 @@ Progress lines or warnings on stdout look harmless while developing, but a progr
 
 <!-- /fold -->
 
-Full guide: [Code and repository practices](code-practices.html) · [Logging and program output](code-practices.html#logging-and-program-output) · [Generated files](code-practices.html#generated-files)
+Full guide: [Code and repository practices](code-practices.html) · [Logging and program output](code-practices.html#logging-and-program-output) · [Generated files](code-practices.html#generated-files) · [Dependencies](code-practices.html#dependencies)
 
 </section>
 
@@ -429,6 +431,8 @@ Full guide: [Ownership and delivery](delivery.html) · [Decisions and blockers](
 
 The recipient of a report has to decide what to trust and what to do next, usually without rerunning the work. A report that says "done" without naming what was checked leaves them unable to tell finished work from verified behavior. The guide asks you to say whether each claim comes from an executed check, source inspection or an inference. Chat, temporary coordination state and temporary files must not be the only retained copy of evidence later work needs.
 
+Work also leaves files nobody needs afterwards: drafts, captures taken for a review by eye, and the temporary folders of tests and tools. The guide calls these scratch files and asks you to delete the ones your work created before you report completion, except a capture the person is still to look at. Anything else that looks unneeded is named in the report with a proposal to delete it, and run output is never scratch. A record states what a draft or a review established; it does not cite the scratch file by path or hash, so nothing breaks when the file goes.
+
 On the receiving side, before relying on a consequential claim, check its supporting evidence and whether its source, inputs and scope match the work being integrated.
 
 An illustrative example, not taken from a real project; ‹link› stands for a link to the change:
@@ -459,7 +463,7 @@ On the receiving side, two small acts keep work from stalling. Confirm receipt w
 
 <!-- /fold -->
 
-Full guide: [Handoffs and progress reports](handoffs.html) · [Reporting completion](handoffs.html#reporting-completion) · [Reporting blockers](handoffs.html#reporting-blockers) · [Evidence and durable records](handoffs.html#evidence-and-durable-records) · [Receiving a handoff](handoffs.html#receiving-a-handoff)
+Full guide: [Handoffs and progress reports](handoffs.html) · [Reporting completion](handoffs.html#reporting-completion) · [Scratch files](handoffs.html#scratch-files) · [Reporting blockers](handoffs.html#reporting-blockers) · [Evidence and durable records](handoffs.html#evidence-and-durable-records) · [Receiving a handoff](handoffs.html#receiving-a-handoff)
 
 </section>
 

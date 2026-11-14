@@ -12,6 +12,18 @@ Identify the source or generator before changing a generated file. Make the chan
 
 Follow the project's toolchain, reproducibility and validation requirements. Keep its rules for which generated outputs are tracked or ignored.
 
+## Dependencies
+
+Declare every dependency the code needs in the project's dependency file and
+install it into the environment. Code does not load a third-party library from
+a path outside the environment, such as an untracked checkout or a folder
+under build output. A copy tracked in the repository is vendored: it carries
+its license and a notice of its source and version.
+
+The project's setup guide, followed from a fresh clone, produces the
+environment the project runs. When the two differ, correct the dependency file
+or the guide.
+
 ## Refactoring over compatibility
 
 The project prefers clean refactors to keeping old interfaces working.
