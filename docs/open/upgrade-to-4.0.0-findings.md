@@ -121,8 +121,30 @@ these; only the first is checked here.
    The session committed the pin first, ran the checks and amended. A note for
    such consumers may help; the cause is ADP's tooling.
 
-## Next step
+## Decided and still owed
 
-deivid decides which requirements of the slide-face rule make a face fail.
-After that the rule and the guide step are rewritten, and the guide gaps are
-fixed in the next release.
+deivid decided on 2026-11-14, when asked whether a face with a real visual but
+without the prescribed layout is fine: "B must be reworked too cuz we dont want
+fixed layouts", and each face needs a "cool and unique layout made as if the
+creator was an expert designer". His reference is his own deck "CORE Labs".
+Checked here on eight of its slides: label row, title, footer, type and colours
+are the same on every slide, and the body differs on seven of the eight.
+
+Done: the slide-face rule no longer prescribes one arrangement. It asks for a
+layout that follows the shape of the content, names what the faces share, sets
+a designer's standard and says how a review sorts existing faces. This answers
+case 1 above.
+
+Owed:
+
+- An independent review of the changed rule before the next release.
+- The kit's own four example faces were built to the old prescribed
+  arrangement and need the same review.
+- Four places still describe the old arrangement and wait for a page agent:
+  `docs/topics/writing-practices/index.md` ("Composed from top to bottom"),
+  `docs/topics/build-a-site/index.md`, and in the starter
+  `docs/topics/guide/guide.md` and `docs/topics/guide/index.md`.
+- Cases 2 to 8 above, the three omissions of the guide step and the fourteen
+  other gaps.
+- A trial of the changed rule on a few of adaptation's faces, to see whether
+  it produces better faces and not only finds weak ones.

@@ -2,6 +2,23 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Slide faces: no prescribed arrangement
+
+- deivid decided that slide faces get no fixed layout: each face is designed
+  for its own content, to the standard of an expert designer. He named his
+  deck "CORE Labs" as the example.
+- The rule of 2026-11-12 had turned one reference deck into one arrangement:
+  visual, three to five points beside it, a row of facts. On adaptation that
+  arrangement was met by none of 36 faces. Eight slides of "CORE Labs" share
+  the frame and vary the body on seven.
+- `rules/writing/pages.md`, slide faces: the prescribed arrangement is
+  replaced by a layout that follows the shape of the content, the shared
+  frame, a designer's standard, components as parts to choose from, and three
+  groups for a review of existing faces.
+- Not done: independent review of the rule, the kit's four example faces, the
+  4.0.0 guide step. Listed in `docs/open/upgrade-to-4.0.0-findings.md`.
+- Checks: build and strict lint.
+
 ## 2026-11-14 — ADP's upgrade to 4.0.0 reported, findings record renamed
 
 - ADP's session reported its move to 4.0.0: one local commit, strict lint

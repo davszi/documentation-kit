@@ -66,13 +66,21 @@ Slide faces are added when a person wants them. Build the page's chapters first.
 
 A face earns its place by its visual. Make each one a slide worth presenting on its own: one finding, a visual that fills the canvas and shows that finding, and labels a person can read from the back of a room.
 
-Compose the face from top to bottom so that no band of the canvas is left over:
+Design each face for its own content. Decide what the finding is and what shape its evidence has: a comparison, a sequence, a trend, parts of a whole, one decisive number, a place on a drawing. That shape sets the layout. No arrangement is prescribed, and two faces of a page share one only when their content has the same shape. A face may be one figure across the whole canvas with labels on its parts, a figure with a few points beside it, a row of steps above two conclusions, a matrix, or pictures in columns with a caption each.
 
-- A label row names the subject. The title states the finding. One lead sentence says what the visual shows.
-- The body holds the visual and three to five points beside or below it. Each point is a short claim in bold with one or two sentences that explain it. A point that is only a label belongs on the visual, not in a box.
-- Emphasis follows the title. Mark only the points and the parts of the visual that the title names; leave the others plain, separated by a thin rule and without a box of their own.
-- A closing row gives the facts a person would ask for next, each as a small label over a value, when the chapter states them. The scope line ends the face.
-- Use few type roles and keep them the same on every face: small capitals for labels, bold for claims, regular for explanations.
+The frame is what a project's faces share, not the body: the label row and the title at the top, the scope line at the bottom, the type roles and the tones.
+
+Hold every face to what a professional slide designer would present:
+
+- The canvas is used from top to bottom, with no band left over and nothing crowded.
+- One thing draws the eye first, and it is the finding. Emphasis marks only what the title names; everything else stays plain.
+- Text is short. A claim stands in bold with at most one or two sentences that explain it. A point that is only a label belongs on the visual, not in a box.
+- Parts align on one grid with even spacing, thin rules take the place of a box around every item, and the type roles are few: small capitals for labels, bold for claims, regular for explanations.
+- Facts a person would ask for next, such as counts, sizes and dates, may close the face as small labels over values when the chapter states them.
+
+The shared slide components, such as ruled points, a facts row, tiles, chips and a legend, are parts to choose from. None is required on a face.
+
+A review of existing faces sorts each one into three groups and gives the reason: a face without a real visual, or on a chapter with nothing to show, is redrawn or removed; a face with a real visual whose layout is below this standard, or repeats its neighbours' without the same shape of content, is redesigned; the others stay.
 
 - The title states the finding as a sentence, not a topic. The eyebrow names the subject without a chapter number; the reader card and extracted deck supply numbers.
 - Use one visual that shows the finding: the chapter's figure, plot or diagram, a figure beside headline measurements, or a project-local drawing. Reuse the chapter's own figure assets rather than drawing a second version of the same data. When the chapter has no figure yet, [make one](figures.md#figures-and-comparisons) for the chapter first.
