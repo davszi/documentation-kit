@@ -8,4 +8,3 @@ Routes only. The linked owner holds the checklist, rationale and evidence.
 - An invariant marker inside a code block is rendered as a card and breaks the block: [defect, workaround and next step](marker-in-fenced-code.md).
 - Six gaps in the migration guides, release notes and tooling that adaptation's upgrade met: [cases with evidence](adaptation-upgrade-findings.md).
 - In the zoomed figure the plot toggle chips lose their series colour, and a long label wraps at phone width: [both points](plot-toggle-chips-in-lightbox.md).
-- Release 4.0.0 waits for deivid's go to tag and push: [what is settled and what waits](next-release-version.md).

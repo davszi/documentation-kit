@@ -2,6 +2,21 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Release 4.0.0
+
+- deivid gave the go for the tag and the push on 2026-11-14, in answer to
+  "Tag v4.0.0 and push the kit to main?".
+- The tag `v4.0.0` is set on the commit that holds this entry and is pushed
+  with `main`. The push publishes the kit's site.
+- The open record `docs/open/next-release-version.md` and its route are
+  deleted, as the record itself asked. What it settled is in the release
+  notes: the version is 4.0.0 and the migration guides stay.
+- Checks on this state: build and strict lint. The full check script last ran
+  on the commit before, which differs only by this entry and the deleted
+  record.
+- Not verified before the push: the Pages workflow with its new `npm ci`
+  install has not run on GitHub.
+
 ## 2026-11-14 — Two points left by the second look at the review fixes
 
 - The reviewer checked the fixes of the entry below: eight of ten findings
