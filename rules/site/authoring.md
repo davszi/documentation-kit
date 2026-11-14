@@ -26,6 +26,14 @@ python .docs-kit/docsite.py lint --project .
 
 Use `--page <slug>` with build for targeted iteration. Lint supports `--strict` and `--registry`. The kit README owns installation and shared-engine development checks. The project's `docs/PROJECT_CONTEXT.md` records its tested environment and additional checks. Pin dependency versions; documentation builds must not require importing the consuming application's runtime or initializing a GPU.
 
+Set `gh_repo = ""` when the project has no source remote. Source links then
+keep their local identity relative to the logical `docs/html/` origin, and
+registered pages omit remote edit links. HTTP previews do not rewrite those
+links to GitHub. Building still packages only declared resources; it does not
+expose the source checkout. To make source files available in an HTTP bundle,
+admit them through the [publication exporter](publication.md#configured-publication).
+Exported relative source links remain unchanged without a source remote.
+
 ## Authoring paths
 
 Two kinds of page render: topic entry pages at `docs/topics/*/index.md`, or inside a [topic group folder](#topic-group-folders), and [registered source pages](#registered-source-pages). Every new entry page needs frontmatter with `title` and `toc` (an empty list is valid with automatic chapters), plus a corresponding `[[nav]]` entry in `docs/site/site.toml`. The folder supplies its public slug; set `slug = "index"` on the home page. Slugs are lowercase filename stems without directories. Use `hidden = true` for a built, directly reachable page outside navigation, subject to the documentation deletion policy.

@@ -84,6 +84,44 @@ class SourcePages(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0, result.stdout)
         self.assertIn(message, result.stderr)
 
+    def test_no_remote_source_links_build_lint_and_export_locally(self):
+        config = self.root / 'docs/site/site.toml'
+        config.write_text(config.read_text().replace(
+            'gh_repo = "https://github.com/example/project"', 'gh_repo = ""') + '''
+[publication]
+assets_manifest = "docs/site/resources.json"
+pages = ["shared-rule.html", "other-rule.html"]
+''')
+        sources = ['policy/rule.md', 'policy/other.md', 'notes/record.md']
+        self.write('docs/site/resources.json', json.dumps({'files': sources}))
+        self.write('policy/rule.md', RULE + '\nRead [the notes directory](../notes/).\n')
+        result = self.build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        page = self.page('shared-rule')
+        self.assertIn('href="../../policy/rule.md"', page)
+        self.assertIn('href="../../notes/record.md#kept"', page)
+        self.assertIn('href="../../notes/"', page)
+        self.assertIn('data-repo-path="notes/record.md"', page)
+        self.assertNotIn('/blob/', page)
+        self.assertNotIn('source-origin-edit', page)
+        lint = invoke('lint', '--project', self.root, '--strict')
+        self.assertEqual(lint.returncode, 0, lint.stdout + lint.stderr)
+
+        destination = self.root / '_site'
+        exported = invoke('publish', '--project', self.root, '--out', destination)
+        self.assertEqual(exported.returncode, 0, exported.stdout + exported.stderr)
+        public = (destination / 'shared-rule.html').read_text()
+        self.assertIn('href="policy/rule.md"', public)
+        self.assertIn('href="notes/record.md#kept"', public)
+        self.assertNotIn('data-repo-path="notes/record.md"', public)
+        self.assertEqual((destination / 'notes/record.md').read_text(), '# Record\n\n## Kept\n')
+
+        # Local identity must still expose a genuinely missing source to lint.
+        (self.root / 'notes/record.md').unlink()
+        lint = invoke('lint', '--project', self.root, '--strict')
+        self.assertNotEqual(lint.returncode, 0)
+        self.assertIn('dead relative href ../../notes/record.md#kept', lint.stderr)
+
     def test_source_origin_routes_media_and_literal_markers(self):
         result = self.build()
         self.assertEqual(result.returncode, 0, result.stderr)

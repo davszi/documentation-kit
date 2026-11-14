@@ -2,6 +2,47 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Publish the approved isolated source-link fix
+
+- deivid approved publishing the prepared fix on its own branch and updating
+  the consuming project's pin. The target is
+  `fix/local-source-links-20261114`, based only on published commit
+  `df089ef22838a3c776eb692e8c785d3b2816113a`. The kit's other local commits
+  remain outside this branch; no release, tag or merge is included.
+- The primary agent reviewed the complete patch and verified it was byte-for-byte
+  identical to the tested preparation. The implementation and test inputs are
+  unchanged, so the 188-test evidence below is reused. A focused browser check
+  also preserved an exported canonical Markdown link after JavaScript ran;
+  clicking it requested the correct local file with HTTP 200.
+- The build guide's source-link paragraph now explains the absent-remote
+  boundary and explicit HTTP export requirement; its prior blanket GitHub
+  description no longer matched the authoring record.
+- The consuming project's final build, strict lint and reader checks follow the
+  published pin. Its wider content/design and evidence-retention work remain
+  owned by that project.
+
+## 2026-11-14 — Prepare no-remote source-link correction
+
+- Prepared a review patch against `df089ef22838a3c776eb692e8c785d3b2816113a`.
+  No release, tag, push or consumer pin change is part of this patch.
+- With `gh_repo = ""`, generated source links retain their logical local
+  paths, so strict lint checks the real source targets. HTTP source-link
+  handling preserves exported relative Markdown, Python and directory paths.
+  Configured hosted source behavior remains covered by the existing tests.
+- Both added regression checks failed against the original implementation
+  and passed with the fix. The build/export check also deletes a source and
+  confirms that strict lint still rejects the missing target.
+- `bash tests/run_checks.sh`, selecting the installed Python documentation
+  environment with `DOCS_PYTHON` and Node 22.23.3 with `DOCS_NODE`, passed:
+  188 Python tests, starter and kit builds
+  and strict lint, math/source-link/reader/fold/panel logic, and syntax checks
+  for 25 scripts. Runtime: Python 3.12.3, mistune 3.3.4, Pygments 2.21.0,
+  Node 22.23.3; pinned Python dependencies were already installed.
+- Browser suites were skipped because this scratch checkout has no local
+  Playwright installation. No browser pixel inspection is claimed. A build
+  does not serve the source checkout; HTTP source access still requires the
+  explicit publication resource allowlist.
+
 ## 2026-11-14 — Release 4.0.0
 
 - deivid gave the go for the tag and the push on 2026-11-14, in answer to

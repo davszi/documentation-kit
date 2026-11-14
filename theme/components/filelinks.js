@@ -6,6 +6,8 @@
   var HOSTED = location.protocol !== 'file:';
   var match = decodeURIComponent(location.pathname).match(/^(.*)\/\.build\/docs\/html\/[^\/]*$/);
   var REPO_ROOT = match ? match[1] : '';
+  // No remote means HTTP source links keep the builder/exporter's local paths.
+  if (HOSTED && !GH_REPO) return;
   document.querySelectorAll('a[href]').forEach(function(a){
     var href = a.getAttribute('href');
     var relative = a.getAttribute('data-repo-path');
