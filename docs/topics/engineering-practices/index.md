@@ -407,7 +407,7 @@ An illustrative example, not taken from a real project:
 
 When two pieces of parallel work collide, stopping all nearby work looks safe. It also stops everyone who was never part of the collision. The guide asks for a narrower response: restrict only what actually conflicts, so that unrelated work continues.
 
-In practice, keep other contributors' changes intact, agree on edits that overlap, and leave alone what running work depends on: its source, inputs, dependencies, execution settings and outputs. When two efforts need to move independently, give each its own worktree or another suitable form of isolation.
+In practice, keep other contributors' changes intact, agree on edits that overlap, and leave alone what running work depends on: its source, inputs, dependencies, execution settings and outputs. Work that nobody else shares stays in the project's checkout on its current branch. A separate branch or worktree is for the case that other work changes the same repository at the same time, that the project's workflow asks for one, or that the person asks for one.
 
 <!-- /fold -->
 

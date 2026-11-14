@@ -2,6 +2,26 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Work alone stays in the checkout on its current branch
+
+- deivid reported on 2026-11-14 that agents now use a branch and a worktree
+  for all work, also when they work alone. No rule asked for it: the kit said
+  only "Use separate worktrees or other suitable isolation when independent
+  work requires it", and neither ADP's guides nor his personal instructions
+  name worktrees. The habit comes from how sessions are started in the desktop
+  app, where a session started from a session in a worktree gets its own
+  worktree and branch by default. That cause is read from the app's tool
+  description, not measured.
+- [Parallel work](../rules/engineering/delivery.md#parallel-work) now states
+  the default: work alone happens in the project's checkout on its current
+  branch, and a separate branch or worktree is used only when other work
+  changes the same repository at the same time, when the project's workflow
+  asks for one, or when the person asks for one. deivid chose the kit over his
+  personal instructions as the home and accepted the wording.
+- The parallel-work chapter of the engineering-practices page, the 4.0.0
+  release notes and the 4.0.0 migration guide name the rule. The rule does not
+  reach a session a person starts by hand in the app.
+
 ## 2026-11-14 — Plot toggle labels come from the project
 
 - `theme/components/plot-toggles.js` no longer holds a fixed table of nine

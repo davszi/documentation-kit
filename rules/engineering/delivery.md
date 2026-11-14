@@ -40,8 +40,10 @@ Preserve other contributors' changes. Coordinate overlapping edits and protect
 active work from conflicting changes to its source, inputs, dependencies,
 execution settings and outputs.
 
-Use separate worktrees or other suitable isolation when independent work
-requires it. Coordinate restrictions around the actual conflict so unrelated
+Work alone happens in the project's checkout on its current branch. Use a
+separate branch or worktree only when other work changes the same repository
+at the same time, when the project's workflow asks for one, or when the person
+asks for one. Coordinate restrictions around the actual conflict so unrelated
 work can continue.
 
 ## Decisions and blockers
