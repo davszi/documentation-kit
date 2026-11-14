@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Locked page</title>
+{{BASE_CSS}}<link rel="stylesheet" href="{{LOCK_CSS}}">
+</head>
+<body class="page-lock">
+<main class="page-lock-panel" id="page-lock" data-level="{{LEVEL}}" data-root="{{ROOT}}">
+  <h1>This page is locked</h1>
+  <noscript><p class="page-lock-text">Unlocking this page needs JavaScript. Turn JavaScript on for this site and reload the page.</p></noscript>
+  <p class="page-lock-text" id="page-lock-message" hidden></p>
+  <form class="page-lock-form" id="page-lock-form" hidden>
+    <label for="page-lock-password">Password</label>
+    <input id="page-lock-password" name="password" type="password" autocomplete="current-password" required>
+    <label class="page-lock-remember"><input id="page-lock-remember" type="checkbox"> Remember on this device</label>
+    <button type="submit">Unlock</button>
+  </form>
+  <p class="page-lock-status" id="page-lock-status" role="status" aria-live="polite"></p>
+</main>
+<script type="application/json" id="page-lock-keys">{{KEYS}}</script>
+<script type="application/octet-stream" id="page-lock-data">{{DATA}}</script>
+<script src="{{LOCK_JS}}"></script>
+</body>
+</html>

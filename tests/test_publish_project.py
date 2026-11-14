@@ -75,7 +75,7 @@ private_prefixes = ["configs/"]
                 with patch('publication.subprocess.run') as build:
                     with self.assertRaisesRegex(ValueError, 'Unsupported \\[publication\\] keys: '
                                                 '(page_routes|files|retired_routes); supported keys: '
-                                                'assets_manifest, pages, private_suffixes, private_prefixes'):
+                                                'assets_manifest, pages, private_suffixes, private_prefixes, lock'):
                         publish_project(self.root, self.output, kit=self.kit)
                     build.assert_not_called()
                 self.assertFalse(self.output.exists())

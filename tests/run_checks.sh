@@ -24,6 +24,18 @@ DOCSITE_PROJECT_ROOT="$TASK_KIT_ROOT" "$DOCS_PYTHON" docsite.py lint --project .
 # Reader, fold-control and panel-switcher logic in a fake DOM; no browser needed.
 "$DOCS_NODE" tests/test_reader_logic.cjs
 "$DOCS_NODE" tests/test_panel_switcher_logic.cjs
+# Page lock: Node's WebCrypto must open what the Python side sealed. Its checks
+# need the optional cryptography package from requirements-lock.txt.
+if "$DOCS_PYTHON" -c "import cryptography" 2>/dev/null; then
+  lock_checks=1
+  DOCS_PYTHON="$DOCS_PYTHON" "$DOCS_NODE" tests/test_page_lock_webcrypto.cjs
+elif [ "${DOCS_REQUIRE_BROWSER:-0}" = 1 ]; then
+  echo "ERROR: the page-lock checks need cryptography. Run python -m pip install -r requirements-lock.txt." >&2
+  exit 1
+else
+  lock_checks=0
+  echo "SKIPPED: page-lock checks. Run python -m pip install -r requirements-lock.txt to run them."
+fi
 # Every shared script must parse, even where no browser is available.
 scripts=(theme/components/*.js tooling/*.cjs tests/*.cjs)
 for script in "${scripts[@]}"; do
@@ -46,6 +58,10 @@ if "$DOCS_NODE" -e "require('./node_modules/playwright')" 2>/dev/null; then
     ${cap[@]+"${cap[@]}"} env DBUS_SESSION_BUS_ADDRESS="unix:path=/nonexistent-docs-kit-review" \
       timeout 280 "$DOCS_NODE" "tests/$suite.cjs"
   done
+  if [ "$lock_checks" = 1 ]; then
+    ${cap[@]+"${cap[@]}"} env DBUS_SESSION_BUS_ADDRESS="unix:path=/nonexistent-docs-kit-review" \
+      DOCS_PYTHON="$DOCS_PYTHON" timeout 280 "$DOCS_NODE" tests/test_page_lock_browser.cjs
+  fi
 elif [ "${DOCS_REQUIRE_BROWSER:-0}" = 1 ]; then
   echo "ERROR: browser suites are required, but Playwright does not load from node_modules/. Run npm ci." >&2
   exit 1
