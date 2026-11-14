@@ -32,10 +32,10 @@ jobs:
         with:
           node-version: '22'
       - name: Install Playwright and Chromium for the browser suites
+        # The version comes from package.json and package-lock.json.
         run: |
-          npm install --prefix "$RUNNER_TEMP/browser" playwright@1.62.1
-          "$RUNNER_TEMP/browser/node_modules/.bin/playwright" install --with-deps chromium
-          echo "DOCS_PLAYWRIGHT=$RUNNER_TEMP/browser/node_modules/playwright" >> "$GITHUB_ENV"
+          npm ci
+          npx playwright install --with-deps chromium
       - name: Run the kit checks
         # Test fixtures commit in disposable repositories, so Git needs an identity.
         run: |

@@ -87,6 +87,7 @@ search for each.
 | Lint | A configuration error in `site.toml` was reported as a stale site; lint now prints the build's error | [Validation and review](../../../rules/site/validation.md#validation-and-review) |
 | Starter | The guide page's two slide faces are rebuilt around SVG figures in two new fragments. The starter router is unchanged | [Slide faces](../../../rules/writing/pages.md#slide-faces) |
 | Kit checks | Node checks of the reader, fold controls and panel switcher run in an imitation page without a browser; a test checks that a built site ships the kit's component files unchanged | [README](../../../README.md#develop-the-kit) |
+| Kit checks | The browser suites load Playwright from the kit's own `node_modules/`, installed by `npm ci` from a root `package.json` and `package-lock.json` that pin version 1.62.1; the Pages workflow installs from the same files. `DOCS_PLAYWRIGHT` and `DOCS_CHROMIUM` are gone. Only kit development is affected: building a site needs no Node.js | [README](../../../README.md#develop-the-kit) |
 
 Known open defects, each recorded under `docs/open/`:
 
@@ -97,9 +98,6 @@ Known open defects, each recorded under `docs/open/`:
 - `theme/components/plot-toggles.js` still holds one project's plot series
   labels.
   [Record](../../open/shared-theme-leftovers.md).
-- The kit's own browser suites use a Playwright that no dependency file
-  declares, against the new dependencies rule. Consumers are not affected.
-  [Record](../../open/browser-test-dependency-not-declared.md).
 
 ## 3.2.1 — rule wording corrected
 

@@ -1,7 +1,7 @@
 // Optional real-browser review of the kit's own reference website (.build/docs).
 // Build it first: python docsite.py build --project .
 // Run as one owned, serialized local job; screenshots go to .build/visual-review/own-site/.
-const { chromium } = require(process.env.DOCS_PLAYWRIGHT || 'playwright');
+const { chromium } = require('../node_modules/playwright');
 const fs = require('node:fs/promises');
 const http = require('node:http');
 const path = require('node:path');
@@ -32,7 +32,7 @@ const SHOTS = ['index', 'getting-started', 'build-a-site', 'git', 'releases', 'r
     assert.ok(pages.includes(required), 'missing required page ' + required);
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
   const origin = `http://127.0.0.1:${server.address().port}`;
-  const browser = await chromium.launch({headless:true, executablePath:process.env.DOCS_CHROMIUM || undefined});
+  const browser = await chromium.launch({headless:true});
   const results = {pages: pages.length, viewports: {}};
   try {
     for (const viewport of [{width:1600,height:1000},{width:390,height:844}]) {

@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "description": "Development dependencies of the kit's browser suites; building a site needs no Node.js.",
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}

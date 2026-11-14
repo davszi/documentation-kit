@@ -147,8 +147,9 @@ python .docs-kit/docsite.py slides --project . --select guide --select other#int
 ```
 
 Python 3.12 is the validated runtime; the entrypoint requires at least 3.12.
-Dependencies are pinned in `requirements.txt`. Node.js 22 is used for kit
-development checks, not for building a consuming site.
+Dependencies are pinned in `requirements.txt`. Node.js 22 and the Playwright
+version pinned in `package.json` are used for kit development checks, not for
+building a consuming site.
 
 The build packages tracked resources only, rejects missing media and symlink
 escapes, checks resource closure and detects stray generated files. Local-only
@@ -171,8 +172,15 @@ optional.
 
 ```bash
 python -m pip install -r requirements.txt
+npm ci
+npx playwright install chromium
 bash tests/run_checks.sh
 ```
+
+`npm ci` installs the Playwright version that `package.json` and
+`package-lock.json` pin into the kit's own `node_modules/`, which Git ignores;
+`npx playwright install chromium` then downloads the Chromium build that this
+Playwright version expects. Both are needed only for the browser suites.
 
 `tests/run_checks.sh` generates the starter with `init` under `.build/starter/`,
 builds and lints it, runs the unit tests against it, then builds and checks the
@@ -189,16 +197,17 @@ stays under each consumer's `.build/docs/`; tools never infer the consumer from
 where the kit happens to be installed.
 
 The script then checks that every shared script parses and runs the four
-real-browser suites when Playwright resolves. Playwright and Chromium come from
-the development environment:
+real-browser suites when Playwright loads from the kit's `node_modules/`.
+`DOCS_NODE` selects a Node 22 binary when `node` on the path is another
+version:
 
 ```bash
-DOCS_PLAYWRIGHT=/path/to/playwright DOCS_CHROMIUM=/path/to/chromium DOCS_NODE=/path/to/node22 bash tests/run_checks.sh
+DOCS_NODE=/path/to/node22 bash tests/run_checks.sh
 ```
 
-Without Playwright the script prints that the browser suites were skipped.
-`DOCS_REQUIRE_BROWSER=1` turns that into a failure, and a `DOCS_PLAYWRIGHT` that
-does not load is always a failure. The Pages workflow sets it,
+Without that install the script prints that the browser suites were skipped.
+`DOCS_REQUIRE_BROWSER=1` turns that into a failure. The Pages workflow installs
+from the same `package.json` with `npm ci` and sets `DOCS_REQUIRE_BROWSER=1`,
 so a push to `main` publishes only when every check passes, browser suites
 included.
 

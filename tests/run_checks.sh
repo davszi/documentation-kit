@@ -31,9 +31,11 @@ for script in "${scripts[@]}"; do
 done
 echo "Syntax: ${#scripts[@]} scripts parse."
 # Real-browser suites: starter reader, layout helpers, panel switcher and the
-# kit's own site. They run when Playwright resolves. DOCS_REQUIRE_BROWSER=1
-# makes a missing Playwright fail instead of skipping, as the Pages workflow does.
-if "$DOCS_NODE" -e "require(process.env.DOCS_PLAYWRIGHT || 'playwright')" 2>/dev/null; then
+# kit's own site. They load Playwright from the kit's own node_modules, which
+# `npm ci` installs from package.json and package-lock.json, and run when it
+# loads. DOCS_REQUIRE_BROWSER=1 makes a missing install fail instead of
+# skipping, as the Pages workflow does.
+if "$DOCS_NODE" -e "require('./node_modules/playwright')" 2>/dev/null; then
   cap=()
   if systemd-run --user --scope --quiet -p MemoryMax=4G -p MemorySwapMax=0 true 2>/dev/null; then
     cap=(systemd-run --user --scope --quiet -p MemoryMax=4G -p MemorySwapMax=0)
@@ -45,12 +47,9 @@ if "$DOCS_NODE" -e "require(process.env.DOCS_PLAYWRIGHT || 'playwright')" 2>/dev
       timeout 280 "$DOCS_NODE" "tests/$suite.cjs"
   done
 elif [ "${DOCS_REQUIRE_BROWSER:-0}" = 1 ]; then
-  echo "ERROR: browser suites are required, but Playwright does not resolve. Set DOCS_PLAYWRIGHT." >&2
-  exit 1
-elif [ -n "${DOCS_PLAYWRIGHT:-}" ]; then
-  echo "ERROR: DOCS_PLAYWRIGHT is set to '$DOCS_PLAYWRIGHT', but Playwright does not load from there." >&2
+  echo "ERROR: browser suites are required, but Playwright does not load from node_modules/. Run npm ci." >&2
   exit 1
 else
   echo "SKIPPED: browser suites (starter reader, layout helpers, panel switcher, own site)."
-  echo "         Set DOCS_PLAYWRIGHT and DOCS_CHROMIUM to run them."
+  echo "         Run npm ci and npx playwright install chromium to run them."
 fi

@@ -5,7 +5,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs/promises');
 const path = require('node:path');
-const {chromium} = require(process.env.DOCS_PLAYWRIGHT || 'playwright');
+const {chromium} = require('../node_modules/playwright');
 const {visibleMedia, measureOverflow, assertHorizontalContainment, checkLayout, readerChecks, captureElement} =
   require('../tooling/browser_checks.cjs');
 
@@ -61,8 +61,7 @@ async function reviewSmallReaders(browser) {
 }
 
 (async () => {
-  const browser = await chromium.launch({headless:true,
-    executablePath:process.env.DOCS_CHROMIUM || undefined});
+  const browser = await chromium.launch({headless:true});
   try {
     const page = await browser.newPage({viewport:{width:480,height:320}});
     await page.setContent(`<!doctype html><style>

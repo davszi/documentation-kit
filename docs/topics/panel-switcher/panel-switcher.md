@@ -48,8 +48,9 @@ documentation owns its adoption and compatibility status.
 package the shared script/stylesheet without a local extension. The optional
 real-browser check `node tests/test_panel_switcher.cjs` covers independent
 groups, defaults, buttons and keyboard, hash reveal, printing, invalid input,
-wide/narrow containment and no-JavaScript reading. Use the Playwright/Chromium
-environment variables documented in the README.
+wide/narrow containment and no-JavaScript reading. It needs the
+Playwright install that the README's [development steps](../../../README.md#develop-the-kit)
+set up.
 
 The [verification record](https://github.com/davszi/documentation-kit/blob/v1.1.0/verification/panel-switcher-checks.json)
 records the checks actually run for this extraction; the original kit's initial

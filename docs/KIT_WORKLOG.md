@@ -2,6 +2,31 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — The browser suites' Playwright is declared
+
+- The kit now declares Playwright 1.62.1, exactly, as a development dependency
+  in a private root `package.json`, with a committed `package-lock.json`, as
+  the [dependencies rule](../rules/engineering/code.md#dependencies) asks.
+  `npm ci` installs it into `node_modules/`, which Git ignores. The four browser
+  suites and `tests/run_checks.sh` load it from the kit's own `node_modules/`;
+  the Pages workflow runs `npm ci` and `npx playwright install --with-deps
+  chromium` instead of installing a version written in the workflow. The
+  README's development steps gain both install commands.
+- `DOCS_PLAYWRIGHT` and `DOCS_CHROMIUM` are removed. Only the kit's own suites
+  and runner read them; `tooling/browser_checks.cjs`, which consuming projects
+  use, takes a Playwright page from its caller and reads neither. Chromium
+  revision 1234, which Playwright 1.62.1 expects, is found in the Playwright
+  browser cache, so no path override is needed. A missing install still skips
+  the browser suites with a printed line, and `DOCS_REQUIRE_BROWSER=1` still
+  turns that into a failure.
+- Checked: `npm ci` reinstalled 1.62.1 from the lock file; the kit site build
+  and `lint --strict` passed; `DOCS_REQUIRE_BROWSER=1 bash tests/run_checks.sh`
+  with Node v22.23.3 passed with all four browser suites in about 2 min 20 s;
+  with `node_modules/` moved aside, the runner's browser section printed the
+  skip line and exited 0, and with `DOCS_REQUIRE_BROWSER=1` exited 1. The
+  workflow change was not run on GitHub. The open record on the undeclared
+  dependency is deleted.
+
 ## 2026-11-14 — Font notices state the font version
 
 - The notices of IBM Plex Mono, IBM Plex Sans and Saira Condensed under

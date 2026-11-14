@@ -1,5 +1,5 @@
 // Optional real-browser contract check; the legacy mode proves extraction parity.
-const {chromium} = require(process.env.DOCS_PLAYWRIGHT || 'playwright');
+const {chromium} = require('../node_modules/playwright');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const assert = require('node:assert/strict');
@@ -37,7 +37,7 @@ ${['first','second'].map(value => `<div id="${id}-${value}" ${panelAttribute}="$
 (async () => {
   await fs.mkdir(output, {recursive:true});
   const css = await fs.readFile(stylesheet, 'utf8');
-  const browser = await chromium.launch({headless:true, executablePath:process.env.DOCS_CHROMIUM || undefined});
+  const browser = await chromium.launch({headless:true});
   const results = [];
   try {
     for (const viewport of [{width:1600,height:1000},{width:390,height:844}]) {
