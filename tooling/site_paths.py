@@ -63,9 +63,19 @@ def local_artifacts_manifest(root=REPO, *, site=None):
     return source
 
 
+# One build or lint run asks the project's adapter about the same link on every
+# page that carries it, such as each sidebar entry; its answer cannot change
+# during the run, so it is asked once.
+_project_answers: dict = {}
+
+
 def resolve_legacy_path(path, root=REPO, *, recorded_roots=()):
     if _project_paths is not None:
-        return _project_paths.resolve_legacy_path(path, root=root, recorded_roots=recorded_roots)
+        key = (os.fspath(path), os.fspath(root), tuple(os.fspath(item) if isinstance(item, (str, Path)) else repr(item)
+                                                       for item in recorded_roots))
+        if key not in _project_answers:
+            _project_answers[key] = _project_paths.resolve_legacy_path(path, root=root, recorded_roots=recorded_roots)
+        return _project_answers[key]
     root = Path(root).resolve()
     path = Path(path)
     absolute = Path(os.path.abspath(path if path.is_absolute() else root / path))

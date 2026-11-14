@@ -1,0 +1,325 @@
+"""Automatic Reference listing: every tracked Markdown file, opt-out settings and tolerance."""
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import unittest
+
+KIT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(KIT / 'tooling'))
+
+from source_pages import automatic_pages, automatic_route_base, glob_regex, reference_settings  # noqa: E402
+
+GONE = '<span class="link-gone" title="The target of this link no longer exists.">'
+
+
+def invoke(*args):
+    env = {name: value for name, value in os.environ.items() if name not in {'GITHUB_SHA', 'DOCSITE_PROJECT_ROOT'}}
+    return subprocess.run([sys.executable, str(KIT / 'docsite.py'), *map(str, args)],
+                          capture_output=True, text=True, env=env)
+
+
+def git(root, *args):
+    subprocess.run(['git', '-c', 'user.name=Test', '-c', 'user.email=test@example.com', *args],
+                   cwd=root, check=True, capture_output=True)
+
+
+class Settings(unittest.TestCase):
+    def test_defaults_and_validation(self):
+        self.assertEqual(reference_settings({}), (True, ()))
+        self.assertEqual(reference_settings({'reference': False, 'reference_exclude': ['a/**']}), (False, ('a/**',)))
+        for site in ({'reference': 'no'}, {'reference_exclude': 'a/**'}, {'reference_exclude': ['a', 'a']},
+                     {'reference_exclude': [1]}, {'reference_exclude': ['/abs/*.md']},
+                     {'reference_exclude': ['../up.md']}, {'reference_exclude': ['a\\b.md']},
+                     {'reference_exclude': ['']}):
+            with self.assertRaises(ValueError, msg=site):
+                reference_settings(site)
+
+    def test_globs_are_repository_relative(self):
+        def matches(pattern, path):
+            return bool(glob_regex(pattern).fullmatch(path))
+        self.assertTrue(matches('experiments/**', 'experiments/a/b/notes.md'))
+        self.assertTrue(matches('experiments/', 'experiments/a/notes.md'))
+        self.assertFalse(matches('experiments/**', 'docs/experiments/notes.md'))
+        self.assertTrue(matches('**/drafts/*.md', 'drafts/x.md'))
+        self.assertTrue(matches('**/drafts/*.md', 'docs/drafts/x.md'))
+        self.assertFalse(matches('**/drafts/*.md', 'docs/drafts/deeper/x.md'))
+        self.assertTrue(matches('CLAUDE.md', 'CLAUDE.md'))
+        self.assertFalse(matches('CLAUDE.md', 'docs/CLAUDE.md'))
+        self.assertTrue(matches('notes/[!x]*.md', 'notes/a.md'))
+        self.assertFalse(matches('notes/[!x]*.md', 'notes/x.md'))
+        self.assertTrue(matches('notes/?.md', 'notes/a.md'))
+
+    def test_route_base_is_path_shaped(self):
+        self.assertEqual(automatic_route_base('README.md'), ('readme.md', False))
+        self.assertEqual(automatic_route_base('docs/topics/guide/guide.md'), ('docs.topics.guide.guide.md', True))
+        self.assertEqual(automatic_route_base('docs/Design Notes/API v1.2.md'),
+                         ('docs.design-notes.api-v1-2.md', False))
+        self.assertEqual(automatic_route_base('docs/KIT_WORKLOG.md'), ('docs.kit_worklog.md', False))
+
+
+class ReferenceListing(unittest.TestCase):
+    def setUp(self):
+        folder = tempfile.TemporaryDirectory(prefix='docs-kit-reference-')
+        self.addCleanup(folder.cleanup)
+        self.root = Path(folder.name)
+        git(self.root, 'init', '-q')
+        self.assertEqual(invoke('init', self.root).returncode, 0)
+        self.config = self.root / 'docs/site/site.toml'
+        self.write('README.md', '# Project\n\nSee [the notes](notes/plan.md#steps).\n')
+        self.write('notes/plan.md', '# Plan\n\n## Steps\n\nBack to [the project](../README.md).\n')
+        self.write('notes/deep/inner.md', '# Inner\n')
+        self.write('drafts/idea.md', '# Idea\n')
+        self.write('docs/topics/guide/extra.md', '# Extra record\n')
+        self.write('docs/framed.md', '+++\ntitle = "Framed"\n+++\n\n# Framed\n')
+
+    def write(self, relative, text):
+        path = self.root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text)
+        return path
+
+    def settings(self, text):
+        """Top-level settings go above the first [[nav]] table; a key set again replaces the starter's line."""
+        key = text.split('=')[0].strip()
+        lines = [line for line in self.config.read_text().splitlines(keepends=True) if not line.startswith(key + ' =')]
+        self.config.write_text(''.join(lines).replace('[[nav]]', text + '\n\n[[nav]]', 1))
+
+    def build(self, *options):
+        git(self.root, 'add', '-A')
+        return invoke('build', '--project', self.root, *options)
+
+    def routes(self):
+        manifest = json.loads((self.root / '.build/docs/site-build.json').read_text())
+        return manifest['source_pages']
+
+    def page(self, route):
+        return (self.root / '.build/docs/html' / route).read_text()
+
+    def test_default_lists_every_tracked_markdown_file(self):
+        self.write('untracked.md', '# Untracked\n')
+        nested = self.root / 'vendor/lib'
+        nested.mkdir(parents=True)
+        git(nested, 'init', '-q')
+        (nested / 'inside.md').write_text('# Inside a submodule\n')
+        git(nested, 'add', '-A')
+        git(nested, 'commit', '-q', '-m', 'Nested')
+        git(self.root, 'add', 'README.md', 'notes', 'drafts', 'docs', 'AGENTS.md', 'CLAUDE.md', 'vendor/lib')
+        result = invoke('build', '--project', self.root)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        routes = self.routes()
+        self.assertEqual(routes, {
+            'agents.md.html': 'AGENTS.md',
+            'docs.index.md.html': 'docs/index.md',
+            'docs.open.open.md.html': 'docs/open/OPEN.md',
+            'docs.project_context.md.html': 'docs/PROJECT_CONTEXT.md',
+            'docs.topics.guide.extra.md.html': 'docs/topics/guide/extra.md',
+            'docs.topics.guide.guide.md.html': 'docs/topics/guide/guide.md',
+            'docs.worklog.md.html': 'docs/worklog.md',
+            'drafts.idea.md.html': 'drafts/idea.md',
+            'notes.deep.inner.md.html': 'notes/deep/inner.md',
+            'notes.plan.md.html': 'notes/plan.md',
+            'readme.md.html': 'README.md',
+        })  # CLAUDE.md is excluded by the starter; frontmatter, topic, untracked and submodule files are skipped
+        readme = self.page('readme.md.html')
+        self.assertIn('href="notes.plan.md.html#steps"', readme)
+        self.assertIn('<span class="repo-tree-label" id="repo-tree-label">Reference</span>', readme)
+        self.assertIn('href="readme.md.html"', self.page('guide.html'))
+        self.assertIn('href="readme.md.html"', self.page('notes.plan.md.html'))
+        lint = invoke('lint', '--project', self.root, '--strict')
+        self.assertEqual(lint.returncode, 0, lint.stdout + lint.stderr)
+        self.assertNotIn('NOTE: reference page', lint.stdout)
+
+    def test_excluded_globs_are_not_listed(self):
+        self.settings('reference_exclude = ["CLAUDE.md", "drafts/**", "notes/", "**/extra.md"]')
+        result = self.build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        routes = set(self.routes().values())
+        self.assertIn('README.md', routes)
+        for source in ('drafts/idea.md', 'notes/plan.md', 'notes/deep/inner.md', 'docs/topics/guide/extra.md'):
+            self.assertNotIn(source, routes)
+        # A link to an excluded file stays a source link.
+        self.assertIn('data-repo-path="notes/plan.md"', self.page('readme.md.html'))
+
+    def test_invalid_settings_fail_with_a_clear_message(self):
+        self.settings('reference = "yes"')
+        result = self.build()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('site.toml: reference must be true or false', result.stderr)
+        self.config.write_text(self.config.read_text().replace('reference = "yes"\n', ''))
+        self.settings('reference_exclude = ["/notes/**"]')
+        result = self.build()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("reference_exclude pattern '/notes/**' must be a repository-relative glob", result.stderr)
+
+    def test_reference_false_equals_the_explicit_registry_alone(self):
+        self.settings('reference = false')
+        self.config.write_text(self.config.read_text() + '\n[[source_pages]]\nsource = "notes/plan.md"\nslug = "plan"\n')
+        self.assertEqual(self.build().returncode, 0)
+        listed = {path.relative_to(self.root).as_posix(): path.read_bytes()
+                  for path in (self.root / '.build/docs').rglob('*') if path.is_file()}
+        self.assertEqual(self.routes(), {'plan.html': 'notes/plan.md'})
+        # The same site without any other Markdown file builds the same bytes.
+        for relative in ('notes/deep/inner.md', 'drafts/idea.md', 'docs/topics/guide/extra.md'):
+            git(self.root, 'rm', '-q', '--cached', relative)
+            (self.root / relative).unlink()
+        git(self.root, 'add', '-A')
+        self.assertEqual(invoke('build', '--project', self.root).returncode, 0)
+        rebuilt = {path.relative_to(self.root).as_posix(): path.read_bytes()
+                   for path in (self.root / '.build/docs').rglob('*') if path.is_file()}
+        self.assertEqual(listed.keys(), rebuilt.keys())
+        self.assertEqual({name for name in listed if listed[name] != rebuilt[name]}, set())
+
+    def test_explicit_table_overrides_and_survives_an_exclude(self):
+        self.settings('reference_exclude = ["notes/**"]')
+        self.config.write_text(self.config.read_text() + '\n[[source_pages]]\nsource = "notes/plan.md"\n'
+                               'slug = "plan"\ntitle = "The plan"\npinned = true\n')
+        result = self.build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        routes = self.routes()
+        self.assertEqual(routes['plan.html'], 'notes/plan.md')
+        self.assertNotIn('notes.plan.md.html', routes)
+        self.assertNotIn('notes/deep/inner.md', routes.values())
+        readme = self.page('readme.md.html')
+        self.assertIn('href="plan.html#steps"', readme)
+        self.assertIn('<a class="repo-tree-pin" href="plan.html" title="notes/plan.md">The plan</a>', readme)
+
+    def test_route_collisions_take_a_path_hash_and_never_fail(self):
+        self.write('notes/My Plan.md', '# Spaced plan\n')
+        self.write('notes/my-plan.md', '# Dashed plan\n')
+        result = self.build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        routes = self.routes()
+
+        def hashed(stem, source):
+            return stem + '-' + hashlib.sha256(source.encode()).hexdigest()[:8] + '.md.html'
+        self.assertEqual(routes['notes.my-plan.md.html'], 'notes/my-plan.md')  # the lossless path keeps it
+        self.assertEqual(routes[hashed('notes.my-plan', 'notes/My Plan.md')], 'notes/My Plan.md')
+        # A route a topic or registered page already has (the build itself
+        # refuses topic folders named *.md, so only the listing can show it).
+        tracked = frozenset(self.root / name for name in ('README.md', 'notes/plan.md'))
+        pages, notes = automatic_pages({}, self.root, tracked, [], {'readme.md.html'})
+        self.assertEqual([page.route for page in pages], [hashed('readme', 'README.md'), 'notes.plan.md.html'])
+        self.assertIn('README.md: route readme.md.html is also claimed by a topic or registered page', notes[0])
+        lint = invoke('lint', '--project', self.root, '--strict')
+        self.assertEqual(lint.returncode, 0, lint.stdout + lint.stderr)
+        self.assertIn('NOTE: reference page notes/My Plan.md: route notes.my-plan.md.html is also claimed by '
+                      'notes/my-plan.md', lint.stdout)
+        # Routes are stable across builds.
+        self.assertEqual(self.build().returncode, 0)
+        self.assertEqual(self.routes(), routes)
+
+    def test_problems_in_automatic_pages_are_notes(self):
+        (self.root / 'notes/media').mkdir()
+        (self.root / 'notes/media/kept.png').write_bytes(b'\x89PNG\r\n\x1a\nfixture')
+        (self.root / 'notes/media/ignored.png').write_bytes(b'\x89PNG\r\n\x1a\nfixture')
+        (self.root / '.gitignore').write_text('notes/media/ignored.png\n')
+        self.write('notes/messy.md', '\n'.join([
+            'No heading here. A [dead link](missing.md#x), an [absolute one](/etc/passwd),',
+            'one [outside](../../outside.md), a [phone](tel:123), an [unknown anchor](#nowhere),',
+            'a [bad fragment](plan.md#no-such-part) and [a good one](plan.md#steps).',
+            '',
+            '![missing](gone.png) ![untracked](media/ignored.png) ![kept](media/kept.png)',
+            '![remote](https://example.com/x.png)',
+            '',
+            '<script src="https://example.com/x.js"></script>',
+            '<div style="background: url(https://example.com/bg.png)">styled</div>',
+            '',
+            'Prose with url(https://example.com/a) and href="nowhere.html".',
+            '',
+            '```css',
+            'body { background: url(https://example.com/b.png); }',
+            '```',
+            '',
+            '<!-- an unclosed comment',
+        ]) + '\n')
+        (self.root / 'notes/latin1.md').write_bytes('# Caf\xe9 notes\n'.encode('latin-1'))
+        result = self.build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('problem(s) in automatically listed reference pages were tolerated', result.stdout)
+        page = self.page('notes.messy.md.html')
+        self.assertIn('<title>messy</title>', page)
+        self.assertIn(GONE + 'dead link</span>', page)
+        self.assertIn(GONE + 'absolute one</span>', page)
+        self.assertIn(GONE + 'outside</span>', page)
+        self.assertIn(GONE + 'phone</span>', page)
+        self.assertIn(GONE + 'unknown anchor</span>', page)
+        self.assertIn(GONE + 'missing</span>', page)
+        self.assertIn(GONE + 'untracked</span>', page)
+        self.assertIn('src="_media/notes/media/kept.png"', page)
+        self.assertIn('<a href="https://example.com/x.png">remote</a>', page)
+        self.assertIn('&lt;script src=', page)
+        self.assertNotIn('<script src="https://example.com', page)
+        self.assertNotIn('url(https://', page)
+        self.assertIn('href="notes.plan.md.html#no-such-part"', page)
+        self.assertIn('Caf� notes', self.page('notes.latin1.md.html'))
+        lint = invoke('lint', '--project', self.root, '--strict')
+        self.assertEqual(lint.returncode, 0, lint.stdout + lint.stderr)
+        self.assertIn('lint clean (0 warning(s))', lint.stdout)
+        for expected in ('notes/messy.md: no level-one heading; the title is the file name',
+                         'notes/messy.md: link target not found: missing.md#x',
+                         'notes/messy.md: absolute link /etc/passwd',
+                         'notes/messy.md: link escapes the repository: ../../outside.md',
+                         'notes/messy.md: link scheme tel: is not served',
+                         'notes/messy.md: link target not found: media/ignored.png',
+                         'notes/messy.md: external media is not loaded; shown as a link',
+                         'notes/messy.md: unclosed HTML comment shown as text',
+                         'notes/messy.md: anchor #nowhere not found on its own page',
+                         'notes.messy.md.html: anchor #no-such-part not found in notes.plan.md.html',
+                         'notes/latin1.md: not valid UTF-8'):
+            self.assertIn(expected, lint.stdout)
+
+    def test_registered_pages_keep_their_strictness(self):
+        self.write('notes/strict.md', '# Strict\n\n[dead](missing.md)\n')
+        self.config.write_text(self.config.read_text() + '\n[[source_pages]]\nsource = "notes/strict.md"\nslug = "strict"\n')
+        result = self.build()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('notes/strict.md: link target not found: missing.md', result.stderr)
+
+    def test_publication_carries_automatic_pages_and_their_media(self):
+        (self.root / 'notes/media').mkdir()
+        (self.root / 'notes/media/kept.png').write_bytes(b'\x89PNG\r\n\x1a\nfixture')
+        self.write('notes/plan.md', '# Plan\n\n## Steps\n\n![kept](media/kept.png) and ![secret](../configs/s.png)\n')
+        (self.root / 'configs').mkdir()
+        (self.root / 'configs/s.png').write_bytes(b'\x89PNG\r\n\x1a\nsecret')
+        self.write('configs/notes.md', '# Private notes\n')
+        self.config.write_text(self.config.read_text() + '\n[publication]\npages = ["readme.md.html"]\n'
+                               'private_suffixes = [".toml"]\nprivate_prefixes = ["configs/"]\n')
+        self.assertEqual(self.build().returncode, 0)
+        lint = invoke('lint', '--project', self.root, '--strict')
+        self.assertEqual(lint.returncode, 0, lint.stdout + lint.stderr)
+        self.assertIn('notes/plan.md: media file is not packaged (untracked, private or symlinked): ../configs/s.png',
+                      lint.stdout)
+        git(self.root, 'add', '-A')
+        destination = self.root / '_site'
+        result = invoke('publish', '--project', self.root, '--out', destination)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        published = {path.relative_to(destination).as_posix() for path in destination.rglob('*') if path.is_file()}
+        for route in ('readme.md.html', 'notes.plan.md.html', 'notes.deep.inner.md.html', 'docs.worklog.md.html',
+                      '_media/notes/media/kept.png'):
+            self.assertIn(route, published)
+        self.assertNotIn('configs.notes.md.html', published)  # private prefixes are never listed
+        self.assertNotIn('_media/configs/s.png', published)
+        self.assertIn(GONE + 'secret</span>', (destination / 'notes.plan.md.html').read_text())
+        # Every Reference link in the published bundle opens a published page.
+        sidebar = (destination / 'guide.html').read_text()
+        for route in json.loads((self.root / '.build/docs/site-build.json').read_text())['source_pages']:
+            self.assertIn(f'href="{route}"', sidebar)
+            self.assertIn(route, published)
+
+    def test_no_remote_builds_without_github_source_lines(self):
+        self.config.write_text(self.config.read_text().replace(
+            'gh_repo = "https://github.com/example/project"', 'gh_repo = ""'))
+        result = self.build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        page = self.page('notes.plan.md.html')
+        self.assertIn('class="source-origin"', page)
+        self.assertNotIn('github.com', page[page.index('class="source-origin"'):].split('</p>')[0])
+        self.assertNotIn('source-origin-edit', page)
+
+
+if __name__ == '__main__':
+    unittest.main()

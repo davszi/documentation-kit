@@ -6,6 +6,12 @@ A project registers an existing, tracked Markdown file under a public route:
     source = "rules/engineering/git.md"
     slug = "git"
 
+By default every other tracked Markdown file is listed too, under a route
+derived from its path (`automatic_pages`). `reference = false` in site.toml
+turns that off; `reference_exclude` skips files by repository-relative glob.
+An automatically listed page never fails the build: what a registered page
+would reject is rendered tolerantly and returned as a note.
+
 The file stays the single editable source. Its relative links and media resolve
 from the file's own folder: links to other registered files become their HTML
 routes, and every other repository link becomes the logical generated-site path
@@ -15,6 +21,7 @@ registered routes are checked against the rendered target page.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 import html
 import os
 from pathlib import Path
@@ -42,6 +49,7 @@ class SourcePage:
     math: bool
     reader: bool
     pinned: bool         # listed first in the sidebar's repository section
+    automatic: bool = False  # listed by `reference`, not by a [[source_pages]] table
 
     @property
     def route(self) -> str:
@@ -104,6 +112,166 @@ def load_registry(site: dict, root: Path, tracked: frozenset[Path]) -> tuple[lis
     return pages, problems
 
 
+REFERENCE_ERROR = "site.toml: reference must be true or false"
+EXCLUDE_ERROR = ('site.toml: reference_exclude must list distinct repository-relative glob patterns, '
+                 'such as "experiments/**" or "**/drafts/*.md"')
+
+
+def reference_settings(site: dict) -> tuple[bool, tuple[str, ...]]:
+    """`reference` (default true) and `reference_exclude` (default empty); ValueError when invalid."""
+    enabled = site.get("reference", True)
+    if not isinstance(enabled, bool):
+        raise ValueError(REFERENCE_ERROR)
+    patterns = site.get("reference_exclude", [])
+    if (not isinstance(patterns, list) or any(not isinstance(pattern, str) for pattern in patterns)
+            or len(set(patterns)) != len(patterns)):
+        raise ValueError(EXCLUDE_ERROR)
+    for pattern in patterns:
+        if (not pattern.strip() or pattern != pattern.strip() or pattern.startswith("/") or "\\" in pattern
+                or any(part in {"", ".", ".."} for part in pattern.rstrip("/").split("/"))):
+            raise ValueError(f"site.toml: reference_exclude pattern {pattern!r} must be a repository-relative "
+                             'glob without a leading slash, backslashes, "." or ".." parts, such as "experiments/**"')
+    return enabled, tuple(patterns)
+
+
+def glob_regex(pattern: str) -> re.Pattern:
+    """A repository-relative glob as a regular expression over a whole POSIX path.
+
+    `*` and `?` stay inside one path segment, `[...]` is a character class,
+    `**` spans any number of segments and a pattern ending in `/` matches
+    everything below that folder.
+    """
+    if pattern.endswith("/"):
+        pattern += "**"
+    out, index = [], 0
+    while index < len(pattern):
+        if pattern.startswith("**/", index):
+            out.append("(?:[^/]*/)*")
+            index += 3
+        elif pattern.startswith("**", index):
+            out.append(".*")
+            index += 2
+        elif pattern[index] == "*":
+            out.append("[^/]*")
+            index += 1
+        elif pattern[index] == "?":
+            out.append("[^/]")
+            index += 1
+        elif pattern[index] == "[" and "]" in pattern[index + 2:]:
+            end = pattern.index("]", index + 2)
+            body = pattern[index + 1:end]
+            negate = body.startswith("!")
+            body = body[1:] if negate else body
+            out.append("(?!/)[" + ("^" if negate else "") + body.replace("\\", "\\\\").replace("^", "\\^") + "]")
+            index = end + 1
+        else:
+            out.append(re.escape(pattern[index]))
+            index += 1
+    return re.compile("".join(out))
+
+
+_SEGMENT_RUN = re.compile(r"[^a-z0-9_-]+")
+MAX_ROUTE_BASE = 180
+
+
+def automatic_route_base(source: str) -> tuple[str, bool]:
+    """The route base of an automatically listed file and whether it is lossless.
+
+    Each path segment is lowercased and every run of characters other than
+    `a-z`, `0-9`, `_` and `-` becomes one `-`; segments join with `.` and the
+    `.md` suffix stays: `docs/Design Notes/API.md` becomes
+    `docs.design-notes.api.md`. The base is lossless when the path already has
+    that form, so no other path can have the same base.
+    """
+    parts = source[:-len(".md")].split("/")
+    segments = [_SEGMENT_RUN.sub("-", part.lower()) for part in parts]
+    base = ".".join(segments) + ".md"
+    return base, segments == parts
+
+
+def _hashed(base: str, source: str) -> str:
+    digest = hashlib.sha256(source.encode()).hexdigest()[:8]
+    return base[:-len(".md")][:MAX_ROUTE_BASE] + "-" + digest + ".md"
+
+
+def read_source(path: Path) -> tuple[str, bool]:
+    """The file's text, and whether bytes that are not UTF-8 were replaced."""
+    data = path.read_bytes()
+    try:
+        text = data.decode("utf-8")
+        replaced = False
+    except UnicodeDecodeError:
+        text = data.decode("utf-8", errors="replace")
+        replaced = True
+    return text.removeprefix("﻿"), replaced
+
+
+def automatic_pages(site: dict, root: Path, tracked: frozenset[Path], explicit: list[SourcePage],
+                    taken_routes: set[str], kit_root: Path | None = None) -> tuple[list[SourcePage], list[str]]:
+    """Every tracked Markdown file a [[source_pages]] table does not register.
+
+    Skipped: files inside a submodule or the kit, topic entry pages, files that
+    start with `+++` frontmatter, symlinked files, files matching
+    `reference_exclude` and files under `[publication] private_prefixes`.
+    Returns the pages, in path order, and notes about what was tolerated.
+    Settings must have passed `reference_settings`.
+    """
+    enabled, patterns = reference_settings(site)
+    if not enabled:
+        return [], []
+    excludes = [glob_regex(pattern) for pattern in patterns]
+    publication = site.get("publication")
+    prefixes = publication.get("private_prefixes", []) if isinstance(publication, dict) else []
+    prefixes = tuple(prefix for prefix in prefixes if isinstance(prefix, str) and prefix) if isinstance(prefixes, list) else ()
+    registered = {page.source for page in explicit}
+    groups = topic_group_folders(root)
+    kit = kit_root.resolve() if kit_root is not None else None
+    candidates: list[tuple[str, str, str | None, bool]] = []
+    notes: list[str] = []
+    for path in sorted(tracked):
+        if path.suffix != ".md" or not path.is_relative_to(root):
+            continue
+        source = path.relative_to(root).as_posix()
+        if source in registered or any(parent in tracked for parent in path.parents):
+            continue  # a tracked parent is a gitlink: the file belongs to a submodule
+        if kit is not None and kit != root and path.is_relative_to(kit):
+            continue
+        if any(pattern.fullmatch(source) for pattern in excludes) or source.startswith(prefixes):
+            continue
+        if (any(parent.is_symlink() for parent in (path, *path.parents) if parent.is_relative_to(root) and parent != root)
+                or not path.is_file() or is_topic_page(path, root, groups)):
+            continue
+        text, replaced = read_source(path)
+        if text.startswith(("+++\n", "+++\r\n")):
+            continue
+        if replaced:
+            notes.append(f"{source}: not valid UTF-8; undecodable bytes are shown as �")
+        title = first_heading(text)
+        if not title:
+            title = path.name[:-len(".md")] or path.name
+            notes.append(f"{source}: no level-one heading; the title is the file name")
+        candidates.append((source, *automatic_route_base(source), title))
+    claims: dict[str, list[str]] = {}
+    for source, base, _, _ in candidates:
+        claims.setdefault(base, []).append(source)
+    pages = []
+    for source, base, lossless, title in candidates:
+        rivals = [other for other in claims[base] if other != source]
+        if base + ".html" in taken_routes or (rivals and not lossless):
+            # A lossless path keeps its plain route against every other file,
+            # and at most one path is lossless per base. The others, and a file
+            # that meets a topic or registered route, take a hash of their path.
+            hashed = _hashed(base, source)
+            notes.append(f"{source}: route {base}.html is also claimed by "
+                         f"{', '.join(rivals) or 'a topic or registered page'}; "
+                         f"this file is published as {hashed}.html")
+            base = hashed
+        elif len(base) > MAX_ROUTE_BASE + len(".md"):
+            base = _hashed(base, source)
+        pages.append(SourcePage(source, base, title, None, False, False, False, automatic=True))
+    return pages, notes
+
+
 def first_heading(text: str) -> str | None:
     """The first level-one ATX heading outside fenced code."""
     fenced = False
@@ -118,10 +286,14 @@ def first_heading(text: str) -> str | None:
 LINK_GONE = '<span class="link-gone" title="The target of this link no longer exists.">'
 _GONE = "\x00link-gone\x00"
 _ALT = re.compile(r'(?<![\w-])alt="([^"]*)"')
+_EXTERNAL = re.compile(r"(?i)(?:https?:)?//")
+# Schemes that lint and the browser accept on a link from an automatic page.
+LINK_SCHEMES = {"http", "https", "mailto", "vscode"}
 
 
 def rewrite_links(markup: str, page: SourcePage, routes: dict[str, str], root: Path,
-                  exists, links_checked_from: str | None = None) -> tuple[str, list[str], set[str]]:
+                  exists, links_checked_from: str | None = None,
+                  media_ok=None) -> tuple[str, list[str], set[str]]:
     """Resolve relative link/media targets from the source file's own folder.
 
     Registered sources become `<route>#fragment`; other repository paths become
@@ -133,32 +305,52 @@ def rewrite_links(markup: str, page: SourcePage, routes: dict[str, str], root: P
     dated before it, a link or image whose target is gone renders as its text
     inside `LINK_GONE` instead of failing the build, and a link that appears
     only in such entries keeps its fragment unchecked.
+
+    An automatically listed page (`page.automatic`) never fails: every link or
+    image the build cannot serve renders as its text inside `LINK_GONE`, other
+    media lose the attribute, an external image becomes a link to it, and the
+    returned problems are notes. `media_ok(path)` then says whether an
+    existing media file can be packaged (tracked, not private).
     """
     problems: list[str] = []
     folder = posixpath.dirname(page.source)
+    tolerant = page.automatic
     unchecked = unchecked_spans(markup, links_checked_from, HTML_HEADING)
     old_hrefs: set[str] = set()
     new_hrefs: set[str] = set()
 
-    def resolve(raw: str, old: bool) -> str | None:
+    def resolve(raw: str, old: bool, media: bool) -> str | None:
         url = urlsplit(html.unescape(raw))
+        if tolerant and not media and (url.scheme or url.netloc):
+            if url.scheme.lower() in LINK_SCHEMES:
+                return None
+            if not url.scheme:  # protocol-relative: the site is served over HTTPS
+                return "https:" + html.unescape(raw)
+            problems.append(f"{page.source}: link scheme {url.scheme}: is not served; shown as text: {raw}")
+            return _GONE
+        if tolerant and media and url.scheme and url.scheme.lower() != "data":
+            problems.append(f"{page.source}: media scheme {url.scheme}: is not served: {raw}")
+            return _GONE
         if url.scheme or url.netloc or not url.path:
             return None  # external, same-page fragment or empty
         if url.path.startswith("/"):
             problems.append(f"{page.source}: absolute link {raw}; use a path relative to the source file")
-            return None
+            return _GONE if tolerant else None
         target = posixpath.normpath(posixpath.join(folder, unquote(url.path)))
         if target == ".." or target.startswith("../"):
             problems.append(f"{page.source}: link escapes the repository: {raw}")
-            return None
+            return _GONE if tolerant else None
         suffix = ("?" + url.query if url.query else "") + ("#" + url.fragment if url.fragment else "")
-        if target in routes:
+        if target in routes and not media:
             return routes[target] + suffix
         if not exists(root / target):
             if old:
                 return _GONE
             problems.append(f"{page.source}: link target not found: {raw}")
-            return None
+            return _GONE if tolerant else None
+        if tolerant and media and not media_ok(root / target):
+            problems.append(f"{page.source}: media file is not packaged (untracked, private or symlinked): {raw}")
+            return _GONE
         logical = posixpath.relpath(target, "docs/html")
         if url.path.endswith("/") and not logical.endswith("/"):
             logical += "/"
@@ -170,12 +362,23 @@ def rewrite_links(markup: str, page: SourcePage, routes: dict[str, str], root: P
         old = within(unchecked, match.start())
         updated = original
         for attribute, raw in _ATTR.findall(original):
-            replacement = resolve(raw, old)
+            media = name != "a" and attribute in {"src", "poster"}
+            if tolerant and media and _EXTERNAL.match(html.unescape(raw)):
+                problems.append(f"{page.source}: external media is not loaded; shown as a link: {raw}")
+                if name == "img":
+                    alt = _ALT.search(original)
+                    return f'<a href="{raw}">{alt[1] if alt and alt[1] else raw}</a>'
+                updated = re.sub(r"\s" + attribute + '="' + re.escape(raw) + '"', "", updated, count=1)
+                continue
+            replacement = resolve(raw, old, media and tolerant)
             if replacement == _GONE and name in {"a", "img"}:
                 if name == "a":
                     return _GONE  # the closing </a> becomes </span> below
                 alt = _ALT.search(original)
                 return LINK_GONE + (alt[1] if alt else raw) + "</span>"
+            if replacement == _GONE and tolerant:
+                updated = re.sub(r"\s" + attribute + '="' + re.escape(raw) + '"', "", updated, count=1)
+                continue
             if replacement == _GONE:  # other media keep failing the build
                 problems.append(f"{page.source}: link target not found: {raw}")
                 replacement = None
@@ -190,6 +393,70 @@ def rewrite_links(markup: str, page: SourcePage, routes: dict[str, str], root: P
     markup = _TAG.sub(tag, markup)
     markup = re.sub(re.escape(_GONE) + r"(.*?)</a>", lambda m: LINK_GONE + m[1] + "</span>", markup, flags=re.S)
     return markup, problems, old_hrefs - new_hrefs
+
+
+_COMMENT = re.compile(r"<!--[\s\S]*?-->")
+# Raw HTML that would load a resource, run, swallow the rest of the page or
+# change the document: shown as text on an automatically listed page.
+_UNSAFE_TAG = re.compile(r"<(/?)(script|style|link|meta|base|object|embed|form|frame|frameset|iframe|textarea"
+                         r"|title|noscript|template|plaintext|xmp)\b", re.I)
+_CSS_URL = re.compile(r"url\((?=\s*['\"]?(?:https?:)?//)", re.I)
+_QUOTED_ATTRIBUTE = re.compile(r"""\s[^\s"'<>/=]+\s*=\s*(?:"[^"]*"|'[^']*')""")
+
+
+def tolerate_raw_html(markup: str, source: str) -> tuple[str, list[str]]:
+    """Make raw HTML in an automatically listed file harmless before links are resolved.
+
+    Complete HTML comments are dropped, since they never show; an unclosed
+    comment opener and the tags in `_UNSAFE_TAG` are shown as text. Code
+    blocks are already escaped, so only real raw HTML is touched.
+    """
+    notes = []
+    markup = _COMMENT.sub("", markup)
+    if "<!--" in markup:
+        markup = markup.replace("<!--", "&lt;!--")
+        notes.append(f"{source}: unclosed HTML comment shown as text")
+    markup, count = _UNSAFE_TAG.subn(lambda m: "&lt;" + m[1] + m[2], markup)
+    if count:
+        notes.append(f"{source}: {count} raw HTML tag(s) that load, run or enclose content shown as text")
+    return markup, notes
+
+
+def quiet_text(markup: str) -> str:
+    """Keep page text from reading as markup to the site's checks.
+
+    Outside tags, a double quote becomes `&quot;` and a CSS `url(` before an
+    external address becomes `url&#40;`; both render the same. Inside a tag,
+    an attribute whose value loads an external `url(...)` is removed.
+    """
+    parts = re.split(r"(<[^>]*>)", markup)
+    for index, part in enumerate(parts):
+        if index % 2 == 0:
+            parts[index] = _CSS_URL.sub("url&#40;", part.replace('"', "&quot;"))
+        elif _CSS_URL.search(part):
+            parts[index] = _QUOTED_ATTRIBUTE.sub(lambda m: "" if _CSS_URL.search(m[0]) else m[0], part)
+    return "".join(parts)
+
+
+_SAME_PAGE_LINK = re.compile(r'<a\b[^>]*?\bhref="#([^"]+)"[^>]*>', re.I)
+
+
+def unlink_missing_fragments(page_html: str, source: str) -> tuple[str, list[str]]:
+    """Show a same-page link whose anchor the built page lacks as unlinked text."""
+    identifiers = set(_ID.findall(page_html))
+    notes: list[str] = []
+
+    def unlink(match: re.Match) -> str:
+        if match[1] in identifiers:
+            return match[0]
+        notes.append(f"{source}: anchor #{match[1]} not found on its own page; shown as text")
+        return _GONE
+
+    page_html = _SAME_PAGE_LINK.sub(unlink, page_html)
+    if notes:
+        page_html = re.sub(re.escape(_GONE) + r"(.*?)</a>", lambda m: LINK_GONE + m[1] + "</span>", page_html,
+                           flags=re.S)
+    return page_html, notes
 
 
 def table_of_contents(markup: str) -> list[list[str]]:
@@ -280,6 +547,24 @@ def fragment_problems(pages: dict[str, str], sources: set[str], targets: set[str
             if html.unescape(unquote(fragment)) not in identifiers[destination]:
                 problems.append(f"{name}: anchor #{fragment} not found in {destination}")
     return problems
+
+
+_ROUTE_FRAGMENT = re.compile(r'<a\b[^>]*?\bhref="([^"/?#:]+\.html)#([^"]+)"', re.I)
+
+
+def fragment_notes(pages: dict[str, str], automatic: set[str]) -> list[str]:
+    """Missing anchors in links from or into automatically listed pages; these never fail."""
+    identifiers: dict[str, set[str]] = {}
+    notes = []
+    for name in sorted(pages):
+        for target, fragment in _ROUTE_FRAGMENT.findall(pages[name]):
+            if (name not in automatic and target not in automatic) or target not in pages:
+                continue
+            if target not in identifiers:
+                identifiers[target] = set(_ID.findall(pages[target]))
+            if html.unescape(unquote(fragment)) not in identifiers[target]:
+                notes.append(f"{name}: anchor #{fragment} not found in {target}; the link opens the page top")
+    return notes
 
 
 def exists_in(root: Path, resolver):

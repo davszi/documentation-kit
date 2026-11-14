@@ -389,7 +389,8 @@ def verify(root, *, require_all_manifests=False): raise ValueError("project evid
         self.assertIn(gone + 'a record</span>', page)
         self.assertIn(gone + 'A removed figure</span>', page)
         self.assertNotIn('topics/removed', page)
-        self.assertRegex(page, r'<a [^>]*href="[^"]*topics/guide/guide\.md"[^>]*>the guide record</a>')
+        # The guide record is listed automatically, so the kept link opens its page.
+        self.assertIn('<a href="docs.topics.guide.guide.md.html">the guide record</a>', page)
         self.assertIn('href="project-context.html#removed-section"', page)
         result = invoke('lint', '--project', self.root, '--strict')
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

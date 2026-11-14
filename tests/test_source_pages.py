@@ -50,6 +50,9 @@ class SourcePages(unittest.TestCase):
         self.root = Path(folder.name)
         subprocess.run(['git', 'init', '-q', self.root], check=True)
         self.assertEqual(invoke('init', self.root).returncode, 0)
+        # These cases cover [[source_pages]] tables alone; automatic listing has its own tests.
+        config = self.root / 'docs/site/site.toml'
+        config.write_text(config.read_text().replace('[[nav]]', 'reference = false\n\n[[nav]]', 1))
         self.write('policy/rule.md', RULE)
         self.write('policy/other.md', OTHER)
         self.write('notes/record.md', '# Record\n\n## Kept\n')

@@ -246,7 +246,8 @@ class SiteContract(unittest.TestCase):
         result = self.build()
         self.assertEqual(result.returncode, 0, (result.stdout + result.stderr)[-600:])
         page = (self.root / '.build/docs/html/beta.html').read_text()
-        tree = page[page.index('<div class="toc"'):page.index('</nav>')]
+        # The navigation only: the Reference section after it has disclosures of its own.
+        tree = page[page.index('<div class="toc"'):page.index('</nav>')].split('<div class="repo-tree"')[0]
         self.assertEqual(tree.count('<details class="nav-section nav-section-fold"'), 2)
         self.assertEqual(tree.count('</details>'), 2)
         self.assertEqual(tree.count('<div class="nav-section"'), 1)

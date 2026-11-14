@@ -37,6 +37,14 @@ source of each generated asset or medium. A renamed project asset therefore
 cannot hide a private source. Missing, untracked, duplicate or symlinked files
 fail.
 
+Every generated page is published, the pages of the
+[automatic reference listing](authoring.md#automatic-reference-listing)
+included, with the media they package. That listing skips files under
+`private_prefixes`, and its pages do not package media that the private
+prefixes or suffixes cover, so it cannot make a publication fail. It still
+publishes every other tracked Markdown file as a page: exclude private files
+with `reference_exclude`, or set `reference = false`.
+
 The output directory must not exist yet. The bundle is written to a temporary
 directory next to it and moved into place only after every check passes.
 Failed publications leave no output directory.
