@@ -2,6 +2,14 @@ title = "{{project_title}}"
 gh_repo = "{{repository_url}}"
 gh_ref = "main"
 chapter_reader = true
+# Every tracked Markdown file of the project becomes a page, listed in the
+# sidebar's Reference section, unless it starts with +++ frontmatter or lies in
+# the kit submodule. A private repository with a public site publishes those
+# files too: exclude what must stay private, or set
+# `reference_listing = false` to list only [[source_pages]] tables.
+# CLAUDE.md only points agents at AGENTS.md.
+# reference_listing = false
+reference_exclude = ["CLAUDE.md"]
 
 [[nav]]
 label = "Home"

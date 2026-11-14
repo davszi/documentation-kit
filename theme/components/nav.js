@@ -44,6 +44,68 @@
   if (r.height && (r.bottom > box.bottom - 24 || r.top < box.top)) scroller.scrollTop += r.top - box.top - box.height / 3;
 })();
 
+// A Reference tree too large to repeat in every page is written once as
+// reference.tree.js. A <script src> hands its markup over, since fetch() of a
+// neighbouring file fails on a page opened from disk. It loads when "Browse by
+// folder" opens, or at once on a page the tree lists, which then unfolds to its
+// file as the inline tree does. Without JavaScript the disclosure keeps the
+// folders leading to the page and a link to the Reference index page.
+(function(){
+  var box = document.querySelector('.toc .repo-tree[data-repo-tree-src]');
+  var all = box && box.querySelector('details.repo-tree-all');
+  if (!all) return;
+  var current = box.getAttribute('data-repo-tree-current');
+  var state = 'idle';
+  function place(){
+    var markup = window.docsReferenceTree;
+    if (typeof markup !== 'string') { state = 'failed'; return; }
+    var holder = document.createElement('div');
+    holder.innerHTML = markup;
+    var list = holder.querySelector('ul.repo-tree-list');
+    if (!list) { state = 'failed'; return; }
+    var here = null;
+    if (current) {
+      list.querySelectorAll('a.repo-tree-file').forEach(function(a){
+        if (a.getAttribute('href') === current) here = a;
+      });
+    }
+    if (here) {
+      here.classList.add('current');
+      if (box.hasAttribute('data-repo-tree-mark')) here.setAttribute('aria-current', 'page');
+      for (var node = here.parentElement; node && node !== list; node = node.parentElement) {
+        if (node.matches('li.repo-tree-folder')) {
+          node.classList.add('has-current');
+          node.querySelector(':scope > details').open = true;
+        }
+      }
+    }
+    var old = all.querySelector(':scope > ul.repo-tree-list');
+    if (old) old.replaceWith(list); else all.insertBefore(list, all.querySelector(':scope > .repo-tree-index'));
+    list.addEventListener('click', function(event){
+      if (event.target.closest('a')) document.body.classList.remove('nav-open');
+    });
+    box.setAttribute('data-repo-tree-ready', '');
+    state = 'ready';
+    var bar = here && here.closest('.sidebar');
+    if (bar && all.open) {
+      var frame = bar.getBoundingClientRect(), r = here.getBoundingClientRect();
+      if (r.height && (r.bottom > frame.bottom - 24 || r.top < frame.top)) bar.scrollTop += r.top - frame.top - frame.height / 3;
+    }
+  }
+  function load(){
+    if (state !== 'idle') return;
+    if (typeof window.docsReferenceTree === 'string') { place(); return; }
+    state = 'loading';
+    var script = document.createElement('script');
+    script.src = box.getAttribute('data-repo-tree-src');
+    script.onload = place;
+    script.onerror = function(){ state = 'failed'; };
+    document.head.appendChild(script);
+  }
+  if (current) load();
+  else all.addEventListener('toggle', function(){ if (all.open) load(); });
+})();
+
 // Group tones: a site may colour its groups in CSS (--g); groups without one get
 // the next tone in order, so every group header, page, chapter list and home-page
 // map group matches.

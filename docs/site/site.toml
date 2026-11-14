@@ -14,6 +14,10 @@ worklog = "docs/KIT_WORKLOG.md"
 # Older entries link files that were deleted later; entries are never rewritten.
 worklog_links_checked_from = "2026-11-12"
 open_work = "docs/open/KIT_OPEN.md"
+# Every other tracked Markdown file is listed under Reference automatically.
+# CLAUDE.md only points agents at AGENTS.md, and the starter's sample record
+# belongs to the example project, not to the kit.
+reference_exclude = ["CLAUDE.md", "examples/**"]
 
 [[nav]]
 label = "Home"

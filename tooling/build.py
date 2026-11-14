@@ -216,6 +216,14 @@ def err(msg: str) -> None:
     _errors.append(msg)
 
 
+_notes: list[str] = []
+
+
+def note(msg: str) -> None:
+    """Something an automatically listed reference page tolerated; it never fails the build."""
+    _notes.append(msg)
+
+
 def slugify(text: str) -> str:
     """GitHub-style (kept in sync with docs/lint.py): strip punctuation, then
     every space becomes a hyphen — consecutive spaces stay as -- runs."""
@@ -639,7 +647,8 @@ def nested_nav_html(nav_entries: list, fname: str, toc: str) -> str:
 
 
 def repository_tree(source_pages: list) -> list:
-    """Registered records for the sidebar's repository section, in declared order."""
+    """Records for the sidebar's repository section: registered ones in declared
+    order, then automatically listed ones; an automatic page carries its title."""
     from source_pages import first_heading
     from source_tree import TreeFile
 
@@ -649,8 +658,57 @@ def repository_tree(source_pages: list) -> list:
             for page in source_pages]
 
 
+def automatic_link_checks(site: dict, declared_local: set[str]):
+    """`exists` and `media_ok` for automatically listed pages.
+
+    Only tracked files and folders, files of a checked-out submodule and
+    declared local evidence count, so the page does not depend on untracked
+    files of one checkout. Media must also be packageable: tracked, no
+    symlink, nothing under `[publication]` private prefixes or suffixes.
+    """
+    from site_paths import resolve_legacy_path
+    tracked = consumer_tracked_paths()
+    folders = {parent for path in tracked for parent in path.parents if parent.is_relative_to(REPO)}
+    local = {REPO / name for name in declared_local}
+    publication = site.get("publication") if isinstance(site.get("publication"), dict) else {}
+    private = tuple(tuple(value for value in publication.get(key, []) if isinstance(value, str) and value)
+                    if isinstance(publication.get(key, []), list) else ()
+                    for key in ("private_prefixes", "private_suffixes"))
+
+    def candidates(path: Path) -> tuple[Path, ...]:
+        try:
+            return (path, resolve_legacy_path(path, root=REPO))
+        except (ValueError, OSError):
+            return (path,)
+
+    def exists(path: Path) -> bool:
+        for item in candidates(path):
+            if item in tracked or item in folders or item in local:
+                return True
+            # A tracked parent is a submodule, such as the kit, checked out at its pinned commit.
+            if any(parent in tracked for parent in item.parents) and os.path.lexists(item):
+                return True
+        return False
+
+    def media_ok(path: Path) -> bool:
+        for item in candidates(path):
+            if item in local:
+                return True
+            if item not in tracked or not item.is_relative_to(REPO):
+                continue
+            relative = item.relative_to(REPO).as_posix()
+            if (any(parent.is_symlink() for parent in (item, *item.parents) if parent.is_relative_to(REPO) and parent != REPO)
+                    or relative.startswith(private[0]) or relative.endswith(private[1])):
+                continue
+            return True
+        return False
+
+    return exists, media_ok
+
+
 def build_source_page(page, routes: dict[str, str], site: dict, shell: str,
-                      unchecked: dict[str, set[str]]) -> tuple[str, str] | None:
+                      unchecked: dict[str, set[str]], automatic_checks=None,
+                      plain: bool = False) -> tuple[str, str] | None:
     """Render one registered Markdown file as a whole-file page.
 
     The source keeps its own folder as link origin; no topic-page markers
@@ -659,28 +717,56 @@ def build_source_page(page, routes: dict[str, str], site: dict, shell: str,
     the project's worklog, links in entries dated before
     `worklog_links_checked_from` may point at removed targets; `unchecked`
     receives the page's links whose fragments are not verified.
+
+    An automatically listed page (`page.automatic`) never fails: its problems
+    become notes, `automatic_checks` gives its `(exists, media_ok)` tests and
+    `plain` shows the source as preformatted text, the fallback when the
+    rendered page cannot be packaged.
     """
-    from source_pages import exists_in, first_heading, origin_banner, rewrite_links, table_of_contents, wrap_tables
+    from source_pages import (exists_in, first_heading, origin_banner, quiet_text, read_source, rewrite_links,
+                              table_of_contents, tolerate_raw_html, wrap_tables)
     from site_paths import resolve_legacy_path
     from worklog_entries import configured_entry
 
     name = page.source
-    text = local_resource(REPO / page.source).read_text()
+    if page.automatic:
+        text = read_source(REPO / page.source)[0]
+    else:
+        text = local_resource(REPO / page.source).read_text()
     title = page.title or first_heading(text)
     if not title:
         err(f"{name}: a source page needs a level-one heading or a registered title")
         return None
     meta = {"title": title, "slug": page.slug, "toc": [], "math": page.math, "body_class": "source-page reference-page",
             "page_css": ["build-sheet.css"]}
-    renderer = DocsRenderer(math_enabled=page.math)
-    content = mistune.create_markdown(renderer=renderer, plugins=["table", "math"])(text)
-    worklog = configured_entry(site, "worklog")
-    is_worklog = isinstance(worklog, str) and posixpath.normpath(worklog) == page.source
-    content, problems, unchecked[page.route] = rewrite_links(
-        wrap_tables(content), page, routes, REPO, exists_in(REPO, resolve_legacy_path),
-        site.get("_links_checked_from") if is_worklog else None)
+    report = note if page.automatic else err
+    if plain:
+        content = "<pre>" + html.escape(text) + "</pre>\n"
+        problems = []
+        unchecked[page.route] = set()
+    else:
+        renderer = DocsRenderer(math_enabled=page.math)
+        try:
+            content = mistune.create_markdown(renderer=renderer, plugins=["table", "math"])(text)
+        except Exception as problem:  # noqa: BLE001 - only an automatic page reaches the fallback
+            if not page.automatic:
+                raise
+            note(f"{name}: Markdown rendering failed ({type(problem).__name__}); shown as plain text")
+            return build_source_page(page, routes, site, shell, unchecked, automatic_checks, plain=True)
+        if page.automatic:
+            content, tolerated = tolerate_raw_html(content, name)
+            for problem in tolerated:
+                note(problem)
+        worklog = configured_entry(site, "worklog")
+        is_worklog = isinstance(worklog, str) and posixpath.normpath(worklog) == page.source and not page.automatic
+        exists, media_ok = automatic_checks if page.automatic else (exists_in(REPO, resolve_legacy_path), None)
+        content, problems, unchecked[page.route] = rewrite_links(
+            wrap_tables(content), page, routes, REPO, exists,
+            site.get("_links_checked_from") if is_worklog else None, media_ok=media_ok)
+    if page.automatic:
+        content = quiet_text(content)
     for problem in problems:
-        err(problem)
+        report(problem)
     banner = origin_banner(page, site.get("gh_repo", ""), site.get("_edit_ref", site.get("gh_ref", "main")))
     content = banner + content
     comps = ["toc", "nav", "code", "filelinks"]
@@ -721,6 +807,9 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
         comps.append("fold-controls")
     if "data-slide-face" in content and "slide-face" not in comps:
         comps.append("slide-face")
+    # A Reference tree too large to inline is loaded by nav.js.
+    if site.get("_repository_tree_script") and "nav" not in comps:
+        comps.append("nav")
     for c in comps:
         if c not in KNOWN_COMPONENTS:
             err(f"{name}: unknown component {c!r} (known: {KNOWN_COMPONENTS})")
@@ -729,7 +818,8 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
     fname = f"{slug}.html"
     tree = site.get("_repository_tree", [])
     # Registered records are listed by the repository tree; pages need a nav entry.
-    if fname not in {n["file"] for n in nav_entries} and fname not in {f.route for f in tree}:
+    from source_tree import TREE_INDEX
+    if fname not in {n["file"] for n in nav_entries} and fname not in {f.route for f in tree} and fname != TREE_INDEX:
         err(f"{name}: {fname} missing from site.toml [[nav]] registry")
     crossnav_lines, last_group, section_close = [], None, '    </div>'
     # `folded_groups`: a named group is a native disclosure, closed unless it
@@ -774,7 +864,7 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
     if tree:
         from source_tree import tree_html
         listed = any(entry.get("file") == fname and not entry.get("hidden") for entry in nav_entries)
-        crossnav += "\n" + tree_html(tree, fname, listed=listed)
+        crossnav += "\n" + tree_html(tree, fname, listed=listed, script=site.get("_repository_tree_script"))
 
     # Before every other stylesheet but base.css, so a page's own CSS can still set --g.
     head_extra = f'<link rel="stylesheet" href="{GROUP_COLORS_ASSET}">\n' if site.get("group_colors") else ""
@@ -1025,6 +1115,11 @@ def main() -> int:
         site["_links_checked_from"] = links_checked_from(site)
     except ValueError as problem:
         ap.error(f"site.toml: {problem}")
+    from source_pages import reference_settings
+    try:
+        reference_settings(site)
+    except ValueError as problem:
+        ap.error(str(problem))
     global KNOWN_COMPONENTS
     extra = site.get("extra_components", [])
     if not isinstance(extra, list) or any(not isinstance(c, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", c) or c in KNOWN_COMPONENTS for c in extra) or len(set(extra)) != len(extra):
@@ -1066,11 +1161,11 @@ def main() -> int:
                 f"use {group}/<topic>/{flat_source.name}")
     if not md_files:
         err(f"no pages found in {PAGES}")
-    from source_pages import fragment_problems, load_registry
+    from source_pages import (automatic_pages, fragment_notes, fragment_problems, load_registry,
+                              unlink_missing_fragments)
     source_pages, problems = load_registry(site, REPO, consumer_tracked_paths())
     for problem in problems:
         err(problem)
-    site["_repository_tree"] = repository_tree(source_pages)
     seen_slugs: set[str] = set()
     for md_path in md_files:
         local_resource(md_path)
@@ -1080,34 +1175,79 @@ def main() -> int:
         if slug in seen_slugs:
             err(f"duplicate slug: {slug}")
         seen_slugs.add(slug)
+    # Automatic routes avoid every topic and registered route, so they never collide.
+    automatic, tolerated = automatic_pages(site, REPO, consumer_tracked_paths(), source_pages,
+                                           {slug + ".html" for slug in seen_slugs}
+                                           | {page.route for page in source_pages}, KIT_SITE.parent)
+    for problem in tolerated:
+        note(problem)
+    site["_repository_tree"] = repository_tree(source_pages + automatic)
+    from source_tree import TREE_INDEX, TREE_SCRIPT, is_large, shared_tree_html, tree_script
+    if is_large(site["_repository_tree"]):
+        # Written once and loaded by nav.js instead of repeated in every page.
+        outputs["html/" + TREE_SCRIPT] = tree_script(site["_repository_tree"])
+        site["_repository_tree_script"] = (TREE_SCRIPT + "?v="
+                                           + hashlib.sha256(outputs["html/" + TREE_SCRIPT]).hexdigest()[:10])
+    automatic_checks = automatic_link_checks(site, bundle.declared_local)
+    for md_path in md_files:
         built = build_page(md_path, site, shell)
         if built:
             try:
                 outputs["html/" + built[0]] = bundle.rewrite_page(built[1]).encode()
             except (ValueError, OSError) as problem:
                 err(str(problem))
-    routes = {page.source: page.route for page in source_pages}
+    routes = {page.source: page.route for page in source_pages + automatic}
     unchecked_links: dict[str, set[str]] = {}
-    for page in source_pages:
+    for page in source_pages + automatic:
         if page.slug in seen_slugs:
             err(f"route collision: {page.route} is produced by more than one page ({page.source})")
             continue
         seen_slugs.add(page.slug)
-        built = build_source_page(page, routes, site, shell, unchecked_links)
+        built = build_source_page(page, routes, site, shell, unchecked_links, automatic_checks)
         if built:
             pages_meta.append({"page_css": ["build-sheet.css"]})
+            markup = built[1]
+            if page.automatic:
+                markup, tolerated = unlink_missing_fragments(markup, page.source)
+                for problem in tolerated:
+                    note(problem)
             try:
-                outputs["html/" + built[0]] = bundle.rewrite_page(built[1]).encode()
+                outputs["html/" + built[0]] = bundle.rewrite_page(markup).encode()
             except (ValueError, OSError) as problem:
-                err(str(problem))
+                if not page.automatic:
+                    err(str(problem))
+                    continue
+                # The listing links every automatic page, so one that cannot be
+                # packaged is still built: as its source text, without links or media.
+                note(f"{page.source}: {problem}; shown as plain text")
+                plain = build_source_page(page, routes, site, shell, unchecked_links, automatic_checks, plain=True)
+                outputs["html/" + plain[0]] = bundle.rewrite_page(plain[1]).encode()
+    if site.get("_repository_tree_script"):
+        # Readers without JavaScript open the whole tree on this page.
+        tree = site["_repository_tree"]
+        if "html/" + TREE_INDEX in outputs:
+            err(f"route collision: {TREE_INDEX} is the Reference index of a large tree")
+        else:
+            content = (f'<h1 id="reference">Reference</h1>\n<p>All {len(tree)} files of the sidebar\'s Reference '
+                       'section, by folder.</p>\n<div class="toc reference-index"><div class="repo-tree">'
+                       + shared_tree_html(tree) + '</div></div>\n')
+            meta = {"title": "Reference", "slug": TREE_INDEX[:-len(".html")], "toc": [],
+                    "body_class": "reference-page reference-index-page", "page_css": ["build-sheet.css"]}
+            built = finish_page(meta, meta["slug"], TREE_INDEX, content, ["nav"], site, shell, {})
+            pages_meta.append({"page_css": ["build-sheet.css"]})
+            outputs["html/" + built[0]] = bundle.rewrite_page(built[1]).encode()
     rendered = {name[5:]: data.decode() for name, data in outputs.items()
                 if name.startswith("html/") and name.endswith(".html") and "/" not in name[5:]}
     # Source pages check every fragment they link. Other pages check fragments
     # pointing into source pages, whose anchors come from Markdown headings.
+    # Links from or into automatically listed pages are only noted.
     source_routes = {page.route for page in source_pages}
-    for problem in [*fragment_problems(rendered, source_routes, set(rendered), unchecked_links),
-                    *fragment_problems(rendered, set(rendered) - source_routes, source_routes)]:
+    automatic_routes = {page.route for page in automatic}
+    for problem in [*fragment_problems(rendered, source_routes, set(rendered) - automatic_routes, unchecked_links),
+                    *fragment_problems(rendered, set(rendered) - source_routes - automatic_routes, source_routes)]:
         err(problem)
+    for problem in fragment_notes(rendered, automatic_routes):
+        note(problem)
     if args.page and args.page not in seen_slugs:
         err("unknown page slug: " + args.page)
     for name, data in gather_page_css(pages_meta, origins=origins).items():
@@ -1129,7 +1269,10 @@ def main() -> int:
                              "<a href=\"html/index.html\">Open the documentation</a></html>\n").encode()
     outputs["site-build.json"] = (json.dumps({"schema_version": 1, "source": "docs/topics",
         "public_pages": sorted(name for name in outputs if name.startswith("html/") and name.endswith(".html")),
-        "source_pages": {page.route: page.source for page in source_pages},
+        "source_pages": {page.route: page.source for page in source_pages + automatic},
+        # The Reference tree written once when it is too large to inline; it carries page titles.
+        "reference_tree": ({"script": "html/" + TREE_SCRIPT, "index": "html/" + TREE_INDEX}
+                           if site.get("_repository_tree_script") else None),
         "local_media": sorted(bundle.local_media), "large_captures_packaged": False,
         # Repository source of each copied resource; publication checks these.
         "resource_origins": dict(sorted(origins.items())),
@@ -1176,6 +1319,13 @@ def main() -> int:
         for e in _errors:
             print(f"ERROR: {e}", file=sys.stderr)
         return 1
+    # Lint reads these lines from `build --check` and shows them as its own notes.
+    if args.check:
+        for message in _notes:
+            print(f"NOTE: reference page {message}")
+    elif _notes:
+        print(f"note: {len(_notes)} problem(s) in automatically listed reference pages were tolerated; "
+              "`lint` lists them")
 
     stale, wrote = [], []
     for rel, data in sorted(outputs.items()):

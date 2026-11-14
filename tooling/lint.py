@@ -32,6 +32,8 @@ A topic page also gets a note for each number in its prose that none of its
 linked records state; values shown as code are not checked.
 A link to a file that the local-artifact manifest lists under `omitted_files`
 gets a note when the file is absent: the project declared that state.
+Each problem the build tolerated in an automatically listed reference page
+(see `reference_listing` in site.toml) is a note too.
 
 Exit 0 clean (warnings print unless --strict fails them), 1 on errors.
 """
@@ -574,6 +576,10 @@ def check_build() -> None:
         error(".build/docs/html is stale — run `python .docs-kit/docsite.py build --project .`")
     elif r.returncode != 0:
         error(f"build.py --check failed:\n{r.stderr.strip()}")
+    # What automatically listed reference pages tolerated; notes never fail.
+    for line in r.stdout.splitlines():
+        if line.startswith("NOTE: "):
+            notice(line[len("NOTE: "):])
 
 
 def check_topic_structure() -> None:

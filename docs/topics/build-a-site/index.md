@@ -262,7 +262,7 @@ A single scroll is still available as **All chapters**, and it is what print and
 
 ## Markdown you already have can be published as it is
 
-<p class="bs-lead">For projects that already have Markdown worth reading: one <code>[[source_pages]]</code> entry publishes a tracked file at a route you choose, and the file stays where it is.</p>
+<p class="bs-lead">For projects that already have Markdown worth reading: by default every tracked Markdown file becomes a page, and one <code>[[source_pages]]</code> entry publishes a file at a route you choose. The file stays where it is.</p>
 
 <div class="panel-switcher" data-panel-switcher data-panel-default="markdown">
 <div class="panel-switcher-controls" role="group" aria-label="View of a registered record">
@@ -283,7 +283,7 @@ A single scroll is still available as **All chapters**, and it is what print and
 </div>
 </div>
 
-Rules, decision notes, a README or release notes are often worth reading on a site, but copying one into a page creates a second copy that drifts, and moving it breaks the links and agent routes that name its path. A registered record avoids both: the build renders the file whole, with a source line and an edit link, resolves its links from its own folder, and checks links between registered files. This site uses it for its rule guides, README and release notes; every registered file is listed by folder in the sidebar's Reference section. Write a topic page when you want to explain; register a record when the file itself is the thing to read.
+Rules, decision notes, a README or release notes are often worth reading on a site, but copying one into a page creates a second copy that drifts, and moving it breaks the links and agent routes that name its path. A registered record avoids both: the build renders the file whole, with a source line and an edit link, resolves its links from its own folder, and checks links between registered files. This site uses it for its rule guides, README and release notes. Every other tracked Markdown file is listed too, unless `reference_exclude` names it or `reference_listing = false` turns the listing off; all of them appear by folder in the sidebar's Reference section. In a private repository with a public site, that publishes every Markdown file the listing does not exclude. Write a topic page when you want to explain; register a record when the file itself is the thing to read, or when it needs a chosen route, title or pin. [Automatic reference listing](authoring.html#automatic-reference-listing) owns the rules.
 
 <!-- fold: code The registry entry -->
 

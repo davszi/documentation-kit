@@ -203,9 +203,10 @@ nearly empty Introduction chapter; a longer opening stays its own chapter. One
 slug belongs to one page. Topic entry pages keep their own frontmatter path and
 cannot be registered.
 
-Once a site registers a source page, every sidebar ends with a **Reference**
-section that lists the registered files. There is no setting: a site
-without source pages shows no section. `pinned = true` lists a file at the top
+Every sidebar ends with a **Reference** section that lists the site's source
+pages: the registered files and the files the
+[automatic reference listing](#automatic-reference-listing) adds. A site
+without either shows no section. `pinned = true` lists a file at the top
 of the section by its title, always visible, in the order the tables are
 declared. Below the pinned files, one **Browse by folder** disclosure holds every
 registered file in a folder tree at its repository path, pinned files included.
@@ -217,6 +218,20 @@ them. On any other registered page it starts open, with only the folders that
 lead to that page unfolded. The section follows the navigation in the menu's
 normal flow.
 
+Up to 60 listed files (`INLINE_TREE_LIMIT` in `tooling/source_tree.py`) every
+page carries the whole folder tree. Above that, the tree is written once, as
+`reference.tree.js` next to the pages, and as the page `reference.index.html`;
+`site-build.json` names both under `reference_tree`, which is `null` for an
+inline tree. Each page then carries the pinned files, the **Browse by folder**
+disclosure with its count, a link to `reference.index.html` and, on a listed
+page, the folders that lead to that page, with their full counts. The shared
+`nav.js` loads `reference.tree.js` when the disclosure opens, or at load on a
+listed page, and marks and unfolds the current file as the inline tree does.
+It loads through a `<script>` element, because a page opened from disk cannot
+`fetch` a neighbouring file. Without JavaScript the link opens the whole tree on
+`reference.index.html`. At 81 files the inline tree added 29.8 KB to every page
+of a measured site; at 400 files it added 199 KB to every page.
+
 A registered file needs no `[[nav]]` entry, because the section lists it. Keep
 `[[nav]]` for pages written for people, and for records every reader needs,
 such as release notes and migration guides; such an entry lists the record
@@ -226,7 +241,8 @@ site navigation and the repository section, not the page's own headings. With
 headings under that entry.
 
 Links and media resolve from the file's own folder, exactly as when reading the
-Markdown. A link to another registered file becomes that page's route. Other
+Markdown. A link to another source page, registered or listed automatically,
+becomes that page's route. Other
 repository files become source links, and tracked media are packaged. Absolute
 paths, links that leave the project and missing targets fail the build. Every
 fragment that points into a registered page, from any page, must match an
@@ -243,6 +259,93 @@ Topic-page markers are not interpreted in a registered file: includes, typed
 folds, registry callouts and `<!-- page-end -->` stay literal, so a record can
 show them as examples. Lint checks a registered file's Markdown links as an
 ordinary record.
+
+### Automatic reference listing
+
+By default every tracked Markdown file of the project is a source page and
+appears in the Reference section, without a `[[source_pages]]` table. **With
+the default, every tracked Markdown file of a project becomes a page of its
+site.** A private repository with a public site thereby publishes those files,
+unless it excludes them or turns the listing off.
+
+A tracked `.md` file is not listed automatically when it:
+
+- lies inside a Git submodule, the kit's `.docs-kit/` included, or inside the
+  kit's own folder;
+- starts with `+++` frontmatter, as topic entry pages do, or is a topic entry
+  page;
+- is a symbolic link or lies below one;
+- matches a `reference_exclude` pattern;
+- lies under a `private_prefixes` entry of the [`[publication]`
+  table](publication.md#configured-publication), whose files the project
+  already declared private.
+
+Two settings in `docs/site/site.toml`, above the first `[[nav]]` table, opt
+out:
+
+```toml
+reference_listing = false   # list only [[source_pages]] tables
+reference_exclude = ["CLAUDE.md", "experiments/**", "**/drafts/"]
+```
+
+`reference_listing = false` turns the automatic listing off; the site then
+lists only its `[[source_pages]]` tables, as before the listing existed.
+`reference_exclude` names repository-relative glob patterns matched against the
+whole path: `*` and `?` stay within one folder, `[...]` is a character class,
+`**` spans any number of folders and a pattern ending in `/` matches everything
+below that folder. Patterns are distinct and have no leading `/`, no `\` and no
+`.` or `..` parts. A wrong type or pattern fails the build with an error such
+as `site.toml: reference_listing must be true or false`.
+
+A `[[source_pages]]` table still wins: it keeps every meaning above and sets
+the slug, title, description, `math`, `reader` and `pinned` of its file.
+`reference_exclude` never removes a registered file. Only a table can pin a
+file.
+
+An automatically listed file is published as a route derived from its path.
+Each folder and the file name are lowercased; every run of characters other
+than `a-z`, `0-9`, `_` and `-` becomes one `-`; the parts join with `.`, and the
+name keeps `.md` before `.html`. `docs/Design Notes/API v1.2.md` becomes
+`docs.design-notes.api-v1-2.md.html`, and `README.md` becomes
+`readme.md.html`. A slug cannot contain `.`, so these routes never meet a
+registered slug. When two files reach the same route, a file whose path already
+has that form keeps it; every other file, and any file whose route another page
+already has, gets the first eight hexadecimal digits of the SHA-256 of its
+path before `.md`, such as `readme-0123abcd.md.html`. A name longer than 180
+characters is cut and gets the same suffix. A collision never fails the build;
+lint prints a note for it. The route stays the same while the file keeps its
+path and no other file reaches its route; moving or renaming the file changes
+its public address.
+
+An automatically listed page never fails the build and never adds a lint
+warning or error. What a registered page would reject is shown tolerantly, and
+lint prints each case as a note, which never fails, not even under `--strict`:
+
+- a link or image whose target is missing, untracked, absolute or outside the
+  project renders as its text, unlinked, inside `<span class="link-gone">`, as
+  in old worklog entries; only tracked files and folders, files of a
+  checked-out submodule such as the kit, and declared local evidence count as
+  present, so the page does not depend on one checkout's untracked files;
+- an image that is symlinked or matches the publication's private prefixes or
+  suffixes is not packaged and renders the same way;
+- an external image becomes a link to it; a link with a scheme other than
+  `http`, `https`, `mailto` or `vscode` renders as text;
+- a same-page link to a missing anchor renders as text; a link from or into an
+  automatically listed page whose fragment matches no anchor stays a link to
+  the page;
+- raw `<script>`, `<style>`, `<link>`, `<iframe>`, `<form>` and similar tags,
+  and an unclosed HTML comment, show as text; complete HTML comments are
+  dropped;
+- a file without a level-one heading takes its file name, without `.md`, as
+  title;
+- bytes that are not UTF-8 show as the replacement character.
+
+Registered pages keep their strictness. The build prints how many problems it
+tolerated; `build --check` and lint list them.
+
+The page's source line links the file in the configured `gh_repo`. A reader
+without access to a private repository cannot open that link or the edit link,
+although the page itself is public.
 
 ### Generated figures
 

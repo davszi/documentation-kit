@@ -32,6 +32,9 @@ evidence adapter exports `MANIFESTS`, `manifest_documents(root, *, require_all_m
 returning `(documents, revisions)`, and `verify` with the same arguments; invalid
 evidence raises `ValueError`. Projects keep adapter tests and schema policy;
 the kit keeps one build/lint engine and uses the adapters consistently.
+Within one build or lint run the kit asks the path adapter once per distinct
+path, root and recorded roots and reuses the answer, so the mapping must not
+depend on anything that changes during the run.
 
 The path adapter is a kept compatibility layer under
 [refactoring over compatibility](../engineering/code.md#refactoring-over-compatibility).
