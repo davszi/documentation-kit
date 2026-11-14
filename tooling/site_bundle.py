@@ -48,6 +48,13 @@ class SiteBundle:
 
     def source_url(self, path: Path, fragment: str = '') -> str:
         relative = path.relative_to(self.root).as_posix()
+        if not self.repository:
+            # Preserve the logical docs/html origin used by source links and
+            # lint. Publication rewrites explicitly admitted files separately.
+            local = posixpath.relpath(relative, 'docs/html')
+            if path.is_dir():
+                local += '/'
+            return quote(local, safe='/') + ('#' + quote(fragment, safe='-_.~') if fragment else '')
         kind = 'tree' if path.is_dir() else 'blob'
         return (self.repository + '/' + kind + '/' + quote(self.ref, safe='') + '/'
                 + quote(relative, safe='/') + ('#' + quote(fragment, safe='-_.~') if fragment else ''))

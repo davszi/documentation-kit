@@ -107,7 +107,7 @@ page_only = "Explains building a site; its records are the site guides in rules/
 
 <!-- fold: code How links are rewritten -->
 
-Inside a page, link to other pages by their generated name, such as `records.html#numbers-and-staleness`. Links to any other repository file become source links: GitHub on a served site, the local checkout when the pages are opened as files. Every path stays inside the project; a link, include or image that escapes it fails the build. [Authoring paths](authoring.html#authoring-paths) has the exact rules.
+Inside a page, link to other pages by their generated name, such as `records.html#numbers-and-staleness`. Links to other repository files use the configured source host, or retain a local identity when no source remote is configured. A local HTTP preview needs those source files in its explicit publication allowlist; the build does not expose the checkout. Every path stays inside the project; a link, include or image that escapes it fails the build. [Authoring paths](authoring.html#authoring-paths) has the exact rules.
 
 <!-- /fold -->
 

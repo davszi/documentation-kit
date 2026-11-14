@@ -39,3 +39,25 @@ assert.equal(hosted.links[4].attrs.href,'https://example.org/paper');
 assert.ok(hosted.links[5].attrs.href.endsWith('/blob/'+encodeURIComponent(process.env.GITHUB_SHA || 'main')+'/docs/topics/guide/index.md#detail'));
 assert.equal(hosted.media.attrs.src,undefined);
 console.log('Source links pass: local root, encoded spaces, editor lines, Markdown anchors, hosted pinned references, code chips and local-only capture access.');
+
+// Publication removes repository metadata from admitted source links. Without
+// a remote, HTTP preview must preserve those exact exported paths as well as
+// the builder's logical source paths that still carry repository metadata.
+const noRemoteScript=fs.readFileSync(path.join(root,'theme/components/filelinks.js'),'utf8')
+  .replace('{{GH_REPO}}','').replace('{{GH_REF}}','main');
+for(const protocol of ['http:','file:']){
+  const links=[
+    new Link({href:'notes/record.md#kept'}),
+    new Link({href:'src/check.py#L8'}),
+    new Link({href:'notes/'}),
+    new Link({href:'data/result.json'}),
+    new Link({href:'record.html#kept'}),
+    new Link({href:'../../notes/record.md#kept','data-repo-path':'notes/record.md','data-repo-fragment':'kept'})
+  ];
+  const before=links.map(link=>({...link.attrs}));
+  vm.runInNewContext(noRemoteScript,{location:{protocol,pathname:'/preview/index.html'},
+    document:{querySelectorAll(selector){return selector==='a[href]'?links:[];}}});
+  assert.deepEqual(links.map(link=>link.attrs),before);
+  assert.ok(links.every(link=>link.title===undefined));
+}
+console.log('No-remote source links pass: HTTP/file exports preserve Markdown, Python, directory, JSON, HTML and source metadata paths.');
