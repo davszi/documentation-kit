@@ -18,14 +18,28 @@ comes from an executed check, source inspection or an inference.
 ## Scratch files
 
 Before reporting completion, delete the scratch files the work created.
-Scratch is what the work made for its own use and what no record, claim or
-person still needs: drafts, captures taken for a review by eye, and the
-temporary folders of its tests and tools. Keep a capture the person is still
-to look at until they have seen it.
+Scratch is an untracked file, never committed, that the work made for its own
+use and that no record, claim, person or delegating agent still needs: a
+draft, a capture taken for a review by eye, or a temporary folder of its tests
+and tools. Deleting it needs no approval; this is the one exception to the
+[deletion gate](../documentation.md#rules-for-changes-and-chronology).
+
+These are not scratch:
+
+- The output of a run, whether or not a stated number or verdict rests on it.
+  [Numbers and staleness](../records.md#numbers-and-staleness) says which
+  output is tracked and which is named in the report with a proposal to delete
+  it.
+- A tracked file, and a plan, review or other
+  [working document](../records.md#finished-working-documents).
+- The fixed output folder of a build or check, which its next run overwrites.
+- A capture that a page uses as a figure.
+
+Keep a capture that the person or a delegating agent is still to look at. The
+agent that reports to the person deletes it once it has been seen.
 
 Delete only what this work created. Name anything else that looks unneeded in
 the report and propose its deletion.
-[Run output](../records.md#numbers-and-staleness) is never scratch.
 
 A record does not cite a scratch file by path or hash. It states what the
 draft or the review established.

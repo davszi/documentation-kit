@@ -62,8 +62,9 @@ the open owner as an unresolved choice, under
 [open work](../documentation.md#from-open-work-to-subject-knowledge): the
 question, the options, the recommendation and what waits on the answer, routed
 from `OPEN.md`. A delegated owner sends such a question through the agreed
-return channel; the agent that reports to the person records it. Delete the
-entry when the person answers.
+return channel; the agent that reports to the person records it. When the
+person answers, record the answer where the work continues and delete the
+entry once nothing waits on it.
 
 Ask only what changes the work. Routine choices within the agreed scope are
 made and reported, as [owner responsibility](#owner-responsibility) states.

@@ -21,9 +21,8 @@ So a fresh clone that follows the [README](../../README.md) gets no browser
 suites, and a local run can use a different Playwright version than the
 workflow.
 
-## Next step
+## Options
 
-Choose one and put it to deivid:
 
 - declare Playwright in a `package.json` with a lock file, install it in the
   README's setup steps and let the workflow install from the same file;
@@ -31,4 +30,12 @@ Choose one and put it to deivid:
   the pinned version in one tracked place that both the README and the
   workflow read.
 
-Consumers are not affected: building a site needs no Node.js.
+## Recommendation
+
+The first option. It is what the rule asks, and it puts the version in one
+place.
+
+## What waits on the answer
+
+Nothing in the next release: the gap is in the kit's development checks.
+Consumers are not affected, because building a site needs no Node.js.

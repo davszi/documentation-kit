@@ -1,52 +1,54 @@
-# Rule proposal from the ADP cleanup: delete one-off probe scripts
+# Rule proposal from the ADP cleanup: a finished probe script that a change breaks
 
-An unresolved choice for deivid, first asked on 2026-11-13. Delete this record
-and its line in [KIT_OPEN.md](KIT_OPEN.md) when he has answered and, if he
-accepts, the rule is written.
+An unresolved choice for deivid, first asked on 2026-11-13 and put to him in a
+narrower form on 2026-11-14. Delete this record and its line in
+[KIT_OPEN.md](KIT_OPEN.md) once he has answered and nothing waits on it.
 
 ## Question
 
-Does this proposal become a kit rule?
+Do the two sentences below become kit rules?
 
-**A one-off probe script is finished working code.** Once its result is
-recorded with the source commit, the script is deleted from the tree unless a
-rerun is planned. Git keeps it.
+- In [refactoring over compatibility](../../rules/engineering/code.md#refactoring-over-compatibility):
+  a caller that is a finished probe or one-time script, which nothing else
+  imports and for which no rerun is planned, is deleted in the same change
+  instead of updated, once its result is recorded with a source pin. Claims
+  that rest on it are historical from then on.
+- In the source-pin paragraph of [numbers and staleness](../../rules/records.md#numbers-and-staleness):
+  the pin still stands for the code after the code is deleted from the current
+  tree.
 
-- Met in ADP: six historical probe scripts break against a changed interface,
-  and the project holds many more of their kind.
+## Why this form
 
-## Three gaps to close first
+The first form was "a one-off probe script is deleted once its result is
+recorded, unless a rerun is planned". It had three gaps:
 
-Put to deivid on 2026-11-14.
+- The source-pin rule did not say whether code "lives in the repository" in
+  the current tree or at the pinned commit. The second sentence writes out
+  the pinned commit.
+- The pin only stands for code when the run started from a clean tree. A
+  script from a run with uncommitted code has no such pin, so it is not
+  deleted this way; it is updated, or its diff is kept first.
+- "One-off" was not defined. It becomes two conditions that can be checked:
+  nothing imports the script, and no rerun is planned.
 
-- [Numbers and staleness](../../rules/records.md#numbers-and-staleness) asks
-  an experiment to retain its producing code, and lets a source pin stand for
-  code that "lives in the repository". It does not say whether that means the
-  current tree or the pinned commit. The proposal needs the second reading
-  written out.
-- The pin only stands for the code when the run started from a clean tree.
-  Several ADP runs started from uncommitted code. For those the script may be
-  deleted only when its diff against the pinned commit is kept, as the same
-  section now requires.
-- "One-off" is not defined. In ADP other code imports probe files: the
-  attended judges test imports `test_sdk_app_demo_probe`. A script that
-  something else imports is not one-off. Deleting a script also turns every
-  claim that rests on it into a historical one, because it can no longer be
-  rerun; the rule has to say so.
+What ADP met was narrower than the first form: a change to an interface broke
+six old probe scripts and left them broken. The refactoring rule already asks
+a full refactor to update every caller in the same change. It only does not
+say what happens to a caller that is a finished probe.
+
+The narrower form creates no duty to search for old scripts that still run.
+
+## Options
+
+- Write the two sentences.
+- Leave the rules as they are; a broken probe script is then updated like any
+  other caller.
 
 ## Recommendation
 
-Decide it after the next release. The release does not need it, and the
-wording needs a draft that closes the three gaps.
+Write the two sentences.
 
-## Answered proposals
+## What waits on the answer
 
-This record held seven proposals. deivid answered six on 2026-11-14; the
-[worklog](../KIT_WORKLOG.md) has the chronology.
-
-- Written into the rules: [scratch files](../../rules/engineering/handoffs.md#scratch-files),
-  [dependencies](../../rules/engineering/code.md#dependencies), the commit and
-  diff a run records in [numbers and staleness](../../rules/records.md#numbers-and-staleness),
-  and roles instead of names in [page design](../../rules/writing/pages.md#page-design).
-- Withdrawn as specific to ADP: pictures are chosen, not collected.
-- Dropped: a statement that holds for one case names the case.
+Nothing in the next release. If accepted before the release, the sentences
+join it and its review.

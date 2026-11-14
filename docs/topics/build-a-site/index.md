@@ -54,7 +54,7 @@ page_only = "Explains building a site; its records are the site guides in rules/
 <li class="is-alert"><b>Never edit the output</b><p>It can always be deleted and rebuilt. Fix the source instead.</p></li>
 </ol>
 </div></div>
-<dl class="slide-facts"><div><dt>Reads</dt><dd>Tracked files only</dd></div><div><dt>Writes</dt><dd>.build/docs/</dd></div><div><dt>Installs</dt><dd>Nothing extra</dd></div><div><dt>Checks</dt><dd>Every link</dd></div></dl>
+<dl class="slide-facts"><div><dt>Reads</dt><dd>Tracked files only</dd></div><div><dt>Writes</dt><dd>.build/docs/</dd></div><div><dt>Installs</dt><dd>Nothing extra</dd></div><div><dt>Checks</dt><dd>Internal links</dd></div></dl>
 <p class="slide-scope">Illustration of the build · no measured results</p>
 <!-- /slide -->
 
@@ -241,7 +241,7 @@ A single scroll is still available as **All chapters**, and it is what print and
 </ul></div>
 <div class="bs-part bs-orange"><span class="bs-label">Slides</span><h3>A slide shows the chapter's figure</h3><ul>
 <li>added last: build the chapters, then ask the person, and add faces only after a yes</li>
-<li>the chapter's own figure takes about half the canvas, its parts numbered; beside it, numbered points each give a bold claim and a sentence or two, and a closing row lists the facts a reader asks for next (<code>slide-points</code>, <code>slide-facts</code>)</li>
+<li>the chapter's own figure with its parts numbered; beside it, numbered points each give a bold claim and a sentence or two, and a closing row lists the facts a reader asks for next (<code>slide-points</code>, <code>slide-facts</code>)</li>
 <li>boxes of text alone are not a visual: a chapter with nothing to show gets no face</li>
 <li>write a face between <code>&lt;!-- slide --&gt;</code> and <code>&lt;!-- /slide --&gt;</code> at the start of a chapter; the first chapter of this page opens with one</li>
 <li>every fact on a slide is also in its chapter</li>
@@ -360,7 +360,7 @@ Without `--strict`, warnings print but the run passes; with it, any warning fail
 python3.12 -m http.server 8321 --bind 127.0.0.1 --directory .build/docs
 ```
 
-Open `http://127.0.0.1:8321/html/index.html`. The server exposes only the generated output, not the repository. A successful build, lint and browser suite still need a look by eye: capture each changed element whole, at wide and narrow widths and in each reader view it appears in, and look at the captures before committing or publishing. The captures are [scratch files](handoffs.html#scratch-files): the record states what the review found and cites no capture by path or hash. [Validation](validation.html#validation-and-review) lists what a complete review covers, including the reusable browser checks.
+Open `http://127.0.0.1:8321/html/index.html`. The server exposes only the generated output, not the repository. A successful build, lint and browser suite still need a look by eye: capture each changed element whole, at wide and narrow widths and in each reader view it appears in, and look at the captures before committing or publishing. The captures are [scratch files](handoffs.html#scratch-files), except one a page uses as a figure: the record states what the review found and cites no capture by path or hash, and the captures stay until whoever must look at them has done so. [Validation](validation.html#validation-and-review) lists what a complete review covers, including the reusable browser checks.
 
 Before reusing a server that is already running, confirm who owns it and which checkout it serves, and stop only servers you started; [local review and browser access](validation.html#local-review-and-browser-access) covers the rest. When a page was written by a delegated page agent, the agent that delegated it looks at these captures itself before reporting the page done.
 

@@ -2,6 +2,61 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Close the findings of the independent review
+
+An independent reviewer read every unreleased change after `v3.2.1`. It found
+the release not ready: two blockers and three majors in the four new rules,
+one tooling defect and smaller points. This landing closes the rule and page
+findings.
+
+Rules:
+
+- **Scratch files** (`rules/engineering/handoffs.md`). Scratch is now an
+  untracked, never committed file. The output of a run is never scratch,
+  whether or not a stated number rests on it; before, an agent could read
+  output without a stated number as scratch and delete it without asking. A
+  capture stays while the person or a delegating agent is still to look at
+  it; before, a delegated page author had to delete captures its delegating
+  agent must review. Tracked files, working documents, a tool's fixed output
+  folder and a capture used as a figure are named as not scratch.
+  `rules/documentation.md` names scratch files as the one exception to the
+  deletion gate.
+- **Dependencies** (`rules/engineering/code.md`). A pinned Git submodule is a
+  declared dependency, a dependency file inside it counts as declared, and
+  the environment may live in an ignored folder. Without this every consumer
+  of the kit could be read as breaking the rule.
+- **Commit and diff** (`rules/records.md`). The diff is taken against the
+  commit the run started from, which is recorded and stays reachable, and it
+  includes changes inside submodules. "Never committed" became "not committed
+  when the run started". A declared dependency is identified by its version,
+  and an ignored file a run reads is recorded as an input.
+- **Roles, not names** (`rules/writing/pages.md`). One role word for each
+  role; names stay in a method's name, a citation or a contact line.
+- Smaller alignments: the lists of working documents now all name the
+  decision record; an answered question is deleted once nothing waits on it
+  (`rules/engineering/delivery.md`); `rules/site/resources.md` says which
+  projects register no adapter and states that `worklog_links_checked_from`
+  does not reach a worklog rendered as a source page; the last "frozen or
+  dated link" wording is gone.
+
+Pages: the handoffs, code, evidence and page-design paragraphs follow the
+rule text again. Four older sentences that said more or less than their rule
+are corrected in `docs/topics/writing-practices/index.md` and
+`docs/topics/build-a-site/index.md`. Text only; no figure or layout changed.
+
+Theme: three vendored font notices named an ADP page and now name the
+build-sheet theme.
+
+Correction to the consumer step in the entry below: citations of review
+captures are removed from records other than worklog entries and historical
+experiment records, which stay as written.
+
+Open after this landing, each routed from `docs/open/KIT_OPEN.md`: the version
+number and migration guide of the next release, which the release record
+makes 4.0.0 because a section anchor under `rules/` was removed; the worklog
+cut-off in the build; the plot labels and font versions in the theme; the
+Playwright declaration; and the last rule proposal, now in a narrower form.
+
 ## 2026-11-14 — Write four rules from the ADP cleanup
 
 deivid accepted proposals 1, 2, 3 and 6 ("Yes, write them"). Each answers

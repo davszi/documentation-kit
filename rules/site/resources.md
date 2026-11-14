@@ -18,7 +18,7 @@ state. When the file is absent, lint prints a note, which never fails, not even
 under `--strict`. A missing file that the manifest does not list is an error.
 
 The adapters below exist only for projects that already keep unedited old
-documents whose links name old paths. New projects do not register them, and
+documents whose links name old paths. A project without such documents does not register them, and
 the kit removes each hook once no project names it.
 
 Projects with existing historical-path or evidence schemas can register local
@@ -69,6 +69,6 @@ projects use `docs/worklog.md` and `docs/open/OPEN.md`.
 A project may set `worklog_links_checked_from = "YYYY-MM-DD"`. Lint then checks
 links only in worklog entries dated on or after that day. Worklog entries are
 append-only, so a link in an older entry cannot follow a later move or removal
-of its target. Text above the first dated heading is always checked.
+of its target. Text above the first dated heading is always checked. The setting applies to lint's own link check only: a worklog that is also rendered as a [registered source page](authoring.md#registered-source-pages) still fails the build on a missing link target in any entry.
 
 Validate [generated-figure provenance](../writing/figures.md#figures-and-comparisons) and the identities of documents listed in an evidence manifest separately from link resolution and presentation.
