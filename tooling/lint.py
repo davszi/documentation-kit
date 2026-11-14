@@ -546,8 +546,7 @@ def check_worklog() -> None:
     if not f.is_file():
         error(f'{f.relative_to(REPO)} missing')
         return
-    dates = re.findall(r"^## (\d{4}-\d{2}-\d{2})", f.read_text(), re.M)
-    starts = [d[:10] for d in dates]
+    starts = _worklog_entries.markdown_entry_dates(f.read_text())
     if starts != sorted(starts, reverse=True):
         error("worklog.md: date sections are not newest-first")
     for i, line in enumerate(f.read_text().splitlines(), 1):

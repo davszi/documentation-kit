@@ -2,6 +2,30 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Two points left by the second look at the review fixes
+
+- The reviewer checked the fixes of the entry below: eight of ten findings
+  closed, two not fully. It removed each part of the cut-off fix in turn and
+  the test failed each time.
+- Lint's newest-first check of the worklog still counted a dated `## ` line
+  inside a fenced code block, so the case the fix targeted still failed strict
+  lint with "date sections are not newest-first". `check_worklog` now reads
+  the entry dates through `markdown_entry_dates` in
+  `tooling/worklog_entries.py`, which skips fenced lines, and the test asserts
+  that the error is absent.
+- Correction to the entry below: a configuration error does not always exit
+  with status 2. The checks of `site.toml` at the start of the build exit 2
+  with `build.py: error: …`; a configuration error found while rendering, such
+  as an unknown `[[source_pages]]` key or a TOML syntax error, exits 1. The
+  header of `tooling/build.py` now says so.
+- The release notes say that any value but a `YYYY-MM-DD` date is an error for
+  the cut-off, where they said "not an ISO date".
+- Left as they are: rare Markdown forms on which lint and the build still
+  date entries differently, such as a closing fence that carries text or a
+  heading in a `<pre>` block; and the sentence on retained producing code in
+  `rules/records.md`, which agrees with the probe-script rule only through
+  the source-pin paragraph.
+
 ## 2026-11-14 — Close the findings of the review before the 4.0.0 tag
 
 - An independent review of the unreviewed commits, from the release

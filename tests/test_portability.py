@@ -351,6 +351,7 @@ def verify(root, *, require_all_manifests=False): raise ValueError("project evid
         result = lint('"2000-01-02"')
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('dead link topics/lost/lost.md', result.stderr)
+        self.assertNotIn('not newest-first', result.stderr)
         # The build reads the setting too, so it rejects a value that is not a
         # date, and lint prints the build's error.
         for invalid in ('"soon"', '20000102', '"20000102"', '"2000-W01-1"'):

@@ -73,6 +73,17 @@ def _fenced_spans(text: str) -> list[tuple[int, int]]:
     return spans
 
 
+def markdown_entry_dates(text: str) -> list[str]:
+    """The dates of the dated entry headings in Markdown source, in file order."""
+    fenced = _fenced_spans(text)
+    dates = []
+    for match in MARKDOWN_HEADING.finditer(text):
+        dated = _DATE.match(match.group(1).strip())
+        if dated and not within(fenced, match.start()):
+            dates.append(dated.group(0))
+    return dates
+
+
 def unchecked_spans(text: str, first: str | None, heading: re.Pattern = MARKDOWN_HEADING) -> list[tuple[int, int]]:
     """(start, end) offsets of the entries dated before `first`.
 
