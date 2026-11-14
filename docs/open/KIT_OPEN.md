@@ -8,4 +8,4 @@ Routes only. The linked owner holds the checklist, rationale and evidence.
 - An invariant marker inside a code block is rendered as a card and breaks the block: [defect, workaround and next step](marker-in-fenced-code.md).
 - Six gaps in the migration guides, release notes and tooling that adaptation's upgrade met: [cases with evidence](adaptation-upgrade-findings.md).
 - In the zoomed figure the plot toggle chips lose their series colour, and a long label wraps at phone width: [both points](plot-toggle-chips-in-lightbox.md).
-- The slide-face rule failed 12 of adaptation's 36 faces and gave two readings in eight places; the 4.0.0 guide has eight more gaps: [evaluation and cases](adaptation-upgrade-to-4.0.0-findings.md).
+- The slide-face rule failed 12 of adaptation's 36 faces and gave two readings in eight places; the two upgrades to 4.0.0 met fourteen more gaps in the guide: [evaluation and cases](upgrade-to-4.0.0-findings.md).

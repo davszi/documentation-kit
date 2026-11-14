@@ -1,4 +1,4 @@
-# Slide-face rule and guide gaps found by adaptation's upgrade to 4.0.0
+# Slide-face rule and guide gaps found by the upgrades to 4.0.0
 
 Adaptation moved from kit 3.2.0 to 4.0.0 on 2026-11-14, as three local commits
 on its branch `docs-kit-4.0.0`. deivid asked to evaluate what the
@@ -96,6 +96,30 @@ Reported by the session; only the two marked points are checked here.
    which are still needed.
 8. **`--check-reader`.** The guide does not say whether a project without a
    comparison test should add the command.
+
+## Gaps reported by ADP's upgrade
+
+ADP moved from 3.2.1 to 4.0.0 on 2026-11-14 in one local commit. It has no
+slide faces, so it adds nothing to the evaluation above. Its session reported
+these; only the first is checked here.
+
+1. **Colour navigation groups.** The step does not say what happens to a
+   group outside the table. A group whose colour the project sets itself keeps
+   it with or without the table; ADP's `Parked` group did. Checked here: the
+   kit owner had told ADP that `Parked` needs a line, which was wrong.
+2. **Move the pin, step 3.** The same hard-coded `.build/docs-env/bin/python`
+   that adaptation met; ADP has no such environment either.
+3. **Generated output.** "Change its generator and run it again" gives no
+   route when the generator's environment no longer exists.
+4. **Search for imports of kit tooling.** The search also finds scripts kept
+   as historical evidence, and the step does not say to leave them, as the
+   theme step does.
+5. **One README.** "Files that arrive with third-party code keep their names"
+   does not clearly cover a notice the project wrote itself for vendored data.
+6. **Runners that hash changed files.** ADP's resource slot refuses a run
+   while the pin move is uncommitted, because the changed path is a directory.
+   The session committed the pin first, ran the checks and amended. A note for
+   such consumers may help; the cause is ADP's tooling.
 
 ## Next step
 

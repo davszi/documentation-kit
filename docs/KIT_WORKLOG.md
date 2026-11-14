@@ -2,6 +2,19 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — ADP's upgrade to 4.0.0 reported, findings record renamed
+
+- ADP's session reported its move to 4.0.0: one local commit, strict lint
+  clean, no slide faces in ADP. Its six guide gaps are added to the findings
+  record.
+- The record of the entry below is renamed to
+  `docs/open/upgrade-to-4.0.0-findings.md`, because it now holds the gaps of
+  both upgrades.
+- Correction to what the kit owner told ADP: a navigation group with its own
+  colour needs no line in `[group_colors]`, and only five of the nine plot
+  toggle keys need a label line.
+- Checks: build and strict lint.
+
 ## 2026-11-14 — Slide-face rule evaluated on adaptation's upgrade to 4.0.0
 
 - deivid asked for ADP and adaptation to move to 4.0.0 and to evaluate what
