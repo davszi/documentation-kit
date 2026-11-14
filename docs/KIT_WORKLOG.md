@@ -2,6 +2,18 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Keep the migration guides
+
+- deivid withdrew his decision of 2026-11-11 to remove all migration guides.
+  Asked whether to release as 4.0.0 with the guides removed in it, he
+  answered: "no we still need migrations sadly".
+- The open record for the removal is deleted and its route is gone from
+  `docs/open/KIT_OPEN.md`. The five existing guides stay, and the next release
+  gets a guide of its own.
+- `docs/open/next-release-version.md` now states what is settled, the guide
+  and the version number 4.0.0 that the release record requires, and what the
+  release still waits for.
+
 ## 2026-11-14 — Close the second review's findings and correct the ADP pin
 
 The same reviewer read the previous landing. It found the rule text ready for
