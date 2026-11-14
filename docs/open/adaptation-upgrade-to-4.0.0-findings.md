@@ -1,0 +1,104 @@
+# Slide-face rule and guide gaps found by adaptation's upgrade to 4.0.0
+
+Adaptation moved from kit 3.2.0 to 4.0.0 on 2026-11-14, as three local commits
+on its branch `docs-kit-4.0.0`. deivid asked to evaluate what the
+[slide-face rule](../../rules/writing/pages.md#slide-faces) does there. The
+session followed the rule and the
+[guide step](../topics/releases/migrations/4.0.0.md#slide-faces) as written,
+with no further direction, and judged every face. Nothing here is fixed.
+
+"Checked here" means the kit owner looked at the session's captures or
+compared the claim with the kit's files. The session's full report and its 36
+captures are local files outside any repository, in
+`~/.config/Claude/side-session-notes/local_bb11e441-a6c1-4093-95f3-b914a9daec12/adaptation-kit-upgrade/`.
+
+## What the rule did
+
+- Adaptation has 36 slide faces: 27 on its Cursor study page and 9 on its
+  robotics page. Checked here: the count matches the source.
+- The session failed 12 and passed 24. It removed and redrew nothing and
+  wrote the decision for its owner as an open decision in adaptation.
+- Checked here by eye on all 36 captures: the 12 verdicts hold. Ten failing
+  faces show two or three text tiles or boxes on a canvas that is otherwise
+  empty; one shows four number tiles and no figure; one lists file names in
+  boxes. The 24 passing faces each show a plot, a diagram or a drawing.
+- All seven faces that adaptation added between 2026-11-11 and 2026-11-13
+  fail. They were written under kit 3.2.0, which asked for "one visual" but
+  did not yet say that boxes do not replace it. So this run shows that the
+  rule finds such faces at an upgrade. It does not show that the rule stops
+  an author from writing them.
+- The session decided the 12 by one sentence of the rule, "Boxes do not
+  replace the visual". It set the composition requirements aside as notes,
+  because read strictly they fail almost every face: 34 of 36 have no lead
+  sentence and none uses ruled points or a closing row of facts.
+
+## Where the rule gave two readings
+
+1. **Which requirements make a face fail.** The guide says "list the faces
+   that fail with the reason". The rule has two removal conditions and about
+   fifteen composition requirements, and neither text says which count.
+2. **"Only repeats the title and lead in boxes."** The failing boxes add
+   counts such as "12 of 12" and "381 / 432", so the removal sentence, read
+   literally, does not reach them.
+3. **Number tiles without a figure.** The rule allows "a figure beside
+   headline measurements" and is silent on measurements alone.
+4. **Drawn boxes.** The rule allows "a project-local drawing" and does not
+   say when a drawing whose content is text in boxes is a visual. The session
+   passed process flows and failed lists in boxes, a line it drew itself.
+5. **The grid exception.** A face that lists each factor's levels in rows
+   names options and compares nothing. The session passed it under "a grid
+   that compares options factor by factor"; another reader could fail it.
+6. **Title as a finding.** A teaching chapter states how something works, and
+   an opening chapter may ask a question. The rule covers neither.
+7. **"Readable from the back of a room" and "half empty".** Neither has a
+   measure. Nine faces carry text of 10.88 px on the 1280 px canvas, and
+   several passing faces leave the lower quarter empty.
+8. **Existing faces and the person's yes.** Nothing records whether a person
+   asked for an existing face, so a review cannot test that part.
+
+## What the guide step leaves out
+
+- A project may bind its faces in checks. Adaptation fixes the face counts in
+  a test and hashes the pages in a content baseline; the step does not say
+  that removing a face changes those.
+- Neither text says where a face is looked at for the review. The session
+  used the extracted deck at 1280×720.
+- `?slide-check` outlines overflow of the canvas only. Legend text cut off
+  inside a figure, on adaptation's face 8, is not flagged.
+
+## Other gaps in the 4.0.0 guide and rules
+
+Reported by the session; only the two marked points are checked here.
+
+1. **Branches and worktrees.** The rule names four cases for a separate
+   branch or worktree. Adaptation's checkout was one commit behind its remote
+   while its working tree already held that commit's content, so bringing it
+   in step needed a reset the session may not run in a shared folder. No case
+   covers a checkout that is out of step. Checked here: the working tree
+   equals `origin/main` and local `main` is one commit behind.
+2. **Move the pin, step 3** calls `.build/docs-env/bin/python`, which a fresh
+   worktree does not have.
+3. **Finished working documents.** An archived earlier publication and copied
+   tool sources are not named, and an experiment plan that a run copies and
+   hashes sits between "delete a plan" and "keep protocols".
+4. **Run output.** "Each experiment the project reports as complete" has no
+   bound; adaptation has more than fifteen.
+5. **Tooling imports.** The guide says imports from `.docs-kit/tooling` are
+   not stable, while `rules/site/authoring.md` tells projects that
+   `tooling/svg_figures.py` supplies the shared figure markup. Five of
+   adaptation's generators import it. Checked here: the release notes list
+   `tooling/svg_figures.py` as kept, so the two texts disagree.
+6. **Names on pages.** No search is given, and the step does not say whether
+   a workstation path with a user name inside a data payload is a name on a
+   page.
+7. **Scratch files.** About thirty preview and review folders of other
+   sessions sit in adaptation's `.build/`, and the rule gives no way to tell
+   which are still needed.
+8. **`--check-reader`.** The guide does not say whether a project without a
+   comparison test should add the command.
+
+## Next step
+
+deivid decides which requirements of the slide-face rule make a face fail.
+After that the rule and the guide step are rewritten, and the guide gaps are
+fixed in the next release.

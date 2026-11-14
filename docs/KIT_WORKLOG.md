@@ -2,6 +2,22 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Slide-face rule evaluated on adaptation's upgrade to 4.0.0
+
+- deivid asked for ADP and adaptation to move to 4.0.0 and to evaluate what
+  the slide-face rule does on adaptation. Both sessions got the request; ADP's
+  has not reported yet.
+- Adaptation's session judged its 36 faces by the rule and the guide step
+  alone: 12 fail, 24 pass, nothing removed. The kit owner viewed all 36
+  captures and agrees with the 12 verdicts.
+- The rule finds faces that are text boxes on an empty canvas. It was decided
+  by one sentence; the composition requirements, read strictly, fail almost
+  every face, and the guide does not say which requirements count.
+- Recorded in `docs/open/adaptation-upgrade-to-4.0.0-findings.md`: eight
+  places where the rule gave two readings, three omissions of the guide step
+  and eight other gaps of the 4.0.0 guide. Nothing is fixed.
+- Checks: build and strict lint.
+
 ## 2026-11-14 — Release 4.0.0
 
 - deivid gave the go for the tag and the push on 2026-11-14, in answer to
