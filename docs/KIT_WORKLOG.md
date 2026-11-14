@@ -2,6 +2,14 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Font notices state the font version
+
+- The notices of IBM Plex Mono, IBM Plex Sans and Saira Condensed under
+  `theme/assets/vendor/` now give the font version: 2.3, 3.201 and 0.072. Each
+  was read from name record 5 of every bundled WOFF2 file of the family with
+  fontTools; all files of one family agree. This closes the font point of the
+  open record on theme leftovers, which keeps the plot labels.
+
 ## 2026-11-14 — A finished probe script that a refactor breaks is deleted
 
 - deivid accepted the last rule proposal from the ADP cleanup on 2026-11-14

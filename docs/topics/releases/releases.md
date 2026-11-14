@@ -95,7 +95,7 @@ Known open defects, each recorded under `docs/open/`:
   any entry. No known consumer registers its worklog.
   [Record](../../open/worklog-cutoff-not-applied-to-source-pages.md).
 - `theme/components/plot-toggles.js` still holds one project's plot series
-  labels, and the notices of three vendored fonts give no font version.
+  labels.
   [Record](../../open/shared-theme-leftovers.md).
 - The kit's own browser suites use a Playwright that no dependency file
   declares, against the new dependencies rule. Consumers are not affected.

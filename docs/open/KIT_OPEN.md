@@ -10,4 +10,4 @@ Routes only. The linked owner holds the checklist, rationale and evidence.
 - Release 4.0.0 waits for deivid's go to tag and push: [what is settled and what waits](next-release-version.md).
 - The kit's browser suites use a Playwright that no dependency file declares, against the new dependencies rule: [what is wrong, options and recommendation](browser-test-dependency-not-declared.md).
 - `worklog_links_checked_from` does not stop the build from failing on old links when the worklog is a rendered source page: [defect, reach and next step](worklog-cutoff-not-applied-to-source-pages.md).
-- The shared theme still holds one project's plot labels, and three font notices lack a version: [both points](shared-theme-leftovers.md).
+- The shared theme still holds one project's plot labels: [finding and next step](shared-theme-leftovers.md).
