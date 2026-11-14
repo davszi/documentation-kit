@@ -33,7 +33,7 @@ linked records state; values shown as code are not checked.
 A link to a file that the local-artifact manifest lists under `omitted_files`
 gets a note when the file is absent: the project declared that state.
 Each problem the build tolerated in an automatically listed reference page
-(see `reference` in site.toml) is a note too.
+(see `reference_listing` in site.toml) is a note too.
 
 Exit 0 clean (warnings print unless --strict fails them), 1 on errors.
 """

@@ -12,6 +12,7 @@ KIT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(KIT / 'tooling'))
 
 from source_pages import automatic_pages, automatic_route_base, glob_regex, reference_settings  # noqa: E402
+from source_tree import INLINE_TREE_LIMIT, TREE_INDEX, TREE_SCRIPT  # noqa: E402
 
 GONE = '<span class="link-gone" title="The target of this link no longer exists.">'
 
@@ -30,8 +31,8 @@ def git(root, *args):
 class Settings(unittest.TestCase):
     def test_defaults_and_validation(self):
         self.assertEqual(reference_settings({}), (True, ()))
-        self.assertEqual(reference_settings({'reference': False, 'reference_exclude': ['a/**']}), (False, ('a/**',)))
-        for site in ({'reference': 'no'}, {'reference_exclude': 'a/**'}, {'reference_exclude': ['a', 'a']},
+        self.assertEqual(reference_settings({'reference_listing': False, 'reference_exclude': ['a/**']}), (False, ('a/**',)))
+        for site in ({'reference_listing': 'no'}, {'reference_exclude': 'a/**'}, {'reference_exclude': ['a', 'a']},
                      {'reference_exclude': [1]}, {'reference_exclude': ['/abs/*.md']},
                      {'reference_exclude': ['../up.md']}, {'reference_exclude': ['a\\b.md']},
                      {'reference_exclude': ['']}):
@@ -61,7 +62,9 @@ class Settings(unittest.TestCase):
         self.assertEqual(automatic_route_base('docs/KIT_WORKLOG.md'), ('docs.kit_worklog.md', False))
 
 
-class ReferenceListing(unittest.TestCase):
+class Project(unittest.TestCase):
+    """A starter project with a few Markdown files outside its topic pages."""
+
     def setUp(self):
         folder = tempfile.TemporaryDirectory(prefix='docs-kit-reference-')
         self.addCleanup(folder.cleanup)
@@ -99,6 +102,8 @@ class ReferenceListing(unittest.TestCase):
     def page(self, route):
         return (self.root / '.build/docs/html' / route).read_text()
 
+
+class ReferenceListing(Project):
     def test_default_lists_every_tracked_markdown_file(self):
         self.write('untracked.md', '# Untracked\n')
         nested = self.root / 'vendor/lib'
@@ -145,18 +150,18 @@ class ReferenceListing(unittest.TestCase):
         self.assertIn('data-repo-path="notes/plan.md"', self.page('readme.md.html'))
 
     def test_invalid_settings_fail_with_a_clear_message(self):
-        self.settings('reference = "yes"')
+        self.settings('reference_listing = "yes"')
         result = self.build()
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn('site.toml: reference must be true or false', result.stderr)
-        self.config.write_text(self.config.read_text().replace('reference = "yes"\n', ''))
+        self.assertIn('site.toml: reference_listing must be true or false', result.stderr)
+        self.config.write_text(self.config.read_text().replace('reference_listing = "yes"\n', ''))
         self.settings('reference_exclude = ["/notes/**"]')
         result = self.build()
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("reference_exclude pattern '/notes/**' must be a repository-relative glob", result.stderr)
 
-    def test_reference_false_equals_the_explicit_registry_alone(self):
-        self.settings('reference = false')
+    def test_reference_listing_false_equals_the_explicit_registry_alone(self):
+        self.settings('reference_listing = false')
         self.config.write_text(self.config.read_text() + '\n[[source_pages]]\nsource = "notes/plan.md"\nslug = "plan"\n')
         self.assertEqual(self.build().returncode, 0)
         listed = {path.relative_to(self.root).as_posix(): path.read_bytes()
@@ -319,6 +324,87 @@ class ReferenceListing(unittest.TestCase):
         self.assertIn('class="source-origin"', page)
         self.assertNotIn('github.com', page[page.index('class="source-origin"'):].split('</p>')[0])
         self.assertNotIn('source-origin-edit', page)
+
+
+class TreeSize(Project):
+    """The Reference tree is inlined up to INLINE_TREE_LIMIT files and written once above it."""
+
+    def files(self, count):
+        for index in range(count):
+            self.write(f'many/group{index % 5}/file{index:03d}.md', f'# File {index}\n')
+
+    def test_small_tree_stays_inline(self):
+        self.files(INLINE_TREE_LIMIT - 20)  # plus the fixture's and the starter's files
+        self.assertEqual(self.build().returncode, 0)
+        listed = len(self.routes())
+        self.assertLessEqual(listed, INLINE_TREE_LIMIT)
+        guide = self.page('guide.html')
+        self.assertNotIn('data-repo-tree-src', guide)
+        self.assertNotIn(TREE_INDEX, guide)
+        for route in self.routes():
+            self.assertIn(f'href="{route}"', guide)
+        self.assertFalse((self.root / '.build/docs/html' / TREE_SCRIPT).exists())
+        manifest = json.loads((self.root / '.build/docs/site-build.json').read_text())
+        self.assertIsNone(manifest['reference_tree'])
+
+    def test_large_tree_is_written_once(self):
+        self.files(INLINE_TREE_LIMIT + 10)
+        self.assertEqual(self.build().returncode, 0)
+        routes = self.routes()
+        self.assertGreater(len(routes), INLINE_TREE_LIMIT)
+        html_root = self.root / '.build/docs/html'
+        script = (html_root / TREE_SCRIPT).read_text()
+        self.assertTrue(script.startswith('window.docsReferenceTree = "'))
+        index = (html_root / TREE_INDEX).read_text()
+        for route in routes:
+            self.assertIn(route, script)
+            self.assertIn(f'href="{route}"', index)
+        manifest = json.loads((self.root / '.build/docs/site-build.json').read_text())
+        self.assertEqual(manifest['reference_tree'], {'script': 'html/' + TREE_SCRIPT, 'index': 'html/' + TREE_INDEX})
+        self.assertIn('html/' + TREE_SCRIPT, manifest['files'])
+
+        # A page for people: pinned files, the closed disclosure and the index link only.
+        guide = self.page('guide.html')
+        digest = hashlib.sha256((html_root / TREE_SCRIPT).read_bytes()).hexdigest()[:10]
+        self.assertIn(f'data-repo-tree-src="{TREE_SCRIPT}?v={digest}"', guide)
+        self.assertNotIn('data-repo-tree-current', guide)
+        self.assertIn('<details class="repo-tree-all"><summary><span class="repo-tree-name">Browse by folder</span>'
+                      f'<span class="repo-tree-count" title="{len(routes)} files">{len(routes)}</span></summary>', guide)
+        self.assertIn(f'<p class="repo-tree-index"><a href="{TREE_INDEX}">All {len(routes)} files on one page</a></p>',
+                      guide)
+        self.assertNotIn('many.group0.file000.md.html', guide)
+
+        # A listed page: the open disclosure holds the folders leading to it, with full counts.
+        page = self.page('many.group2.file007.md.html')
+        self.assertIn('data-repo-tree-current="many.group2.file007.md.html" data-repo-tree-mark', page)
+        self.assertIn('<details class="repo-tree-all" open>', page)
+        self.assertIn('<li class="repo-tree-folder has-current"><details open><summary><span class="repo-tree-name">'
+                      'many/</span><span class="repo-tree-count" title="70 files">70</span>', page)
+        self.assertIn('<span class="repo-tree-name">group2/</span><span class="repo-tree-count" title="14 files">14',
+                      page)
+        self.assertIn('<a class="repo-tree-file current" aria-current="page" href="many.group2.file007.md.html"', page)
+        self.assertNotIn('href="many.group2.file002.md.html"', page)
+        self.assertNotIn('group1/', page)
+        self.assertLess(len(page.encode()), len(index.encode()) + 4000)
+        lint = invoke('lint', '--project', self.root, '--strict')
+        self.assertEqual(lint.returncode, 0, lint.stdout + lint.stderr)
+
+        # A topic page that sets its own components still gets the loader.
+        guide_source = self.root / 'docs/topics/guide/index.md'
+        text = guide_source.read_text()
+        self.assertIn('components = ["toc", "nav",', text)
+        guide_source.write_text(text.replace('components = ["toc", "nav",', 'components = ["toc",'))
+        self.assertEqual(self.build().returncode, 0)
+        self.assertIn('assets/nav.js', self.page('guide.html'))
+
+        # Publication carries the tree script and the index page.
+        destination = self.root / '_site'
+        self.config.write_text(self.config.read_text() + '\n[publication]\npages = ["guide.html"]\n')
+        git(self.root, 'add', '-A')
+        published = invoke('publish', '--project', self.root, '--out', destination)
+        self.assertEqual(published.returncode, 0, published.stdout + published.stderr)
+        self.assertTrue((destination / TREE_SCRIPT).is_file())
+        self.assertTrue((destination / TREE_INDEX).is_file())
 
 
 if __name__ == '__main__':

@@ -216,8 +216,10 @@ so a push to `main` publishes only when every check passes, browser suites
 included.
 
 The suites are `tests/visual_review.cjs`, `tests/test_browser_checks.cjs`,
-`tests/test_panel_switcher.cjs` and `tests/own_site_review.cjs`; together they
-take about two minutes. The script gives each a 280-second limit, sets
+`tests/test_panel_switcher.cjs`, `tests/own_site_review.cjs` and
+`tests/test_reference_tree.cjs`; together they take about two minutes.
+`test_reference_tree.cjs` builds its own project with `DOCS_PYTHON` and opens
+it from disk, without a server. The script gives each a 280-second limit, sets
 `DBUS_SESSION_BUS_ADDRESS=unix:path=/nonexistent-docs-kit-review` so Chromium
 does not reach the desktop session, and uses a 4G memory cap without swap when
 `systemd-run --user` is available. To run one suite alone, keep the same

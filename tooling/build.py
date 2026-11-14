@@ -807,6 +807,9 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
         comps.append("fold-controls")
     if "data-slide-face" in content and "slide-face" not in comps:
         comps.append("slide-face")
+    # A Reference tree too large to inline is loaded by nav.js.
+    if site.get("_repository_tree_script") and "nav" not in comps:
+        comps.append("nav")
     for c in comps:
         if c not in KNOWN_COMPONENTS:
             err(f"{name}: unknown component {c!r} (known: {KNOWN_COMPONENTS})")
@@ -815,7 +818,8 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
     fname = f"{slug}.html"
     tree = site.get("_repository_tree", [])
     # Registered records are listed by the repository tree; pages need a nav entry.
-    if fname not in {n["file"] for n in nav_entries} and fname not in {f.route for f in tree}:
+    from source_tree import TREE_INDEX
+    if fname not in {n["file"] for n in nav_entries} and fname not in {f.route for f in tree} and fname != TREE_INDEX:
         err(f"{name}: {fname} missing from site.toml [[nav]] registry")
     crossnav_lines, last_group, section_close = [], None, '    </div>'
     # `folded_groups`: a named group is a native disclosure, closed unless it
@@ -860,7 +864,7 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
     if tree:
         from source_tree import tree_html
         listed = any(entry.get("file") == fname and not entry.get("hidden") for entry in nav_entries)
-        crossnav += "\n" + tree_html(tree, fname, listed=listed)
+        crossnav += "\n" + tree_html(tree, fname, listed=listed, script=site.get("_repository_tree_script"))
 
     # Before every other stylesheet but base.css, so a page's own CSS can still set --g.
     head_extra = f'<link rel="stylesheet" href="{GROUP_COLORS_ASSET}">\n' if site.get("group_colors") else ""
@@ -1178,6 +1182,12 @@ def main() -> int:
     for problem in tolerated:
         note(problem)
     site["_repository_tree"] = repository_tree(source_pages + automatic)
+    from source_tree import TREE_INDEX, TREE_SCRIPT, is_large, shared_tree_html, tree_script
+    if is_large(site["_repository_tree"]):
+        # Written once and loaded by nav.js instead of repeated in every page.
+        outputs["html/" + TREE_SCRIPT] = tree_script(site["_repository_tree"])
+        site["_repository_tree_script"] = (TREE_SCRIPT + "?v="
+                                           + hashlib.sha256(outputs["html/" + TREE_SCRIPT]).hexdigest()[:10])
     automatic_checks = automatic_link_checks(site, bundle.declared_local)
     for md_path in md_files:
         built = build_page(md_path, site, shell)
@@ -1212,6 +1222,20 @@ def main() -> int:
                 note(f"{page.source}: {problem}; shown as plain text")
                 plain = build_source_page(page, routes, site, shell, unchecked_links, automatic_checks, plain=True)
                 outputs["html/" + plain[0]] = bundle.rewrite_page(plain[1]).encode()
+    if site.get("_repository_tree_script"):
+        # Readers without JavaScript open the whole tree on this page.
+        tree = site["_repository_tree"]
+        if "html/" + TREE_INDEX in outputs:
+            err(f"route collision: {TREE_INDEX} is the Reference index of a large tree")
+        else:
+            content = (f'<h1 id="reference">Reference</h1>\n<p>All {len(tree)} files of the sidebar\'s Reference '
+                       'section, by folder.</p>\n<div class="toc reference-index"><div class="repo-tree">'
+                       + shared_tree_html(tree) + '</div></div>\n')
+            meta = {"title": "Reference", "slug": TREE_INDEX[:-len(".html")], "toc": [],
+                    "body_class": "reference-page reference-index-page", "page_css": ["build-sheet.css"]}
+            built = finish_page(meta, meta["slug"], TREE_INDEX, content, ["nav"], site, shell, {})
+            pages_meta.append({"page_css": ["build-sheet.css"]})
+            outputs["html/" + built[0]] = bundle.rewrite_page(built[1]).encode()
     rendered = {name[5:]: data.decode() for name, data in outputs.items()
                 if name.startswith("html/") and name.endswith(".html") and "/" not in name[5:]}
     # Source pages check every fragment they link. Other pages check fragments
@@ -1246,6 +1270,9 @@ def main() -> int:
     outputs["site-build.json"] = (json.dumps({"schema_version": 1, "source": "docs/topics",
         "public_pages": sorted(name for name in outputs if name.startswith("html/") and name.endswith(".html")),
         "source_pages": {page.route: page.source for page in source_pages + automatic},
+        # The Reference tree written once when it is too large to inline; it carries page titles.
+        "reference_tree": ({"script": "html/" + TREE_SCRIPT, "index": "html/" + TREE_INDEX}
+                           if site.get("_repository_tree_script") else None),
         "local_media": sorted(bundle.local_media), "large_captures_packaged": False,
         # Repository source of each copied resource; publication checks these.
         "resource_origins": dict(sorted(origins.items())),

@@ -7,8 +7,8 @@ A project registers an existing, tracked Markdown file under a public route:
     slug = "git"
 
 By default every other tracked Markdown file is listed too, under a route
-derived from its path (`automatic_pages`). `reference = false` in site.toml
-turns that off; `reference_exclude` skips files by repository-relative glob.
+derived from its path (`automatic_pages`). `reference_listing = false` in
+site.toml turns that off; `reference_exclude` skips files by repository-relative glob.
 An automatically listed page never fails the build: what a registered page
 would reject is rendered tolerantly and returned as a note.
 
@@ -49,7 +49,7 @@ class SourcePage:
     math: bool
     reader: bool
     pinned: bool         # listed first in the sidebar's repository section
-    automatic: bool = False  # listed by `reference`, not by a [[source_pages]] table
+    automatic: bool = False  # listed by `reference_listing`, not by a [[source_pages]] table
 
     @property
     def route(self) -> str:
@@ -112,14 +112,14 @@ def load_registry(site: dict, root: Path, tracked: frozenset[Path]) -> tuple[lis
     return pages, problems
 
 
-REFERENCE_ERROR = "site.toml: reference must be true or false"
+REFERENCE_ERROR = "site.toml: reference_listing must be true or false"
 EXCLUDE_ERROR = ('site.toml: reference_exclude must list distinct repository-relative glob patterns, '
                  'such as "experiments/**" or "**/drafts/*.md"')
 
 
 def reference_settings(site: dict) -> tuple[bool, tuple[str, ...]]:
-    """`reference` (default true) and `reference_exclude` (default empty); ValueError when invalid."""
-    enabled = site.get("reference", True)
+    """`reference_listing` (default true) and `reference_exclude` (default empty); ValueError when invalid."""
+    enabled = site.get("reference_listing", True)
     if not isinstance(enabled, bool):
         raise ValueError(REFERENCE_ERROR)
     patterns = site.get("reference_exclude", [])

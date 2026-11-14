@@ -210,6 +210,20 @@ them. On any other registered page it starts open, with only the folders that
 lead to that page unfolded. The section follows the navigation in the menu's
 normal flow.
 
+Up to 60 listed files (`INLINE_TREE_LIMIT` in `tooling/source_tree.py`) every
+page carries the whole folder tree. Above that, the tree is written once, as
+`reference.tree.js` next to the pages, and as the page `reference.index.html`;
+`site-build.json` names both under `reference_tree`, which is `null` for an
+inline tree. Each page then carries the pinned files, the **Browse by folder**
+disclosure with its count, a link to `reference.index.html` and, on a listed
+page, the folders that lead to that page, with their full counts. The shared
+`nav.js` loads `reference.tree.js` when the disclosure opens, or at load on a
+listed page, and marks and unfolds the current file as the inline tree does.
+It loads through a `<script>` element, because a page opened from disk cannot
+`fetch` a neighbouring file. Without JavaScript the link opens the whole tree on
+`reference.index.html`. At 81 files the inline tree added 29.8 KB to every page
+of a measured site; at 400 files it added 199 KB to every page.
+
 A registered file needs no `[[nav]]` entry, because the section lists it. Keep
 `[[nav]]` for pages written for people, and for records every reader needs,
 such as release notes and migration guides; such an entry lists the record
@@ -262,18 +276,18 @@ Two settings in `docs/site/site.toml`, above the first `[[nav]]` table, opt
 out:
 
 ```toml
-reference = false                                  # list only [[source_pages]] tables
+reference_listing = false   # list only [[source_pages]] tables
 reference_exclude = ["CLAUDE.md", "experiments/**", "**/drafts/"]
 ```
 
-`reference = false` turns the automatic listing off; the site then lists only
-its `[[source_pages]]` tables, as before the listing existed.
+`reference_listing = false` turns the automatic listing off; the site then
+lists only its `[[source_pages]]` tables, as before the listing existed.
 `reference_exclude` names repository-relative glob patterns matched against the
 whole path: `*` and `?` stay within one folder, `[...]` is a character class,
 `**` spans any number of folders and a pattern ending in `/` matches everything
 below that folder. Patterns are distinct and have no leading `/`, no `\` and no
 `.` or `..` parts. A wrong type or pattern fails the build with an error such
-as `site.toml: reference must be true or false`.
+as `site.toml: reference_listing must be true or false`.
 
 A `[[source_pages]]` table still wins: it keeps every meaning above and sets
 the slug, title, description, `math`, `reader` and `pinned` of its file.

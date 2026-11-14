@@ -43,7 +43,7 @@ included, with the media they package. That listing skips files under
 `private_prefixes`, and its pages do not package media that the private
 prefixes or suffixes cover, so it cannot make a publication fail. It still
 publishes every other tracked Markdown file as a page: exclude private files
-with `reference_exclude`, or set `reference = false`.
+with `reference_exclude`, or set `reference_listing = false`.
 
 The output directory must not exist yet. The bundle is written to a temporary
 directory next to it and moved into place only after every check passes.
