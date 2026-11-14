@@ -69,6 +69,18 @@ projects use `docs/worklog.md` and `docs/open/OPEN.md`.
 A project may set `worklog_links_checked_from = "YYYY-MM-DD"`. Lint then checks
 links only in worklog entries dated on or after that day. Worklog entries are
 append-only, so a link in an older entry cannot follow a later move or removal
-of its target. Text above the first dated heading is always checked. The setting applies to lint's own link check only: a worklog that is also rendered as a [registered source page](authoring.md#registered-source-pages) still fails the build on a missing link target in any entry. A project that needs the setting does not register its worklog as a source page until the build applies it.
+of its target. An entry is a `## ` section whose heading starts with its date; a
+`## ` section without a date belongs to the dated entry above it. Text above the
+first dated heading is always checked. A value that is not a date fails the
+build, and lint prints the build's error.
+
+The build applies the same day when the worklog is also rendered as a
+[registered source page](authoring.md#registered-source-pages). In an entry
+dated before it, a link or image whose target is gone does not fail the build:
+the page shows its text, or an image's alternative text, unlinked and marked
+with a dotted underline, `<span class="link-gone">`. A link in such an entry
+whose target exists stays a link, and a fragment that no longer matches an
+anchor of a registered page is not checked. In entries from that day on, a
+missing target fails the build as on any registered page.
 
 Validate [generated-figure provenance](../writing/figures.md#figures-and-comparisons) and the identities of documents listed in an evidence manifest separately from link resolution and presentation.

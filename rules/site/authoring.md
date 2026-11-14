@@ -213,7 +213,9 @@ Markdown. A link to another registered file becomes that page's route. Other
 repository files become source links, and tracked media are packaged. Absolute
 paths, links that leave the project and missing targets fail the build. Every
 fragment that points into a registered page, from any page, must match an
-anchor of the rendered target. The page opens with its source path and an edit
+anchor of the rendered target. The worklog's entries dated before
+[`worklog_links_checked_from`](resources.md#resource-closure-and-evidence) are
+the exception: there a link whose target is gone renders as unlinked text. The page opens with its source path and an edit
 link built from `gh_repo` and the configured `gh_ref`; `site-build.json` maps
 each such route to its source file. Wide tables scroll inside
 labelled regions. The page body carries the classes `source-page` and

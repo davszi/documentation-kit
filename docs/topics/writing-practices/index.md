@@ -221,7 +221,7 @@ A plan, a decision record, a review or a coordination note exists to get one pie
 
 **What never ends this way.** Topic records and guides are edited in place, and the worklog is append-only, so neither leaves an old file behind. An experiment keeps what [numbers and staleness](records.html#numbers-and-staleness) lists.
 
-**Old worklog links.** A worklog entry is never rewritten, so its links can break when a target is later moved or deleted. A project then sets `worklog_links_checked_from`, and lint checks links only in entries from that date on; see the [resources guide](resources.html#resource-closure-and-evidence).
+**Old worklog links.** A worklog entry is never rewritten, so its links can break when a target is later moved or deleted. A project then sets `worklog_links_checked_from`, and lint checks links only in entries from that date on. When the worklog is also a rendered page, an older link whose target is gone shows as plain text with a dotted underline; see the [resources guide](resources.html#resource-closure-and-evidence).
 
 <!-- /fold -->
 

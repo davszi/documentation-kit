@@ -46,7 +46,6 @@ import re
 import subprocess
 import sys
 import tomllib
-from datetime import date
 from pathlib import Path
 
 REPO = Path(os.environ.get("DOCSITE_PROJECT_ROOT", Path.cwd())).resolve()
@@ -101,6 +100,7 @@ _evidence_spec = importlib.util.spec_from_file_location(
 _evidence = importlib.util.module_from_spec(_evidence_spec)
 _evidence_spec.loader.exec_module(_evidence)
 from project_extensions import load_extension
+import worklog_entries as _worklog_entries
 _project_evidence = load_extension(REPO, 'evidence_validator')
 if _project_evidence is not None:
     if not all(callable(getattr(_project_evidence, name, None)) for name in ('manifest_documents', 'verify')) or not hasattr(_project_evidence, 'MANIFESTS'):
@@ -238,7 +238,6 @@ def check_md_links() -> None:
             _check_chunk_links(f, chunk, base)
 
 
-_ENTRY_DEFAULTS = {"worklog": "docs/worklog.md", "open_work": "docs/open/OPEN.md"}
 _entry_cache: dict = {}
 
 
@@ -252,7 +251,7 @@ def entry_path(key: str) -> Path | None:
         return _entry_cache[key]
     config = REPO / 'docs/site/site.toml'
     site = tomllib.loads(config.read_text()) if config.is_file() else {}
-    relative = site.get(key, _ENTRY_DEFAULTS[key])
+    relative = _worklog_entries.configured_entry(site, key)
     path = None
     if (not isinstance(relative, str) or Path(relative).is_absolute()
             or '..' in Path(relative).parts):
@@ -277,19 +276,16 @@ def worklog_links_checked_from() -> str | None:
 
     A project sets `worklog_links_checked_from = "YYYY-MM-DD"` in
     docs/site/site.toml. Entries are append-only, so a link in an older entry
-    cannot follow a later move or removal of its target.
+    cannot follow a later move or removal of its target. The build rejects a
+    value that is not a date, and lint prints the build's error.
     """
     if "links_from" not in _entry_cache:
         config = REPO / 'docs/site/site.toml'
         site = tomllib.loads(config.read_text()) if config.is_file() else {}
-        value = site.get("worklog_links_checked_from")
-        if value is not None:
-            try:
-                value = date.fromisoformat(value).isoformat() if isinstance(value, str) else None
-            except ValueError:
-                value = None
-            if value is None:
-                error('worklog_links_checked_from must be a date written as "YYYY-MM-DD"')
+        try:
+            value = _worklog_entries.links_checked_from(site)
+        except ValueError:
+            value = None
         _entry_cache["links_from"] = value
     return _entry_cache["links_from"]
 
@@ -300,16 +296,11 @@ def link_checked_worklog_text(text: str) -> str:
     Text before the first dated heading is always kept. Any other `## ` section
     belongs to the dated heading above it.
     """
-    first = worklog_links_checked_from()
-    if first is None:
-        return text
-    kept, entry_date = [], None
-    for section in re.split(r"(?m)^(?=## )", text):
-        dated = re.match(r"## (\d{4}-\d{2}-\d{2})", section)
-        if dated:
-            entry_date = dated.group(1)
-        if entry_date is None or entry_date >= first:
-            kept.append(section)
+    kept, position = [], 0
+    for start, end in _worklog_entries.unchecked_spans(text, worklog_links_checked_from()):
+        kept.append(text[position:start])
+        position = end
+    kept.append(text[position:])
     return "".join(kept)
 
 

@@ -23,6 +23,7 @@ import re
 from urllib.parse import quote, unquote, urlsplit
 
 from topic_structure import is_topic_page, topic_group_folders
+from worklog_entries import HTML_HEADING, unchecked_spans, within
 
 SOURCE_KEYS = {"source", "slug", "title", "description", "math", "reader", "pinned"}
 _SLUG = re.compile(r"[a-z0-9][a-z0-9-]*")
@@ -114,18 +115,32 @@ def first_heading(text: str) -> str | None:
     return None
 
 
+LINK_GONE = '<span class="link-gone" title="The target of this link no longer exists.">'
+_GONE = "\x00link-gone\x00"
+_ALT = re.compile(r'(?<![\w-])alt="([^"]*)"')
+
+
 def rewrite_links(markup: str, page: SourcePage, routes: dict[str, str], root: Path,
-                  exists) -> tuple[str, list[str]]:
+                  exists, links_checked_from: str | None = None) -> tuple[str, list[str], set[str]]:
     """Resolve relative link/media targets from the source file's own folder.
 
     Registered sources become `<route>#fragment`; other repository paths become
     the logical `docs/html/` URL the site bundle already understands. Returns
-    the markup and any containment or missing-target problems.
+    the markup, any containment or missing-target problems, and the link
+    targets whose fragments are not checked.
+
+    `links_checked_from` is given for the project's worklog only. In an entry
+    dated before it, a link or image whose target is gone renders as its text
+    inside `LINK_GONE` instead of failing the build, and a link that appears
+    only in such entries keeps its fragment unchecked.
     """
     problems: list[str] = []
     folder = posixpath.dirname(page.source)
+    unchecked = unchecked_spans(markup, links_checked_from, HTML_HEADING)
+    old_hrefs: set[str] = set()
+    new_hrefs: set[str] = set()
 
-    def resolve(raw: str) -> str | None:
+    def resolve(raw: str, old: bool) -> str | None:
         url = urlsplit(html.unescape(raw))
         if url.scheme or url.netloc or not url.path:
             return None  # external, same-page fragment or empty
@@ -140,6 +155,8 @@ def rewrite_links(markup: str, page: SourcePage, routes: dict[str, str], root: P
         if target in routes:
             return routes[target] + suffix
         if not exists(root / target):
+            if old:
+                return _GONE
             problems.append(f"{page.source}: link target not found: {raw}")
             return None
         logical = posixpath.relpath(target, "docs/html")
@@ -149,15 +166,30 @@ def rewrite_links(markup: str, page: SourcePage, routes: dict[str, str], root: P
 
     def tag(match: re.Match) -> str:
         original = match[0]
+        name = match[1].lower()
+        old = within(unchecked, match.start())
         updated = original
         for attribute, raw in _ATTR.findall(original):
-            replacement = resolve(raw)
+            replacement = resolve(raw, old)
+            if replacement == _GONE and name in {"a", "img"}:
+                if name == "a":
+                    return _GONE  # the closing </a> becomes </span> below
+                alt = _ALT.search(original)
+                return LINK_GONE + (alt[1] if alt else raw) + "</span>"
+            if replacement == _GONE:  # other media keep failing the build
+                problems.append(f"{page.source}: link target not found: {raw}")
+                replacement = None
+            href = raw
             if replacement is not None:
-                updated = updated.replace(f'{attribute}="{raw}"',
-                                          f'{attribute}="{html.escape(replacement, quote=True)}"', 1)
+                href = html.escape(replacement, quote=True)
+                updated = updated.replace(f'{attribute}="{raw}"', f'{attribute}="{href}"', 1)
+            if name == "a" and attribute == "href":
+                (old_hrefs if old else new_hrefs).add(href)
         return updated
 
-    return _TAG.sub(tag, markup), problems
+    markup = _TAG.sub(tag, markup)
+    markup = re.sub(re.escape(_GONE) + r"(.*?)</a>", lambda m: LINK_GONE + m[1] + "</span>", markup, flags=re.S)
+    return markup, problems, old_hrefs - new_hrefs
 
 
 def table_of_contents(markup: str) -> list[list[str]]:
@@ -225,17 +257,23 @@ _ID = re.compile(r'\bid="([^"]+)"')
 _FRAGMENT_LINK = re.compile(r'<a\b[^>]*?\bhref="([a-z0-9][a-z0-9-]*\.html)?#([^"]+)"', re.I)
 
 
-def fragment_problems(pages: dict[str, str], sources: set[str], targets: set[str]) -> list[str]:
+def fragment_problems(pages: dict[str, str], sources: set[str], targets: set[str],
+                      unchecked: dict[str, set[str]] | None = None) -> list[str]:
     """Missing anchors in links between generated pages.
 
     `pages` maps public file names (`git.html`) to rendered markup. Links from
     every page in `sources` into a page in `targets` are verified; a link
-    without a file name targets its own page.
+    without a file name targets its own page. `unchecked` maps a page to the
+    link targets it does not verify: the worklog's links that appear only in
+    entries dated before `worklog_links_checked_from`.
     """
     identifiers = {name: set(_ID.findall(markup)) for name, markup in pages.items()}
     problems = []
     for name in sorted(sources & set(pages)):
+        skipped = (unchecked or {}).get(name, set())
         for target, fragment in _FRAGMENT_LINK.findall(pages[name]):
+            if f"{target}#{fragment}" in skipped:
+                continue
             destination = target or name
             if destination not in identifiers or destination not in targets:
                 continue  # an unbuilt route is reported by the resource checks

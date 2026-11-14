@@ -80,6 +80,7 @@ search for each.
 | Rules | The path and evidence adapters exist only for projects that keep old documents whose links name old paths; a project removes its adapter once no record that is not edited afterwards names an old path. The hooks still work in 4.0.0, and the kit removes each one once no project uses it | [Resources](../../../rules/site/resources.md#resource-closure-and-evidence) |
 | Configuration | New optional `worklog_links_checked_from = "YYYY-MM-DD"`: lint checks links only in worklog entries dated on or after that day. A value that is not an ISO date is an error | [Resources](../../../rules/site/resources.md#resource-closure-and-evidence) |
 | Configuration | New optional `[group_colors]` table: one hex colour per navigation group, written to `assets/group-colors.css` and linked on every page after `base.css`. The build rejects a value that is not a table, a colour that is not a 3, 4, 6 or 8 digit hex colour, and a name no visible `[[nav]]` entry uses. Groups without an entry take the `nav.js` tones | [Authoring paths](../../../rules/site/authoring.md#authoring-paths) |
+| Build | A worklog registered as a source page applies `worklog_links_checked_from`: in an entry dated before that day, a link or image whose target is gone renders as its text, unlinked, in `<span class="link-gone">` with a dotted underline from `base.css`, and a fragment into a registered page is not checked. Links whose target exists stay links; newer entries fail on a missing target as before. The build, not only lint, now rejects a value that is not a date | [Resources](../../../rules/site/resources.md#resource-closure-and-evidence) |
 | Command | New `docsite.py build --project . --check-reader`: renders every topic page with and without the chapter reader, writes nothing and exits with status 1 when the reader changes a page's content | [Validation and review](../../../rules/site/validation.md#validation-and-review) |
 | Theme | `--adp` and `--ada` renamed to `--accent` and `--secondary`; seven classes renamed, as listed above. The hard-coded colours of five group names are gone, so those groups take `nav.js` tones until the project sets `[group_colors]`; with the table, their home-map card edges take the group colour. The unused pin button is removed | [Authoring paths](../../../rules/site/authoring.md#authoring-paths) |
 | Theme | New slide-face classes `slide-points` and `slide-facts`, and a keyed `figcaption.slide-legend` inside `slide-figure` | [Slide faces and decks](../../../rules/site/authoring.md#slide-faces-and-decks) |
@@ -91,10 +92,6 @@ search for each.
 
 Known open defects, each recorded under `docs/open/`:
 
-- `worklog_links_checked_from` applies to lint only. A worklog that is also a
-  registered source page still fails the build on a missing link target in
-  any entry. No known consumer registers its worklog.
-  [Record](../../open/worklog-cutoff-not-applied-to-source-pages.md).
 - `theme/components/plot-toggles.js` still holds one project's plot series
   labels.
   [Record](../../open/shared-theme-leftovers.md).

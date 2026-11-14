@@ -2,6 +2,38 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — The build applies the worklog link cut-off
+
+- A worklog registered as a source page now honours
+  `worklog_links_checked_from` in the build, as lint already did. In an entry
+  dated before that day, a link or image whose target is gone renders as its
+  text, or an image's alternative text, unlinked inside
+  `<span class="link-gone" title="The target of this link no longer exists.">`,
+  instead of failing the build with `link target not found`. A link in such an
+  entry whose target exists stays a link, and a fragment that appears only in
+  such entries is not checked against the target page's anchors. Entries from
+  the cut-off date on fail on a missing target as before. `base.css` gives
+  `.link-gone` a dotted underline in the muted text colour.
+- The new `tooling/worklog_entries.py` holds what lint and build share: the
+  configured worklog path and its default, the validation of the cut-off date,
+  and which `## ` sections form an entry dated when, read from the Markdown
+  source for lint and from the rendered `<h2>` headings for the build. The
+  build now rejects a cut-off that is not a date, and lint prints the build's
+  error instead of its own. Other media, such as a video, with a missing
+  target still fail the build in any entry.
+- [Resources](../rules/site/resources.md#resource-closure-and-evidence) no
+  longer states the limit and describes the build's behaviour; the
+  registered-source-pages section of the authoring guide names the exception,
+  and the writing-practices page says how such a link shows.
+- Checked: a new unit test in `tests/test_portability.py` builds a starter
+  whose worklog is a source page: an old dead link and image render as the
+  span and the build and strict lint pass, an old live link stays a link, an
+  old link to a removed section of a registered page passes, the same entries
+  fail with the cut-off on their own date, and a dead link in a newer entry
+  still fails. The lint cut-off test now expects the build to reject an
+  invalid date. A throwaway project's rendered worklog was reviewed by eye at
+  1600×1000 and 390×844. The open record on the defect is deleted.
+
 ## 2026-11-14 — The browser suites' Playwright is declared
 
 - The kit now declares Playwright 1.62.1, exactly, as a development dependency

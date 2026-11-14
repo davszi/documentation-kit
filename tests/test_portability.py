@@ -312,12 +312,13 @@ def verify(root, *, require_all_manifests=False): raise ValueError("project evid
         worklog.write_text(log + old)
         self.track()
 
-        def lint(setting=None):
+        def lint(setting=None, builds=True):
             lines = list(original)
             if setting is not None:
                 lines.insert(5, f'worklog_links_checked_from = {setting}\n')
             config.write_text(''.join(lines))
-            self.assertEqual(invoke('build', '--project', self.root).returncode, 0)
+            built = invoke('build', '--project', self.root)
+            self.assertEqual(built.returncode == 0, builds, built.stderr)
             return invoke('lint', '--project', self.root, '--strict')
 
         result = lint()
@@ -338,10 +339,59 @@ def verify(root, *, require_all_manifests=False): raise ValueError("project evid
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('dead link topics/lost/lost.md', result.stderr)
         self.assertNotIn('topics/removed', result.stderr)
+        # The build reads the setting too, so it rejects a value that is not a
+        # date, and lint prints the build's error.
         for invalid in ('"soon"', '20000102'):
-            result = lint(invalid)
+            result = lint(invalid, builds=False)
             self.assertNotEqual(result.returncode, 0)
             self.assertIn('worklog_links_checked_from must be a date written as "YYYY-MM-DD"', result.stderr)
+
+    def test_worklog_source_page_applies_the_link_cutoff(self):
+        config = self.root / 'docs/site/site.toml'
+        original = config.read_text().splitlines(keepends=True)
+        worklog = self.root / 'docs/worklog.md'
+        log = worklog.read_text()
+        old = ('\n## 2000-01-01 — Old landing\n\n- Moved [a record](topics/removed/removed.md) and kept '
+               '[the guide record](topics/guide/guide.md).\n\n## Notes kept with it\n\n'
+               '- ![A removed figure](topics/removed/figure.svg) and '
+               '[a removed section](PROJECT_CONTEXT.md#removed-section).\n')
+        worklog.write_text(log + old)
+        registered = ('\n[[source_pages]]\nsource = "docs/worklog.md"\nslug = "worklog"\n'
+                      '\n[[source_pages]]\nsource = "docs/PROJECT_CONTEXT.md"\nslug = "project-context"\n')
+
+        def build(setting):
+            lines = list(original)
+            lines.insert(5, f'worklog_links_checked_from = "{setting}"\n')
+            config.write_text(''.join(lines) + registered)
+            self.track()
+            return invoke('build', '--project', self.root)
+
+        # Before the cut-off, a link whose target is gone renders as its text,
+        # unlinked; a link whose target exists stays a link, and a link to a
+        # removed section of a registered page no longer fails the build.
+        result = build('2000-01-02')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        page = (self.root / '.build/docs/html/worklog.html').read_text()
+        gone = '<span class="link-gone" title="The target of this link no longer exists.">'
+        self.assertIn(gone + 'a record</span>', page)
+        self.assertIn(gone + 'A removed figure</span>', page)
+        self.assertNotIn('topics/removed', page)
+        self.assertRegex(page, r'<a [^>]*href="[^"]*topics/guide/guide\.md"[^>]*>the guide record</a>')
+        self.assertIn('href="project-context.html#removed-section"', page)
+        result = invoke('lint', '--project', self.root, '--strict')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        # From the cut-off date on, a missing target fails the build as before.
+        result = build('2000-01-01')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('docs/worklog.md: link target not found: topics/removed/removed.md', result.stderr)
+        self.assertIn('anchor #removed-section not found in project-context.html', result.stderr)
+        first = log.index('\n## ')
+        worklog.write_text(log[:first] + '\n## 2999-01-01 — New landing\n\n- Lost [a file](topics/lost/lost.md).\n'
+                           + log[first:] + old)
+        result = build('2000-01-02')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('docs/worklog.md: link target not found: topics/lost/lost.md', result.stderr)
+        self.assertNotIn('topics/removed', result.stderr)
 
     def test_declared_project_assets_are_packaged_without_shared_overwrite(self):
         config = self.root / 'docs/site/site.toml'

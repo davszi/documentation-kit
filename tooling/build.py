@@ -29,6 +29,7 @@ import hashlib
 import json
 import os
 import html
+import posixpath
 import re
 import sys
 import subprocess
@@ -49,6 +50,7 @@ except ImportError:  # pragma: no cover
 
 from site_paths import DOCS, REPO, SITE as SRC, TOPICS as PAGES, HTML as OUT, OUTPUT_ROOT, KIT_SITE, topic_pages
 from site_bundle import SiteBundle, validate_resources
+from worklog_entries import links_checked_from
 
 COMPONENTS = KIT_SITE / "components"
 KATEX_SRC = KIT_SITE / "assets" / "vendor" / "katex"
@@ -645,15 +647,20 @@ def repository_tree(source_pages: list) -> list:
             for page in source_pages]
 
 
-def build_source_page(page, routes: dict[str, str], site: dict, shell: str) -> tuple[str, str] | None:
+def build_source_page(page, routes: dict[str, str], site: dict, shell: str,
+                      unchecked: dict[str, set[str]]) -> tuple[str, str] | None:
     """Render one registered Markdown file as a whole-file page.
 
     The source keeps its own folder as link origin; no topic-page markers
     (includes, folds, registry callouts or the notes tail) are interpreted, so
-    examples of those markers inside the record stay literal.
+    examples of those markers inside the record stay literal. When the page is
+    the project's worklog, links in entries dated before
+    `worklog_links_checked_from` may point at removed targets; `unchecked`
+    receives the page's links whose fragments are not verified.
     """
     from source_pages import exists_in, first_heading, origin_banner, rewrite_links, table_of_contents, wrap_tables
     from site_paths import resolve_legacy_path
+    from worklog_entries import configured_entry
 
     name = page.source
     text = local_resource(REPO / page.source).read_text()
@@ -665,7 +672,11 @@ def build_source_page(page, routes: dict[str, str], site: dict, shell: str) -> t
             "page_css": ["build-sheet.css"]}
     renderer = DocsRenderer(math_enabled=page.math)
     content = mistune.create_markdown(renderer=renderer, plugins=["table", "math"])(text)
-    content, problems = rewrite_links(wrap_tables(content), page, routes, REPO, exists_in(REPO, resolve_legacy_path))
+    worklog = configured_entry(site, "worklog")
+    is_worklog = isinstance(worklog, str) and posixpath.normpath(worklog) == page.source
+    content, problems, unchecked[page.route] = rewrite_links(
+        wrap_tables(content), page, routes, REPO, exists_in(REPO, resolve_legacy_path),
+        site.get("_links_checked_from") if is_worklog else None)
     for problem in problems:
         err(problem)
     banner = origin_banner(page, site.get("gh_repo", ""), site.get("_edit_ref", site.get("gh_ref", "main")))
@@ -988,6 +999,10 @@ def main() -> int:
         if not isinstance(color, str) or not GROUP_COLOR.fullmatch(color):
             ap.error(f"site.toml: group_colors gives group {name!r} the colour {color!r}; "
                      "use a hex colour such as \"#6ee7c5\"")
+    try:
+        site["_links_checked_from"] = links_checked_from(site)
+    except ValueError as problem:
+        ap.error(f"site.toml: {problem}")
     global KNOWN_COMPONENTS
     extra = site.get("extra_components", [])
     if not isinstance(extra, list) or any(not isinstance(c, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", c) or c in KNOWN_COMPONENTS for c in extra) or len(set(extra)) != len(extra):
@@ -1050,12 +1065,13 @@ def main() -> int:
             except (ValueError, OSError) as problem:
                 err(str(problem))
     routes = {page.source: page.route for page in source_pages}
+    unchecked_links: dict[str, set[str]] = {}
     for page in source_pages:
         if page.slug in seen_slugs:
             err(f"route collision: {page.route} is produced by more than one page ({page.source})")
             continue
         seen_slugs.add(page.slug)
-        built = build_source_page(page, routes, site, shell)
+        built = build_source_page(page, routes, site, shell, unchecked_links)
         if built:
             pages_meta.append({"page_css": ["build-sheet.css"]})
             try:
@@ -1067,7 +1083,7 @@ def main() -> int:
     # Source pages check every fragment they link. Other pages check fragments
     # pointing into source pages, whose anchors come from Markdown headings.
     source_routes = {page.route for page in source_pages}
-    for problem in [*fragment_problems(rendered, source_routes, set(rendered)),
+    for problem in [*fragment_problems(rendered, source_routes, set(rendered), unchecked_links),
                     *fragment_problems(rendered, set(rendered) - source_routes, source_routes)]:
         err(problem)
     if args.page and args.page not in seen_slugs:
