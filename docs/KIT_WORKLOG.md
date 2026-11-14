@@ -2,6 +2,16 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Adaptation's redesign under the changed slide-face rule
+
+- deivid asked for all of adaptation's faces to be redesigned under the
+  changed rule, with the old and the new face one after the other for
+  comparison. The session did all 30.
+- The kit owner viewed the 30 pairs: the new faces differ from each other.
+  Weak points and the session's eight rule findings and three kit behaviours
+  are added to `docs/open/upgrade-to-4.0.0-findings.md`.
+- Checks: build and strict lint.
+
 ## 2026-11-14 — Adaptation's redraw under the released rule
 
 - Adaptation's session removed six failing faces and redrew six, on deivid's

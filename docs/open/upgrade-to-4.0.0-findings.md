@@ -147,6 +147,45 @@ the rule as released in 4.0.0, before the change recorded below reached it.
   5. Removing a face cost a generator change, a fragment, the expected count
      of a check and a hash in the project's location manifest.
 
+## What a redesign under the changed rule showed
+
+On deivid's word the session redesigned all 30 remaining faces under the
+changed rule and, for comparison, kept each current face with the new one
+directly after it (adaptation commit `09ec123`, 2026-11-14).
+
+- Checked here by eye on all 30 pairs at thumbnail size and on two pairs at
+  full size: the new faces differ from each other, where the old ones mostly
+  repeat two arrangements. Bodies now include a large count with a dot field,
+  small multiples per family, a matrix, grouped bars, a timeline and one
+  stacked bar. Weak points seen: a large headline number recurs on about nine
+  faces and may become the next recipe; at least three new faces leave an
+  empty band; one new face shows a formula and text with no picture; axis
+  labels in small multiples are small.
+- Reported by the session, not checked here. Where the changed rule was
+  unclear or pushed back towards one arrangement:
+  1. Reusing the chapter's figure, readable labels and 16:9 together leave one
+     place for a wide figure. Ten faces share "figure across the canvas above
+     one row of text" for that reason, although the rule allows a shared
+     layout only for content of the same shape. Which wins is not said.
+  2. Whether a drawing of the chapter's numbers in HTML and CSS, such as dots,
+     bars and meters, is "a second version of the same data". The strongest
+     new layouts are such drawings.
+  3. A chapter whose only figure is made at run time: the rule says to make a
+     chapter figure first; the session drew bars from the chapter's table.
+  4. "One thing draws the eye first" against a title with two clauses.
+  5. "No band left over" has no threshold; five faces with little content
+     still leave one.
+  6. "What a professional slide designer would present" has no test.
+  7. Stacking below 720 px is now each layout's own work: thirty layouts,
+     thirty sets of stacking rules, six faults in the first phone pass.
+  8. "No fact only on a face" is checked for numbers only.
+- Kit behaviour the pairs met:
+  1. With two faces in one chapter the page shows both, the second narrower
+     than the first, and each adds its own "Continue reading" bar.
+  2. `docsite.py slides` keeps only the first face of a chapter.
+  3. Project slide classes need `!important` on every declaration to win over
+     the shared ones.
+
 ## Decided and still owed
 
 deivid decided on 2026-11-14, when asked whether a face with a real visual but
