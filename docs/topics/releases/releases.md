@@ -39,7 +39,9 @@ links written as HTML `<a href>` are not checked. No other anchor under
 `rules/` changed, and no command, flag, configuration key, marker or adapter
 signature is removed. The new `build --check-reader` flag and the new
 `site.toml` settings `worklog_links_checked_from`, `[group_colors]` and
-`[plot_toggle_labels]` join the stable interfaces. Follow the [4.0.0 migration guide](migrations/4.0.0.md).
+`[plot_toggle_labels]` join the stable interfaces. A project that already
+used one of these three names as a top-level `site.toml` key for something
+else fails the build until it renames its own key. Follow the [4.0.0 migration guide](migrations/4.0.0.md).
 
 Removed or renamed interfaces, with their status under the
 [stable and provisional interfaces](#100--first-stable-version):
@@ -53,7 +55,8 @@ Removed or renamed interfaces, with their status under the
   `b-adp` and `b-ada`: theme class names outside the documented authoring
   markup, so provisional. Renamed to `badge accent`, `badge secondary`,
   `card secondary`, `band-accent`, `band-secondary`, `b-accent` and
-  `b-secondary`, with the same styling.
+  `b-secondary`, with the same styling. The new variable and class names are
+  provisional as well: no guide under `rules/` lists them as authoring markup.
 - The colours of the navigation groups `method`, `road`, `racing`, `sim` and
   `related work`, hard-coded in four theme stylesheets: provisional theme
   styling, removed. `[group_colors]` replaces them.
@@ -72,7 +75,7 @@ search for each.
 | Rules | Removed: the section "Evidence identity and frozen records". New: finished working documents. A plan, decision record, review or coordination note is deleted once its work has landed and its lasting content is in the owning record, with the person's approval; Git keeps it, and whatever still needs it cites the commit and path. No unedited copy stays in the tree or moves into an evidence folder | [Finished working documents](../../../rules/records.md#finished-working-documents), [rules for changes and chronology](../../../rules/documentation.md#rules-for-changes-and-chronology) |
 | Rules | Run output that a stated number or verdict rests on is tracked in the experiment directory before the experiment is reported complete; a claim that rests on output only in an untracked folder is not measured. Keeping run output outside Git is the person's decision, recorded as an unresolved choice until answered. The 3.2.1 sentence that let repository size decide where material is stored is gone | [Numbers and staleness](../../../rules/records.md#numbers-and-staleness) |
 | Rules | Uncommitted code of a run is kept as a diff against the commit the run started from, with new files and submodule changes; a run does not copy the working tree, and an unavoidable copy holds no ignored files. A plan, protocol or review document that a run recorded by hash is identified by its commit, path and hash | [Numbers and staleness](../../../rules/records.md#numbers-and-staleness) |
-| Rules | Work alone happens in the project's checkout on its current branch. A separate branch or worktree is used only when other work changes the same repository at the same time, when the project's workflow asks for one, or when the person asks for one | [Parallel work](../../../rules/engineering/delivery.md#parallel-work) |
+| Rules | Work alone happens in the project's checkout on its current branch. A separate branch or worktree is used only when other work changes the same repository at the same time, when a running job depends on files the work would change, when the project's workflow asks for one, or when the person asks for one | [Parallel work](../../../rules/engineering/delivery.md#parallel-work) |
 | Rules | A question for the person that is not answered before work stops is written into open work as an unresolved choice, routed from `OPEN.md` | [Decisions and blockers](../../../rules/engineering/delivery.md#decisions-and-blockers) |
 | Rules | New section: scratch files. An agent deletes the untracked drafts, review captures and temporary test folders its own work created, without approval; run output is never scratch. A record cites no scratch file by path or hash | [Scratch files](../../../rules/engineering/handoffs.md#scratch-files), [validation and review](../../../rules/site/validation.md#validation-and-review) |
 | Rules | A full refactor deletes a caller that is a finished probe or one-time script instead of updating it, when nothing imports it, no rerun is planned and its result is recorded with a source pin; claims that rest on it are historical from then on. A source pin still stands for code after the code is deleted from the current tree | [Refactoring over compatibility](../../../rules/engineering/code.md#refactoring-over-compatibility), [Numbers and staleness](../../../rules/records.md#numbers-and-staleness) |
@@ -88,7 +91,7 @@ search for each.
 | Configuration | New optional `[plot_toggle_labels]` table: one chip label per plot group key for pages that load `plot-toggles`, written into each such page as a JSON block. The build rejects a value that is not a table and a label that is not text | [Authoring paths](../../../rules/site/authoring.md#authoring-paths) |
 | Command | New `docsite.py build --project . --check-reader`: renders every topic page with and without the chapter reader, writes nothing and exits with status 1 when the reader changes a page's content | [Validation and review](../../../rules/site/validation.md#validation-and-review) |
 | Theme | `--adp` and `--ada` renamed to `--accent` and `--secondary`; seven classes renamed, as listed above. The hard-coded colours of five group names are gone, so those groups take `nav.js` tones until the project sets `[group_colors]`; with the table, their home-map card edges take the group colour. The unused pin button is removed | [Authoring paths](../../../rules/site/authoring.md#authoring-paths) |
-| Theme | `plot-toggles.js` no longer holds the labels of nine group keys, which were one project's plot series; without `[plot_toggle_labels]` a chip shows its group key | [Label plot toggle chips](migrations/4.0.0.md#label-plot-toggle-chips) |
+| Theme | `plot-toggles.js` no longer holds the labels of nine group keys, which were one project's plot series; without `[plot_toggle_labels]` a chip shows its group key | [Authoring paths](../../../rules/site/authoring.md#authoring-paths) |
 | Theme | New slide-face classes `slide-points` and `slide-facts`, and a keyed `figcaption.slide-legend` inside `slide-figure` | [Slide faces and decks](../../../rules/site/authoring.md#slide-faces-and-decks) |
 | Build output | Changed shared files get a new `?v=` query on every page: `base.css`, `chapter-reader.css`, `chapter-reader.js`, `panel-switcher.css`, `plot-toggles.js`, `slide-face.css`, `home.css`, `build-sheet.css` and three font `SOURCE.txt` notices. A site with `[group_colors]` gains `assets/group-colors.css`; no other built file is added or removed | [Authoring and configuration](../../../rules/site/authoring.md) |
 | Lint | A configuration error in `site.toml` was reported as a stale site; lint now prints the build's error | [Validation and review](../../../rules/site/validation.md#validation-and-review) |

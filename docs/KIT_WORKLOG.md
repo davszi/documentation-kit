@@ -2,6 +2,46 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Close the findings of the review before the 4.0.0 tag
+
+- An independent review of the unreviewed commits, from the release
+  preparation to the solo-work rule, found no blocker, three major and eight
+  minor points. It ran the full checks once, 187 unit tests and all four
+  browser suites, and took a throwaway project from `v3.2.1` through the
+  migration guide to a clean build and strict lint.
+- Migration guide: it still called the worklog cut-off in the build an open
+  defect, which this release fixes; the search for the old theme names had its
+  options after `--`, so grep read them as file names and searched `.docs-kit`
+  and `.build`; the lead said one step is enforced where the table names
+  three; the reread list for site authoring lacked `[plot_toggle_labels]` and
+  the worklog source page. All four are corrected.
+- [Parallel work](../rules/engineering/delivery.md#parallel-work): the new
+  default named no case for a running job that reads the checkout, which
+  [execution](../rules/engineering/execution.md) sends to that section. A
+  separate branch or worktree is now also used when a running job depends on
+  files the work would change. This adds to the wording deivid accepted.
+- [Refactoring over compatibility](../rules/engineering/code.md#refactoring-over-compatibility)
+  and the [deletion gate](../rules/documentation.md#rules-for-changes-and-chronology)
+  now say that the deletion of a finished probe script also covers a script
+  in an experiment directory and is an exception to the gate.
+- `tooling/worklog_entries.py`: a `## ` line inside a fenced code block of the
+  worklog no longer starts an entry for lint, as in the rendered page; before,
+  such a line dated before the cut-off hid dead links in the newer entry
+  around it. The cut-off accepts the text "YYYY-MM-DD" or the same TOML date
+  without quotes and rejects other ISO spellings such as "20000102". The test
+  of the cut-off covers both. The header of `tooling/build.py` states that a
+  configuration error exits with status 2.
+- Release notes: a project that already used one of the three new `site.toml`
+  names fails the build; the new theme names are provisional; the plot-label
+  row links the authoring guide. The README names the `--with-deps` form of
+  the Chromium install.
+- New open record for two older flaws of the plot toggle chips in the zoomed
+  figure, [grey dots and a wrapping label](open/plot-toggle-chips-in-lightbox.md).
+- Not changed: the reviewer's note that the README does not say the fixture
+  commits need a Git identity was inspected only and is older than this
+  release. Old logs and review folders under `.build/` from earlier work are
+  proposed to deivid for deletion, not deleted.
+
 ## 2026-11-14 — Work alone stays in the checkout on its current branch
 
 - deivid reported on 2026-11-14 that agents now use a branch and a worktree

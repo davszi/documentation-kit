@@ -54,7 +54,9 @@ change instead of updated, when nothing else imports it, no rerun is planned
 and its result is recorded with a
 [source pin](../records.md#numbers-and-staleness) that stands for it. Claims
 that rest on it are historical from then on. The deletion is part of the
-refactor and needs no separate approval.
+refactor and needs no separate approval. This holds for a script kept in an
+experiment directory too: the pin stands for it, so the directory need not hold
+it.
 
 If the owner decides to keep compatibility, record why it exists and when it
 can be removed.

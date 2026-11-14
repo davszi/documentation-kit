@@ -42,8 +42,8 @@ execution settings and outputs.
 
 Work alone happens in the project's checkout on its current branch. Use a
 separate branch or worktree only when other work changes the same repository
-at the same time, when the project's workflow asks for one, or when the person
-asks for one. Coordinate restrictions around the actual conflict so unrelated
+at the same time, when a running job depends on files the work would change,
+when the project's workflow asks for one, or when the person asks for one. Coordinate restrictions around the actual conflict so unrelated
 work can continue.
 
 ## Decisions and blockers

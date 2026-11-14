@@ -10,8 +10,9 @@ body with raw-HTML passthrough and <!-- include: … --> directives), shared
 components in docs/site/components/, vendored assets in docs/site/assets/.
 Site config: docs/site/site.toml.
 
-Exit codes: 0 built / clean · 1 config or content error · 2 --check found
-generated site stale against a fresh render.
+Exit codes: 0 built / clean · 1 content error · 2 configuration error, printed
+as `build.py: error: …`, or --check found the generated site stale against a
+fresh render.
 
 --check-reader renders every topic page with and without the chapter reader,
 reports any content the reader changes and writes nothing (reader_content.py).

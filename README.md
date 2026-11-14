@@ -182,6 +182,10 @@ bash tests/run_checks.sh
 `npx playwright install chromium` then downloads the Chromium build that this
 Playwright version expects. Both are needed only for the browser suites.
 
+On a machine without Chromium's system libraries,
+`npx playwright install --with-deps chromium` installs them as well and needs
+administrator rights; the Pages workflow uses that form.
+
 `tests/run_checks.sh` generates the starter with `init` under `.build/starter/`,
 builds and lints it, runs the unit tests against it, then builds and checks the
 kit's own [reference website](docs/topics/website/website.md) and the Node checks.

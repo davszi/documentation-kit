@@ -339,9 +339,21 @@ def verify(root, *, require_all_manifests=False): raise ValueError("project evid
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('dead link topics/lost/lost.md', result.stderr)
         self.assertNotIn('topics/removed', result.stderr)
+        # A TOML date without quotes is the same date.
+        result = lint('2000-01-02')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('dead link topics/lost/lost.md', result.stderr)
+        self.assertNotIn('topics/removed', result.stderr)
+        # A dated heading inside a fenced code block starts no entry: the
+        # links of the newer entry around it stay checked.
+        fenced = '\n## 2999-01-01 — New landing\n\n```text\n## 1999-01-01 — quoted heading\n```\n\n- Lost [a file](topics/lost/lost.md).\n'
+        worklog.write_text(log[:first] + fenced + log[first:] + old)
+        result = lint('"2000-01-02"')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('dead link topics/lost/lost.md', result.stderr)
         # The build reads the setting too, so it rejects a value that is not a
         # date, and lint prints the build's error.
-        for invalid in ('"soon"', '20000102'):
+        for invalid in ('"soon"', '20000102', '"20000102"', '"2000-W01-1"'):
             result = lint(invalid, builds=False)
             self.assertNotEqual(result.returncode, 0)
             self.assertIn('worklog_links_checked_from must be a date written as "YYYY-MM-DD"', result.stderr)
