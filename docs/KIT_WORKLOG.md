@@ -2,6 +2,36 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-14 — Plot toggle labels come from the project
+
+- `theme/components/plot-toggles.js` no longer holds a fixed table of nine
+  chip labels (`pinned`, `menger`, `stacked`, `heuristic`, `free_psi`,
+  `free_kappa`, `free_both`, `corridor`, `waypoints`), which were one
+  project's plot series. A project now sets them in a `[plot_toggle_labels]`
+  table in `docs/site/site.toml`, one text label per group key. The build
+  writes the table as `<script type="application/json"
+  id="plot-toggle-labels">` into each page that loads `plot-toggles`, with
+  `<`, `>` and `&` escaped, and the component reads it once, so the lightbox
+  chips, built by `window.figToggles.buildChips`, use the same labels. A key
+  without a label, or a site without the table, shows the group key as
+  before. The build rejects a value that is not a table and a label that is
+  not text, and lint prints the build's error, as for `[group_colors]`.
+- Before the change, ADP loaded the component on four pages; adaptation and
+  Tempo do not use it. The 4.0.0 migration guide gains the step "Label plot
+  toggle chips" with the nine removed labels to copy; nothing enforces it. The
+  authoring guide documents the table beside `[group_colors]`, and the release
+  notes list it as a stable setting, the removed labels as provisional
+  internals and `plot-toggles.js` among the changed shared files. The open
+  record on theme leftovers is deleted, which closes the release's list of
+  known open defects.
+- Checked: a new test in `tests/test_site_contract.py` builds a starter page
+  that loads the component, without and with the table, checks the JSON block,
+  its escaping and its place before the script, that a page without the
+  component gets no block, strict lint, and three configuration errors in both
+  build and lint. No Node logic check covers `plot-toggles.js`. A throwaway
+  page with four groups, three labelled, was reviewed by eye at 1600×1000 and
+  390×844, on the page and in the lightbox.
+
 ## 2026-11-14 — The build applies the worklog link cut-off
 
 - A worklog registered as a source page now honours

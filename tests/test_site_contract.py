@@ -1,4 +1,5 @@
 """Version 1.0 site contract: nested includes, strict navigation tables and site-map cards."""
+import json
 from pathlib import Path
 import re
 import subprocess
@@ -307,6 +308,48 @@ class SiteContract(unittest.TestCase):
         result = self.build()
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('group_colors must be a [group_colors] table', result.stdout + result.stderr)
+
+    def test_plot_toggle_labels_reach_pages_that_load_the_component(self):
+        site = self.root / 'docs/site/site.toml'
+        text = site.read_text()
+        html = self.root / '.build/docs/html'
+        self.guide.write_text(self.guide.read_text().replace('"lightbox"]', '"lightbox", "plot-toggles"]', 1))
+        # Without the table the page loads the component and no labels; chips show the group keys.
+        self.assertEqual(self.build().returncode, 0)
+        guide = (html / 'guide.html').read_text()
+        self.assertIn('assets/plot-toggles.js', guide)
+        self.assertNotIn('plot-toggle-labels', guide)
+        site.write_text(text + '\n[plot_toggle_labels]\n"corridor" = "road corridor"\n"edge" = "</script><b>&"\n')
+        result = self.build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        guide = (html / 'guide.html').read_text()
+        block = re.search(r'<script type="application/json" id="plot-toggle-labels">(.*?)</script>', guide)
+        self.assertIsNotNone(block)
+        # A label cannot close the script element; the JSON still reads back unchanged.
+        self.assertNotIn('<', block[1])
+        self.assertEqual(json.loads(block[1]), {'corridor': 'road corridor', 'edge': '</script><b>&'})
+        # The deferred component runs after the block is parsed.
+        self.assertLess(guide.index('id="plot-toggle-labels"'), guide.index('assets/plot-toggles.js'))
+        # Pages that do not load the component get no labels.
+        self.assertNotIn('plot-toggle-labels', (html / 'index.html').read_text())
+        lint = invoke('lint', '--project', self.root, '--strict')
+        self.assertEqual(lint.returncode, 0, lint.stdout + lint.stderr)
+        for config, message in (
+                (text + '\n[plot_toggle_labels]\n"corridor" = 3\n',
+                 "plot_toggle_labels gives group 'corridor' the label 3; use a text string"),
+                (text + '\n[plot_toggle_labels]\ncorridor = { label = "road corridor" }\n',
+                 "plot_toggle_labels gives group 'corridor' the label {'label': 'road corridor'}"),
+                ('plot_toggle_labels = "road corridor"\n' + text,
+                 'plot_toggle_labels must be a [plot_toggle_labels] table')):
+            site.write_text(config)
+            result = self.build()
+            self.assertNotEqual(result.returncode, 0, config)
+            self.assertIn(message, result.stdout + result.stderr)
+            # Lint reports the configuration error itself, not a stale site.
+            lint = invoke('lint', '--project', self.root)
+            self.assertNotEqual(lint.returncode, 0, config)
+            self.assertIn(message, lint.stdout + lint.stderr)
+            self.assertNotIn('is stale', lint.stdout + lint.stderr)
 
     def test_one_character_mark_is_sized_as_a_glyph(self):
         site = self.root / 'docs/site/site.toml'

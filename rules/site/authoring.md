@@ -79,6 +79,15 @@ Each name must be the `group` of a visible `[[nav]]` entry, written exactly.
 Project CSS on a page may still set `--g`. A group without a colour gets the
 next shared tone in order.
 
+A page that lists `plot-toggles` in its `components` gives every inline SVG
+figure (class `inline-fig`) one chip per group of elements whose `id` is
+`tg-<group>--<n>`; a chip hides and shows its group, on the page and in the
+lightbox. The chip shows the group key. A `[plot_toggle_labels]` table in
+`site.toml` gives a key a label for the whole site, such as
+`"corridor" = "road corridor"`; each value must be text. The build writes the
+table into each page that loads the component, and a key the table does not
+name keeps showing the key.
+
 `page_number_notes = true` turns on lint notes, for the whole site, for numbers
 in a topic page's prose that none of the page's linked records state, as
 [rendered pages are for people](../documentation.md#rendered-pages-are-for-people-records-stay-markdown)

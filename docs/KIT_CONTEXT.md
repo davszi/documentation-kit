@@ -37,7 +37,7 @@ consumer migration steps; `VERSION` holds the current version.
 The current release is 4.0.0. Its [migration guide](topics/releases/migrations/4.0.0.md)
 covers the removed `rules/records.md` anchor and finished working documents,
 the renamed theme variables and classes, `[group_colors]`,
-`build --check-reader` and the rules no check enforces. The 3.2.1 patch needed
+`[plot_toggle_labels]`, `build --check-reader` and the rules no check enforces. The 3.2.1 patch needed
 no migration step. The [3.2.0 guide](topics/releases/migrations/3.2.0.md)
 covers topic group folders and folded navigation groups. The
 [3.1.0 guide](topics/releases/migrations/3.1.0.md) covers one site name in the

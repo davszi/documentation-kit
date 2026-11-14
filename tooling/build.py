@@ -796,6 +796,8 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
     scripts = "".join(
         f'<script defer src="assets/{c}.js"></script>\n' for c in KNOWN_COMPONENTS if c in comps
     )
+    if "plot-toggles" in comps and site.get("plot_toggle_labels"):
+        scripts = plot_toggle_labels_script(site["plot_toggle_labels"]) + scripts
     if meta.get("math"):
         scripts += katex_scripts()
 
@@ -828,6 +830,17 @@ def local_resource(path: Path) -> Path:
 def consumer_tracked_paths() -> frozenset[Path]:
     result = subprocess.run(['git', 'ls-files', '-z'], cwd=REPO, capture_output=True, check=True)
     return frozenset(REPO / path for path in result.stdout.decode().split('\0') if path)
+
+
+def plot_toggle_labels_script(labels: dict[str, str]) -> str:
+    """`[plot_toggle_labels]` as the JSON block that plot-toggles.js reads.
+
+    `<`, `>` and `&` are escaped inside the JSON strings, so no label can end
+    the script element.
+    """
+    data = json.dumps(labels, ensure_ascii=False, sort_keys=True)
+    data = data.replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
+    return f'<script type="application/json" id="plot-toggle-labels">{data}</script>\n'
 
 
 def page_stylesheet(css: str) -> Path:
@@ -999,6 +1012,13 @@ def main() -> int:
         if not isinstance(color, str) or not GROUP_COLOR.fullmatch(color):
             ap.error(f"site.toml: group_colors gives group {name!r} the colour {color!r}; "
                      "use a hex colour such as \"#6ee7c5\"")
+    labels = site.get("plot_toggle_labels", {})
+    if not isinstance(labels, dict):
+        ap.error('site.toml: plot_toggle_labels must be a [plot_toggle_labels] table mapping plot group keys '
+                 'to chip labels, such as "corridor" = "road corridor"')
+    for key, label in labels.items():
+        if not isinstance(label, str):
+            ap.error(f"site.toml: plot_toggle_labels gives group {key!r} the label {label!r}; use a text string")
     try:
         site["_links_checked_from"] = links_checked_from(site)
     except ValueError as problem:

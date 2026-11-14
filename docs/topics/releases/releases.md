@@ -38,8 +38,8 @@ Lint fails on a Markdown link to the old anchor until the project repoints it;
 links written as HTML `<a href>` are not checked. No other anchor under
 `rules/` changed, and no command, flag, configuration key, marker or adapter
 signature is removed. The new `build --check-reader` flag and the new
-`site.toml` settings `worklog_links_checked_from` and `[group_colors]` join the
-stable interfaces. Follow the [4.0.0 migration guide](migrations/4.0.0.md).
+`site.toml` settings `worklog_links_checked_from`, `[group_colors]` and
+`[plot_toggle_labels]` join the stable interfaces. Follow the [4.0.0 migration guide](migrations/4.0.0.md).
 
 Removed or renamed interfaces, with their status under the
 [stable and provisional interfaces](#100--first-stable-version):
@@ -59,6 +59,9 @@ Removed or renamed interfaces, with their status under the
   styling, removed. `[group_colors]` replaces them.
 - The `reader-drawer-pin` button: a theme class, provisional, removed. The
   reader built it and never added it to the page.
+- The chip labels of nine plot group keys in `plot-toggles.js`, such as
+  "Menger joints (default)" for `menger`: undocumented component internals,
+  so provisional, removed. `[plot_toggle_labels]` replaces them.
 
 No lint or build check reports a project that still uses one of the renamed
 theme names; the element only loses its style. The migration guide gives a
@@ -81,20 +84,16 @@ search for each.
 | Configuration | New optional `worklog_links_checked_from = "YYYY-MM-DD"`: lint checks links only in worklog entries dated on or after that day. A value that is not an ISO date is an error | [Resources](../../../rules/site/resources.md#resource-closure-and-evidence) |
 | Configuration | New optional `[group_colors]` table: one hex colour per navigation group, written to `assets/group-colors.css` and linked on every page after `base.css`. The build rejects a value that is not a table, a colour that is not a 3, 4, 6 or 8 digit hex colour, and a name no visible `[[nav]]` entry uses. Groups without an entry take the `nav.js` tones | [Authoring paths](../../../rules/site/authoring.md#authoring-paths) |
 | Build | A worklog registered as a source page applies `worklog_links_checked_from`: in an entry dated before that day, a link or image whose target is gone renders as its text, unlinked, in `<span class="link-gone">` with a dotted underline from `base.css`, and a fragment into a registered page is not checked. Links whose target exists stay links; newer entries fail on a missing target as before. The build, not only lint, now rejects a value that is not a date | [Resources](../../../rules/site/resources.md#resource-closure-and-evidence) |
+| Configuration | New optional `[plot_toggle_labels]` table: one chip label per plot group key for pages that load `plot-toggles`, written into each such page as a JSON block. The build rejects a value that is not a table and a label that is not text | [Authoring paths](../../../rules/site/authoring.md#authoring-paths) |
 | Command | New `docsite.py build --project . --check-reader`: renders every topic page with and without the chapter reader, writes nothing and exits with status 1 when the reader changes a page's content | [Validation and review](../../../rules/site/validation.md#validation-and-review) |
 | Theme | `--adp` and `--ada` renamed to `--accent` and `--secondary`; seven classes renamed, as listed above. The hard-coded colours of five group names are gone, so those groups take `nav.js` tones until the project sets `[group_colors]`; with the table, their home-map card edges take the group colour. The unused pin button is removed | [Authoring paths](../../../rules/site/authoring.md#authoring-paths) |
+| Theme | `plot-toggles.js` no longer holds the labels of nine group keys, which were one project's plot series; without `[plot_toggle_labels]` a chip shows its group key | [Label plot toggle chips](migrations/4.0.0.md#label-plot-toggle-chips) |
 | Theme | New slide-face classes `slide-points` and `slide-facts`, and a keyed `figcaption.slide-legend` inside `slide-figure` | [Slide faces and decks](../../../rules/site/authoring.md#slide-faces-and-decks) |
-| Build output | Changed shared files get a new `?v=` query on every page: `base.css`, `chapter-reader.css`, `chapter-reader.js`, `panel-switcher.css`, `slide-face.css`, `home.css`, `build-sheet.css` and three font `SOURCE.txt` notices. A site with `[group_colors]` gains `assets/group-colors.css`; no other built file is added or removed | [Authoring and configuration](../../../rules/site/authoring.md) |
+| Build output | Changed shared files get a new `?v=` query on every page: `base.css`, `chapter-reader.css`, `chapter-reader.js`, `panel-switcher.css`, `plot-toggles.js`, `slide-face.css`, `home.css`, `build-sheet.css` and three font `SOURCE.txt` notices. A site with `[group_colors]` gains `assets/group-colors.css`; no other built file is added or removed | [Authoring and configuration](../../../rules/site/authoring.md) |
 | Lint | A configuration error in `site.toml` was reported as a stale site; lint now prints the build's error | [Validation and review](../../../rules/site/validation.md#validation-and-review) |
 | Starter | The guide page's two slide faces are rebuilt around SVG figures in two new fragments. The starter router is unchanged | [Slide faces](../../../rules/writing/pages.md#slide-faces) |
 | Kit checks | Node checks of the reader, fold controls and panel switcher run in an imitation page without a browser; a test checks that a built site ships the kit's component files unchanged | [README](../../../README.md#develop-the-kit) |
 | Kit checks | The browser suites load Playwright from the kit's own `node_modules/`, installed by `npm ci` from a root `package.json` and `package-lock.json` that pin version 1.62.1; the Pages workflow installs from the same files. `DOCS_PLAYWRIGHT` and `DOCS_CHROMIUM` are gone. Only kit development is affected: building a site needs no Node.js | [README](../../../README.md#develop-the-kit) |
-
-Known open defects, each recorded under `docs/open/`:
-
-- `theme/components/plot-toggles.js` still holds one project's plot series
-  labels.
-  [Record](../../open/shared-theme-leftovers.md).
 
 ## 3.2.1 — rule wording corrected
 

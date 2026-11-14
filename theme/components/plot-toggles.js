@@ -27,17 +27,14 @@
   `;
   document.head.appendChild(style);
 
-  const LABELS = {
-    pinned: "κ=0 joints",
-    menger: "Menger joints (default)",
-    stacked: "optimized joints",
-    heuristic: "Menger heuristic",
-    free_psi: "free_psi",
-    free_kappa: "free_kappa",
-    free_both: "free_both",
-    corridor: "road corridor",
-    waypoints: "waypoints",
-  };
+  // Chip labels come from [plot_toggle_labels] in the project's site.toml,
+  // which the build writes into #plot-toggle-labels. A group without a
+  // label shows its key.
+  const LABELS = (() => {
+    const data = document.getElementById("plot-toggle-labels");
+    try { return data ? JSON.parse(data.textContent) : {}; } catch { return {}; }
+  })();
+  const label = (key) => (Object.hasOwn(LABELS, key) && LABELS[key]) || key;
 
   function collect(svg) {
     const groups = {};
@@ -78,7 +75,7 @@
       const dot = document.createElement("span");
       dot.className = "fig-dot";
       dot.style.background = strokeOf(els);
-      chip.append(dot, document.createTextNode(LABELS[key] || key));
+      chip.append(dot, document.createTextNode(label(key)));
       chip.addEventListener("click", (e) => {
         e.stopPropagation();
         const off = chip.classList.toggle("off");
