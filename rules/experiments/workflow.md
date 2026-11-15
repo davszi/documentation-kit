@@ -94,5 +94,6 @@ Checks: [verification](verification.md). Resources and cleanup:
 [execution](../engineering/execution.md). Provenance:
 [numbers and staleness](../records.md#numbers-and-staleness). Visuals:
 [run visuals](../writing/figures.md#run-visuals-and-experiment-lifecycle). Benchmarks:
-[performance](../engineering/performance.md). Placement:
-[documentation policy](../documentation.md).
+[performance](../engineering/performance.md). Placement of records:
+[documentation policy](../documentation.md). Placement of code:
+[where code lives](../engineering/code.md#where-code-lives).

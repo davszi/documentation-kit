@@ -2,6 +2,27 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Where reused code lives
+
+- deivid asked in ADP's session for a second kit rule. ADP's reusable
+  native-run tooling sits inside one experiment,
+  `experiments/platform_qualification/sdk_integration/`, and tools under
+  `tools/coordination/` import from it. His words as that session relayed
+  them: "its also incorrect that its in a random place in exerpeimnts instead
+  of an experiment tools or in general tools sectin?", then "again rule in
+  the kit".
+- `rules/engineering/code.md` has a new section, Where code lives: an
+  experiment's folder holds only its own code, inputs and records; code that
+  other experiments or tools reuse lives in the project's tooling or source
+  tree and is moved there before a second user imports it. A finished
+  experiment is not edited for the move; its source pin stands for the code
+  it ran. `rules/experiments/workflow.md` links the section from "Use the
+  existing owners".
+- The 5.0.0 release notes list the rule. Like the path rule, it was added
+  after the independent release review and was not reviewed. ADP moves no
+  code now; that waits for deivid's decision on the attended runs.
+- Checks: build and strict lint.
+
 ## 2026-11-15 — Page lock run in Firefox and WebKit
 
 - deivid asked why the lock was tested in Chromium only. The kit installs
