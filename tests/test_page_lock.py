@@ -527,7 +527,7 @@ class PublishWithLock(unittest.TestCase):
         for value in env.values():
             self.assertNotIn(value, result.stdout + result.stderr)
 
-        # Every tracked Markdown file is now a Reference page by default, and a locked
+        # Every tracked Markdown file of a listed folder is a Reference page, and a locked
         # build writes the tree once even for a few files. This test once expected
         # exactly two reference-level files: the registered page and the exported Markdown.
         project = self.folder / 'project'

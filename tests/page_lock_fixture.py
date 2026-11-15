@@ -5,7 +5,8 @@ with the chapter reader, a page with tabs, plot toggles, a lightbox image and
 an embedded HTML frame, a registered Reference page and an exported Markdown
 file. Each carries a marker string that must never appear in a locked bundle.
 
-Every tracked Markdown file is also listed automatically in the Reference
+The fixture names ``notes`` beside ``docs`` in ``reference_roots``, so their
+tracked Markdown files are also listed automatically in the Reference
 section; ``notes/record.md`` carries a title marker that only the Reference
 tree and its own page show.
 

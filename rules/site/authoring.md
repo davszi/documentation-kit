@@ -348,13 +348,15 @@ ordinary record, and its HTML links to repository files in the built page, as
 
 ### Automatic reference listing
 
-By default every tracked Markdown file of the project is a source page and
-appears in the Reference section, without a `[[source_pages]]` table. **With
-the default, every tracked Markdown file of a project becomes a page of its
-site.** A private repository with a public site thereby publishes those files,
-unless it excludes them or turns the listing off. Agent files such as
-`AGENTS.md` and `CLAUDE.md` are listed too unless `reference_exclude` names
-them.
+By default every tracked Markdown file under `docs/` is a source page and
+appears in the Reference section, without a `[[source_pages]]` table. A
+project that keeps records elsewhere names those folders or single files in
+`reference_roots`. **Every tracked Markdown file under a listed folder becomes
+a page of the site.** A private repository with a public site thereby
+publishes those files, unless it declares them private or turns the listing
+off. A folder that no entry names is never listed, so a new folder publishes
+nothing until the project names it. Root files such as `README.md` and
+`AGENTS.md` are listed only when an entry names them.
 
 A tracked `.md` file is not listed automatically when it:
 
@@ -366,7 +368,7 @@ A tracked `.md` file is not listed automatically when it:
 - starts with `+++` frontmatter, as topic entry pages do, or is a topic entry
   page;
 - is a symbolic link or lies below one;
-- matches a `reference_exclude` pattern;
+- lies outside every `reference_roots` entry;
 - starts with a `private_prefixes` entry or ends with a `private_suffixes`
   entry of the [`[publication]` table](publication.md#configured-publication),
   which declare the file private. With `.md` among the private suffixes the
@@ -375,30 +377,32 @@ A tracked `.md` file is not listed automatically when it:
 
 A file that starts with `---` YAML frontmatter is listed and rendered as
 ordinary Markdown: the frontmatter shows as text, and its closing `---` turns
-the lines above it into a heading. Exclude such a file when its frontmatter
-should not show.
+the lines above it into a heading. Declare such a file private, or keep it
+outside the listed folders, when its frontmatter should not show.
 
-Two settings in `docs/site/site.toml`, above the first `[[nav]]` table, opt
-out:
+Two settings in `docs/site/site.toml`, above the first `[[nav]]` table,
+control the listing:
 
 ```toml
+reference_roots = ["docs", "experiments", "README.md"]   # default: ["docs"]
 reference_listing = false   # list only [[source_pages]] tables
-reference_exclude = ["CLAUDE.md", "experiments/**", "**/drafts/"]
 ```
 
+`reference_roots` names what is listed: each entry is a folder, whose tracked
+Markdown files are listed at any depth, or one Markdown file. An entry is a
+plain path from the project root, not a glob: distinct, with no leading `/`,
+no `\`, no `*`, `?` or `[`, and no `.` or `..` parts. A set value replaces the
+default, so it names `docs` too when `docs/` stays listed. An entry that lists
+no file gets a note in lint. To keep one file of a listed folder off the site,
+name it in `private_prefixes`.
 `reference_listing = false` turns the automatic listing off; the site then
-lists only its `[[source_pages]]` tables, as before the listing existed.
-`reference_exclude` names repository-relative glob patterns matched against the
-whole path: `*` and `?` stay within one folder, `[...]` is a character class,
-`**` spans any number of folders and a pattern ending in `/` matches everything
-below that folder. Patterns are distinct and have no leading `/`, no `\` and no
-`.` or `..` parts. A wrong type or pattern fails the build with an error such
-as `site.toml: reference_listing must be true or false`.
+lists only its `[[source_pages]]` tables. A wrong type or entry fails the
+build with an error such as `site.toml: reference_listing must be true or
+false`.
 
 A `[[source_pages]]` table still wins: it keeps every meaning above and sets
-the slug, title, description, `math`, `reader` and `pinned` of its file.
-`reference_exclude` never removes a registered file. Only a table can pin a
-file.
+the slug, title, description, `math`, `reader` and `pinned` of its file. It
+registers a file outside every listed folder too. Only a table can pin a file.
 
 An automatically listed file is published as a route derived from its path.
 Each folder and the file name are lowercased; every run of characters other

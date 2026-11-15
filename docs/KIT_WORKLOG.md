@@ -2,6 +2,43 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — The Reference section lists named folders only; prepare 6.0.0
+
+- Why: after the release of 5.0.0 deivid asked whether the Reference section
+  looks beyond `docs/` and said he had meant `docs/` only: "fix that i was
+  talking about just docs and then we dont need the ref exclude no? or do u
+  have a counterarg". The counterargument was measured: most records lie
+  outside `docs/`. ADP has 329 tracked Markdown files, 95 under `docs/` and
+  230 under `experiments/`; adaptation has 84, 20 under `docs/` and 61 under
+  `studies/`; the kit has 63, 31 under `docs/` and 23 under `rules/`. With
+  `docs/` alone both projects would lose the records he had asked to show.
+- deivid chose the proposal "Yes, docs plus named": the default lists
+  `docs/` only, a project names further folders, and `reference_exclude`
+  goes. He was told that removing a setting 5.0.0 released makes this 6.0.0
+  under the promise as written, and that no project is on 5.0.0 yet.
+- `reference_roots` names the listed folders and single Markdown files as
+  plain paths; its default is `["docs"]`. A file is listed when it equals an
+  entry or lies below it. An entry that lists no file gets a note.
+  `reference_exclude` fails the build with a message that names
+  `reference_roots`, `private_prefixes` and the 6.0.0 guide. The glob
+  matcher that only `reference_exclude` used is deleted.
+- The kit's own site sets `reference_roots = ["docs", "AGENTS.md",
+  "THIRD_PARTY.md"]` and lists the same pages as before. The starter keeps
+  the default, so a new project no longer lists its `AGENTS.md`.
+- Records: `rules/site/authoring.md#automatic-reference-listing` and one
+  sentence of `rules/site/publication.md` are rewritten; no heading changes.
+  Release notes gain a 6.0.0 section, and
+  `docs/topics/releases/migrations/6.0.0.md` is new, with one content step.
+  The 5.0.0 guide gains a paragraph that sends a project moving on to 6.0.0
+  to that step in place of its two Reference sections. `VERSION` is 6.0.0.
+- Tests: fixtures that keep records outside `docs/` name their folders. New
+  cases cover the default, a file outside the roots, whole path segments, a
+  root that lists nothing and the removed setting.
+- Checks: `build`, `lint --strict` and `build --check-reader` of the kit
+  pass, and `DOCS_REQUIRE_BROWSER=1 bash tests/run_checks.sh` passes with 349
+  Python tests and seven browser suites.
+- Not tagged and not pushed; the tag and the push wait for deivid's go.
+
 ## 2026-11-15 — Release 5.0.0
 
 - deivid gave the go: "Yes, release 5.0.0". The ask named what the go covers:

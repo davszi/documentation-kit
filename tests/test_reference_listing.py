@@ -1,4 +1,4 @@
-"""Automatic Reference listing: every tracked Markdown file, opt-out settings and tolerance."""
+"""Automatic Reference listing: the named folders and files, its settings and tolerance."""
 import hashlib
 import json
 import os

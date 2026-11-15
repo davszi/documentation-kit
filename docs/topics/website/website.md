@@ -33,11 +33,12 @@ The navigation lists these pages and, in a Releases group, the release notes
 and migration guides. Every registered record, including the rule guides,
 README and kit-development records, appears in the sidebar's **Reference**
 section: README is pinned at its top, and a **Browse by folder** tree lists every
-record. Besides the `[[source_pages]]` tables, the tree holds every other tracked
-Markdown file through the [automatic reference listing](../../../rules/site/authoring.md#automatic-reference-listing):
-the worklog, open work, `AGENTS.md` and `THIRD_PARTY.md`. `reference_exclude`
-leaves out `CLAUDE.md`, which only points agents at `AGENTS.md`, and
-`examples/**`, whose sample record belongs to the starter project.
+record. Besides the `[[source_pages]]` tables, the tree holds what the
+[automatic reference listing](../../../rules/site/authoring.md#automatic-reference-listing)
+adds: the tracked Markdown files under `docs/`, such as the worklog and open
+work, and `AGENTS.md` and `THIRD_PARTY.md`, which `reference_roots` names.
+`CLAUDE.md`, which only points agents at `AGENTS.md`, and the starter's sample
+record under `examples/` are in no entry and so are not listed.
 
 The site sets `chapter_reader = true`; records keep the registry default
 `reader = false`. Topic pages use the shared `home.css` and

@@ -46,8 +46,9 @@ included, with the media they package. That listing skips files that the
 private prefixes or suffixes cover, and its pages do not package media they
 cover, so it cannot make a publication fail. With `private_suffixes` holding
 `.md`, as in the example above, it lists no file at all. It still publishes
-every other tracked Markdown file as a page: exclude private files with
-`reference_exclude`, or set `reference_listing = false`. Without a source
+every other tracked Markdown file of a listed folder as a page: declare
+private files in `private_prefixes`, name fewer folders in `reference_roots`,
+or set `reference_listing = false`. Without a source
 remote, `publish` also rewrites the source links of pages not named in
 `pages`; see [a project without a source remote](authoring.md#tooling-and-ownership).
 
