@@ -2,6 +2,25 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — The kit keeps its name; close the open record
+
+- Decision 2026-11-15 by deivid on the open question of the kit's name, raised
+  on 2026-11-10: "we leave it". The site stays "Documentation kit", the README
+  and `AGENTS.md` keep "Engineering and documentation kit", the repository
+  stays `documentation-kit` and the folder in every project stays `.docs-kit`.
+- What the record held, for whoever raises the question again: about a quarter
+  of the rule text, measured in words on 2026-11-10, is about engineering,
+  experiments and delivery rather than documentation. Names proposed and not
+  accepted: Shared practices kit, Working agreements kit, Agent practices kit,
+  Project practices kit, Engineering and documentation kit, and handbook or
+  playbook variants. A display title costs one setting; the repository name
+  changes the public site URL; the folder `.docs-kit` would break every
+  project.
+- `docs/open/kit-name.md` is deleted with its route in `docs/open/KIT_OPEN.md`,
+  as the rule on [finished working documents](../rules/records.md#finished-working-documents)
+  asks; deivid was told it would be. Git keeps it at its path in the commit
+  before this one.
+
 ## 2026-11-15 — Sync three pages with the removed adapters and kept copies
 
 - Sentence-level sync after the removal of the adapter hooks and of
