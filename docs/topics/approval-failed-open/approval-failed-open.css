@@ -1,0 +1,58 @@
+/* Page "Approval that failed open": generated figures and the three kinds of statement.
+   Figures come from draw_figures.py; each holds a wide and an upright SVG, and the
+   figure's own width picks one, so labels stay at 11 px or more in one, two or all
+   chapters and on a phone. */
+.afo-fig { container-type: inline-size; margin: 20px 0 22px; }
+.afo-scroll { border-radius: 14px; }
+.afo-scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.afo-fig svg.inline-fig { width: 100%; height: auto; display: block; border-radius: 14px;
+  box-shadow: 0 0 0 1px var(--border); transition: box-shadow .25s ease; }
+.afo-fig:hover svg.inline-fig { box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 45%, var(--border)),
+  0 0 26px color-mix(in srgb, var(--accent) 16%, transparent); }
+.afo-fig svg.afo-tall { display: none; max-width: 560px; }
+@container (max-width: 699.98px) {
+  .afo-fig svg.afo-wide { display: none; }
+  .afo-fig svg.afo-tall { display: block; }
+}
+
+/* Three kinds of statement, kept apart as in the record. */
+.afo-kinds { display: flex; flex-wrap: wrap; gap: 8px 10px; margin: 12px 0 4px; padding: 0; list-style: none; }
+.afo-kinds li { font-size: 14px; color: var(--muted); }
+.afo-kinds li b { display: inline-block; margin-right: 6px; padding: 1px 10px; border-radius: 999px;
+  font: 600 12px/1.6 "IBM Plex Mono", ui-monospace, monospace; letter-spacing: .06em; text-transform: uppercase; }
+.afo-kind { position: relative; margin: 12px 0; padding: 10px 14px 10px 16px; border-radius: 0 10px 10px 0;
+  background: color-mix(in srgb, var(--k) 7%, transparent); border-left: 3px solid var(--k); }
+.afo-kind > .afo-tag, .afo-kinds li b { color: var(--k); border: 1px solid color-mix(in srgb, var(--k) 70%, transparent); }
+.afo-kind > .afo-tag { float: right; margin: 2px 0 4px 12px; padding: 0 9px; border-radius: 999px;
+  font: 600 11.5px/1.7 "IBM Plex Mono", ui-monospace, monospace; letter-spacing: .06em; text-transform: uppercase; }
+.afo-kind p { margin: 4px 0; }
+@media (max-width: 640px) {
+  .afo-kind > .afo-tag { float: none; display: inline-block; margin: 0 0 2px; }
+}
+.afo-measured { --k: var(--accent); }
+.afo-said { --k: var(--orange); margin-left: 0; margin-right: 0; }
+.afo-said p { font-size: 17.5px; color: var(--bright); font-style: italic; }
+.afo-said p::before { content: "\201C"; color: var(--orange); font-style: normal; margin-right: 2px; }
+.afo-said p::after { content: "\201D"; color: var(--orange); font-style: normal; margin-left: 1px; }
+.afo-reading { --k: var(--secondary); }
+.afo-kind.afo-reading { border-left-style: dashed; background: color-mix(in srgb, var(--k) 5%, transparent); }
+.afo-kinds .afo-reading b { border-style: dashed; }
+
+/* The rule-and-pile matrix of the kit chapter. */
+.afo-matrix table { border-collapse: collapse; min-width: 760px; font-size: 14px; }
+.afo-matrix th, .afo-matrix td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: center; vertical-align: middle; }
+.afo-matrix thead th { color: var(--muted); font-weight: 600; vertical-align: bottom; line-height: 1.3; }
+.afo-matrix tbody th { text-align: left; color: var(--bright); font-weight: 600; white-space: nowrap; }
+.afo-matrix td.on { color: var(--accent); font-size: 18px; }
+/* The rule names stay in view while the piles scroll sideways. */
+.afo-matrix tbody th, .afo-matrix thead th:first-child { position: sticky; left: 0; z-index: 1; background: var(--bg2); }
+@media (max-width: 640px) {
+  .afo-matrix table { min-width: 620px; }
+  .afo-matrix tbody th { white-space: normal; min-width: 128px; max-width: 128px; }
+}
+.afo-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.afo-matrix tbody tr { transition: background .2s ease; }
+.afo-matrix tbody tr:hover { background: color-mix(in srgb, var(--accent) 7%, transparent); }
+@media (prefers-reduced-motion: reduce) {
+  .afo-fig svg.inline-fig, .afo-matrix tbody tr { transition: none; }
+}

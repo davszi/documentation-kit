@@ -1,0 +1,587 @@
+date,commit,subject,files_added,files_deleted,lines_added,lines_deleted,bytes_added,bytes_deleted,deleted_attended,deleted_doctools,deleted_evidencetools,deleted_pool,deleted_harness,deleted_pq_other,deleted_product,deleted_other_code,deleted_docs_open,deleted_docs_evidence,net_lines,net_removal
+2026-07-25,cc7e98e3,Remove SAC/TD3 and RL machinery for a fresh redo; seams stay,0,20,74,1497,0,45853,0,0,0,0,0,0,1374,20,2,0,-1423,1
+2026-07-05,7f3f0f7f,Retire the legacy PyQt desktop app,0,52,303,5832,0,202970,0,0,0,0,0,0,5784,0,0,0,-5529,1
+2026-10-01,ab42daca,Record bounded body-engine comparison and PhysX setup limit,141,0,20775,7,27723747,0,0,0,0,0,0,0,0,0,6,0,20768,0
+2026-10-03,cacccc81,Isolate PhysX startup thread limit and viewport failure,65,0,7315,37,374012,0,0,0,0,0,0,0,0,17,18,0,7278,0
+2026-10-04,cbaf95f9,Prepare headless PhysX body conformance,8,0,1153,57,40524,0,0,0,0,0,0,0,0,41,10,0,1096,0
+2026-10-04,201d3d27,Record headless PhysX controlled-step failure,36,0,5324,67,6975988,0,0,0,0,0,0,0,0,0,18,0,5257,0
+2026-10-04,3bd43346,Compare manual PhysX APIs and reference harnesses,1,0,507,2,5334,0,0,0,0,0,0,0,0,0,2,0,505,0
+2026-10-04,1ed6b067,Prepare bounded manual PhysX operation isolation,9,0,2406,10,117864,0,0,0,0,0,0,0,0,0,6,0,2396,0
+2026-10-04,62e86252,Record indexed reset failure in manual PhysX,142,0,23330,15,21337956,0,0,0,0,0,0,0,0,0,9,0,23315,0
+2026-10-04,383c83db,Prepare bounded standard Isaac lifecycle checks,14,0,2215,0,114722,0,0,0,0,0,0,0,0,0,0,0,2215,0
+2026-10-04,180e645c,Record standard Core GPU failure and reset callback gap,64,0,11574,9,7380811,0,0,0,0,0,0,0,0,0,7,0,11565,0
+2026-10-04,9cf31de2,Prepare initial and additional Core reset comparison,13,0,1661,16,79121,0,0,0,0,0,0,0,0,14,2,0,1645,0
+2026-10-04,d1560eb5,Record initial-only Core pulse failure,76,0,13013,12,7466560,0,0,0,0,0,0,0,0,0,8,0,13001,0
+2026-10-04,01a5493d,Prepare bounded manual setter and repair checks,17,0,2230,2,123774,0,0,0,0,0,0,0,0,0,2,0,2228,0
+2026-10-04,0630d25d,Isolate pose input and prepare host-staged reset repair,267,0,47378,18,22831597,0,0,0,0,0,0,0,0,8,4,0,47360,0
+2026-10-04,762e1497,Record pose transfer rejection and close repair allowance,91,0,16612,31,7747357,0,0,0,0,0,0,0,0,0,7,0,16581,0
+2026-10-04,03044537,Prepare bounded no-op CUDA pose discrimination,15,0,1736,18,98383,0,0,0,0,0,0,0,0,0,12,0,1718,0
+2026-10-04,cd58190b,Record no-op pose failure and close its allowance,105,0,20554,38,8088730,0,0,0,0,0,0,0,0,0,18,0,20516,0
+2026-10-04,74c0bcc4,Prepare retained CUDA pose-input follow-through,15,0,1987,17,112833,0,0,0,0,0,0,0,0,0,11,0,1970,0
+2026-10-04,be9d2207,Record zero-start GPU exclusivity rejection,4,0,315,15,18654,0,0,0,0,0,0,0,0,2,7,0,300,0
+2026-10-04,f1654513,Prepare bounded shared-resource pose follow-through,18,0,1775,2,103107,0,0,0,0,0,0,0,0,0,2,0,1773,0
+2026-10-04,bbfcaeda,Record shared control pass and retained pose failure,277,0,48953,8,16815933,0,0,0,0,0,0,0,0,0,2,0,48945,0
+2026-10-04,ce537d27,Prepare bounded CUDA pose-submission fences,18,0,1782,2,105424,0,0,0,0,0,0,0,0,0,2,0,1780,0
+2026-10-04,9ceba27c,Record completed CUDA fences and persistent pose failure,309,0,54822,8,17396353,0,0,0,0,0,0,0,0,0,2,0,54814,0
+2026-10-04,8256df66,Prepare disconnected static shape-table candidate,21,0,1864,2,112192,0,0,0,0,0,0,0,0,0,2,0,1862,0
+2026-10-04,1d978a53,Qualify native body resets with disconnected static fixture,520,0,102719,9,27340366,0,0,0,0,0,0,0,0,0,3,0,102710,0
+2026-10-05,5c93bbe9,Prepare visible PhysX vehicle and batch-reset qualification,20,0,3676,4,211047,0,0,0,0,0,0,0,0,0,4,0,3672,0
+2026-10-05,1568d540,Record first vehicle pair setup failure and closed budget,225,0,41936,6,13804566,0,0,0,0,0,0,0,0,0,2,0,41930,0
+2026-10-05,4429a134,Match COM validation to the native metadata device,0,0,124,6,0,0,0,0,0,0,0,0,0,4,2,0,118,0
+2026-10-05,16949a42,Release bounded vehicle continuation with reviewed repair reserve,4,0,744,29,73965,0,0,0,0,0,0,0,0,4,24,0,715,0
+2026-10-05,fd33ce6c,Preserve pending-capture failure and original checker verdict,458,0,86470,2,28017809,0,0,0,0,0,0,0,0,0,0,0,86468,0
+2026-10-05,cd6bf1d5,Repair asynchronous capture and release conserved vehicle starts,5,0,1771,31,302853,0,0,0,0,0,0,0,0,27,0,0,1740,0
+2026-10-05,cc9f8ad3,Record completed capture and Fabric path binding failure,694,0,133405,2,42836955,0,0,0,0,0,0,0,0,0,0,0,133403,0
+2026-10-05,c16a6334,Bind Fabric native paths and frame complete vehicle qualification,5,0,3109,16,778421,0,0,0,0,0,0,0,0,8,2,0,3093,0
+2026-10-05,9f1e0dcc,Record validated vehicle display and RSS-interrupted execution,1392,0,285308,2,88002860,0,0,0,0,0,0,0,0,0,0,0,285306,0
+2026-10-05,a5174734,Bind expanded resource and time allowance to vehicle qualification,7,0,6107,27,1868483,0,0,0,0,0,0,0,0,22,3,0,6080,0
+2026-10-05,ac4dc195,Record camera agreement failure after verified driving prefix,2792,0,820607,6,189537859,0,0,0,0,0,0,0,0,0,2,0,820601,0
+2026-10-05,a6c49809,Retain rejected camera state with bounded shared-resource headroom,7,0,12087,17,4303455,0,0,0,0,0,0,0,0,15,2,0,12070,0
+2026-10-05,696f13bc,Record complete visible recovery and version-label audit failure,5588,0,1341333,4,387749825,0,0,0,0,0,0,0,0,0,2,0,1341329,0
+2026-10-05,23b9c401,Verify saved recovery and prepare matched PhysX batch reset,11,0,34630,7,14177549,0,0,0,0,0,0,0,0,0,3,0,34623,0
+2026-10-05,c9c60f81,Retain batch camera overwrite and checked physical prefix,11189,0,2763664,7,795220839,0,0,0,0,0,0,0,0,0,3,0,2763657,0
+2026-10-05,e5a3fdd3,Protect experiment camera authority and release batch reset,5,0,1024,3,41549,0,0,0,0,0,0,0,0,1,2,0,1021,0
+2026-10-05,15d3e02a,Qualify visible PhysX vehicle and selected moving reset,22378,0,5450494,9,1591506699,0,0,0,0,0,0,0,0,0,3,0,5450485,0
+2026-10-05,266c909e,Require watchable recordings for matched track results,0,0,19,1,0,0,0,0,0,0,0,0,0,0,1,0,18,0
+2026-10-05,22f1ff0d,Clarify simulator viewport requirement for track results,0,0,17,10,0,0,0,0,0,0,0,0,0,0,10,0,7,0
+2026-10-05,fa3a82b3,Prepare matched contacts and Track S1 viewport captures,30,0,42441,2,2429357,0,0,0,0,0,0,0,0,0,2,0,42439,0
+2026-10-05,ae6312b4,Retain matched PhysX contacts and Newton import failure,879,0,580281,11,41447290,0,0,0,0,0,0,0,0,0,4,0,580270,0
+2026-10-05,5c212323,Repair Newton material scope and release reserved continuation,6,0,3662,36,424961,0,0,0,0,0,0,0,0,8,2,0,3626,0
+2026-10-05,6f3fca06,Retain Newton visualizer failure and close original allowance,433,0,115788,33,13174413,0,0,0,0,0,0,0,0,3,4,0,115755,0
+2026-10-05,58cc8ef7,Fix Newton visualizer selection and prepare bounded track continuation,6,0,3845,38,424958,0,0,0,0,0,0,0,0,12,0,0,3807,0
+2026-10-05,ea5cf26f,Retain incomplete Newton native contact evidence,445,0,118734,38,13420560,0,0,0,0,0,0,0,0,3,0,0,118696,0
+2026-10-05,11d7fa6a,Prepare explicit normal-only contact fixture and bounded captures,7,0,3983,38,436970,0,0,0,0,0,0,0,0,5,0,0,3945,0
+2026-10-05,8d81f5df,Retain completed Newton contacts and incomplete track display,901,0,561177,156,39860580,0,0,0,0,0,0,0,0,3,2,0,561021,0
+2026-10-05,bcc936b7,Add owned follow and top-down vehicle viewports,9,0,5900,211,514079,0,0,0,0,0,0,0,0,54,78,0,5689,0
+2026-10-05,27205f20,Retain the two-viewport setup failure,435,0,124540,10,13862540,0,0,0,0,0,0,0,0,0,1,0,124530,0
+2026-10-05,2e8aefa6,Correct the installed camera-layer wrapper access,5,0,3392,38,423538,0,0,0,0,0,0,0,0,9,3,0,3354,0
+2026-10-05,dae2b0b2,Retain the first dual-view capture timeout,445,0,127930,24,14161516,0,0,0,0,0,0,0,0,0,13,0,127906,0
+2026-10-05,fcdc9477,Reuse the extension docked vehicle viewport layout,8,0,4073,78,449514,0,0,0,0,0,0,0,0,31,6,0,3995,0
+2026-10-05,de9952a0,Retain completed docked PhysX track capture,457,0,197742,69,36237189,0,0,0,0,0,0,0,0,0,14,0,197673,0
+2026-10-05,745f2caf,Improve authoritative live viewport cadence,8,0,19024,120,2190711,0,0,0,0,0,0,0,0,53,9,0,18904,0
+2026-10-05,c337cefb,Retain measured live viewport publication holds,459,0,155296,44,31569196,0,0,0,0,0,0,0,0,0,0,0,155252,0
+2026-10-05,eecee84b,Bound live producer progress publication,7,0,6454,58,739111,0,0,0,0,0,0,0,0,5,6,0,6396,0
+2026-10-05,330caa2b,Retain user-stopped viewport capture,459,0,319403,2,21576229,0,0,0,0,0,0,0,0,0,0,0,319401,0
+2026-10-06,7f6e828c,Reuse compiled vehicle equations in matched captures,12,0,315315,73,12242151,0,0,0,0,0,0,0,0,11,0,0,315242,0
+2026-10-06,35e95750,Retain compiled capture failure before driving,472,0,404699,38,35149736,0,0,0,0,0,0,0,0,0,0,0,404661,0
+2026-10-06,b27b005e,Isolate compiled producer from timed stack walks,7,0,2100,29,207220,0,0,0,0,0,0,0,0,4,0,0,2071,0
+2026-10-06,3948887a,Retain successful compiled setup and default-buffer failure,993,0,547433,41,48753703,0,0,0,0,0,0,0,0,0,0,0,547392,0
+2026-10-06,e0ba9ab9,Match compiled default wrench buffers to setup layout,0,0,251,108,0,0,0,0,0,0,0,0,0,27,0,0,143,0
+2026-10-06,d4420db0,Retain completed viewport capture and torque replay failure,997,0,663673,44,69006915,0,0,0,0,0,0,0,0,0,0,0,663629,0
+2026-10-06,c19b1384,Prepare bounded retained-input vehicle arithmetic replay,8,0,3059,45,196951,0,0,0,0,0,0,0,0,0,0,0,3014,0
+2026-10-06,f881e339,Retain arithmetic replay and passing precision candidate,1509,0,676661,48,79147377,0,0,0,0,0,0,0,0,0,0,0,676613,0
+2026-10-06,5a2d8e3b,Prepare complete retained-state precision conformance,7,0,2077,54,176074,0,0,0,0,0,0,0,0,3,0,0,2023,0
+2026-10-06,5c2f5217,Record parallel qualification sequence and ownership,0,0,115,0,0,0,0,0,0,0,0,0,0,0,0,0,115,0
+2026-10-06,5bd516d3,Retain complete arithmetic replay failure and checked evidence,1012,0,531676,231,71229257,0,0,0,0,0,0,0,0,12,0,0,531445,0
+2026-10-06,93e0d3ac,Prepare guarded operation-order vehicle arithmetic replay,18,0,3813,19,366216,0,0,0,0,0,0,0,0,1,1,0,3794,0
+2026-10-06,2f7d556b,Retain reviewed eager Newton admission preparation,3,0,879,10,29453,0,0,0,0,0,0,0,0,3,7,0,869,0
+2026-10-06,6171d2cf,Authorize bounded operation-order arithmetic qualification,1,0,614,10,69913,0,0,0,0,0,0,0,0,0,0,0,604,0
+2026-10-08,dd359754,Retain partial execution-fidelity evidence and vehicle review drafts,508,0,496501,60,56574781,0,0,0,0,0,0,0,0,2,0,0,496441,0
+2026-10-08,a93ab550,Retain PhysX Vehicle SDK reuse assessment and measured adapter evidence,2899,0,9485328,157,865572371,0,0,1,0,0,0,155,0,0,1,0,9485171,0
+2026-10-08,191f00e1,Keep large experiment artifacts local during publication,2,0,76742,2,3798404,0,0,2,0,0,0,0,0,0,0,0,76740,0
+2026-10-08,d014e1f2,Clarify locally retained SDK artifact availability,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0
+2026-10-08,de9b4703,Prepare parallel contract and road geometry work,10,0,2596,35,88844,0,0,0,0,0,0,0,0,0,35,0,2561,0
+2026-10-08,6f9c732f,Prepare guarded SDK batch interfaces and retain native failures,667,0,204442,0,10238912,0,0,0,0,0,0,0,0,0,0,0,204442,0
+2026-10-08,4fd0ed7f,Verify SDK graph lifetime and correct batch adapter lookups,335,0,120452,71,5528003,0,0,0,0,0,11,59,0,0,0,0,120381,0
+2026-10-09,c1cab69f,Verify SDK batch commands and collection cost,732,0,578270,77,29869141,0,0,0,0,0,21,56,0,0,0,0,578193,0
+2026-10-09,a9f60741,Accept component contracts and close Plan 02,0,0,536,473,0,0,0,0,0,0,0,0,0,0,445,0,63,0
+2026-10-09,a705cc7e,Separate qualification cost from production FPS,6,0,381,27,78002,0,0,0,0,0,2,7,0,0,17,0,354,0
+2026-10-09,d1ea55a9,Add variable track corridors and explicit save-as,9,0,1787,6,267902,0,0,0,0,0,0,0,1,0,3,0,1781,0
+2026-10-09,3eca4e1c,Measure verified normal SDK collection,233,0,58879,85,3272721,0,0,0,0,0,20,57,0,0,7,0,58794,0
+2026-10-09,833fe262,Measure training and inference environment profiles,238,0,58702,17,3387099,0,0,0,0,0,9,8,0,0,0,0,58685,0
+2026-10-09,fa168f8c,Run existing controller on the SDK vehicle,253,0,76411,28,3850450,0,0,0,0,0,11,17,0,0,0,0,76383,0
+2026-10-09,c0bda797,Certify variable-width racing lines and add measured Norisring,23,0,104594,25,2951725,0,0,0,0,0,0,0,5,0,3,0,104569,0
+2026-10-11,c97570b5,Assess bounded source-edge reconstruction,7,0,101893,1,2746980,0,0,0,0,0,0,0,0,0,1,0,101892,0
+2026-10-11,ac78cf22,Record the SDK controller viewport demo,461,0,118348,0,6598472,0,0,0,0,0,0,0,0,0,0,0,118348,0
+2026-10-11,14037332,Record a complete SDK controller lap,662,0,240678,16,12107303,0,0,0,0,0,0,14,0,0,0,0,240662,0
+2026-10-11,0906edba,Compare cubic-axis offset constructions,5,0,89127,1,3053309,0,0,0,0,0,0,0,0,0,1,0,89126,0
+2026-10-11,ce74b46d,Assess SDK road surfaces and record the ramp demo,125,0,111524,18,7327805,0,0,0,0,0,2,16,0,0,0,0,111506,0
+2026-10-11,d8a2326f,Document PhysX road assessment conclusions,0,0,143,1,0,0,0,0,0,0,0,0,0,0,0,0,142,0
+2026-10-11,615d557a,Diagnose SDK contacts and prepare the query comparison,25,0,8688,1,2197292,0,0,0,0,0,0,0,0,0,0,0,8687,0
+2026-10-11,8e99b2b0,Measure SDK query effects and retain contact limits,66,0,22390,3,4020801,0,0,0,0,0,2,0,0,0,0,0,22387,0
+2026-10-11,e43e7b87,Audit bounded SDK contact observation and retain adapter failure,56,0,28419,4,2799575,0,0,0,0,0,1,2,0,0,0,0,28415,0
+2026-10-11,603a6b1f,Verify corrected SDK observer and record fixed-pose results,39,0,21692,25,2353650,0,0,0,0,0,1,0,0,0,1,0,21667,0
+2026-10-11,9ba7c5d1,Consolidate track sampling and width smoothing documentation,61,0,142578,684,5837227,0,0,1,0,0,0,0,0,0,39,0,141894,0
+2026-10-11,b6cce265,Diagnose SDK kerb drift and prepare matched controls,21,0,40068,2,2107421,0,0,0,0,0,0,1,0,0,0,0,40066,0
+2026-10-11,4e9d410d,Teach corridor geometry and render inline equations,11,0,5508,147,173958,0,0,5,0,0,0,0,0,0,0,0,5361,0
+2026-10-11,4bbe0042,Measure SDK kerb sensitivity with matched flat meshes,83,0,59605,11,9397628,0,0,0,0,0,10,0,0,0,0,0,59594,0
+2026-10-11,cdbbe49f,Introduce Frenet frames in the road geometry walkthrough,0,0,211,94,0,0,0,0,0,0,0,0,0,0,0,0,117,0
+2026-10-11,c3d506f6,Assess SDK response on better-shaped road meshes,112,0,59793,33,9900841,0,0,0,0,0,4,6,0,0,1,0,59760,0
+2026-10-11,50a05a80,"Explain track stations, signed corridors and lap seams",2,0,307,57,74832,0,0,0,0,0,0,0,11,0,0,0,250,0
+2026-10-11,b1d09788,Motivate the road strip fold check before its derivation,0,0,78,13,0,0,0,0,0,0,0,0,0,0,0,0,65,0
+2026-10-11,2ce327f6,Explain sampling and smoothing interactions in the road demo,0,0,181,30,0,0,0,0,0,0,0,0,0,0,0,0,151,0
+2026-10-11,8d630cf2,Assess SDK faster turns and gentle chassis contact,67,0,22928,13,2980159,0,0,0,0,0,1,0,0,0,6,0,22915,0
+2026-10-11,aad1708f,Assess SDK grass recovery and selected reset isolation,66,0,27331,16,2615018,0,0,0,0,0,3,0,0,0,7,0,27315,0
+2026-10-11,128dae2b,Assess SDK high-speed handling and wheel frames,67,0,20843,10,2469736,0,0,0,0,0,1,0,0,0,0,0,20833,0
+2026-10-11,989008b3,Assess SDK low-speed timestep sensitivity,58,0,31148,19,3814808,0,0,0,0,0,4,3,0,0,0,0,31129,0
+2026-10-11,1ed46a6e,Quarantine partially failed SDK resets,4,0,678,56,124293,0,0,0,0,0,0,53,0,0,0,0,622,0
+2026-10-11,aad0dbcb,Prepare fixed-command SDK timestep comparison,12,0,8491,11,563231,0,0,0,0,0,0,0,0,0,10,0,8480,0
+2026-10-11,975bbdde,Prepare fixed-command SDK collection and scoring,24,0,12098,16,780594,0,0,0,0,0,0,0,0,0,5,0,12082,0
+2026-10-12,860d83ae,Measure SDK timestep response with identical commands,71,0,55592,29,3762673,0,0,0,0,0,13,0,0,0,0,0,55563,0
+2026-10-12,8638f594,Refactor curve and track documentation,97,0,273791,226717,6536449,0,0,3,0,0,0,0,0,0,0,0,47074,0
+2026-10-12,3b5bf51d,Verify active SDK reset isolation and prepare powered response,97,0,35328,8,2379768,0,0,0,0,0,0,0,0,0,4,0,35320,0
+2026-10-12,c3d0bd57,Measure SDK powered launch braking and support misses,62,0,94213,17,3544108,0,0,0,0,0,0,0,0,0,10,0,94196,0
+2026-10-12,79349838,Validate SDK flat-road mesh and diagnose chassis contact,87,0,125502,19,6251746,0,0,0,0,0,0,0,0,0,7,0,125483,0
+2026-10-12,e8f0c749,Verify SDK observed-speed braking and hold,75,0,36744,18,3251404,0,0,0,0,0,0,0,0,0,9,0,36726,0
+2026-10-12,71c8aee3,Verify SDK post-contact hold and reset isolation,101,0,143702,14,7376799,0,0,0,0,0,0,0,0,0,8,0,143688,0
+2026-10-12,39e93d43,Verify SDK brake release and awake restart,102,0,121815,20,8222337,0,0,0,0,0,0,0,0,0,10,0,121795,0
+2026-10-12,b770c53c,Prepare SDK fixed-command mesh comparison,31,0,33409,5,1926962,0,0,0,0,0,0,0,0,0,4,0,33404,0
+2026-10-12,e1abfe62,Prepare SDK repeated stops and reverse recording,35,0,86191,1,2115399,0,0,0,0,0,0,0,0,0,0,0,86190,0
+2026-10-12,d7151830,Measure SDK response on the retained road mesh,134,0,131847,14,9974567,0,0,0,0,0,0,0,0,0,9,0,131833,0
+2026-10-12,41986ec2,Apply the shared chapter reader across documentation,2,0,16499,15052,15256,0,0,3,0,0,0,0,0,0,1,0,1447,0
+2026-10-12,0faeb0cc,Verify SDK repeated stops and reverse release,128,0,94816,19,5439548,0,0,0,0,0,0,0,0,0,7,0,94797,0
+2026-10-12,1bc81832,Reconcile documentation writing guidance,0,0,157,72,0,0,0,0,0,0,0,0,0,0,0,0,85,0
+2026-10-12,e4b6248f,Prepare SDK near-rest loads and recovery,23,0,81829,8,1994778,0,0,0,0,0,0,0,0,0,6,0,81821,0
+2026-10-12,d02e8a7c,Install approved NVIDIA 595 driver,6,0,431,7,24860,0,0,0,0,0,0,0,0,0,0,0,424,0
+2026-10-12,814d1fc4,Assess smoothing on mapped Norisring widths,4,0,840,17,367785,0,0,0,0,0,0,0,0,0,7,0,823,0
+2026-10-12,1bdfcc33,Explain track projection and containment with worked figures,5,0,16345,9,214917,0,0,0,0,0,0,0,0,0,0,0,16336,0
+2026-10-12,227c2698,Prepare SDK near-rest recording and analysis,138,0,164933,24,5546080,0,0,0,0,0,0,0,0,0,4,0,164909,0
+2026-10-12,206aed20,Support optional shape-preserving track widths,6,0,305190,55,6773280,0,0,0,0,0,0,0,19,4,10,0,305135,0
+2026-10-12,67f30a86,Clarify fixed track widths in the comparison figure,0,0,32,15,0,0,0,0,0,0,0,0,2,0,0,0,17,0
+2026-10-12,a7d9d00e,Show widths at marked track stations,0,0,72,14,0,0,0,0,0,0,0,0,2,0,0,0,58,0
+2026-10-12,618d3016,Clarify section shortcuts in the documentation drawer,0,0,166,19,0,0,0,0,0,0,0,0,0,0,0,0,147,0
+2026-10-12,a309f2cc,Include navigation disclosures in the keyboard focus loop,0,0,24,2,0,0,0,0,0,0,0,0,0,0,0,0,22,0
+2026-10-12,032e1d56,Record SDK stopped-car push and recovery,81,0,40213,23,2158975,0,0,0,0,0,0,0,0,0,11,0,40190,0
+2026-10-12,f8164bf6,Connect track profiles to app and planner,9,0,337114,108,7682860,0,0,0,0,0,0,0,68,0,9,0,337006,0
+2026-10-12,c278eea8,Audit SDK near-rest resistance and observation,18,0,21822,12,1128020,0,0,0,0,0,0,0,0,0,11,0,21810,0
+2026-10-12,eb17acab,Separate track queries and connect their illustrated mathematics,4,0,27849,3017,335391,0,0,0,0,0,0,0,0,27,0,0,24832,0
+2026-10-12,840609dd,Explain crossing work and measure supported query costs,2,0,662,0,13202,0,0,0,0,0,0,0,0,0,0,0,662,0
+2026-10-12,46c1f27f,Verify track consumers in the app,55,0,137231,333,10885516,0,0,0,0,0,0,0,9,0,6,0,136898,0
+2026-10-12,a3f76b82,Preserve concurrent crossing documentation,0,0,311,0,0,0,0,0,0,0,0,0,0,0,0,0,311,0
+2026-10-12,16e2abe8,Clarify the crossing comparison and link every figure reference,0,0,3535,1715,0,0,0,0,0,0,0,0,0,27,0,0,1820,0
+2026-10-12,cce154c8,Correct the app verification report link,0,0,7,2,0,0,0,0,0,0,0,0,0,0,0,0,5,0
+2026-10-13,dd7a4513,Solve straight boundary crossings directly,2,0,666,76,13243,0,0,0,0,0,0,0,0,12,0,0,590,0
+2026-10-13,31c9d247,Recover SDK near-rest observation and independent closeout,124,0,72606,29,3240504,0,0,0,0,0,0,0,0,0,12,0,72577,0
+2026-10-13,ab32d00b,Clarify track sections and source correspondence,0,0,862,519,0,0,0,0,0,0,0,0,0,0,0,0,343,0
+2026-10-13,76b7b893,Audit retained SDK driving capabilities and reuse work,17,0,1597,12,498381,0,0,0,0,0,0,0,0,0,11,0,1585,0
+2026-10-13,5fffa0cc,Add authored physical track surface copies,106,0,95557,26,14220044,0,0,2,0,0,0,0,15,0,0,0,95531,0
+2026-10-13,8a81aed6,Retain SDK force startup and owned compute qualification limits,76,0,16799,20,1519345,0,0,0,0,0,0,0,0,0,19,0,16779,0
+2026-10-13,99a16db4,Verify SDK force delivery and retain qualification limits,70,0,35935,140,3233912,0,0,0,0,0,23,0,0,0,19,0,35795,0
+2026-10-13,792648e2,Verify braked SDK response and retain conditional limits,136,0,48240,48,3270256,0,0,0,0,0,21,0,0,0,5,0,48192,0
+2026-10-13,2fa2cbd4,Qualify SDK driving probes and retain grade initialization limits,112,0,43276,8,3995935,0,0,0,0,0,0,1,0,0,4,0,43268,0
+2026-10-13,3184ae5d,Record SDK progressive handling and retain support-query limits,36,0,38239,21,2199150,0,0,0,0,0,0,0,0,0,4,0,38218,0
+2026-10-13,dadfcdec,Verify gentle off-centre SDK contact and finite continuation,39,0,14803,15,1461208,0,0,0,0,0,0,0,0,0,1,0,14788,0
+2026-10-13,61ae0aa9,Retain SDK powered-pushing evidence and its failed paired comparison,60,0,28933,25,2747428,0,0,0,0,0,1,2,0,0,2,0,28908,0
+2026-10-13,c49f1b79,Record unresolved SDK turn support on smaller road triangles,76,0,55933,21,3983890,0,0,0,0,0,0,2,0,0,5,0,55912,0
+2026-10-13,f03d1aeb,Record direct SDK separated recontact with paired failure retained,86,0,70122,29,5219936,0,0,0,0,0,0,11,0,0,3,0,70093,0
+2026-10-13,4185fc6c,Record unresolved SDK spin qualification on smaller road triangles,89,0,84977,50,5719095,0,0,0,0,0,0,14,0,0,5,0,84927,0
+2026-10-13,8db3ff4a,Verify SDK grade initialization and preserve driving qualification gaps,120,0,55409,53,4580196,0,0,0,0,0,0,12,0,0,11,0,55356,0
+2026-10-16,c0684183,Prepare approved unequal-mass SDK contact qualification,100,0,29463,49,2301262,0,0,0,0,0,1,4,0,0,1,0,29414,0
+2026-10-17,19895d6e,Close bounded SDK reuse qualification with unequal-mass contact evidence,63,0,60615,121,3857628,0,0,0,0,0,0,0,0,0,1,0,60494,0
+2026-10-17,9410e4f9,Reconcile canonical SDK integration order and parallel work,0,0,666,258,0,0,0,0,0,0,0,0,0,0,257,0,408,0
+2026-10-17,e2d81fea,"Clarify SDK completion, parallel work and MCP handoffs",0,0,107,16,0,0,0,0,0,0,0,0,0,0,16,0,91,0
+2026-10-17,8383d8fe,Consolidate peer handoffs and shelve custom vehicle research,2,0,1952,1413,97021,0,0,1,0,0,0,0,0,0,50,0,539,0
+2026-10-17,fed2560c,Keep review findings in their owning topic documents,0,0,39,32,0,0,0,0,0,0,0,0,0,0,31,0,7,0
+2026-10-17,95586ac7,Consolidate open documentation around canonical topics,2,13,1038,4905,31452,120143,0,1,0,0,0,0,0,0,4368,0,-3867,1
+2026-10-17,00eacb82,Move historical SDK documents into experiment evidence,4,0,5750,4982,33283,0,0,2,0,0,0,0,0,0,4925,0,768,0
+2026-10-17,9a90cde0,Separate subject knowledge from unfinished platform work,7,1,9918,5755,210041,9947,0,24,0,0,0,0,0,0,5087,0,4163,0
+2026-10-17,ab1e3c9f,Build documentation from one topic source tree,7,79,32184,425657,21859,15827105,0,57,0,0,0,0,0,3442,135,0,-393473,1
+2026-10-17,bf00c524,Resolve documentation checks in fresh checkouts,0,0,117,8,0,0,0,5,0,0,0,0,0,0,0,0,109,0
+2026-10-17,4f52e2b6,Keep documentation evidence with its topic,0,0,26249,26155,0,0,0,36,0,0,0,0,0,5,137,2637,94,0
+2026-10-17,0c29312a,Name the refactor execution plan by its role,0,0,524,493,0,0,0,0,0,0,0,0,0,0,418,0,31,0
+2026-10-17,8a691041,Reconcile documentation policy and relocate its tooling,1,0,2708,2538,9665,0,0,2320,0,0,0,0,0,1,0,0,170,0
+2026-10-17,58a65b3a,Consolidate project writing and Isaac development guidance,0,0,637,578,0,0,0,1,0,0,0,0,2,0,3,0,59,0
+2026-10-18,cf7661c8,Move dynamics knowledge into model and control topics,8,0,3114,1766,68842,0,0,7,0,0,0,0,30,0,9,0,1348,0
+2026-10-18,6db44580,Use an approved loopback preview for documentation review,0,0,38,8,0,0,0,0,0,0,0,0,0,0,0,0,30,0
+2026-10-18,733cb2fa,"Place spiral tooling, checks and history in their owning homes",1,0,1442,1303,245,0,0,1,0,0,0,0,6,714,1,0,139,0
+2026-10-18,bd3c03d3,Prepare SDK vehicle and shared-clock integration,8,0,3660,12,156523,0,0,0,0,0,0,0,0,0,5,0,3648,0
+2026-10-18,96e36036,Implement approved finite brake release candidate,2,0,538,44,18386,0,0,0,0,0,0,0,18,0,4,0,494,0
+2026-10-18,64a3b3d8,Verify standalone SDK clock and reset validity,11,0,6662,38,400993,0,0,0,0,0,0,0,0,0,21,0,6624,0
+2026-10-18,14bbaf1f,Qualify finite brake release through ordinary SDK delivery,11,0,5462,220,250913,0,0,0,0,0,209,0,0,0,5,0,5242,0
+2026-10-18,d0a3ce20,Add fixed-datum vehicle kinematics,5,0,533,1,26873,0,0,0,0,0,0,0,0,0,1,0,532,0
+2026-10-18,67bac2fa,Qualify full-duration SDK brake hold and ordinary restart,9,0,4107,11,215397,0,0,0,0,0,0,0,0,0,5,0,4096,0
+2026-10-18,9cfb3bcc,Extract the private SDK vehicle recipe,5,0,1138,3,59164,0,0,0,0,0,0,0,0,0,2,0,1135,0
+2026-10-18,b84f0e08,Add inactive SDK vehicle adapter boundaries,10,0,3097,7,149727,0,0,0,0,0,0,0,0,0,4,0,3090,0
+2026-10-18,d868a164,Qualify joined SDK adapter and finite partial brake release,11,0,7220,33,366181,0,0,0,0,0,0,0,7,0,10,0,7187,0
+2026-10-18,8ac5bfce,Add bounded body-input and direct-command admission,6,0,1723,10,83108,0,0,0,0,0,0,0,0,0,5,0,1713,0
+2026-10-18,e1b2bf61,Compose SDK participant under caller-owned clock,12,0,3452,16,185995,0,0,0,0,0,12,0,1,0,3,0,3436,0
+2026-10-18,b9e968df,Verify native SDK participant composition,1,0,951,30,45405,0,0,0,0,0,0,0,0,0,6,0,921,0
+2026-10-18,86542b37,Extract existing aerodynamic load requests,3,0,465,1,21667,0,0,0,0,0,0,0,0,0,1,0,464,0
+2026-10-18,2c75e530,Compose four SDK participants under one clock,9,0,4001,5,239069,0,0,0,0,0,2,0,0,0,3,0,3996,0
+2026-10-18,eb947fc5,Verify shared SDK routing from retained native records,3,0,1155,60,49412,0,0,0,0,0,1,2,0,0,6,0,1095,0
+2026-10-19,fd8039fe,Add explicit body-frame command kinematics,4,0,486,4,21647,0,0,0,0,0,0,0,0,0,1,0,482,0
+2026-10-19,4d350b0b,Add checked private SDK acceleration readout,1,0,255,2,2669,0,0,0,0,0,0,0,0,0,0,0,253,0
+2026-10-19,719f18a9,Prepare bounded SDK acceleration readout diagnostic,10,0,2438,23,135642,0,0,0,0,0,21,0,0,0,2,0,2415,0
+2026-10-20,385da05d,Close pre-native SDK readout review gaps,1,0,194,25,5404,0,0,0,0,0,21,0,0,0,2,0,169,0
+2026-10-20,d30c9045,Fix fresh-stage SDK readout preflight,1,0,249,10,8426,0,0,0,0,0,0,5,0,0,2,0,239,0
+2026-10-20,3eeba72f,Add explicit SDK command test candidate and failure evidence,9,0,2011,22,97558,0,0,0,0,0,0,0,21,0,1,0,1989,0
+2026-10-20,256b15b5,Close SDK acceleration readout evidence and report replay,3,0,2540,6,122313,0,0,0,0,0,1,0,0,0,2,0,2534,0
+2026-10-20,757eaa8b,Fix SDK command cancellation before delayed activation,1,0,324,46,3730,0,0,0,0,0,0,0,23,0,1,0,278,0
+2026-10-20,9ba03a7d,Prepare bounded SDK command and direction screen,8,0,2140,26,124318,0,0,0,0,0,4,21,0,0,1,0,2114,0
+2026-10-20,296b52e5,Qualify SDK command routes direction and finite release,4,0,4558,10,178309,0,0,0,0,0,0,0,0,0,6,0,4548,0
+2026-10-20,64c72d25,Add guarded SDK participant actuation retirement,1,0,362,2,3942,0,0,0,0,0,0,0,1,0,1,0,360,0
+2026-10-20,3d278be0,Add caller-owned SDK rest initialization candidate,3,0,1097,2,56168,0,0,0,0,0,0,0,0,0,2,0,1095,0
+2026-10-20,38c34bc2,Prepare SDK selected-world rest and rebind qualification,10,0,3309,13,198284,0,0,0,0,0,3,7,0,0,2,0,3296,0
+2026-10-20,311a92f1,Qualify isolated SDK rest reset and peer continuation,3,0,3989,7,137375,0,0,0,0,0,0,0,0,0,3,0,3982,0
+2026-10-20,aa01f9cc,Add checked SDK actor aftermath and cohort finalization,4,0,1515,4,66312,0,0,0,0,0,0,0,1,0,2,0,1511,0
+2026-10-20,90974ce9,Prepare native SDK contact and actor aftermath qualification,8,0,3268,26,206604,0,0,0,0,0,2,15,0,0,8,0,3242,0
+2026-10-20,5583c0a4,Fix native SDK held-state publication carriers,1,0,403,20,18081,0,0,0,0,0,0,0,0,0,3,0,383,0
+2026-10-20,54b8c08a,Record native SDK held contact and topology binding failure,3,0,4852,42,157004,0,0,0,0,0,0,0,0,0,3,0,4810,0
+2026-10-20,9919165c,Prepare same-clock SDK topology read-view discriminator,8,0,1833,7,118964,0,0,0,0,0,4,0,0,0,2,0,1826,0
+2026-10-20,62da0eb0,Record native SDK factory-only topology view result,1,0,278,15,10108,0,0,0,0,0,0,0,0,0,3,0,263,0
+2026-10-20,4e8bfad4,Preserve SDK commands while refreshing removal read views,4,0,1869,11,57744,0,0,0,0,0,0,0,7,0,3,0,1858,0
+2026-10-20,3d7cacb9,Prepare SDK removal rebind and continued driving screen,8,0,2511,4,158807,0,0,0,0,0,1,0,0,0,2,0,2507,0
+2026-10-20,375bb9b7,Resolve Lab manager before SDK read-view recovery,1,0,668,9,21668,0,0,0,0,0,0,3,3,0,2,0,659,0
+2026-10-20,4febc621,Verify SDK survivor continuation with corrected offline checks,3,0,3766,10,262941,0,0,0,0,0,4,0,0,0,5,0,3756,0
+2026-10-20,c1b8d8d5,Support SDK retired-world authoring and REST adapters,2,0,1764,123,24494,0,0,0,0,0,0,0,117,0,6,0,1641,0
+2026-10-20,369bf91e,Prepare SDK retired-world reconstruction test and pause,8,0,3492,9,231905,0,0,0,0,0,1,0,0,0,5,0,3483,0
+2026-10-23,11c6c163,Retain SDK birth-side velocity failure and owned cleanup,2,0,922,13,33144,0,0,0,0,0,0,0,1,0,7,0,909,0
+2026-10-23,391da4cf,Add static SDK road contact authoring,3,0,702,2,40371,0,0,0,0,0,0,0,0,0,2,0,700,0
+2026-10-23,25558c52,Prepare same-clock SDK birth-velocity diagnostic,8,0,2539,3,156886,0,0,0,0,0,2,0,0,0,1,0,2536,0
+2026-10-23,c4b59050,Exclude historical samples before owned process birth,3,0,996,12,43505,0,0,0,0,0,10,0,0,0,2,0,984,0
+2026-10-23,758ffd33,Add live NVIDIA GPU process monitor,2,0,300,0,11636,0,0,0,0,0,0,0,0,0,0,0,300,0
+2026-10-23,b608c844,Retain native SDK birth-velocity diagnostic evidence,2,0,1188,10,42383,0,0,0,0,0,0,0,0,0,8,0,1178,0
+2026-10-23,08d60d7f,Add public body input bridge for Pure Pursuit,4,0,1611,8,67580,0,0,0,0,0,0,0,0,0,1,0,1603,0
+2026-10-23,6a85b4ef,Prepare isolated SDK birth activation batches,2,0,792,37,26179,0,0,0,0,0,20,8,0,0,7,0,755,0
+2026-10-23,d530494c,Record SDK activation-order diagnostic and contract gap,3,0,2442,15,88406,0,0,0,0,0,0,0,0,0,7,0,2427,0
+2026-10-23,addfead4,Record installed SDK source identity gap,1,0,337,0,15873,0,0,0,0,0,0,0,0,0,0,0,337,0
+2026-10-23,2c9c2b58,Prepare authored-road SDK support collector,4,0,3861,14,299622,0,0,0,0,0,2,9,0,0,3,0,3847,0
+2026-10-23,9f436309,Consolidate current SDK reuse readiness,2,0,694,43,35890,0,0,0,0,0,0,0,0,0,0,0,651,0
+2026-10-23,76878f78,Prepare bounded SDK post-guard motion diagnostic,9,0,3195,5,184637,0,0,0,0,0,0,0,0,0,5,0,3190,0
+2026-10-23,2a325a09,Record SDK post-guard motion and complete owned cleanup,2,0,2363,11,90082,0,0,0,0,0,0,0,0,0,9,0,2352,0
+2026-10-23,18a306f2,Add checked retained-body dormancy candidate,4,0,814,2,41247,0,0,0,0,0,0,0,0,0,2,0,812,0
+2026-10-23,70ee8f08,Prepare retained-finisher reset qualification,11,0,5091,15,292531,0,0,0,0,0,0,0,0,0,15,0,5076,0
+2026-10-23,f8cd1ab9,Record retained-finisher native guard failure,3,0,1150,6,54635,0,0,0,0,0,0,0,0,0,6,0,1144,0
+2026-10-23,9b97dbfd,Capture legacy run and preset compatibility fixtures,7,0,570,0,21967,0,0,0,0,0,0,0,0,0,0,0,570,0
+2026-10-23,9d3ac2f8,Merge racing-line methods into platform preparation,49,0,24224,238,1235328,0,0,0,0,0,2,9,102,0,12,0,23986,0
+2026-10-23,59de4951,Document proposed held-orientation verification resolution,2,0,607,3,37012,0,0,0,0,0,0,0,0,0,3,0,604,0
+2026-10-25,34d0a682,Prepare approved retained-finisher orientation test,11,0,2751,50,142215,0,0,0,0,0,21,0,0,0,12,0,2701,0
+2026-10-25,d7d98a4f,Correct retained-finisher call accounting and retain native evidence,2,0,1502,21,47589,0,0,0,0,0,2,0,0,0,10,0,1481,0
+2026-10-25,d332b500,Keep frozen project data inside the nearest source root,1,0,55,0,1488,0,0,0,0,0,0,0,0,0,0,0,55,0
+2026-10-25,561498fb,Prepare frozen authored-road support qualification,6,0,1727,10,107550,0,0,0,0,0,0,0,0,0,7,0,1717,0
+2026-10-25,4fc10ad9,Retain pre-worker road admission failure and verified recovery,2,0,270,3,14543,0,0,0,0,0,0,0,0,0,2,0,267,0
+2026-10-25,c1474c38,Reuse validated road data before guarded native startup,2,0,541,5,21734,0,0,0,0,0,0,3,0,0,2,0,536,0
+2026-10-25,f568de17,Retain native road support evidence and correct post-close replay,2,0,2347,54,144200,0,0,0,0,0,2,0,0,0,33,0,2293,0
+2026-10-25,2e88fc4d,Document the bounded SDK controller driving candidate,2,0,488,1,22298,0,0,0,0,0,0,0,0,0,1,0,487,0
+2026-10-25,41dcddaa,Preserve explicit SDK identity and deny unavailable execution,4,0,1179,27,49893,0,0,0,0,0,0,0,15,0,12,0,1152,0
+2026-10-25,474d9e28,Prepare approved SDK public-input driving qualification,13,0,4228,49,239105,0,0,0,0,0,28,0,0,0,5,7,4179,0
+2026-10-25,2faa3bd2,Preserve published selected poses with strict record lookup,4,0,731,5,34650,0,0,0,0,0,0,0,0,0,5,0,726,0
+2026-10-25,2d52dba6,Detach driving protocols before exact JSON validation,0,0,124,11,0,0,0,0,0,0,0,2,0,0,3,5,113,0
+2026-10-25,40627f8f,Verify SDK offline readiness and app ownership constraints,2,0,735,17,27196,0,0,0,0,0,0,0,0,0,6,7,718,0
+2026-10-25,4fbd5729,Recover and qualify the first shared SDK controller drive,3,0,2718,24,93110,0,0,0,0,0,5,0,0,0,7,8,2694,0
+2026-10-25,da1fae58,Add the fixed-roster SDK caller boundary,3,0,607,3,26883,0,0,0,0,0,0,0,0,0,3,0,604,0
+2026-10-25,e883bb48,Prepare the approved SDK grass-edge rejoin,6,0,1992,176,75347,0,0,0,0,0,133,36,0,0,3,4,1816,0
+2026-10-25,88e9a153,Fix canonical SDK mixed worker entry,2,0,447,14,15150,0,0,0,0,0,5,0,0,0,3,4,433,0
+2026-10-25,76b678af,Delegate driving through the shared SDK caller,3,0,851,75,36988,0,0,0,0,0,0,33,1,0,9,0,776,0
+2026-10-25,382c13c5,Recover bounded SDK grass rejoin evidence,5,0,17266,23,524459,0,0,0,0,0,4,0,0,0,12,0,17243,0
+2026-10-25,ae3935a6,Retain the editor stage across SDK runtime ownership,3,0,1204,40,52308,0,0,0,0,0,0,0,0,0,11,0,1164,0
+2026-10-25,b7840278,Finalize SDK caller intervals before publishing survivors,1,0,952,16,12535,0,0,0,0,0,0,0,9,0,5,0,936,0
+2026-10-26,805138e2,Extract production SDK integration prerequisites,10,0,2300,3,126106,0,0,0,0,0,0,0,0,0,3,0,2297,0
+2026-10-26,263ba5b6,Assemble shared SDK driving runtime and manual host,17,0,4800,10,605187,0,0,0,0,0,0,0,1,0,6,0,4790,0
+2026-10-26,a6c64091,Persist bounded finalized SDK run records,3,0,1192,26,50726,0,0,0,0,0,0,0,24,0,2,0,1166,0
+2026-10-26,78cf9c70,Prepare native proof of shared SDK driving,11,0,4140,7,247487,0,0,0,0,0,0,0,0,0,7,0,4133,0
+2026-10-26,e1ce270c,Handle all five Core callback states in SDK ownership,1,0,456,25,12392,0,0,0,0,0,3,0,13,0,6,0,431,0
+2026-10-26,f4189aa4,Validate prepared OpenUSD wrapper and binary identities,1,0,561,9,16812,0,0,0,0,0,0,0,0,0,5,0,552,0
+2026-10-26,52e8c978,Preserve SDK contact vectors and isolate Kit lifecycle updates,6,0,3225,39,112194,0,0,0,0,0,7,5,12,0,12,0,3186,0
+2026-10-26,22a8c634,Retain SDK construction ownership through failed handoffs,2,0,593,15,24550,0,0,0,0,0,1,7,1,0,6,0,578,0
+2026-10-26,fa79f4fe,Qualify bounded production SDK asphalt driving,1,0,593,16,18795,0,0,0,0,0,0,0,0,0,9,0,577,0
+2026-10-26,492ebeb0,Prepare bounded SDK app lifecycle and camera integration,10,0,2328,2,123462,0,0,0,0,0,0,0,1,0,1,0,2326,0
+2026-10-26,54497a05,Restore shared environment for SDK app qualification,1,0,162,5,5435,0,0,0,0,0,0,3,0,0,2,0,157,0
+2026-10-26,1de61291,Apply and verify manual timeline handoff before SDK app ownership,1,0,755,14,10146,0,0,0,0,0,0,2,10,0,2,0,741,0
+2026-10-26,c093448f,Verify frozen ADA namespaces during SDK app qualification,2,0,471,21,16406,0,0,0,0,0,3,0,0,0,15,0,450,0
+2026-10-26,2fb6c199,Accept exact repeated Kit namespace roots and retain rejection evidence,1,0,375,44,8598,0,0,0,0,0,36,0,0,0,4,0,331,0
+2026-10-26,b2486f3e,Fix app lifecycle handoff and retain failed stage evidence,1,0,736,77,11205,0,0,0,0,0,0,52,0,0,9,0,659,0
+2026-10-26,1eb4ffdb,Record successful same-Kit SDK stage lifecycle,1,0,353,136,10192,0,0,0,0,0,0,0,0,0,11,0,217,0
+2026-10-26,525029db,Record attended app compute exception,0,0,30,6,0,0,0,0,0,0,0,0,0,0,6,0,24,0
+2026-10-26,59702b7b,Refresh SDK reuse readiness from accepted native screens,0,0,32,9,0,0,0,0,0,0,0,0,0,0,0,0,23,0
+2026-10-28,081860e6,Join explicit SDK app prototype and owned lifecycle controls,6,0,2569,25,94046,0,0,0,0,0,0,0,15,0,8,0,2544,0
+2026-10-28,396fcb1b,Prepare reviewed manual SDK app qualification,3,0,1315,5,71300,0,0,0,0,0,0,0,0,0,3,0,1310,0
+2026-10-28,48145381,Record frozen SDK app offline readiness,1,0,118,5,4813,0,0,0,0,0,0,0,0,0,3,0,113,0
+2026-10-28,4b8cb4fa,Prepare conditional shared-runtime SDK grass recovery,4,0,717,92,27660,0,0,0,0,0,29,58,1,0,1,0,625,0
+2026-10-28,f9032392,Prepare unattended joined SDK app qualification,4,0,894,45,38413,0,37,0,0,0,1,0,0,0,1,1,849,0
+2026-10-28,ae7f4758,Isolate SDK builder imports from legacy panels,2,0,361,4,16894,0,0,0,0,0,0,0,2,0,1,0,357,0
+2026-10-28,f9e350f3,Observe SDK steps through the native PhysX interface,2,0,359,7,17286,0,2,0,0,0,0,0,0,0,1,0,352,0
+2026-10-28,da88df35,Order SDK stage receipts before legacy callbacks,2,0,445,9,19160,0,0,0,0,0,0,0,1,0,1,0,436,0
+2026-10-28,e46a92d7,Preserve SDK evidence across unloading and app teardown,2,0,523,22,24290,0,13,0,0,0,0,0,2,0,1,0,501,0
+2026-10-28,a9f96b4f,Record verified SDK app lifecycle and cleanup,1,0,165,27,4999,0,0,0,0,0,0,0,0,0,5,0,138,0
+2026-10-28,8379ac15,Add bounded finalized recording for SDK driving,3,0,629,1,35347,0,0,0,0,0,0,0,0,0,1,0,628,0
+2026-10-28,22db67a2,Freeze the approved production grass recovery check,1,0,140,13,4754,0,0,0,0,0,5,1,0,0,1,0,127,0
+2026-10-28,20f94a7f,Record production grass recovery and compute uncertainty,3,0,16896,9,499316,0,0,0,0,0,0,0,0,0,3,0,16887,0
+2026-10-28,47887dec,Add SDK app recording and repaired preview,11,0,2788,32,119740,0,0,0,0,0,0,0,27,0,3,0,2756,0
+2026-10-28,0d299fe4,Freeze one-step SDK app visual qualification,3,0,759,25,36826,0,24,0,0,0,0,0,0,0,1,0,734,0
+2026-10-28,0fcf685b,Handle flat SDK viewport capture matrices,1,0,389,4,16344,0,3,0,0,0,0,0,0,0,1,0,385,0
+2026-10-28,0edb0518,Record usable SDK views and separate projection domains,1,0,441,61,17609,0,11,0,0,0,0,0,0,0,2,0,380,0
+2026-10-28,529e1469,Prepare SDK app recording and replay qualification,1,0,689,22,4736,0,21,0,0,0,0,0,0,0,1,0,667,0
+2026-10-28,143267ca,Require recorder core in frozen SDK app packages,1,0,317,5,10831,0,0,0,0,0,0,0,0,0,2,0,312,0
+2026-10-29,0a1520b5,Add longer and faster attended SDK preview,2,0,1161,60,13514,0,21,0,0,0,0,0,18,0,3,0,1101,0
+2026-10-29,59a0d116,Qualify attended SDK driving and correct preview status,4,0,4120,43,114702,0,0,0,0,0,0,0,1,0,4,0,4077,0
+2026-10-29,844ea846,Move Isaac Lab 3 and Sim 6.1 evidence into topic folders,142,0,34763,13,3593107,0,0,0,0,0,0,0,0,0,0,0,34750,0
+2026-10-29,b846a167,Keep attended SDK replay responsive,2,0,1317,75,13320,0,22,0,0,5,8,0,30,0,3,0,1242,0
+2026-10-29,7f191387,Keep recording file errors recoverable,2,0,557,29,14362,0,10,0,0,0,0,0,16,0,1,0,528,0
+2026-10-29,9e69bf60,Record attended SDK recording and replay evidence,3,0,1131,64,48005,0,0,0,0,0,0,0,0,0,59,0,1067,0
+2026-10-29,f5e92501,Connect explicit owner outcomes to SDK recording,1,0,549,16,6721,0,0,0,0,0,0,0,14,0,2,0,533,0
+2026-10-29,0e6feec0,Add declared SDK crash ownership and hold guards,3,0,1378,7,47379,0,0,0,0,0,0,0,4,0,2,0,1371,0
+2026-10-29,8e5869f3,Prepare native SDK crash and survivor proof,12,0,3258,16,277444,0,0,0,0,0,7,0,8,0,1,0,3242,0
+2026-10-29,7acfa8c9,Generate SDK protocol within frozen source context,0,0,167,7,0,0,0,0,0,0,1,0,0,0,1,4,160,0
+2026-10-29,2b2e2be5,Align SDK worker command and validation imports,0,0,134,8,0,0,0,0,0,0,2,0,0,0,1,4,126,0
+2026-10-29,89009fa4,Record failed native SDK hold and survivor qualification,3,0,1750,3,77575,0,0,0,0,0,0,0,0,0,2,0,1747,0
+2026-10-29,56dba202,Prepare finite brake release grade qualification,3,0,528,1,27589,0,0,0,0,0,0,0,0,0,1,0,527,0
+2026-10-30,3e649662,Add passive-wreck post-crash contract and prepare its native proof,14,0,4686,17,257267,0,0,0,0,0,0,0,17,0,0,0,4669,0
+2026-10-30,e38ef3c5,Import passive-wreck frame view only after the app starts,0,0,38,2,0,0,0,0,0,0,0,2,0,0,0,0,36,0
+2026-10-30,3d78fabe,Reorganise the PhysX Vehicle SDK page for human readers,0,0,3819,3395,0,0,0,0,0,0,0,0,0,0,0,0,424,0
+2026-10-30,5b847e70,Keep the chapter drawer's active link in view,0,0,24,2,0,0,0,0,0,0,0,0,0,0,0,0,22,0
+2026-10-30,21cca7e9,"Record native passive-wreck crash, survivor and replay pass",2,0,2554,7,93428,0,0,0,0,0,0,2,0,0,2,0,2547,0
+2026-10-30,7679a834,Make new documentation topics Markdown-first,0,0,13,6,0,0,0,0,0,0,0,0,0,0,0,0,7,0
+2026-10-30,9251c9c0,Record the Markdown-first topic rule in the worklog,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,8,0
+2026-10-30,ab5f0ab9,Replay saved crash runs as whole frames in the SDK app,1,0,403,24,10797,0,0,0,0,0,0,0,24,0,0,0,379,0
+2026-10-30,3f40c06e,Convert agent-facing documentation pages to Markdown records,7,0,9463,6738,559786,0,0,2,0,0,0,0,0,0,86,0,2725,0
+2026-10-30,4630eb15,Record the Markdown record conversion in the worklog,0,0,17,0,0,0,0,0,0,0,0,0,0,0,0,0,17,0
+2026-10-30,b5466bfa,Merge finite brake grade drive-away result from agent2/finite-grade-drive-away,34,0,26571,10035,1229090,0,0,2,0,0,2,5,40,0,90,0,16536,0
+2026-10-30,1252fbc7,Point project context at Markdown records and drop unused page styles,0,2,16,69,0,3932,0,0,0,0,0,0,0,0,0,0,-53,1
+2026-10-30,8e0565a1,Merge SDK cutaway vehicle visuals from agent3/vehicle-visuals,65,2,29648,10104,10824485,3932,0,2,0,0,2,5,40,0,90,0,19544,0
+2026-10-30,5af56878,Convert the GT3 specification to a Markdown record,1,0,1683,1041,71445,0,0,0,0,0,0,0,0,0,18,0,642,0
+2026-10-30,e703c37b,"Reconcile SDK status, execution plan and OPEN with the latest landings",0,0,47,20,0,0,0,0,0,0,0,0,0,0,7,0,27,0
+2026-10-30,cc80b0a6,Attach the cutaway visual to the live SDK demo behind an opt-in setting,1,0,258,4,6213,0,0,0,0,0,0,0,4,0,0,0,254,0
+2026-10-30,e759787c,Retire the rendered-review item for converted platform pages,0,0,5,1,0,0,0,0,0,0,0,0,0,0,1,0,4,0
+2026-10-30,0617c216,Add a cutaway shell control to the SDK demo panel,0,0,96,3,0,0,0,0,0,0,0,0,2,0,0,0,93,0
+2026-10-30,b6f99393,Write Markdown records for agents and rewrite capability requirements,0,0,255,232,0,0,0,0,0,0,0,0,0,0,0,0,23,0
+2026-10-30,05ec49ac,Rewrite converted documentation records for agents,53,0,3978,4116,124212,0,0,0,0,0,0,0,0,0,0,0,-138,1
+2026-10-30,156740d8,Add attended crash-replay and cutaway-visual app question,0,0,1251,26,0,0,25,0,0,0,0,1,0,0,0,0,1225,0
+2026-10-30,90aed3e3,Merge Agent 2 passive-rollback result and closeout,10,0,3678,1,208192,0,0,0,0,0,0,0,0,0,0,0,3677,0
+2026-10-30,f44a063d,Record passive rollback status on the SDK page,0,0,12,2,0,0,0,0,0,0,0,0,0,0,0,0,10,0
+2026-10-30,7309f526,Adopt reader improvements from the adaptation docs,0,0,45,19,0,0,0,0,0,0,0,0,0,0,0,0,26,0
+2026-10-30,e47301fa,Add a documentation home page and a single navigation tree,1,0,227,66,8865,0,0,10,0,0,0,0,0,0,0,0,161,0
+2026-10-30,e9d8784b,Hide the collision box under the cutaway car and fix the attended crash-visual check,1,0,546,18,6225,0,17,0,0,0,0,0,1,0,0,0,528,0
+2026-10-30,9e63a562,Style the navigation tree as a coloured chapter track,0,0,52,5,0,0,0,1,0,0,0,0,0,0,0,0,47,0
+2026-10-30,4b85d115,Merge Agent 2 sticky-timer diagnostic and closeout,12,0,4660,106,234878,0,17,11,0,0,0,0,1,0,0,0,4554,0
+2026-10-30,9d5b2f3b,Record sticky-timer cause and attended crash replay on the SDK page,0,0,17,2,0,0,0,0,0,0,0,0,0,0,0,0,15,0
+2026-10-30,bbf8a295,Update home page status cards,0,0,6,2,0,0,0,0,0,0,0,0,0,0,0,0,4,0
+2026-10-30,47a710df,Match the home page sidebar to the reader navigation,0,0,20,1,0,0,0,0,0,0,0,0,0,0,0,0,19,0
+2026-10-30,a02c3c13,Merge Agent 2 sticky-timer adoption plan and exposure screen,5,0,8744,0,231216,0,0,0,0,0,0,0,0,0,0,0,8744,0
+2026-10-30,501d2172,"Adopt Atkinson Hyperlegible and brighter, larger documentation text",10,0,139,4,114531,0,0,0,0,0,0,0,0,0,0,0,135,0
+2026-10-30,f8fbf12b,Refine the documentation sidebar after review,0,0,70,12,0,0,0,3,0,0,0,0,0,0,0,0,58,0
+2026-10-30,366f49d9,Centre chapter content and size cards to their content,0,0,29,5,0,0,0,0,0,0,0,0,0,0,0,0,24,0
+2026-10-30,f3ac3d1b,Use one shared full-width column and full-height chapter cards,0,0,13,10,0,0,0,0,0,0,0,0,0,0,0,0,3,0
+2026-10-31,8afeb121,Merge Agent 2 opt-in compound chassis collider,11,0,807,46,138046,0,0,3,0,0,0,0,26,0,0,0,761,0
+2026-10-31,2f15eac5,Merge Agent 2 coast-to-rest diagnostic and closeout,20,0,5944,20,392478,0,0,3,0,0,0,0,0,0,0,0,5924,0
+2026-10-31,399c0ab1,Add the PhysX collision-shape cooking question and offline comparison,16,0,4786,1,269032,0,0,0,0,0,0,0,0,0,1,0,4785,0
+2026-10-31,960c4851,Record the native PhysX collision-shape cooking result,1,0,255,5,7658,0,0,0,0,0,0,0,0,2,0,0,250,0
+2026-10-31,3a28a515,Add the PhysX collision-cost question for the car collision shapes,13,0,4322,5,250525,0,0,0,0,0,0,0,0,0,0,0,4317,0
+2026-10-31,3cf9234e,Record the native PhysX collision-cost result and show it on the page,1,0,936,12,12844,0,0,0,0,0,0,0,0,6,0,0,924,0
+2026-10-31,79efa270,Record the cause reading of the PhysX-hull side-press anomaly,0,0,12,1,0,0,0,0,0,0,0,0,0,0,0,0,11,0
+2026-10-31,35c3e295,Record that the single PhysX hull does not hold car-to-car contact,0,0,15,0,0,0,0,0,0,0,0,0,0,0,0,0,15,0
+2026-10-31,f0300659,Fix the format of the single-hull probe line in the worklog,0,0,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2026-10-31,0bba072d,Let the attended chassis check pass the Unload teardown window,0,0,28,1,0,0,1,0,0,0,0,0,0,0,0,0,27,0
+2026-10-31,b489f235,Make the attended app physical fingerprint deterministic for list ops,0,0,69,2,0,0,2,0,0,0,0,0,0,0,0,0,67,0
+2026-11-01,0b9769f0,Let the attended app check hold free exploration and running shell changes,0,0,79,8,0,0,6,0,0,0,0,0,0,0,0,0,71,0
+2026-11-01,dfa9fcf4,Integrate the cutaway outline ghost mode and opaque window panels,0,0,150,48,0,0,0,0,0,0,0,0,33,0,0,0,102,0
+2026-11-01,b69a70a9,Pin the opaque cutaway glass and paint pillars in a test,0,0,14,0,0,0,0,0,0,0,0,0,0,0,0,0,14,0
+2026-11-01,8ae1560b,Rebuild the vehicle visuals page with a 3D viewer and the cutaway build story,57,0,6379,149,6617618,0,0,5,0,0,0,0,0,0,1,0,6230,0
+2026-11-01,1584842d,Record the attended V4 failure and V6 pass of the crash-replay cutaway session,2,0,223,0,9437,0,0,0,0,0,0,0,0,0,0,0,223,0
+2026-11-01,7f761d41,"Add the PhysX collision-cost scaling question for 2, 16 and 64 cars",13,0,4466,0,267760,0,0,0,0,0,0,0,0,0,0,0,4466,0
+2026-11-01,fadd935c,Record the cutaway's passing attended session V6 with its RTX stills,3,0,29,4,203193,0,0,0,0,0,0,0,0,0,1,0,25,0
+2026-11-01,41f35506,Show the two recorded-motion animations side by side,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2026-11-01,80ba5361,Fold liveries and the safety checks into fewer vehicle-visuals chapters,0,0,52,57,0,0,0,0,0,0,0,0,0,0,0,0,-5,1
+2026-11-01,88a85af8,Apply compute and memory caps on native runs only while the host is busy,0,0,28,6,0,0,0,0,0,0,0,0,0,0,6,0,22,0
+2026-11-01,ede9b387,Log the native resource-limit rule,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0
+2026-11-01,1cae7c34,Redo the vehicle-visuals simulator chapter around a one-way flow diagram,0,0,89,58,0,0,0,0,0,0,0,0,0,0,0,0,31,0
+2026-11-01,8f110b73,Record the native PhysX collision-cost scaling result,1,0,1271,0,39298,0,0,0,0,0,0,0,0,0,0,0,1271,0
+2026-11-01,93ced74d,Show the collision-cost scaling result on the hulls page,0,0,718,11,0,0,0,0,0,0,0,0,0,10,0,0,707,0
+2026-11-01,e1ddafbb,Add the shared build-sheet page kit and its writing rules,1,0,387,232,18953,0,0,2,0,0,0,0,0,0,0,0,155,0
+2026-11-01,20340db1,Rework the benchmark-tracks page onto the build-sheet kit,1,0,894,664,13675,0,0,0,0,0,0,0,0,0,0,0,230,0
+2026-11-01,f3eb2858,Merge Agent 2 opt-in surface rolling resistance,82,0,15255,916,7185144,0,6,7,0,0,2,4,34,10,10,0,14339,0
+2026-11-01,e91d784e,Add the attended live-drive and cutaway-replay question,1,0,2801,51,22165,0,31,0,0,0,0,0,20,0,0,0,2750,0
+2026-11-01,f84ed770,Record the failed attended V7 live-replay session,1,0,104,1,4158,0,0,0,0,0,0,0,0,0,0,0,103,0
+2026-11-01,81949c0f,Split native runs into evidence runs and lightweight preview runs,0,0,36,1,0,0,0,0,0,0,0,0,0,0,0,0,35,0
+2026-11-01,e0f56130,Add live-replay question version 2 with side camera and paced drive,1,0,962,53,12163,0,35,0,0,0,0,0,18,0,0,0,909,0
+2026-11-01,c60734ba,Record the V-HACD 8 collider choice and park the collision-share stage,0,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0
+2026-11-01,042a6cab,Add the collision shapes page with a 3D view of every option,12,0,838,2,1675603,0,0,1,0,0,0,0,0,0,0,0,836,0
+2026-11-01,c73f5878,Add the collision-page lessons to the page rules,0,0,40,4,0,0,0,0,0,0,0,0,0,0,0,0,36,0
+2026-11-01,1b471f94,Add the preview launcher for visual app sessions,3,0,2610,2,133524,0,0,0,0,0,0,0,0,0,0,0,2608,0
+2026-11-01,252f1299,Record the attended V8 live-replay session,1,0,139,1,5384,0,0,0,0,0,0,0,0,0,0,0,138,0
+2026-11-01,2b835707,Record the efficient-by-default rule and the paused performance lane,0,0,41,0,0,0,0,0,0,0,0,0,0,0,0,0,41,0
+2026-11-01,b571ae3f,"Make moving code to Rust an explicit decision, not a convention",0,0,11,6,0,0,0,0,0,0,0,0,0,0,3,0,5,0
+2026-11-01,7dede5d2,Add Python-level profiling to the preview launcher,0,0,366,4,0,0,0,0,0,0,0,4,0,0,0,0,362,0
+2026-11-01,987c694a,Merge Agent 2 rolling-resistance coast-to-rest question and result,107,0,28955,975,9365767,0,45,7,0,0,0,0,65,10,8,0,27980,0
+2026-11-01,c5949d9e,Add a recorded Isaac track-drive clip to the cutaway car,2,0,86,21,8144416,0,0,0,0,0,0,0,12,0,0,0,65,0
+2026-11-01,a24e29ef,Show the recorded Track S1 drive on the vehicle visuals page,0,0,27,9,0,0,0,0,0,0,0,0,0,0,0,0,18,0
+2026-11-01,6541864c,Merge Agent 2 agreed vehicle-physics order,99,0,22561,1006,17170461,0,45,7,0,0,0,0,77,10,23,0,21555,0
+2026-11-01,dc5f5a88,Record per-step hot spots under the paused performance lane,0,0,26,0,0,0,0,0,0,0,0,0,0,0,0,0,26,0
+2026-11-02,82d68b6b,Merge Agent 2 provisional vehicle-physics decision proposals,0,0,182,22,0,0,0,0,0,0,0,0,0,0,22,0,160,0
+2026-11-02,0d45558a,Prepare the V9 attended live-replay session (question v3),0,0,941,107,0,0,33,0,0,0,2,0,68,0,1,0,834,0
+2026-11-02,c09bf823,Record the V9 attended live-replay session and its post-run re-validation,1,0,183,0,6369,0,0,0,0,0,0,0,0,0,0,0,183,0
+2026-11-02,20fb1c7f,Make replay pacing uniform and import ada in the supervisor-side check,0,0,247,14,0,0,4,0,0,0,0,0,10,0,0,0,233,0
+2026-11-02,1afda78b,Adopt Plan 11: attended evidence in parts with carry-over,1,0,278,3,12748,0,0,0,0,0,0,0,0,0,1,0,275,0
+2026-11-03,9930b919,Record the Plan 11 carry-over decisions,0,0,18,9,0,0,0,0,0,0,0,0,0,0,9,0,9,0
+2026-11-04,79edb62e,Adopt the shared documentation kit,28,87,2652,5655,1590616,1337928,0,1788,0,0,0,0,0,4,0,0,-3003,1
+2026-11-04,9d164580,Integrate independently judged attended evidence parts,41,0,15592,29,838179,0,0,0,0,14,0,0,0,0,14,0,15563,0
+2026-11-04,d45f8cb9,Document accepted race rules and vehicle decisions,38,0,5393,118,309132,0,0,0,0,0,0,0,0,0,92,0,5275,0
+2026-11-04,57378f74,Validate attended worker history before native startup,2,0,595,11,28125,0,5,0,0,0,0,0,0,0,2,0,584,0
+2026-11-04,4a001d22,Give project chats ownership of focused CPU checks,0,0,43,3,0,0,0,0,0,0,0,0,0,0,3,0,40,0
+2026-11-04,b18eac57,Verify the attended worker and sealed judge pipeline,2,0,716,28,38470,0,0,0,0,0,0,0,0,0,20,0,688,0
+2026-11-04,989af839,Retire legacy Isaac environments and finite-grade checkout,0,0,85,28,0,0,0,0,0,0,0,0,0,0,0,0,57,0
+2026-11-04,9fe4e1b6,Use the retained Isaac Sim 6.1 environment by default,0,0,22,12,0,0,0,0,0,0,0,0,0,0,0,0,10,0
+2026-11-04,7bda98a7,Move coordination rules to their canonical homes,1,0,173,194,7515,0,0,0,0,0,0,0,0,0,194,0,-21,1
+2026-11-04,7f8024bd,Add a supervised normal-app check for the consolidated runtime,4,0,792,9,39782,0,0,0,0,0,0,3,2,0,0,0,783,0
+2026-11-04,11082839,Include static assets in the frozen normal-app check,0,0,121,6,0,0,0,0,0,0,1,0,0,0,0,0,115,0
+2026-11-05,7c6a6d3b,Prepare attended evidence for the installed Rust cohort,5,0,1940,31,81115,0,28,0,0,0,2,0,0,0,1,0,1909,0
+2026-11-05,9c8642a6,feat: isolate and budget concurrent native qualification runs,28,0,9955,245,449840,0,26,0,0,11,176,14,1,0,0,0,9710,0
+2026-11-05,5cf70e7e,fix: isolate attended SDK writable state,1,0,264,7,4701,0,7,0,0,0,0,0,0,0,0,0,257,0
+2026-11-05,44abc9a6,fix: verify native host namespace through user manager,0,0,205,7,0,0,0,0,0,7,0,0,0,0,0,0,198,0
+2026-11-05,ca487f88,fix: handle verified process exits in native resource guards,1,0,591,10,20712,0,0,0,0,10,0,0,0,0,0,0,581,0
+2026-11-05,e0581eae,fix: bind isolated Rust metadata to the approved wheel,1,0,199,13,4683,0,0,0,0,0,0,13,0,0,0,0,186,0
+2026-11-05,8447a257,fix: budget twelve GiB for isolated SDK startup,1,0,468,27,22892,0,0,0,0,27,0,0,0,0,0,0,441,0
+2026-11-05,fede24ea,Document measured SDK closeout and remaining acceptance gates,12,0,1831,6,205536,0,0,0,0,0,0,0,0,0,0,0,1825,0
+2026-11-05,50c4424e,"Integrate pure race progress, timing and classification helpers",40,0,6914,3,341821,0,0,0,0,0,0,0,0,0,1,0,6911,0
+2026-11-05,f58ebd0a,Integrate reviewed SDK vehicle candidate and validation leaves,66,0,21506,101,22014095,0,0,0,0,0,0,0,79,0,16,0,21405,0
+2026-11-05,c907f9ee,Add sealed-record hold and drift plots,91,0,25416,0,3378181,0,0,0,0,0,0,0,0,0,0,0,25416,0
+2026-11-05,a2c33d88,Add file-only combined hold preparation checks,55,0,5662,0,601510,0,0,0,0,0,0,0,0,0,0,0,5662,0
+2026-11-05,20ac0747,Add CPU-only combined hold worker supervision,57,0,5386,0,1020823,0,0,0,0,0,0,0,0,0,0,0,5386,0
+2026-11-05,6ab9e0ad,Document settled racing rules and recovery accounting,58,0,9171,201,35745974,0,0,0,0,0,0,0,0,63,50,0,8970,0
+2026-11-05,02c6b01e,Add CPU release observations and independent Decimal oracle,145,0,224979,0,28049053,0,0,0,0,0,0,0,0,0,0,0,224979,0
+2026-11-05,d69fd7f2,fix: reduce attended startup inventory overhead,1,0,177,4,803112,0,0,0,0,0,0,4,0,0,0,0,173,0
+2026-11-05,ccfd293b,docs: record attended native bootstrap failure,3,0,435,12,2155701,0,0,0,0,0,0,0,0,0,10,0,423,0
+2026-11-05,3d5feed4,docs: simplify owner-led platform delivery,0,0,119,55,0,0,0,0,0,0,0,0,0,0,38,0,64,0
+2026-11-05,7eb8d6c7,docs: consolidate workflow into canonical homes,0,0,130,199,0,0,0,0,0,0,0,0,0,0,137,0,-69,1
+2026-11-05,eda86e87,Route repository reading by task,0,0,324,289,0,0,0,0,0,0,0,0,0,0,0,0,35,0
+2026-11-05,fe565384,Make execution budgets explicit and reusable,12,0,7539,263,2095743,0,0,0,0,175,16,0,0,0,0,0,7276,0
+2026-11-05,d638fb22,Separate personal model choices from project ownership rules,0,0,24,0,0,0,0,0,0,0,0,0,0,0,0,0,24,0
+2026-11-05,0d7d317a,Move delivery and handoff requirements into project conventions,0,0,60,22,0,0,0,0,0,0,0,0,0,0,3,0,38,0
+2026-11-06,3bc34dd4,Separate commit preferences from project landing rules,0,0,45,2,0,0,0,0,0,0,0,0,0,0,0,0,43,0
+2026-11-06,202f2521,Route benchmark freshness to the shared writing rules,0,0,6,4,0,0,0,0,0,0,0,0,0,0,0,0,2,0
+2026-11-06,2ed6ebc5,Consolidate documentation preview and build in the site runbook,0,0,40,46,0,0,0,0,0,0,0,0,0,0,0,0,-6,1
+2026-11-06,5632fbee,Separate publishing history and shared documentation rules,0,0,67,64,0,0,0,0,0,0,0,0,0,0,0,0,3,0
+2026-11-06,82ffad56,Move subsystem conventions to their owning guides,0,0,124,108,0,0,0,0,0,0,0,0,0,0,0,0,16,0
+2026-11-07,815bd797,Reorganize contributor guidance and adopt shared engineering rules,13,4,78302,78090,63295,63998,0,13,0,0,0,0,0,0,28,0,212,0
+2026-11-07,6c0b48cf,Adopt kit 1.1.0 with release and migration guidance,0,0,33,7,0,0,0,0,0,0,0,0,0,0,0,0,26,0
+2026-11-07,3f793e6d,Make the ADP documentation index a grouped reading map,0,0,72,155,0,0,0,0,0,0,0,0,0,0,0,0,-83,1
+2026-11-09,ff6ede7e,Retain compact evidence and complete proof records,405,0,40813,45,223905206,0,0,0,0,0,0,0,0,0,0,30,40768,0
+2026-11-09,bede8e83,Record the accepted lifecycle direction and preserve its intake,1,0,21,1,112020,0,0,0,0,0,0,0,0,0,1,0,20,0
+2026-11-09,353d0fe2,Record the traced startup failure and its evidence route,0,0,95,22,0,0,0,0,0,0,0,0,0,0,4,0,73,0
+2026-11-09,13c3a451,Preserve the open research inventory and historical SDK draft,2,0,382,0,36876,0,0,0,0,0,0,0,0,0,0,0,382,0
+2026-11-09,fd894d70,Retain focused October SDK setup and support evidence,3,0,7581,68,197441,0,0,0,0,0,0,0,0,0,0,66,7513,0
+2026-11-09,0900bda2,Keep the original tracking animation with vehicle-control evidence,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0
+2026-11-09,0c631864,Group the cubic spiral solver-basins experiment,2,0,994,922,7109,0,0,0,0,0,0,0,570,254,0,0,72,0
+2026-11-09,c49aafa9,Give the SDK grade setup evidence its own experiment record,4,0,7619,7476,10537,0,0,0,5,0,0,0,0,0,0,22,143,0
+2026-11-09,b529dbf8,Keep the spiral method illustrations beside their topic,1,0,257,241,2025,0,0,0,0,0,0,0,205,0,0,0,16,0
+2026-11-09,f415b842,Make the cited Plan 11 receipts available in a clean checkout,3,0,266,18,251561,0,0,0,0,0,0,0,0,0,0,6,248,0
+2026-11-09,d4bbe0b9,Set a Git identity for the documentation test fixture,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,8,0
+2026-11-09,634f53c0,Keep legacy evidence verification portable across CPU dispatch,0,0,34,15,0,0,0,0,0,0,0,0,0,2,0,9,19,0
+2026-11-09,9d9236ba,Verify retained evidence from the owning experiments,6,0,325,13,13377,0,0,0,10,0,0,0,0,0,0,3,312,0
+2026-11-09,0231d242,Archive evidence reviews and narrow the live local-link list,2,1,91780,91814,3063,7414,0,7,5,0,0,0,0,0,0,91797,-34,1
+2026-11-09,60834b06,Point the live camera citation to the tracked audit,0,0,4,3,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+2026-11-10,05b3b110,Upgrade the documentation kit to 3.0.0,0,0,68,45,0,0,0,1,0,0,0,0,0,0,0,2,23,0
+2026-11-10,9123c3ce,Record the kit 3.0.0 upgrade and its open decisions,0,0,88,0,0,0,0,0,0,0,0,0,0,0,0,0,88,0
+2026-11-10,b44a55d2,Correct the kit 3.0.0 upgrade after independent review,0,0,81,20,0,0,0,0,0,0,0,0,0,0,0,0,61,0
+2026-11-10,b70d38b4,Stop describing the documentation kit as private,0,0,18,18,0,0,0,0,0,0,0,0,0,0,2,0,0,0
+2026-11-10,1b7e0087,Route experiments and performance claims in the agent router,0,0,15,7,0,0,0,0,0,0,0,0,0,0,1,0,8,0
+2026-11-10,d1763dc1,Record the documentation compatibility layers in open work,1,0,80,3,4323,0,0,0,0,0,0,0,0,0,1,0,77,0
+2026-11-10,1533012a,Record the copied-rules measurement of the conformance check,0,0,10,3,0,0,0,0,0,0,0,0,0,0,1,0,7,0
+2026-11-10,b7f7f69f,Ignore HTML comments when the reader test reads the sidebar list,0,0,5,1,0,0,0,0,0,0,0,0,0,0,0,0,4,0
+2026-11-10,5a9fe53f,Move the documentation kit pin to 3.1.0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2026-11-10,fb86a095,Record the move to kit 3.1.0 and close the header decision,0,0,43,4,0,0,0,0,0,0,0,0,0,0,1,0,39,0
+2026-11-10,abc6ef9d,Record that the hosted workflow passed for the kit upgrade,0,0,11,3,0,0,0,0,0,0,0,0,0,0,0,0,8,0
+2026-11-10,db08f922,Plan records for the 24 topic pages without one,1,0,411,2,32763,0,0,0,0,0,0,0,0,0,2,0,409,0
+2026-11-10,460bd326,Retire the eleven topic pages that held no content,0,11,80,417,0,10835,0,0,0,0,0,0,1,0,27,0,-337,1
+2026-11-10,2df575ca,Declare the two related-work pages page-only,0,0,13,8,0,0,0,0,0,0,0,0,0,0,8,0,5,0
+2026-11-10,a3c85131,Move the lap-race rules into their own racing-rules record,1,0,169,152,14995,0,0,0,0,0,0,0,0,1,11,0,17,0
+2026-11-10,cbb4899e,Rename the SDK report and settle the shelved vehicle reports,1,0,7991,7876,3432,0,0,0,0,1,14,0,0,0,13,2506,115,0
+2026-11-10,9a83aa84,Upgrade the kit to 3.2.0 and move the parked pages into their folder,0,0,6071,6008,0,0,0,4,0,0,0,0,0,0,22,97,63,0
+2026-11-10,6e1f1ec3,Record why experiment folders cannot move cheaply,1,0,78,0,4090,0,0,0,0,0,0,0,0,0,0,0,78,0
+2026-11-10,82cadf86,Record the developer's decisions on Q4 and Q5 of the topic records plan,0,0,8,3,0,0,0,0,0,0,0,0,0,0,3,0,5,0
+2026-11-10,7f99d792,Correct the V-HACD 8 step-cost wording on record and page,0,0,11,5,0,0,0,0,0,0,0,0,0,0,1,0,6,0
+2026-11-10,1cbf178a,Record the kit owner's readings on stubs and commit pins,0,0,14,1,0,0,0,0,0,0,0,0,0,0,1,0,13,0
+2026-11-10,fb73ab2a,Mark Q9 as waiting for a kit rule change,0,0,4,1,0,0,0,0,0,0,0,0,0,0,1,0,3,0
+2026-11-10,256be5dd,Give the inline invariant markers their own paragraphs,0,0,50,34,0,0,0,0,0,0,0,0,0,0,4,0,16,0
+2026-11-11,a0922b02,Record the kit's source-pin rule in the experiment path record,0,0,10,10,0,0,0,0,0,0,0,0,0,0,10,0,0,0
+2026-11-11,d8d4a5b2,Scope the evidence guide's smallest-set rule to Git,0,0,17,4,0,0,0,0,0,0,0,0,0,0,1,3,13,0
+2026-11-11,e96db63f,Move the collision-shapes record beside its page,0,0,2094,2077,0,0,0,0,0,0,1,0,0,3,4,1762,17,0
+2026-11-11,e27e1e97,Upgrade the kit to 3.2.1,0,0,31,7,0,0,0,0,0,0,0,0,0,0,6,0,24,0
+2026-11-11,fd1a58f9,Add the online-planner record,1,0,146,1,7417,0,0,0,0,0,0,0,0,0,0,0,145,0
+2026-11-11,f319bbaf,Add the racing-deployment record,1,0,128,1,6068,0,0,0,0,0,0,0,0,0,0,0,127,0
+2026-11-11,8e1192cf,Add the isaac-lab-3-s2 record and mark it for review,1,0,159,1,8820,0,0,0,0,0,0,0,0,0,0,0,158,0
+2026-11-11,4b5555e2,Add the vehicle-visuals record and move its status board there,1,0,125,12,8405,0,0,0,0,0,0,0,0,0,0,0,113,0
+2026-11-11,f53607ee,Add the local-planner record,1,0,232,1,11676,0,0,0,0,0,0,0,0,0,0,0,231,0
+2026-11-11,7f4607a3,Add the route-optimisation record and move its research tail,2,0,288,78,14796,0,0,0,0,0,0,0,0,0,4,0,210,0
+2026-11-11,8d239ba4,Add the racing-line record and move its page-end notes,1,0,302,84,17663,0,0,0,0,0,0,0,0,0,1,0,218,0
+2026-11-11,1d0834e4,Add the cubic-spiral record and move its working notes,1,0,375,122,20492,0,0,0,0,0,0,0,0,0,4,0,253,0
+2026-11-11,3ccb86e9,Add the road-generation record and move its page-end sections,1,0,465,58,28722,0,0,0,0,0,0,0,0,0,3,0,407,0
+2026-11-11,bea16193,Merge the vehicle and clock topic records,18,0,3828,1335,233747,0,0,0,0,0,0,0,0,0,12,0,2493,0
+2026-11-11,b67587a3,Record the vehicle and clock records in the shared files,0,0,25,14,0,0,0,0,0,0,0,0,0,0,11,0,11,0
+2026-11-11,41b120fd,Unhide three pages and show the vehicle-models rules as cards,0,0,15,9,0,0,0,0,0,0,0,0,0,0,0,0,6,0
+2026-11-11,75f95143,Settle five disagreements the topic records found,0,0,51,45,0,0,0,0,0,0,0,0,0,0,1,0,6,0
+2026-11-11,269cfaa4,Correct page wording the topic records found stale,0,0,17,20,0,0,0,0,0,0,0,0,0,0,1,0,-3,1
+2026-11-11,335a12e2,Run the hosted documentation lint in strict mode,0,0,8,5,0,0,0,0,0,0,0,0,0,0,2,0,3,0
+2026-11-11,2ddddb07,Close the future-specification item in OPEN.md,0,0,2,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0
+2026-11-11,7d85f2a4,Replace or link the kit rules ADP's guides restated,0,0,101,84,0,0,0,0,0,0,0,0,0,0,3,17,17,0
+2026-11-11,978c5401,Measure what each documentation compatibility layer serves,0,0,212,41,0,0,0,0,0,0,0,0,0,0,41,0,171,0
+2026-11-11,2e0887bf,Separate the chain tests from ADP's own module tests,0,0,6,4,0,0,0,0,0,0,0,0,0,0,4,0,2,0
+2026-11-11,1a541cf2,Delete the 53 frozen document copies and cite them from Git,0,60,337,14166,0,955369,0,1065,0,0,0,0,10,0,200,4897,-13829,1
+2026-11-11,ad94c7f5,Delete the two racing-rules record-lint README snapshots,0,2,10,142,0,9212,0,0,0,0,0,0,0,0,0,142,-132,1
+2026-11-11,be191a33,Name Git as the parked report's recovery source,0,0,4,3,0,0,0,0,0,0,0,0,0,0,2,0,1,0
+2026-11-11,c01bce54,Follow the kit's rule for finished working documents,0,0,9,9,0,0,0,0,0,0,0,0,0,0,0,9,0,0
+2026-11-11,c026884d,Delete the two documentation command delegates,0,2,20,71,0,802,0,28,0,0,0,0,1,1,21,0,-51,1
+2026-11-11,8207a0fe,Delete the 47 heading aliases in ADP's guides,0,0,37,156,0,0,0,0,0,0,0,0,0,0,16,0,-119,1
+2026-11-11,c214372d,Delete the 21 unused section ids from the topic-record work,0,0,18,40,0,0,0,0,0,0,0,0,0,0,15,0,-22,1
+2026-11-11,e21c2e84,Replace the reader page check with the kit command,0,2,17,168,0,7395,0,148,0,0,0,0,0,0,18,0,-151,1
+2026-11-11,e41ab54e,Check only ADP content in the Node page checks,0,0,114,722,0,0,0,0,0,0,0,0,0,0,18,0,-608,1
+2026-11-11,39f871da,Keep the check that no former local reader script returns,0,0,2,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+2026-11-11,a4f7bae7,Keep the collision-shape data with its experiment,1,0,143,55,2914,0,0,0,0,0,0,0,0,0,0,17,88,0
+2026-11-11,e0a06970,Keep sdk_integration's stored data in its own folder,1,0,52,958,4881,0,0,0,3,0,0,0,0,0,0,953,-906,1
+2026-11-11,871524c7,Store experiment data at its full original path,0,0,31,22,0,0,0,0,0,0,0,0,0,0,0,0,9,0
+2026-11-11,ef45e937,Rename READMEs below the root to their folder's subject name,0,0,6957,6957,0,0,0,0,0,0,0,0,0,0,0,71,0,0
+2026-11-11,5853f8c7,Point links and scripts at the renamed guides,0,0,173,138,0,0,0,0,0,0,0,0,0,5,27,0,35,0
+2026-11-11,ba9c073f,Keep sdk_reuse's stored data in its own folder,25,0,53,3106,260070,0,0,0,0,0,0,2,0,0,0,3104,-3053,1
+2026-11-11,54bcf9a0,Re-seal two compact_vehicle manifests after the guide renames,0,0,13,4,0,0,0,0,0,0,0,0,0,0,0,0,9,0
+2026-11-11,a18d94e5,Delete the central evidence store,1,6,151,92813,2937,4989340,0,0,1114,0,0,0,0,0,0,91686,-92662,1
+2026-11-11,d3316426,Stop pinning file identities in the evidence check,0,8,21,554,0,22334,0,0,61,0,0,0,0,0,2,2,-533,1
+2026-11-11,26822752,Keep stored data add-only where it lies,0,0,59,11,0,0,0,0,5,0,0,0,0,0,0,3,48,0
+2026-11-11,c81954f2,Drop the file-identity checks inside two retained bundles,0,0,5,820,0,0,0,0,0,0,0,0,0,4,0,0,-815,1
+2026-11-11,834965a5,Rename the last six READMEs below the root,0,0,586,586,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2026-11-11,92dcb444,Point links at the last six renamed guides,0,0,40,35,0,0,0,0,0,0,0,0,0,0,1,10,5,0
+2026-11-12,db0c85b2,Delete the finished topic-records plan,0,1,47,547,0,43810,0,0,0,0,0,0,0,0,536,1,-500,1
+2026-11-12,ac773782,Trim finished parts of five open-work records,0,0,70,186,0,0,0,0,0,0,0,0,0,0,186,0,-116,1
+2026-11-12,0ea69f06,Delete the Isaac forwarding guide and leftover compatibility headings,0,1,14,82,0,1830,0,0,0,0,0,0,0,0,2,0,-68,1
+2026-11-12,629175c3,Fold the development index into AGENTS.md,0,1,13,56,0,1838,0,0,0,0,0,0,0,0,6,0,-43,1
+2026-11-12,c16c471f,Remove kit restatements from the site guides,0,0,22,87,0,0,0,0,0,0,0,0,0,0,0,0,-65,1
+2026-11-12,d470fe9f,Correct stale text in the ADP guides,0,0,13,15,0,0,0,0,0,0,0,0,0,0,0,0,-2,1
+2026-11-12,ce19bdb2,Remove history text from three ADP guides,0,0,46,75,0,0,0,0,0,0,0,0,0,0,0,36,-29,1
+2026-11-12,6d7940a9,Drop finished Pages cutover steps and browser notes from the site guide,0,0,4,13,0,0,0,0,0,0,0,0,0,0,0,0,-9,1
+2026-11-12,98790e76,Delete the 56 unused PNG copies from the shared figures,0,56,44,389,0,3381427,0,0,0,0,0,0,0,53,0,0,-345,1
+2026-11-12,70fff715,Cut the page-figure manifests to generator and input data,0,0,33,1039,0,0,0,0,0,0,0,13,50,10,0,8,-1006,1
+2026-11-12,503128d7,Store the run data behind the page figures in Git,1211,0,7,0,71768302,0,0,0,0,0,0,0,0,0,0,0,7,0
+2026-11-12,0c1c2b99,Store the output of the remaining named runs in Git,11389,0,3,0,325222971,0,0,0,0,0,0,0,0,0,0,0,3,0
+2026-11-12,7abe21b8,Record the open question about run output left out of Git,1,0,51,0,2469,0,0,0,0,0,0,0,0,0,0,0,51,0
+2026-11-12,4195faeb,Store the V9 recorded drive and both V8/V9 wheel streams,3,0,18,10,17369020,0,0,0,0,0,0,0,0,0,9,0,8,0
+2026-11-12,338b7322,Remove the V8 re-judge test after V8's recording was deleted,0,0,11,23,0,0,10,0,0,0,0,0,0,0,11,0,-12,1
+2026-11-12,edd29117,Store 19 V9 viewport frames and record deleted frames,19,0,40,23,11817582,0,0,0,0,0,0,0,0,0,23,0,17,0
+2026-11-12,9a754e4f,Record the open question of where kept pictures go,0,0,9,2,0,0,0,0,0,0,0,0,0,0,2,0,7,0
+2026-11-13,181945fc,Start the development gallery with five V9 frames,6,0,131,23,3306508,0,0,0,0,0,0,0,0,0,22,0,108,0
+2026-11-13,2d7332e0,Add the gallery manifest and record the 183 deleted V9 frames,1,0,27,4,795,0,0,0,0,0,0,0,0,0,2,0,23,0
+2026-11-13,b1ff447b,Remove the 19 V9 viewport frames from the run-output folder,0,19,5,3,0,11817582,0,0,0,0,0,0,0,0,2,0,2,1
+2026-11-13,e3cc6628,"Record the deletion of plots, drafts and review screenshots",0,0,23,14,0,0,0,0,0,0,0,0,0,0,14,0,9,0
+2026-11-13,5c6c3a5a,Record the deletion of race-plot copies in sealed snapshots,0,0,13,15,0,0,0,0,0,0,0,0,0,0,15,0,-2,1
+2026-11-13,3ead12ca,Record the pictures the development gallery should still gain,1,0,33,0,2383,0,0,0,0,0,0,0,0,0,0,0,33,0
+2026-11-13,81e7062b,Build the development gallery page,2,0,284,2,22078,0,0,0,0,0,0,0,0,0,0,0,282,0
+2026-11-13,60ae1c12,Plan moving Isaac Lab into the declared environment,1,0,200,0,10814,0,0,0,0,0,0,0,0,0,0,0,200,0
+2026-11-13,fd02d397,Record step 1 of the Isaac Lab plan,0,0,50,13,0,0,0,0,0,0,0,0,0,0,13,0,37,0
+2026-11-13,c5d19369,Declare Isaac Lab in pyproject and record the step-2 environment,0,0,168,14,0,0,0,0,0,0,0,0,0,0,8,0,154,0
+2026-11-13,64264072,Load Isaac Lab from the installed package instead of a checkout,0,0,95,58,0,0,0,0,0,0,0,11,47,0,0,0,37,0
+2026-11-13,ee937726,Test the installed-package Lab check and record step 3,0,0,318,28,0,0,0,0,0,0,0,8,16,0,4,0,290,0
+2026-11-13,39c93675,Admit attended packets with Isaac Lab as the installed package,1,0,417,61,16567,0,61,0,0,0,0,0,0,0,0,0,356,0
+2026-11-13,2b1ff0db,Test attended admission of the installed Lab package,1,0,400,74,10404,0,74,0,0,0,0,0,0,0,0,0,326,0
+2026-11-13,d1bf4422,Record option A for attended packets,0,0,137,31,0,0,0,0,0,0,0,0,0,0,31,0,106,0
+2026-11-13,29f9bb04,Fix attended Lab admission found by the independent review,0,0,128,20,0,0,16,0,0,0,0,0,4,0,0,0,108,0
+2026-11-13,aa6d9ba9,Test the review fixes of attended Lab admission,0,0,187,21,0,0,16,0,0,0,0,0,5,0,0,0,166,0
+2026-11-13,0b8380d0,Record the review fixes of attended Lab admission,0,0,87,10,0,0,0,0,0,0,0,0,0,0,10,0,77,0
+2026-11-13,de158684,Read each Lab RECORD once and require sha256 on every row,0,0,37,13,0,0,2,0,0,0,0,0,11,0,0,0,24,0
+2026-11-13,f3437013,Test the single RECORD read and the sha256-only rows,0,0,45,25,0,0,3,0,0,0,0,0,22,0,0,0,20,0
+2026-11-13,7ea0fa78,Record the re-review of attended Lab admission,0,0,76,1,0,0,0,0,0,0,0,0,0,0,1,0,75,0
+2026-11-13,1755df04,Record the developer's decision to skip findings A and B,0,0,23,34,0,0,0,0,0,0,0,0,0,0,34,0,-11,1
+2026-11-13,d0b5ca63,Record how an attended session works today,1,0,448,0,38635,0,0,0,0,0,0,0,0,0,0,0,448,0
+2026-11-13,1d8ae196,Build the attended-sessions page,2,0,618,3,52021,0,0,0,0,0,0,0,0,0,0,0,615,0
+2026-11-14,618eadf5,Correct the attended-sessions page after the developer's read,0,0,318,56,0,0,0,0,0,0,0,0,0,0,0,0,262,0
+2026-11-14,9492112f,Park the Isaac Lab 3 / Newton S2 experiment,0,0,11754,11747,0,0,0,0,0,0,0,0,0,0,5,11328,7,0
+2026-11-14,de095a4c,Upgrade the documentation kit to 4.0.0,1,0,252,131,2590,0,0,0,0,0,0,0,0,2,10,0,121,0
+2026-11-14,42c38a90,Delete the finished compatibility-layers record and two leftovers,0,1,23,75,0,1996,0,0,0,0,0,0,0,0,68,0,-52,1
+2026-11-14,6a876ed2,Delete the 2026-11-04 coordination note,0,1,22,179,0,11031,0,0,0,0,0,0,0,0,28,0,-157,1
+2026-11-15,b72475d9,Replace the CPU resource slot with a small one,0,2,1254,1084,0,14155,0,0,0,1041,0,3,0,0,0,0,170,1
+2026-11-15,b68a1d02,Record the run-journal problem as a high-priority open item,1,0,100,0,4986,0,0,0,0,0,0,0,0,0,0,0,100,0
+2026-11-15,3197ab3e,Retire attended evidence and park three pieces for the run journal,1,38,4732,18459,257,812256,16715,0,0,0,0,0,0,0,372,0,-13727,1
+2026-11-15,1797bc4b,Delete the attended recorder and the attended branch of native supervision,1,10,182,8814,2971,508580,8615,0,0,82,16,86,3,0,6,0,-8632,1
+2026-11-15,76e80224,Remove the attended selector from native supervision and log the leftovers,0,0,21,25,0,0,0,0,0,12,11,0,0,0,0,0,-4,1
+2026-11-15,3d0fedc6,Let the preview run from the declared Lab environment,0,0,79,14,0,0,0,0,0,0,0,6,0,0,8,0,65,0
+2026-11-15,84138e5c,Write the SDK demo controller's retained errors to the Kit log,0,0,37,3,0,0,0,0,0,0,0,0,3,0,0,0,34,0
+2026-11-15,03fc4d1d,Add Isaac Lab as a pinned submodule at third_party/IsaacLab,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0
+2026-11-15,78fddef5,Load Isaac Lab as the editable install of its submodule,0,0,587,275,0,0,0,0,0,0,0,15,230,0,5,0,312,0
+2026-11-15,b8b80e0b,Record the Isaac Sim 6.2 and Isaac Lab 3.0.0 upgrade as open work,1,0,36,0,1598,0,0,0,0,0,0,0,0,0,0,0,36,0

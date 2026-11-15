@@ -57,6 +57,13 @@ label = "Experiments"
 file = "experiments.html"
 group = "practices"
 
+# A measured case that shows why several practice rules exist; it follows the
+# three practice pages it draws on.
+[[nav]]
+label = "Approval that failed open"
+file = "approval-failed-open.html"
+group = "practices"
+
 [[nav]]
 label = "Release notes"
 file = "releases.html"

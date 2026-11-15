@@ -27,6 +27,7 @@ tables give the navigation and `[[source_pages]]` tables map records to routes.
 | Engineering | [`engineering-practices/index.md`](../engineering-practices/index.md) | The six engineering guides |
 | Documentation and writing | [`writing-practices/index.md`](../writing-practices/index.md) | The documentation system and the writing guides |
 | Experiments | [`experiments/index.md`](../experiments/index.md) | The experiment workflow and verification guides |
+| Approval that failed open | [`approval-failed-open/index.md`](../approval-failed-open/index.md) | Its record: how supporting code piled up in ADP and which kit rules answer each pile |
 
 The navigation lists these pages and, in a Releases group, the release notes
 and migration guides. Every registered record, including the rule guides,
@@ -39,8 +40,14 @@ leaves out `CLAUDE.md`, which only points agents at `AGENTS.md`, and
 `examples/**`, whose sample record belongs to the starter project.
 
 The site sets `chapter_reader = true`; records keep the registry default
-`reader = false`. Topic pages use only the shared `home.css` and
-`build-sheet.css` blocks, with no site-local stylesheet. The home page is
+`reader = false`. Topic pages use the shared `home.css` and
+`build-sheet.css` blocks. One page adds its own stylesheet:
+[Approval that failed open](../approval-failed-open/index.md) loads
+`approval-failed-open/approval-failed-open.css` for the wide and upright
+versions of its generated figures and for the marks of measured statements,
+the developer's words and interpretation. Its figures are fragments under
+`docs/site/fragments/approval-failed-open/`, written by the generator beside
+its record. The home page is
 reader-free, with `toc = []`.
 
 ## Build and preview

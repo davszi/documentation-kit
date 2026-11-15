@@ -16,6 +16,9 @@ export PYTHONPATH="$TASK_KIT_ROOT/tooling"
 "$DOCS_PYTHON" docsite.py build --project "$STARTER"
 "$DOCS_PYTHON" docsite.py lint --project "$STARTER" --strict
 "$DOCS_PYTHON" -m unittest discover -s tests -p 'test_*.py'
+# The approval-failed-open record: its numbers and the figures drawn from them
+# are current with the measurement beside it (the figure check runs both).
+"$DOCS_PYTHON" -I docs/topics/approval-failed-open/draw_figures.py --check
 # The kit's own reference website, built from the repository root.
 DOCSITE_PROJECT_ROOT="$TASK_KIT_ROOT" "$DOCS_PYTHON" docsite.py build --project .
 DOCSITE_PROJECT_ROOT="$TASK_KIT_ROOT" "$DOCS_PYTHON" docsite.py lint --project . --strict
