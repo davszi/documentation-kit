@@ -420,13 +420,17 @@ _LOADING_ATTRIBUTES = {"srcset", "imagesrcset", "background", "lowsrc", "dynsrc"
                        "formaction", "data", "codebase", "archive", "classid", "xlink:href", "srcdoc", "manifest",
                        "profile", "attributionsrc", "itemtype"}
 _ADDRESS_ATTRIBUTES = {"href": {"a"}, "src": {"img", "video", "audio", "source"}, "poster": {"video"}}
-_STYLE_LOAD = re.compile(r"url\s*\(|image-set\s*\(|expression\s*\(|@import|behavior\s*:|binding\s*:", re.I)
+# A style kept on an automatically listed page: plain declarations only, such as the
+# build's `counter-reset: ln 4`. Without parentheses, backslashes, quotes or slashes no
+# CSS escape, comment or function such as url() can be spelt.
+_PLAIN_STYLE = re.compile(r"[\w\s.:;%#-]*")
 
 
 class _AttributeFilter(HTMLParser):
     """Re-serializes raw HTML with every attribute double-quoted and without
-    event handlers, loading attributes or addresses on elements that do not
-    take them, so the link checks see every address that remains."""
+    event handlers, loading attributes, a style beyond plain declarations or
+    addresses on elements that do not take them, so the link checks see every
+    address that remains."""
 
     def __init__(self) -> None:
         super().__init__(convert_charrefs=False)
@@ -439,7 +443,7 @@ class _AttributeFilter(HTMLParser):
         for name, value in attrs:
             allowed = _ADDRESS_ATTRIBUTES.get(name)
             if (name.startswith("on") or name in _LOADING_ATTRIBUTES or (allowed is not None and tag not in allowed)
-                    or (name == "style" and value and _STYLE_LOAD.search(value))):
+                    or (name == "style" and value and not _PLAIN_STYLE.fullmatch(value))):
                 self.removed += 1
                 continue
             kept.append(name if value is None else f'{name}="{html.escape(value, quote=True)}"')

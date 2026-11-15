@@ -85,7 +85,7 @@ _COMPONENTS = Path(__file__).resolve().parent.parent / 'theme/components'
 _BODY = re.compile(rb'<body\b([^>]*)>', re.I)
 _CLASS = re.compile(rb'''(?:^|\s)class\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))''', re.I)
 # Addresses a page embeds or links: frames, objects, embeds, images and links.
-_TARGET = re.compile(r'''\s(?:src|href|data)\s*=\s*(?:"([^"]*)"|'([^']*)')''', re.I)
+_TARGET = re.compile(r'''\s(?:src|href|data)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))''', re.I)
 # Anything in a page that may be an address or a path, in attributes or text.
 _TOKEN = re.compile(r'''[^\s"'<>()\[\]{}|\\^`]+''')
 _SOURCE_HOST_PATH = re.compile(r'/(?:blob|tree)/[^/]+/(.+)$')
@@ -361,15 +361,25 @@ def lock_page(name: str, level: int, data: bytes, keyring: Keyring, versions: Ma
 
 
 def _addresses(markup: str, name: str) -> set[str]:
-    """Bundle paths a page embeds or links through its src, href or data attributes."""
+    """Bundle paths a page embeds or links through its src, href or data attributes.
+
+    Values may be quoted or not. A root-relative path counts from the bundle's
+    root and, for a site served below a folder, also without its first folder.
+    """
     found = set()
     for match in _TARGET.finditer(markup):
         try:
-            url = urlsplit(html.unescape(match[1] if match[1] is not None else match[2]))
+            url = urlsplit(html.unescape(next(value for value in match.groups() if value is not None)))
         except ValueError:
             continue
-        if not url.scheme and not url.netloc and url.path:
-            found.add(posixpath.normpath(posixpath.join(posixpath.dirname(name), unquote(url.path))))
+        if url.scheme or url.netloc or not url.path:
+            continue
+        path = unquote(url.path)
+        if path.startswith('/'):
+            rooted = posixpath.normpath(path.lstrip('/'))
+            found.update({rooted, rooted.partition('/')[2]} - {''})
+        else:
+            found.add(posixpath.normpath(posixpath.join(posixpath.dirname(name), path)))
     return found
 
 

@@ -56,7 +56,7 @@ A rendered page body above `<!-- page-end -->` uses the logical public `docs/htm
 Prefer `.html` links when the purpose is reading a page and explicit source links when inspecting source is intended. Raw Markdown viewing does not apply generated-origin interpretation. Preserve source path and fragment metadata so local and hosted source links retain identity.
 
 Lint checks every link to a repository file, whether written in Markdown or as
-HTML, `<a href="…">`. A Markdown link is checked in its source file. An HTML
+HTML with a double-quoted `href`, `<a href="…">`; other quoting is not checked. A Markdown link is checked in its source file. An HTML
 link is checked in the built page, where the build has resolved it, with a
 source remote or without one: this covers the body of a topic page, the
 fragments it includes and a registered source page. The target must exist, and
@@ -435,9 +435,9 @@ lint prints each case as a note, which never fails, not even under `--strict`:
   `<math>` and similar tags, and an unclosed HTML comment, show as text;
   complete HTML comments are dropped. Every other raw tag is written again
   with quoted attributes and loses its event handlers (`on…`), loading
-  attributes such as `srcset`, `ping` and `background`, styles that load a
-  `url(…)`, and any `href`, `src` or `poster` on an element that does not take
-  one. The remaining addresses are then checked like Markdown links, so no
+  attributes such as `srcset`, `ping` and `background`, a `style` with
+  parentheses, backslashes, quotes or slashes, and any
+  `href`, `src` or `poster` on an element that does not take one. The remaining addresses are then checked like Markdown links, so no
   script runs and nothing loads from outside the bundle;
 - a file without a level-one heading takes its file name, without `.md`, as
   title;
@@ -499,20 +499,21 @@ page's source, the built page and the formula:
 - a formula that Markdown split with markup, such as an `<em>` that an
   underscore made inside `$…$`;
 - an opening delimiter whose closing one is not in the same text, for example
-  because a tag or an unbalanced brace comes between them.
+  because a tag or an unbalanced brace comes between them. Write a literal
+  `$$` in prose as `$<!-- -->$`.
 
 KaTeX is JavaScript, and building a site needs no Node.js. The check is
 therefore the one part of lint that runs Node: `DOCS_NODE` when it is set,
 otherwise `node` on `PATH`. A `DOCS_NODE` that names no program is an error.
-Without Node, lint prints a note that says how many formulas were not compiled,
-and the run passes. A project whose checks must not pass without the formula
+Without Node, or with a Node that cannot run the compiler, lint prints a note
+that says how many formulas were not compiled, and the run passes. A project whose checks must not pass without the formula
 check sets, above the first `[[nav]]` table:
 
 ```toml
 formula_check_required = true
 ```
 
-Lint then fails when it finds no Node. A value other than `true` or `false`
+Lint then fails in both cases. A value other than `true` or `false`
 fails the build. After the check, lint prints how many formulas compiled and
 with which KaTeX version. The [module's description](../../tooling/formula_checks.py)
 gives the details.

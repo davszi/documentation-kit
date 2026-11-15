@@ -405,9 +405,10 @@
     });
   });
 
-  // What a page serves never deletes stored keys; only a new publish or a
-  // changed password makes them stale, and readSession and readRemembered
-  // drop those.
+  // Only readSession and readRemembered delete stored keys: a damaged entry,
+  // and a remembered key whose salt differs from the page's. A cached page of
+  // an older publish carries its older salt too, so opening it drops a newer
+  // remembered key; the reader enters the password once more.
   function begin() {
     start().catch(function () {
       say('');

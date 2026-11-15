@@ -141,6 +141,7 @@ class NotFacts(unittest.TestCase):
     def test_labels_and_names_are_not_counted(self):
         for decoration in ('01', '02 · 03', '<span>01</span><span>02</span>', 'Figure 3', 'see Fig. 2',
                            'Table 4', 'Chapter 5', 'Section 6', 'Appendix 1', 'version 1.2.3', 'H100 cards',
+                           'Figure 3.2', 'Section 4.1.2',
                            'v4 kit', 'file_2', 'name.5'):
             with self.subTest(decoration):
                 self.assertEqual(only_on_face(decoration, 'nothing'), [])
@@ -204,6 +205,18 @@ class ProjectPages(unittest.TestCase):
             self.assertEqual(errors[0][:52], 'docs/topics/demo/index.md (shown.html), chapter "a":')
             self.assertTrue(warnings[0].startswith('.build/docs/html/other.html, chapter "b": numbers shown only'))
             self.assertEqual(counts, {'pages': 2, 'faces': 3, 'findings': 3, 'accepted': 0})
+
+    def test_the_word_in_text_is_no_face_and_reference_pages_get_notes(self):
+        self.assertEqual(checks.check_page('<p><code>data-slide-face</code> <b unclosed', 'r.html')[:3], ([], [], []))
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            built = root / '.build/docs/html'
+            built.mkdir(parents=True)
+            (root / '.build/docs/site-build.json').write_text('{"source_pages": {"notes.draft.md.html": "notes/draft.md"}}')
+            (built / 'notes.draft.md.html').write_text(page(chapter('a', face('<p>1</p>') + face('<p>2</p>'))))
+            errors, warnings, notes, _ = checks.check(root)
+            self.assertEqual((errors, warnings), ([], []))
+            self.assertTrue(notes and notes[0].startswith('notes/draft.md (notes.draft.md.html), chapter "a": 2 slide faces'), notes)
 
 
 def git(root, *args):

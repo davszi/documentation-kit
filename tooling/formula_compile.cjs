@@ -2,7 +2,7 @@
 // (tooling/formula_checks.py). Reads [{tex, display}] as JSON on stdin and
 // writes {katex, results}: per formula null, or KaTeX's error message.
 'use strict';
-const path = require('node:path');
+const path = require('path');
 const katex = require(path.join(__dirname, '..', 'theme', 'assets', 'vendor', 'katex', 'katex.min.js'));
 
 let input = '';

@@ -2,6 +2,32 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Fix the findings of the code review
+
+- Why: an independent review of the code and checks found two defects that
+  block the release and fourteen minor ones.
+- Automatically listed pages keep a `style` attribute only when it holds no
+  parentheses, backslashes, quotes or slashes: a CSS escape such as `u\72l(`
+  passed the old filter and loaded an outside address. Plain declarations,
+  such as the build's line numbering on code blocks, stay.
+- Formula check: a project's own math wrapper with a child element and no
+  open delimiter is not a split; a Node that cannot run the compiler is a
+  note unless `formula_check_required = true`; lint refuses a value of that
+  setting that is not true or false; the compiler loads with `require('path')`;
+  the rule says how to write a literal `$$`.
+- Slide-face checks: only a tag with the attribute is a face, findings on an
+  automatically listed page are notes, and "Figure 3.2" or "Section 4.1.2" is
+  no number.
+- Page lock: frames found through unquoted and root-relative addresses get
+  the reference level; the comment on stored keys now says what the code does,
+  which drops a remembered key whose salt differs, also for a cached old page.
+- Lint skips protocol-relative links; the rule says only a double-quoted
+  `href` is checked; `publish` counts the automatically listed Reference
+  pages in its summary.
+- Checks: build, `lint --strict`, `build --check-reader` and
+  `DOCS_REQUIRE_BROWSER=1 bash tests/run_checks.sh`; results in the report of
+  this work.
+
 ## 2026-11-15 — Wait for the reader's chapter slide before measuring faces
 
 - Why: the documented loop, `goHash` then `assertSlideFaces` per chapter,

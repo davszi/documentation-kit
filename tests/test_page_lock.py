@@ -350,16 +350,19 @@ class LockBundle(unittest.TestCase):
 
     def test_frames_only_reference_pages_use_need_the_reference_password(self):
         rule = kit_page('rule.html', 'source-page reference-page').replace(
-            b'</main>', b'<iframe src="_media/a/report.html"></iframe><iframe src="_media/b/both.html"></iframe></main>')
+            b'</main>', b'<iframe src="_media/a/report.html"></iframe><iframe src="_media/b/both.html"></iframe>'
+            b'<iframe src=_media/d/bare.html></iframe><object data="/project/_media/e/rooted.html"></object></main>')
         home = kit_page('index.html').replace(b'</main>', b'<iframe src="_media/b/both.html"></iframe></main>')
         self.reset({'rule.html': rule, 'index.html': home,
                     '_media/a/report.html': b'<p>report</p><iframe src="nested.html"></iframe>',
                     '_media/a/nested.html': b'<p>nested</p>', '_media/b/both.html': b'<p>both</p>',
-                    '_media/c/alone.html': b'<p>alone</p>'})
+                    '_media/c/alone.html': b'<p>alone</p>', '_media/d/bare.html': b'<p>bare</p>',
+                    '_media/e/rooted.html': b'<p>rooted</p>'})
         self.apply()
         levels = self.levels()
         self.assertEqual({name: levels[name] for name in levels if name.startswith('_media/')},
                          {'_media/a/report.html': 2, '_media/a/nested.html': 2, '_media/b/both.html': 1,
+                          '_media/d/bare.html': 2, '_media/e/rooted.html': 2,
                           '_media/c/alone.html': 1, '_media/media/frame.html': 1})
 
     def test_root_404_page_opens_at_any_address(self):

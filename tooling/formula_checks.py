@@ -142,7 +142,8 @@ class _Formulas(HTMLParser):
             if tag == self.wrapper[0]:
                 self.wrapper[1] -= 1
             if self.wrapper[1] == 0:
-                if self.wrapper[2]:
+                # A child element splits a formula only where a delimiter stays open.
+                if self.wrapper[2] and self.wrapper[4]:
                     self.split.append("".join(self.wrapper[3]))
                 else:
                     self.unclosed.extend(self.wrapper[4])
@@ -202,8 +203,11 @@ def find_node() -> str | None:
 
 
 def required(site: dict) -> bool:
-    """`formula_check_required = true`: lint fails when Node.js is missing."""
-    return site.get("formula_check_required") is True
+    """`formula_check_required = true`: lint fails when Node.js is missing or cannot run the check."""
+    value = site.get("formula_check_required", False)
+    if not isinstance(value, bool):
+        raise ValueError("formula_check_required must be true or false")
+    return value
 
 
 def compile_formulas(node: str, formulas: list[tuple[str, bool]]) -> tuple[str, list[str | None]]:
@@ -237,6 +241,10 @@ def check(root: Path, site: dict, html_dir: Path, names: dict[str, str],
     """
     errors: list[str] = []
     notes: list[str] = []
+    try:
+        required(site)
+    except ValueError as problem:
+        return [f"site.toml: {problem}"], notes, None
     found: list[tuple[str, str, bool]] = []
     pages = 0
     for path in sorted(Path(html_dir).glob("*.html")):
@@ -270,7 +278,11 @@ def check(root: Path, site: dict, html_dir: Path, names: dict[str, str],
     try:
         version, results = compile_formulas(node, [(tex, display) for _, tex, display in found])
     except (OSError, RuntimeError, ValueError, subprocess.SubprocessError) as problem:
-        errors.append(f"formula check could not run {COMPILER.relative_to(KIT)} with {node}: {problem}")
+        message = f"formula check could not run {COMPILER.relative_to(KIT)} with {node}: {problem}"
+        if required(site):
+            errors.append(message + "; docs/site/site.toml sets formula_check_required = true")
+        else:
+            notes.append(message)
         return errors, notes, None
     failed = 0
     for (label, tex, display), problem in zip(found, results):

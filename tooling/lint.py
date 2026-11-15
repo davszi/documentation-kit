@@ -387,7 +387,7 @@ def check_html() -> None:
             if _worklog_entries.within(source_links, m.start()):
                 continue
             href = m.group(1)
-            if href.startswith(("http://", "https://", "mailto:", "vscode:")):
+            if href.startswith(("http://", "https://", "//", "mailto:", "vscode:")):
                 continue
             path_part, _, frag = href.partition("#")
             path_part = path_part.partition("?")[0]

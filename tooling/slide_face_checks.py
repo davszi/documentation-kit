@@ -90,9 +90,11 @@ LISTED = 12  # numbers named per finding before the rest is counted
 
 # Labels and names blanked before numbers are read; each covers text that is not a stated quantity.
 _LABELS = (
-    re.compile(r"\b(?:Figure|Fig\.|Table|Chapter|Section|Appendix)[ \t\u00a0]*\d+\b", re.I),
+    re.compile(r"\b(?:Figure|Fig\.|Table|Chapter|Section|Appendix)[ \t\u00a0]*\d+(?:\.\d+)*\b", re.I),
     re.compile(r"(?<![\w.])\d+(?:\.\d+){2,}(?![\w])"),  # versions, addresses
 )
+# A face is an element whose tag carries the attribute; the word in text or code is none.
+_FACE_TAG = re.compile(r"<[A-Za-z][^<>]*?\sdata-slide-face(?=[\s=/>])")
 _DATE = re.compile(r"(?<![\w.])\d{4}-\d{2}-\d{2}(?![\w])")
 _SPACE = "\u2009\u202f\u00a0"
 _NUMBER = re.compile(
@@ -253,7 +255,7 @@ def check_page(page: str, name: str) -> tuple[list[str], list[str], list[str], d
     warnings: list[str] = []
     notes: list[str] = []
     counts = {"faces": 0, "findings": 0, "accepted": 0}
-    if "data-slide-face" not in page:
+    if not _FACE_TAG.search(page):
         return errors, warnings, notes, counts
     try:
         found, outside = chapters_with_faces(page)
@@ -298,10 +300,14 @@ def check_page(page: str, name: str) -> tuple[list[str], list[str], list[str], d
 
 
 def check(root: Path) -> tuple[list[str], list[str], list[str], dict]:
-    """(errors, warnings, notes, counts) over every built page of the project."""
+    """(errors, warnings, notes, counts) over every built page of the project.
+
+    On an automatically listed Reference page every finding is a note, as for its links.
+    """
     root = Path(root)
     built = root / ".build/docs/html"
     names = page_sources(root)
+    automatic = {name for name in names if name.endswith(".md.html")}
     errors: list[str] = []
     warnings: list[str] = []
     notes: list[str] = []
@@ -310,9 +316,12 @@ def check(root: Path) -> tuple[list[str], list[str], list[str], dict]:
         source = names.get(path.name)
         name = f"{source} ({path.name})" if source else f".build/docs/html/{path.name}"
         found = check_page(path.read_text(errors="replace"), name)
-        errors += found[0]
-        warnings += found[1]
-        notes += found[2]
+        if path.name in automatic:
+            notes += found[0] + found[1] + found[2]
+        else:
+            errors += found[0]
+            warnings += found[1]
+            notes += found[2]
         if found[3]["faces"]:
             totals["pages"] += 1
         for key in ("faces", "findings", "accepted"):

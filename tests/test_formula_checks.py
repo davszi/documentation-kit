@@ -60,6 +60,11 @@ class PageFormulas(unittest.TestCase):
             '<p><span class="math-inline">\\(a<em>b</em>c\\)</span></p>'))
         self.assertEqual((formulas, split, unclosed), ([], ['\\(a<em>b</em>c\\)'], []))
 
+    def test_a_wrapper_with_markup_and_no_open_delimiter_is_not_split(self):
+        formulas, split, unclosed = page_formulas(page(
+            '<div class="math"><span>a project\'s own wrapper</span> \\(x\\)</div>'))
+        self.assertEqual((formulas, split, unclosed), ([('x', False)], [], []))
+
     def test_a_delimiter_that_never_closes_is_reported(self):
         formulas, split, unclosed = page_formulas(page(
             '<p>raw \\(x <b>bold</b> y\\)</p><span class="math-inline">\\(a{\\)</span>'))
@@ -114,6 +119,20 @@ class Check(unittest.TestCase):
         self.assertEqual(notes, [])
         self.assertEqual(len(errors), 1)
         self.assertIn('formula_check_required = true', errors[0])
+
+    def test_a_node_that_cannot_run_the_compiler_is_a_note_unless_required(self):
+        self.write('guide.html', page('<div class="math">$$x$$</div>'))
+        errors, notes, _ = check(KIT, {}, self.html, self.names, find=lambda: 'false')
+        self.assertEqual(errors, [])
+        self.assertEqual(len(notes), 1)
+        self.assertIn('formula check could not run', notes[0])
+        errors, notes, _ = check(KIT, {'formula_check_required': True}, self.html, self.names, find=lambda: 'false')
+        self.assertEqual((len(errors), notes), (1, []))
+
+    def test_lint_refuses_a_setting_that_is_not_a_boolean(self):
+        self.write('guide.html', page('<div class="math">$$x$$</div>'))
+        self.assertEqual(check(KIT, {'formula_check_required': 'yes'}, self.html, self.names, find=lambda: None),
+                         (['site.toml: formula_check_required must be true or false'], [], None))
 
     def test_a_docs_node_that_names_nothing_is_an_error(self):
         self.write('guide.html', page('<div class="math">$$x$$</div>'))

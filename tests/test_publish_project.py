@@ -46,9 +46,18 @@ private_prefixes = ["configs/"]
 
     def publish(self):
         with patch('publication.subprocess.check_output', return_value='\0'.join(self.tracked) + '\0'), \
-             patch('publication.subprocess.run') as build, contextlib.redirect_stdout(io.StringIO()):
+             patch('publication.subprocess.run') as build, contextlib.redirect_stdout(io.StringIO()) as out:
             publish_project(self.root, self.output, kit=self.kit)
             build.assert_called_once()
+        return out.getvalue()
+
+    def test_summary_counts_automatically_listed_reference_pages(self):
+        config = self.root / 'docs/site/site.toml'
+        config.write_text(config.read_text().replace('".md", ', ''))
+        (self.generated.parent / 'site-build.json').write_text(json.dumps({'resource_origins': {}, 'source_pages': {
+            'readme.md.html': 'README.md', 'notes.plan.md.html': 'notes/plan.md', 'guide.html': 'docs/guide.md'}}))
+        self.assertIn('Published 1 configured pages, 2 automatically listed Reference pages and 1 project resources',
+                      self.publish())
 
     def test_pages_resources_and_opaque_scripts(self):
         self.publish()

@@ -385,6 +385,8 @@ class ReleaseReview(Project):
             '<p><image src="https://example.com/image.png"></p>',
             "<video poster='https://example.com/poster.png'></video>",
             '<p style="background:url(\'https://example.com/style.png\')">styled</p>',
+            '<div style="background:u\\72l(https://example.com/escaped.png)">escaped</div>',
+            '![protocol-relative](//example.com/relative.png)',
             '<p><a href="https://example.com/ok" ping="https://example.com/ping">kept link</a></p>',
         ]) + '\n')
         result = self.build()
@@ -392,7 +394,8 @@ class ReleaseReview(Project):
         page = self.page('notes.raw.md.html')
         body = page[page.index('class="source-origin"'):page.index('</article>') if '</article>' in page else None]
         for forbidden in ('onerror', 'onmouseover', 'ontoggle', 'javascript:', 'java\tscript', 'srcset', 'ping=',
-                          '<svg', '<image', 'poster=', "src='", 'src="https:', 'src=https', 'url('):
+                          '<svg', '<image', 'poster=', "src='", 'src="https:', 'src=https', 'url(', 'style=',
+                          'escaped.png'):
             self.assertNotIn(forbidden, body, forbidden)
         self.assertIn('<a href="https://example.com/single.png">single</a>', body)
         self.assertIn('<a href="https://example.com/bare.png">bare</a>', body)

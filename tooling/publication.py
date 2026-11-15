@@ -326,6 +326,9 @@ def publish_project(root: Path, destination: Path, *, kit: Path) -> None:
                      private_suffixes=suffixes, private_prefixes=prefixes)
         locked = lock.apply(output, built) if lock else ''
         output.rename(destination)
-    print(f'Published {len(pages)} configured pages and {len(public)} project resources to {destination}')
+    # Automatically listed Reference pages are published too; their routes end in .md.html.
+    listed = sum(route.endswith('.md.html') for route in built.get('source_pages', {}))
+    print(f'Published {len(pages)} configured pages, {listed} automatically listed Reference pages '
+          f'and {len(public)} project resources to {destination}')
     if locked:
         print(locked)
