@@ -29,14 +29,10 @@ their owner instead of changing them in the same deliverable.
    and the worklog and open work exist where `docs/site/site.toml` names them
    or at their default paths. Follow
    [canonical homes](documentation.md#canonical-homes).
-5. **Capability map.** `docs/CAPABILITY_MAP.md`, or the file that
-   `capability_map` in `docs/site/site.toml` names, lists each need the
-   project's tooling meets, with its code, state and importers, and the needs
-   seen but not built with the person's decisions. Where `tooling_roots` is
-   set, lint checks that every entry under a tooling root has a row and that
-   the Imported by column is current, and warns when a tool imports from an
-   experiment folder **(lint)**. Where it is not set, read the tooling
-   folders against the map, and propose the setting to the owner. Follow
+5. **Capability map.** `docs/site/site.toml` sets `tooling_roots`, and a
+   project with tooling keeps its map current **(lint)**. Where the list is
+   `[]`, look for tooling the list misses, such as scripts or a harness, and
+   propose its folders to the owner. Follow
    [the capability map](engineering/code.md#the-capability-map).
 6. **Topics.** Every topic page has a record in its folder or declares
    `page_only` with a reason **(lint)**. No `README.md` exists below the repository root, apart from files that arrive with third-party code ([README is the bounded exception](documentation.md#readme-is-the-bounded-exception)).

@@ -28,7 +28,7 @@ Checks (the shared guides under rules/ are the spec):
      deeper in a folder named by `topic_group_folders`, has a record beside it
      (another .md outside evidence/) or declares `page_only = "<reason>"`;
      an empty page_only is an error, an unneeded one a warning; home exempt
- 12. capability map, only when site.toml names `tooling_roots`: the map exists
+ 12. capability map: site.toml sets `tooling_roots` (error); when it names a folder, the map exists
      and is tracked; every tracked file or folder directly under a tooling root
      is linked from its table; its generated Imported by column matches the Python
      imports (errors); a tooling module that imports from a folder under

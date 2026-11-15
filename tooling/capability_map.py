@@ -3,19 +3,20 @@
 
     python .docs-kit/docsite.py capability-map --project .
 
-rewrites the generated "Imported by" column of the map. `docsite.py lint` checks
-the map when `docs/site/site.toml` names `tooling_roots`; a project that sets
-none of the settings below is not checked.
+rewrites the generated "Imported by" column of the map. Every project sets
+`tooling_roots` in `docs/site/site.toml`; `docsite.py lint` fails without it,
+and checks the map when the list names at least one folder. An empty list
+states that the project has no tooling.
 
 Settings, top-level in site.toml, above the first [[nav]] table:
-  tooling_roots     folders whose direct entries every row of the map must cover
+  tooling_roots     folders whose direct entries every row of the map must cover; [] for none
   capability_map    the map's path (default docs/CAPABILITY_MAP.md)
   experiment_roots  folders whose subfolders are experiments; a tool that
                     imports from one gets a warning
 
-The map holds one table with the columns Need | Code | State | Imported by. "Used
-by" is generated from Python imports only; rules/engineering/code.md, section
-"The capability map", owns the format and what the check does not cover.
+The map holds one table with the columns Need | Code | State | Imported by. "Imported
+by" is generated from Python imports only; rules/site/authoring.md, section
+"Capability map settings", owns the format and what the check does not cover.
 """
 
 from __future__ import annotations
@@ -25,6 +26,7 @@ import os
 import re
 import subprocess
 import sys
+import urllib.parse
 import tomllib
 from pathlib import Path, PurePosixPath
 
@@ -35,7 +37,9 @@ NO_CODE = "—"
 NO_IMPORTS = "no Python imports"
 NOT_PYTHON = "not scanned: no Python code"
 COMMAND = "docsite.py capability-map --project ."
-LINK_RE = re.compile(r"!?\[[^\]]*\]\(([^)\s]+)\)")
+# A link's target, bare or in <…>, with an optional title after it.
+LINK_RE = re.compile(r"""!?\[[^\]]*\]\(\s*(?:<([^>]*)>|([^)\s]+))(?:\s+(?:"[^"]*"|'[^']*'))?\s*\)""")
+MISSING = "tooling_roots is missing; every project sets it: list its tooling folders, or [] when it has none"
 
 
 # ---------------------------------------------------------------- settings
@@ -56,19 +60,18 @@ def _folders(value, key: str) -> tuple[str, ...]:
 
 
 def settings(site: dict) -> dict | None:
-    """The validated settings, or None when the project has not opted in.
+    """The validated settings, or None when the project has no tooling or has not set `tooling_roots`.
 
     Raises ValueError for a wrong value or for `capability_map` or
-    `experiment_roots` without `tooling_roots`, which would check nothing.
+    `experiment_roots` without a tooling folder, which would check nothing.
+    Lint reports a missing `tooling_roots` through `check`.
     """
-    if "tooling_roots" not in site:
+    tooling = _folders(site.get("tooling_roots", []), "tooling_roots")
+    if not tooling:
         for key in ("capability_map", "experiment_roots"):
             if key in site:
-                raise ValueError(f"{key} needs tooling_roots; without it the capability map is not checked")
+                raise ValueError(f"{key} needs a folder in tooling_roots; without one the capability map is not checked")
         return None
-    tooling = _folders(site["tooling_roots"], "tooling_roots")
-    if not tooling:
-        raise ValueError("tooling_roots must name at least one folder; remove the setting to turn the check off")
     experiments = _folders(site.get("experiment_roots", []), "experiment_roots")
     for a in tooling + experiments:
         for b in tooling + experiments:
@@ -127,26 +130,29 @@ class ImportIndex:
     def __init__(self, root: Path, tracked: list[str], tooling_roots: tuple[str, ...]):
         self.root, self.tooling_roots = Path(root), tooling_roots
         self.files = set(tracked)
-        self.dirs = {str(parent) for path in tracked for parent in PurePosixPath(path).parents if str(parent) != "."}
-        self.unreadable: list[str] = []
+        # A folder without __init__.py loads as a namespace package only when
+        # Python code lies below it, and never in place of the standard library.
+        self.dirs = {str(parent) for path in tracked if path.endswith(".py")
+                     for parent in PurePosixPath(path).parents if str(parent) != "."}
+        self.unreadable: list[tuple[str, str]] = []
         self.imports: dict[str, list[tuple[int, str]]] = {}
         for path in tracked:
             if path.endswith(".py") and (self.root / path).is_file():
                 self.imports[path] = self._scan(path)
 
-    def _module(self, base: str, parts: list[str]) -> str | None:
+    def _module(self, base: str, parts: list[str], absolute: bool = True) -> str | None:
         stem = "/".join(p for p in (base, *parts) if p)
         if parts and stem + ".py" in self.files:
             return stem + ".py"
         if (stem + "/__init__.py" if stem else "__init__.py") in self.files:
             return stem + "/__init__.py" if stem else "__init__.py"
-        if parts and stem in self.dirs:
+        if parts and stem in self.dirs and not (absolute and parts[0] in sys.stdlib_module_names):
             return stem
         return None
 
-    def _deepest(self, base: str, parts: list[str]) -> str | None:
+    def _deepest(self, base: str, parts: list[str], absolute: bool = True) -> str | None:
         for end in range(len(parts), 0, -1):
-            found = self._module(base, parts[:end])
+            found = self._module(base, parts[:end], absolute)
             if found:
                 return found
         return None
@@ -155,7 +161,7 @@ class ImportIndex:
         try:
             tree = ast.parse((self.root / path).read_bytes(), filename=path)
         except (SyntaxError, ValueError) as problem:
-            self.unreadable.append(f"{path}: {problem.__class__.__name__}")
+            self.unreadable.append((path, problem.__class__.__name__))
             return []
         folder = str(PurePosixPath(path).parent)
         folder = "" if folder == "." else folder
@@ -178,10 +184,11 @@ class ImportIndex:
                 else:
                     bases = [folder, "", *self.tooling_roots]
                 for base in bases:
-                    targets = [self._module(base, parts + [alias.name]) for alias in node.names if alias.name != "*"]
+                    absolute = not node.level
+                    targets = [self._module(base, parts + [alias.name], absolute) for alias in node.names if alias.name != "*"]
                     targets = [t for t in targets if t]
                     if not targets:
-                        whole = self._deepest(base, parts) if parts else self._module(base, [])
+                        whole = self._deepest(base, parts, absolute) if parts else self._module(base, [], absolute)
                         targets = [whole] if whole else []
                     if targets:
                         found.extend((node.lineno, t) for t in targets)
@@ -239,10 +246,11 @@ def code_links(cell: str, map_path: str, root: Path) -> tuple[list[str], list[st
     """Project-relative paths the Code cell links, and links that leave the project."""
     paths, outside = [], []
     folder = PurePosixPath(map_path).parent
-    for target in LINK_RE.findall(re.sub(r"`[^`]*`", "", cell)):
+    for bracketed, bare in LINK_RE.findall(re.sub(r"`[^`]*`", "", cell)):
+        target = bracketed or bare
         if re.match(r"[a-z][a-z0-9+.-]*:", target):
             continue
-        part = target.partition("#")[0].partition("?")[0]
+        part = urllib.parse.unquote(target.partition("#")[0].partition("?")[0])
         if not part:
             continue
         joined = os.path.normpath(str(folder / part))
@@ -286,10 +294,15 @@ def users_cell(paths: list[str], index: ImportIndex, s: dict) -> str:
 
 # ---------------------------------------------------------------- check and write
 def check(root: Path, site: dict | None = None) -> tuple[list[str], list[str]]:
-    """Errors and warnings for the project's capability map; none when it has not opted in."""
+    """Errors and warnings for the project's capability map; none when it has no tooling."""
     root = Path(root)
+    if site is None:
+        config = root / "docs/site/site.toml"
+        site = tomllib.loads(config.read_text()) if config.is_file() else {}
+    if "tooling_roots" not in site:
+        return [f"site.toml: {MISSING} (rules/engineering/code.md#the-capability-map)"], []
     try:
-        s = settings(site) if site is not None else site_settings(root)
+        s = settings(site)
     except ValueError as problem:
         return [f"site.toml: {problem}"], []
     if s is None:
@@ -306,8 +319,9 @@ def check(root: Path, site: dict | None = None) -> tuple[list[str], list[str]]:
             key = "tooling_roots" if folder in s["tooling_roots"] else "experiment_roots"
             errors.append(f"site.toml: {key} names {folder}/, which holds no tracked file")
     index = ImportIndex(root, tracked, s["tooling_roots"])
-    for problem in index.unreadable:
-        warnings.append(f"capability map: cannot read the imports of {problem}")
+    for path, problem in index.unreadable:
+        if any(_inside(path, r) for r in s["tooling_roots"] + s["experiment_roots"]):
+            warnings.append(f"capability map: cannot read the imports of {path}: {problem}")
     for path, imports in sorted(index.imports.items()):
         if not any(_inside(path, r) for r in s["tooling_roots"]):
             continue
@@ -359,11 +373,12 @@ def write(root: Path) -> int:
     root = Path(root)
     s = site_settings(root)
     if s is None:
-        raise LookupError("site.toml names no tooling_roots; the capability map is not used")
+        raise LookupError("site.toml names no folder in tooling_roots; the project keeps no capability map")
     path = root / s["map"]
     if not path.is_file():
         raise ValueError(f"capability map {s['map']} is missing")
-    text = path.read_text()
+    with path.open(newline="") as handle:
+        text = handle.read()
     table = table_rows(text)
     if table is None:
         raise ValueError(f"{s['map']}: no table with the columns Need | Code | State | Imported by")
@@ -375,11 +390,11 @@ def write(root: Path) -> int:
             raise ValueError(f"{s['map']}:{line + 1}: a row needs four cells, Need | Code | State | Imported by")
         expected = users_cell(code_links(cells[1], s["map"], root)[0], index, s)
         if cells[3] != expected:
-            ending = "\n" if lines[line].endswith("\n") else ""
+            ending = lines[line][len(lines[line].rstrip("\r\n")):]
             lines[line] = "| " + " | ".join(cells[:3] + [expected]) + " |" + ending
             changed += 1
     if changed:
-        path.write_text("".join(lines))
+        path.write_text("".join(lines), newline="")
     return changed
 
 

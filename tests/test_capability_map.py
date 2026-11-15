@@ -51,16 +51,23 @@ def base_files(record="`experiments/attended/`, `tools/judge.py`", judge="no Pyt
 
 
 class Settings(unittest.TestCase):
-    def test_no_setting_means_no_check(self):
-        # No map, unlisted tooling and an experiment import: nothing is reported.
+    def test_missing_setting_fails(self):
+        # The map is required: a project that does not set tooling_roots fails lint.
+        with project({"tools/harness.py": ""}) as folder:
+            errors, _ = capability_map.check(Path(folder), {})
+            self.assertEqual(len(errors), 1)
+            self.assertIn("tooling_roots is missing; every project sets it", errors[0])
+
+    def test_empty_list_states_no_tooling(self):
+        # No map and an experiment import: with no tooling folder nothing else is checked.
         files = {"tools/harness.py": "import experiments.a.run\n", "experiments/a/run.py": ""}
         with project(files) as folder:
-            self.assertEqual(capability_map.check(Path(folder), {}), ([], []))
-            self.assertIsNone(capability_map.settings({}))
+            self.assertEqual(capability_map.check(Path(folder), {"tooling_roots": []}), ([], []))
+            self.assertIsNone(capability_map.settings({"tooling_roots": []}))
 
     def test_wrong_settings_are_refused(self):
         for site in ({"capability_map": "docs/MAP.md"}, {"experiment_roots": ["experiments/"]},
-                     {"tooling_roots": []}, {"tooling_roots": "tools/"}, {"tooling_roots": ["../tools"]},
+                     {"tooling_roots": [], "capability_map": "docs/MAP.md"}, {"tooling_roots": "tools/"}, {"tooling_roots": ["../tools"]},
                      {"tooling_roots": ["/abs"]}, {"tooling_roots": ["tools", "tools/"]},
                      {"tooling_roots": ["tools/"], "experiment_roots": ["tools/exp/"]},
                      {"tooling_roots": ["tools/"], "capability_map": "docs/map.txt"}):
@@ -163,6 +170,44 @@ class Check(unittest.TestCase):
             "| Summarise recorded runs | [report/](../tools/report/) | exists | no Python imports |\n| Replay a recorded run |")
         with project(files) as folder:
             self.assertEqual(capability_map.check(Path(folder), SITE), ([], []))
+
+    def test_unparsable_python_warns_only_under_the_roots(self):
+        files = base_files()
+        files["tests/fixtures/broken.py"] = "print 'python 2'\n"
+        files["experiments/attended/broken.py"] = "def (:\n"
+        with project(files) as folder:
+            _, warnings = capability_map.check(Path(folder), SITE)
+            self.assertEqual(warnings, ["capability map: cannot read the imports of "
+                                        "experiments/attended/broken.py: SyntaxError"])
+
+    def test_links_with_a_title_or_an_encoded_space_are_read(self):
+        files = base_files()
+        files["tools/my tool.py"] = ""
+        files["docs/CAPABILITY_MAP.md"] = files["docs/CAPABILITY_MAP.md"].replace(
+            "[judge.py](../tools/judge.py)", '[judge.py](../tools/judge.py "the judge"), [t](../tools/my%20tool.py)')
+        with project(files) as folder:
+            self.assertEqual(capability_map.check(Path(folder), SITE), ([], []))
+
+    def test_stdlib_name_is_not_credited_to_a_namespace_folder(self):
+        files = base_files()
+        files["logging/notes.txt"] = "no Python here\n"
+        files["queue/worker.py"] = ""
+        files["tools/judge.py"] += "import logging\nimport queue\n"
+        with project(files) as folder:
+            imports = capability_map.ImportIndex(Path(folder), capability_map.tracked_files(Path(folder)),
+                                                 ("tools",)).imports["tools/judge.py"]
+            self.assertEqual([t for _, t in imports], ["tools/run_record/writer.py"])
+
+    def test_the_command_keeps_crlf_line_endings(self):
+        files = base_files(record="`tools/judge.py`")
+        files["docs/CAPABILITY_MAP.md"] = files["docs/CAPABILITY_MAP.md"].replace("\n", "\r\n")
+        files["docs/site/site.toml"] = 'tooling_roots = ["tools/"]\nexperiment_roots = ["experiments/"]\n'
+        with project(files) as folder:
+            root = Path(folder)
+            (root / "docs/CAPABILITY_MAP.md").write_bytes(files["docs/CAPABILITY_MAP.md"].encode())
+            self.assertEqual(capability_map.write(root), 1)
+            data = (root / "docs/CAPABILITY_MAP.md").read_bytes()
+            self.assertEqual(data.count(b"\n"), data.count(b"\r\n"))
 
 
 class KitLint(unittest.TestCase):

@@ -10,12 +10,12 @@ chapter_reader = true
 # CLAUDE.md only points agents at AGENTS.md.
 # reference_listing = false
 reference_exclude = ["CLAUDE.md"]
-# The capability map check, off until tooling_roots names the project's
-# tooling folders. Every tracked file or folder directly under them then needs
-# a row in docs/CAPABILITY_MAP.md, and lint checks its generated Imported by
-# column. capability_map names the map when it lives elsewhere; a tool that
-# imports from a folder under experiment_roots gets a warning.
-# tooling_roots = ["tools/"]
+# Every project sets tooling_roots; [] states that it has no tooling yet.
+# Once it names a folder, such as ["tools/"], every tracked file or folder
+# directly under it needs a row in docs/CAPABILITY_MAP.md, and lint checks its
+# generated Imported by column. capability_map names the map when it lives
+# elsewhere; a tool that imports from a folder under experiment_roots warns.
+tooling_roots = []
 # capability_map = "docs/CAPABILITY_MAP.md"
 # experiment_roots = ["experiments/"]
 # Lint compiles every formula on the built pages with the kit's KaTeX, which

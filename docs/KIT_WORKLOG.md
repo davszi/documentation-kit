@@ -2,6 +2,25 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Require the tooling folders in every project
+
+- Why: the guide and release notes called the capability map optional while
+  the rules required it. deivid, asked which: "Required".
+- Every project sets `tooling_roots` in `docs/site/site.toml`; `[]` states it
+  has no tooling, and lint fails without the setting. A project with tooling
+  keeps the map, and the existing check applies. The starter sets `[]`.
+- [The capability map](../rules/engineering/code.md#the-capability-map) keeps
+  four sentences; the format, the check and the import reading moved to
+  [capability map settings](../rules/site/authoring.md#capability-map-settings),
+  as deivid agreed: "i agree with your code .md proposal". The subsection "The
+  check" was never released and is gone. Name the need first says what it
+  means in a project without tooling.
+- Code review fixes in the same module: a file that does not parse warns only
+  under a tooling or experiment root; a link with a title or an encoded space
+  is read; the command keeps CRLF line endings; a folder without
+  `__init__.py` is a package only when Python lies below it, and never under a
+  standard-library name.
+
 ## 2026-11-15 — Close the gaps the upgrades reported in the guides and rules
 
 - Why: the upgrades of adaptation and ADP to 3.2.0 and 4.0.0 reported gaps

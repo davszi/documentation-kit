@@ -3,9 +3,9 @@
 This map lists what the kit's own tooling does, one need per row, so that a
 need is solved once and found again. Read it before building tooling.
 [Name the need first](../rules/engineering/code.md#name-the-need-first) says
-how to use it, and [the capability map](../rules/engineering/code.md#the-capability-map)
-owns its format and its lint check. `tooling_roots = ["tooling/"]` in
-`docs/site/site.toml` turns the check on for the kit.
+how to use it, and [capability map settings](../rules/site/authoring.md#capability-map-settings)
+give its format and its lint check, which `tooling_roots = ["tooling/"]` in
+`docs/site/site.toml` applies to the kit.
 
 The Need, Code and State columns are written by hand. The Imported by column
 is generated from Python imports; never edit it. After adding a row or

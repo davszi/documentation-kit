@@ -201,9 +201,11 @@ rejects a registered source or stylesheet that is missing.
 
 ### Capability map settings
 
-Three top-level settings turn on the check of the project's
-[capability map](../engineering/code.md#the-capability-map). Like every
-top-level setting they go above the first `[[nav]]` table:
+Every project sets `tooling_roots` for its
+[capability map](../engineering/code.md#the-capability-map), above the first
+`[[nav]]` table like every top-level setting; lint fails without it. A project
+without tooling writes `tooling_roots = []`, and nothing else is checked. A
+project with tooling names its folders:
 
 ```toml
 tooling_roots = ["tools/"]
@@ -212,19 +214,54 @@ experiment_roots = ["experiments/"]
 ```
 
 - `tooling_roots` lists the project's tooling folders. Every tracked file or
-  folder directly under one of them needs a row in the map. Naming at least
-  one folder turns the check on; without the setting nothing is checked.
+  folder directly under one of them needs a row in the map; names that start
+  with a dot and `__init__.py` are exempt.
 - `capability_map` names the map when it is not at the default
   `docs/CAPABILITY_MAP.md`. It must be a Markdown file inside the project.
   Lint checks its links wherever it lies.
-- `experiment_roots` lists the folders whose subfolders are experiments. A
-  Python file under a tooling root that imports from one gets a warning.
+- `experiment_roots` lists the folders whose subfolders are experiments.
 
 Each folder is a path relative to the project root, with or without a
 trailing slash, and no folder may lie inside another named folder. The build
 fails with a `site.toml:` error for a wrong type or path, and for
-`capability_map` or `experiment_roots` set without `tooling_roots`. Lint
-fails when a named folder holds no tracked file.
+`capability_map` or `experiment_roots` set while `tooling_roots` names no
+folder. Lint fails when a named folder holds no tracked file.
+
+The map holds one table with the columns Need, Code, State and Imported by,
+one row per need, then the list of needs seen but not built, each with when
+and where it was seen and the person's decision with its date, or where the
+open question waits:
+
+- **Need:** one sentence that names no experiment.
+- **Code:** a Markdown link to each file or folder that meets the need, or
+  `—` when no code exists.
+- **State:** `exists`, `partly` or `missing`. A `missing` row links no code;
+  the other two link at least one path.
+- **Imported by:** generated, never typed: the tracked Python files that
+  import the linked code. A user inside a tooling root is named by the entry
+  directly under that root, and a user inside an experiment folder by that
+  folder. `no Python imports` and `not scanned: no Python code` mark the two
+  empty cases. `python .docs-kit/docsite.py capability-map --project .`
+  rewrites this column and nothing else; run it after adding a row or
+  changing an import.
+
+Lint fails when the map is missing or untracked, when an entry directly under
+a tooling root has no row, when a link in the map is dead, when the Imported
+by column differs from what the command writes, and when a state is unknown
+or does not match its Code column. It warns, which fails `--strict`, when a
+Python file under a tooling root imports from a folder under an experiment
+root, naming the file, the line and the imported path, and when a Python file
+under either root does not parse.
+
+The column and the warning read Python `import` and `from … import`
+statements, those inside functions included. A name resolves against the
+importing file's folder, the project root and each tooling root, in that
+order, and a relative import against its package. A folder without
+`__init__.py` counts as a package only when Python files lie below it, and
+never under a name of the standard library. Not covered: code loaded by file
+path or with `__import__`, code run as a command, imports that need another
+`sys.path` change, and every language other than Python. When such users
+matter, name them in the map's opening text.
 
 ### Registered source pages
 
