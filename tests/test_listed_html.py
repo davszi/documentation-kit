@@ -66,6 +66,17 @@ Text after.
 <img src="\\\\127.0.0.1:8999/b2-backslash" alt="backslash">
 <a href=" //127.0.0.1:8999/b2-link">link</a>
 """
+EVIL_SVG = ('<svg xmlns="http://www.w3.org/2000/svg"><script>window.__mediaRan = "svg"</script>'
+            '<rect width="9" height="9"/></svg>\n')
+EVIL_HTML = '<!doctype html><title>x</title><script>window.__mediaRan = "html"</script>\n'
+TYPES = """# Types
+
+<img src="media/evil.svg" alt="svg-html"> <img src="media/evil.html" alt="html-html"> <img src="media/fake.png" alt="fake-png"> <img src="media/kept.png" alt="png-html"> <img src="media/upper.PNG" alt="upper">
+
+![svg-md](media/evil.svg) ![html-md](media/evil.html) ![png-md](media/kept.png)
+
+<img src="data:text/html,&lt;script&gt;alert(1)&lt;/script&gt;" alt="data-html"> <img src="data:image/svg+xml,&lt;svg/&gt;" alt="data-svg"> <img src="data:image/png;base64,iVBORw0KGgo=" alt="data-png">
+"""
 
 
 def invoke(*args):
@@ -114,7 +125,8 @@ def unsafe(page):
                 found.append(f'{tag} style={value}')
             elif name == 'class' and {'toc', 'repo-tree', 'repo-tree-all', 'sidebar', 'nav-fold'} & set(value.split()):
                 found.append(f'{tag} class={value}')
-            elif name == 'src' and not value.startswith(('_media/', '../figures/', 'data:image/')):
+            elif name == 'src' and not (re.fullmatch(r'_media/[^?#]+\.(?:png|jpe?g|gif|webp|avif)', value, re.I)
+                                        or re.match(r'data:image/(?:png|jpeg|gif|webp|avif)[;,]', value)):
                 found.append(f'{tag} src={value}')
             elif name == 'href':
                 _, scheme, other_host = browser_address(value)
@@ -232,6 +244,13 @@ class Structure(unittest.TestCase):
                                    '&lt;/main&gt;<div><b>out</b> \n\n<p><b><i>left open\n\n</i></b></p></div>')
         self.assertIn('n.md: 5 raw HTML end tag(s) that close nothing the file opened removed', notes)
 
+    def test_a_link_ends_with_the_html_block_that_opened_it(self):
+        rendered, notes = render_listed_file('<div><a href="https://x">\n\nSome *Markdown*.\n\n[link](y)\n\n</div>\n',
+                                             'n.md')
+        self.assertEqual(rendered, '<div><a href="https://x">\n</a>\n<p>Some <em>Markdown</em>.</p>\n'
+                                   '<p><a href="y">link</a></p>\n</div>\n\n')
+        self.assertEqual(notes, [])
+
     def test_links_do_not_nest(self):
         rendered, notes = render_listed_file('[<a href="x">in</a>](y) <a href="a">a<a href="b">b</a>c</a>\n', 'n.md')
         self.assertEqual(rendered, '<p><a href="y">in</a> <a href="a">ab</a>c</p>\n')
@@ -273,32 +292,44 @@ class Built(unittest.TestCase):
                  'notes/end-link.md': '# End\n\n<a href="https://example.com/">open link\n',
                  'docs/notes/figure.md': '# Figure\n\n![drawing](../figures/drawing.svg)\n',
                  'docs/figures/manifest.json': '{"drawing.svg": {}}\n',
-                 'notes/upper.md': '# Upper\n\nA [link](HTTP://example.com/) with its scheme in capitals.\n'}
+                 'notes/upper.md': '# Upper\n\nA [link](HTTP://example.com/) with its scheme in capitals.\n',
+                 'notes/types.md': TYPES,
+                 'notes/placeholders.md': '# Title {{CONTENT}} {{SCRIPTS}}\n\nText {{SCRIPTS}} {{CONTENT}} {{TOC}} '
+                                          '{{CROSSNAV}} {{HEAD_EXTRA}} {{TITLE}}.\n'}
         for name, text in files.items():
             path = cls.root / name
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(text)
         (cls.root / 'notes/media').mkdir()
         (cls.root / 'notes/media/kept.png').write_bytes(PNG)
+        (cls.root / 'notes/media/upper.PNG').write_bytes(PNG)
+        (cls.root / 'notes/media/evil.svg').write_text(EVIL_SVG)
+        (cls.root / 'notes/media/evil.html').write_text(EVIL_HTML)
+        (cls.root / 'notes/media/fake.png').write_text(EVIL_HTML)  # a page under an image name
         (cls.root / 'docs/figures/drawing.svg').write_text(
             '<svg xmlns="http://www.w3.org/2000/svg" onload="alert(1)"><script>alert(2)</script></svg>\n')
         config = cls.root / 'docs/site/site.toml'
-        config.write_text(config.read_text() + '\n[[source_pages]]\nsource = "notes/upper.md"\nslug = "upper"\n')
+        config.write_text(config.read_text() + '\n[[source_pages]]\nsource = "notes/upper.md"\nslug = "upper"\n'
+                          '\n[publication]\npages = ["guide.html"]\n')
         git(cls.root, 'add', '-A')
         cls.build = invoke('build', '--project', cls.root)
         cls.lint = invoke('lint', '--project', cls.root, '--strict')
+        cls.published = cls.root / '_site'
+        cls.publish = invoke('publish', '--project', cls.root, '--out', cls.published)
 
     def page(self, route):
         return (self.root / '.build/docs/html' / route).read_text()
 
-    def test_build_and_strict_lint_pass(self):
+    def test_build_strict_lint_and_publish_pass(self):
         self.assertEqual(self.build.returncode, 0, self.build.stderr)
         self.assertEqual(self.lint.returncode, 0, self.lint.stdout + self.lint.stderr)
+        self.assertEqual(self.publish.returncode, 0, self.publish.stdout + self.publish.stderr)
 
     def test_no_page_runs_script_or_loads_from_outside(self):
         routes = ['notes.review1.md.html', 'notes.review2.md.html', 'notes.review3.md.html',
                   'notes.attempts.md.html', 'notes.end-div.md.html', 'notes.end-quote.md.html',
-                  'notes.end-link.md.html', 'docs.notes.figure.md.html']
+                  'notes.end-link.md.html', 'docs.notes.figure.md.html', 'notes.types.md.html',
+                  'notes.placeholders.md.html']
         for route in routes:
             page = self.page(route)
             self.assertEqual(unsafe(page), [], route)
@@ -363,10 +394,35 @@ class Built(unittest.TestCase):
         self.assertIn('<a href="HTTP://example.com/">link</a>', self.page('upper.html'))
         self.assertNotIn('dead relative href', self.lint.stdout + self.lint.stderr)
 
-    def test_a_listed_file_does_not_inline_a_figure(self):
+    def test_a_listed_file_shows_no_svg_figure(self):
         body = content(self.page('docs.notes.figure.md.html'))
-        self.assertIn('<img src="../figures/drawing.svg" alt="drawing" />', body)
+        self.assertIn(GONE + 'drawing</span>', body)
         self.assertNotIn('<svg', body)
+        self.assertNotIn('<img', body)
+
+    def test_only_raster_images_are_shown_and_published(self):
+        body = content(self.page('notes.types.md.html'))
+        for name in ('svg-html', 'html-html', 'fake-png', 'svg-md', 'html-md', 'data-html', 'data-svg'):
+            self.assertIn(GONE + name + '</span>', body, name)
+        self.assertIn('<img src="_media/notes/media/kept.png" alt="png-html">', body)
+        self.assertIn('<img src="_media/notes/media/upper.PNG" alt="upper">', body)
+        self.assertIn('<img src="_media/notes/media/kept.png" alt="png-md" />', body)
+        self.assertIn('<img src="data:image/png;base64,iVBORw0KGgo=" alt="data-png">', body)
+        for tree in (self.root / '.build/docs/html', self.published):
+            media = sorted(path.relative_to(tree).as_posix() for path in (tree / '_media').rglob('*') if path.is_file())
+            self.assertEqual(media, ['_media/notes/media/kept.png', '_media/notes/media/upper.PNG'], tree)
+        self.assertIn('NOTE: reference page notes/types.md: media file media/evil.svg is not a PNG, JPEG, GIF, '
+                      'WebP or AVIF image; shown as text', self.lint.stdout)
+        self.assertIn('NOTE: reference page notes/types.md: media file media/fake.png is not the image its name '
+                      'says; shown as text', self.lint.stdout)
+
+    def test_placeholders_in_a_file_stay_text(self):
+        page = self.page('notes.placeholders.md.html')
+        for script in ('toc', 'nav', 'code', 'filelinks'):
+            self.assertEqual(page.count(f'<script defer src="assets/{script}.js'), 1, script)
+        self.assertEqual(page.count('<main'), 1)
+        self.assertIn('<title>Title {{CONTENT}} {{SCRIPTS}}</title>', page)
+        self.assertIn('Text {{SCRIPTS}} {{CONTENT}} {{TOC}} {{CROSSNAV}} {{HEAD_EXTRA}} {{TITLE}}.', page)
 
     def test_attempts(self):
         body = content(self.page('notes.attempts.md.html'))
@@ -374,13 +430,12 @@ class Built(unittest.TestCase):
         self.assertIn('&lt;iframe srcdoc=', body)
         self.assertIn('&lt;template&gt;<a href="https://h.test/tpl">https://h.test/tpl</a>&lt;/template&gt;', body)
         # Other ways to write an address.
-        for name in ('i0', 'j1', 'j2', 'j3', 'j4', 'j5', 'j6', 'j7', 'j8', 'j9', 'x4', 'x5', 'x6', 'x7', 'x8',
+        for name in ('i0', 'j1', 'j2', 'j3', 'j4', 'j5', 'j6', 'j7', 'j8', 'j9', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9',
                      'x10', 'x11', 'x12', 'l4', 'l5', 'l6', 'l7'):
             self.assertIn(GONE + name + '</span>', body, name)
         for name, address in (('x1', 'http://h.test/x1'), ('x2', 'https://h.test/x2'), ('x3', 'https://h.test/x3'),
                               ('l1', 'https://h.test/l1'), ('l2', 'https://h.test/l2'), ('l3', 'http://h.test/l3')):
             self.assertIn(f'<a href="{address}">{name}</a>', body, name)
-        self.assertIn('<img src="data:image/svg+xml,&lt;svg onload=alert(1)&gt;" alt="x9">', body)
         # Nested and malformed markup: the first of a repeated attribute counts.
         self.assertIn('<img src="_media/notes/media/kept.png"> <a href="https://h.test/m6">', body)
         self.assertIn('&lt;/main&gt;<div><b>out</b>', body)

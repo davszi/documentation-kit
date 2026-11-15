@@ -307,6 +307,28 @@ LINK_SCHEMES = {"http", "https", "mailto", "vscode"}
 _C0_OR_SPACE = "".join(map(chr, range(0x21)))
 _SCHEME = re.compile(r"([A-Za-z][A-Za-z0-9+.-]*):")
 _CONTROL = re.compile(r"[\x00-\x1f\x7f]")
+# The only media an automatically listed file shows: raster images, as files or
+# data: addresses. Any other file it named, SVG and HTML included, would be
+# published under _media/ and run its own script when opened at its address.
+RASTER_SUFFIXES = frozenset({".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif"})
+_RASTER_DATA = re.compile(r"data:image/(?:png|jpeg|gif|webp|avif)[;,]", re.I)
+RASTER_NOTE = "is not a PNG, JPEG, GIF, WebP or AVIF image; shown as text"
+
+
+def raster_image(path: Path) -> bool:
+    """Whether a file is a raster image by both its suffix and its first bytes, so
+    that no other content is published under an image name, where a host that
+    sends no media type could let a browser read it as a page."""
+    if path.suffix.lower() not in RASTER_SUFFIXES:
+        return False
+    try:
+        with path.open("rb") as file:
+            head = file.read(32)
+    except OSError:
+        return False
+    return (head.startswith((b"\x89PNG\r\n\x1a\n", b"\xff\xd8\xff", b"GIF87a", b"GIF89a"))
+            or (head[:4] == b"RIFF" and head[8:12] == b"WEBP")
+            or (head[4:8] == b"ftyp" and any(brand in head[8:32] for brand in (b"avif", b"avis"))))
 
 
 def _visible(raw: str) -> str:
@@ -377,7 +399,10 @@ def rewrite_links(markup: str, page: SourcePage, routes: dict[str, str], root: P
             # repository stay; the address is written as the browser reads it.
             value, scheme, other_host = browser_address(value)
             if media and scheme == "data":
-                return value
+                if _RASTER_DATA.match(value):
+                    return value
+                problems.append(f"{page.source}: media address {_visible(raw)[:60]} {RASTER_NOTE}")
+                return _GONE
             if media and (scheme or other_host):
                 problems.append(f"{page.source}: media address {_visible(raw)} is not served")
                 return _GONE
@@ -410,7 +435,14 @@ def rewrite_links(markup: str, page: SourcePage, routes: dict[str, str], root: P
                 return _GONE
             problems.append(f"{page.source}: link target not found: {_visible(raw)}")
             return _GONE if tolerant else None
-        if tolerant and media and not media_ok(root / target):
+        if tolerant and media and posixpath.splitext(target)[1].lower() not in RASTER_SUFFIXES:
+            problems.append(f"{page.source}: media file {_visible(raw)} {RASTER_NOTE}")
+            return _GONE
+        file = root / target
+        if tolerant and media and not file.is_symlink() and file.is_file() and not raster_image(file):
+            problems.append(f"{page.source}: media file {_visible(raw)} is not the image its name says; shown as text")
+            return _GONE
+        if tolerant and media and not media_ok(file):
             problems.append(f"{page.source}: media file is not packaged (untracked, private or symlinked): "
                             f"{_visible(raw)}")
             return _GONE
@@ -596,10 +628,14 @@ class ListedHtml:
             return False
         return True
 
-    def fragment(self, raw: str) -> str:
-        """One block or inline HTML fragment of the file, with only admitted tags left as markup."""
+    def fragment(self, raw: str, block: bool = False) -> str:
+        """One block or inline HTML fragment of the file, with only admitted tags left as markup.
+
+        A link the file opens in an HTML block (`block`) ends with that block,
+        so it cannot take in the Markdown that follows.
+        """
         raw = raw.replace(_RAW, "\ufffd")
-        out, at = [], 0
+        out, at, link = [], 0, False
         while (start := raw.find("<", at)) >= 0:
             out.append(_as_text(raw[at:start]))
             if raw.startswith("<!--", start):
@@ -618,11 +654,15 @@ class ListedHtml:
             end, closing, name, attributes = tag
             if name in ADMITTED_HTML:
                 out.append(self._admit(name, closing, attributes))
+                if name == "a":  # as `finish` pairs them: a link inside a link is dropped
+                    link = not closing
             else:
                 self.tags[name] += 1
                 out.append(html.escape(raw[start:end], quote=True))
             at = end
         out.append(_as_text(raw[at:]))
+        if block and link:
+            out.append("</" + _RAW + "a>")
         return "".join(out)
 
     def _admit(self, name: str, closing: bool, attributes: list[tuple[str, str | None]]) -> str:
@@ -654,7 +694,8 @@ class ListedHtml:
         ends only an element the file opened inside the renderer's current
         element; any other is dropped, so the file can neither close the
         kit's markup nor leave an element open past its own content. A link
-        opened inside a link is dropped, so links do not spill over.
+        opened inside a link is dropped, and `fragment` ends a link with the
+        HTML block that opened it, so links do not spill over.
         """
         out, stack, at = [], [], 0  # stack: (tag name, written by the file)
         for match in _OUTPUT_TAG.finditer(markup):

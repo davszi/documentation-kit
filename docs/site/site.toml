@@ -129,6 +129,17 @@ source = "docs/topics/panel-switcher/panel-switcher.md"
 slug = "panel-switcher"
 description = "Authoring contract and behavior of the shared local comparison component."
 
+# These records show generated SVG figures, which an automatically listed page does not.
+[[source_pages]]
+source = "docs/topics/approval-failed-open/approval-failed-open.md"
+slug = "approval-failed-open-record"
+description = "How ADP's supporting code piled up, measured from Git, and the kit rules that answer each pile."
+
+[[source_pages]]
+source = "docs/topics/approval-failed-open/background.md"
+slug = "approval-failed-open-background"
+description = "The long form of the approval-failed-open record: each pile in detail, with its dates and limits."
+
 [[source_pages]]
 source = "rules/site/resources.md"
 slug = "resources"

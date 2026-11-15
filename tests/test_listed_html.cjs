@@ -6,7 +6,9 @@
 // HTTP, and a second local listener stands in for the outside address: it must
 // see no request, and no payload may run. A registered page, which is not
 // filtered, holds the B1 box too, and a copy of the listed page gives the real
-// sidebar box an outside address, so nav.js is checked on its own.
+// sidebar box an outside address, so nav.js is checked on its own. The page also
+// shows an SVG, an HTML file and a page named .png as images: none of them may be
+// packaged, so none can run its script at its own address on the site's origin.
 // LISTED_HTML_BROWSERS=chromium,firefox,webkit picks the engines; the default is chromium.
 const playwright = require('../node_modules/playwright');
 const {execFileSync} = require('node:child_process');
@@ -74,6 +76,12 @@ Review 3, B2:
 <img src="\\\\${host}/b2-backslash" alt="backslash">
 <img src="/\\${host}/b2-slash-backslash" alt="slash backslash">
 
+Files that are not raster images, shown as images:
+
+<img src="media/evil.svg" alt="svg"> <img src="media/evil.html" alt="html"> <img src="media/fake.png" alt="fake">
+
+![svg-md](media/evil.svg) ![html-md](media/evil.html)
+
 An attempt to leave the content:
 
 </div></div></main><b title="escape-marker">out</b>
@@ -92,6 +100,11 @@ function buildFixture(host) {
   fs.mkdirSync(path.join(root, 'notes/media'), {recursive: true});
   fs.writeFileSync(path.join(root, 'notes/media/kept.png'), Buffer.from(
     'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64'));
+  const page = '<!doctype html><title>x</title><script>fetch("http://' + host + '/media-ran")</script>\n';
+  fs.writeFileSync(path.join(root, 'notes/media/evil.html'), page);
+  fs.writeFileSync(path.join(root, 'notes/media/fake.png'), page);
+  fs.writeFileSync(path.join(root, 'notes/media/evil.svg'), '<svg xmlns="http://www.w3.org/2000/svg"><script>' +
+    'fetch("http://' + host + '/media-ran")</script><rect width="9" height="9"/></svg>\n');
   fs.writeFileSync(path.join(root, 'notes/payloads.md'), payloads(host));
   fs.writeFileSync(path.join(root, 'notes/registered.md'), `# Registered\n\nA registered page is not filtered.\n\n${gadget(host)}\n`);
   const config = path.join(root, 'docs/site/site.toml');
@@ -105,6 +118,9 @@ function buildFixture(host) {
   assert.equal(listed.split(box).length, 2, 'the sidebar holds one tree box');
   fs.writeFileSync(path.join(html, 'tampered.html'), listed.replace(box,
     `${box} data-repo-tree-src="http://${host}/sidebar.js" data-repo-tree-current="notes.payloads.md.html"`));
+  // Only the raster image is packaged.
+  const media = fs.readdirSync(path.join(html, '_media/notes/media')).sort();
+  assert.deepEqual(media, ['kept.png'], 'only raster images are packaged');
   return root;
 }
 
@@ -128,7 +144,7 @@ function buildFixture(host) {
     const file = path.join(html, decodeURIComponent(request.url.split('?')[0]));
     if (!file.startsWith(html + path.sep)) { response.writeHead(403); response.end(); return; }
     fs.readFile(file, (error, data) => {
-      if (error) { response.writeHead(404); response.end(); return; }
+      if (error) { response.writeHead(404, {'content-type': 'text/plain'}); response.end('Not found'); return; }
       response.writeHead(200, {'content-type': types[path.extname(file)] || 'application/octet-stream'});
       response.end(data);
     });
@@ -139,7 +155,8 @@ function buildFixture(host) {
     for (const engine of engines) {
       const browser = await playwright[engine].launch({headless: true});
       try {
-        for (const name of ['notes.payloads.md.html', 'registered.html', 'tampered.html']) {
+        for (const name of ['notes.payloads.md.html', 'registered.html', 'tampered.html',
+          '_media/notes/media/evil.html', '_media/notes/media/evil.svg', '_media/notes/media/fake.png']) {
           outside.length = 0;
           const context = await browser.newContext({viewport: {width: 1280, height: 900}});
           const page = await context.newPage();
@@ -150,6 +167,13 @@ function buildFixture(host) {
           page.on('request', request => {
             if (!request.url().startsWith(`http://127.0.0.1:${sitePort}/`)) requests.push(request.url());
           });
+          if (name.startsWith('_media/')) {
+            const response = await page.request.get(`http://127.0.0.1:${sitePort}/${name}`);
+            assert.equal(response.status(), 404, `${engine} ${name}: a file that is not a raster image was published`);
+            results.push({engine, page: name, result: 'pass'});
+            await context.close();
+            continue;
+          }
           await page.goto(`http://127.0.0.1:${sitePort}/${name}`, {waitUntil: 'load'});
           // Give handlers a chance: hover and toggle what the page shows, then wait.
           for (const target of await page.locator('main.content div, main.content img, main.content summary').all()) {

@@ -2,6 +2,39 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Show only raster images on automatically listed pages
+
+- Why: a review of the allowlist found every listed page clean, in three
+  browsers and against 14,000 fuzzed documents, but a listed file could
+  still publish any tracked file as same-origin media. `<img
+  src="media/evil.html">` or an SVG was copied to `_media/`, and opened at
+  its address its script ran on the site's origin. Under the page lock the
+  HTML file was sealed like a page, so a reader who had unlocked with
+  "remember" got it opened and written, and its script read the remembered
+  key.
+- An automatically listed page now shows only PNG, JPEG, GIF, WebP and AVIF
+  images, and a file counts only when its first bytes match its suffix.
+  Any other type renders as `link-gone` with a note and is not packaged, so
+  a listed file publishes nothing but its page and the raster images it
+  shows. A `data:` image must be one of these types too. A link to a
+  tracked file never packaged it, and nothing else on a listed page does.
+- deivid confirmed the rule: "yes lets do 1". Two listed records of the
+  kit's own site showed an SVG figure, `pileup-wide.svg`: the
+  approval-failed-open record and its background. Both are now registered
+  with `[[source_pages]]` tables and keep it, at
+  `approval-failed-open-record.html` and
+  `approval-failed-open-background.html`. Of adaptation's 81 tracked
+  Markdown files, none listed today, 21 SVG references in five result
+  records would not show if listed; 22 raster ones would.
+- Also from the review: the shell's placeholders are filled in one pass, so
+  `{{SCRIPTS}}` in a file's text no longer writes the scripts a second time;
+  a link that a file opens in an HTML block ends with that block.
+- Checks: `build`, `lint --strict` and `build --check-reader` of the kit
+  pass, and `DOCS_REQUIRE_BROWSER=1 bash tests/run_checks.sh` passes with 347
+  Python tests and seven browser suites. The browser suite now also opens
+  the SVG, HTML and misnamed files at their addresses; it passes in Firefox
+  and WebKit and fails on the previous commit, which packages all three.
+
 ## 2026-11-15 — A run does not copy its environment
 
 - deivid asked in ADP's session whether the kit now prohibits what a cleanup

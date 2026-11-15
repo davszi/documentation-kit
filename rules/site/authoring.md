@@ -424,8 +424,10 @@ lint prints each case as a note, which never fails, not even under `--strict`:
   in old worklog entries; only tracked files and folders, files of a
   checked-out submodule such as the kit, and declared local evidence count as
   present, so the page does not depend on one checkout's untracked files;
-- an image that is symlinked or matches the publication's private prefixes or
-  suffixes is not packaged and renders the same way;
+- only PNG, JPEG, GIF, WebP and AVIF images show, as files or `data:`
+  addresses; another type, such as SVG, or a symlinked or private image is
+  not packaged and renders the same way. To show more, such as SVG figures,
+  register the file with a `[[source_pages]]` table;
 - an external image becomes a link to it, or its text inside a link; a link
   with a scheme other than `http`, `https`, `mailto` or `vscode` renders as
   text;

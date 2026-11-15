@@ -344,7 +344,7 @@ class ListedFileRenderer(DocsRenderer):
         self.raw_html = raw_html
 
     def block_html(self, html: str) -> str:
-        return self.raw_html.fragment(html) + "\n"
+        return self.raw_html.fragment(html, block=True) + "\n"
 
     def inline_html(self, html: str) -> str:
         return self.raw_html.fragment(html)
@@ -724,8 +724,10 @@ def automatic_link_checks(site: dict, declared_local: set[str]):
 
     Only tracked files and folders, files of a checked-out submodule and
     declared local evidence count, so the page does not depend on untracked
-    files of one checkout. Media must also be packageable: tracked, no
-    symlink, nothing under `[publication]` private prefixes or suffixes.
+    files of one checkout. Media must also be packageable: a raster image
+    (`raster_image`; declared local evidence by its suffix, as it may be
+    absent), tracked, no symlink, nothing under `[publication]` private
+    prefixes or suffixes.
     """
     from site_paths import resolve_site_path
     tracked = consumer_tracked_paths()
@@ -750,16 +752,19 @@ def automatic_link_checks(site: dict, declared_local: set[str]):
         return False
 
     def media_ok(path: Path) -> bool:
+        from source_pages import RASTER_SUFFIXES, raster_image
         for item in candidates(path):
             if item in local:
-                return True
+                return item.suffix.lower() in RASTER_SUFFIXES
             if item not in tracked or not item.is_relative_to(REPO):
                 continue
             relative = item.relative_to(REPO).as_posix()
             if (any(parent.is_symlink() for parent in (item, *item.parents) if parent.is_relative_to(REPO) and parent != REPO)
                     or relative.startswith(private[0]) or relative.endswith(private[1])):
                 continue
-            return True
+            # Read only a regular file, after the symlink check: a pipe would block.
+            if item.is_file() and raster_image(item):
+                return True
         return False
 
     return exists, media_ok
@@ -961,7 +966,7 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
 
     body_class = ' class="' + html.escape(meta['body_class'], quote=True) + '"' if meta.get('body_class') else ''
     page = shell.replace("<body>", '<body' + body_class + ' data-site-home-label="' + html.escape(site_name(site), quote=True) + '">')
-    for k, v in {
+    values = {
         "{{TITLE}}": html.escape(meta.get("title", "")),
         "{{BRAND}}": brand_mark_html(site) + '<span class="brand-name">' + html.escape(site_name(site)) + "</span>",
         "{{BRAND_SUB}}": html.escape(meta.get("brand_sub", "")),
@@ -970,8 +975,10 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
         "{{HEAD_EXTRA}}": head_extra,
         "{{CONTENT}}": content.rstrip() + "\n",
         "{{SCRIPTS}}": scripts,
-    }.items():
-        page = page.replace(k, v)
+    }
+    # One pass over the shell: a placeholder written in a page's own text or
+    # title stays text, and no script tag is written twice.
+    page = re.sub("|".join(map(re.escape, values)), lambda match: values[match[0]], page)
     return fname, page
 
 
