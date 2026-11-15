@@ -100,6 +100,14 @@
     return JSON.parse(new TextDecoder('utf-8').decode(plain));
   }
 
+  // A sealed page ends with one 0x80 byte and zero bytes of padding.
+  function unpad(plain) {
+    var end = plain.length;
+    while (end > 0 && plain[end - 1] === 0) end--;
+    if (end === 0 || plain[end - 1] !== 0x80) throw new Error('Malformed page padding');
+    return plain.subarray(0, end - 1);
+  }
+
   // A page as built: the publish step cut its Reference section out at byte `at`.
   function joinSection(plain, at, section) {
     var decoder = new TextDecoder('utf-8');
@@ -114,7 +122,7 @@
   }
 
   var api = {FORMAT: FORMAT, unlock: unlock, openSlots: openSlots, openFile: openFile, openTree: openTree,
-    joinSection: joinSection, parseEnvelope: parseEnvelope, fileContext: fileContext,
+    unpad: unpad, joinSection: joinSection, parseEnvelope: parseEnvelope, fileContext: fileContext,
     fromBase64: fromBase64, toBase64: toBase64};
   if (typeof module === 'object' && module && module.exports) { module.exports = api; return; }
   if (typeof document === 'undefined') return;
@@ -124,6 +132,8 @@
   var header = JSON.parse(document.getElementById('page-lock-keys').textContent);
   var pageLevel = Number(shell.getAttribute('data-level'));
   var sectionAt = shell.hasAttribute('data-section-at') ? Number(shell.getAttribute('data-section-at')) : null;
+  // The host serves the site's 404.html at every missing address.
+  var notFound = shell.hasAttribute('data-not-found');
   var siteRoot = new URL(shell.getAttribute('data-root'), location.href);
   var storageKey = 'docsite-lock:' + siteRoot.pathname;
   var form = document.getElementById('page-lock-form');
@@ -171,14 +181,15 @@
   // This publish's content keys, kept for the tab.
   function readSession() {
     var value = read(false);
-    if (!value) return null;
+    // Keys of another publish are ignored, not deleted: a page from a cache may be older than the keys.
+    if (!value || value.id !== header.id) return null;
     try {
-      if (value.id !== header.id || (value.level !== 1 && value.level !== 2)) throw new Error('stale');
+      if (value.level !== 1 && value.level !== 2) throw new Error('damaged');
       var keys = {};
       for (var n = 1; n <= value.level; n++) keys[n] = decodeKey(value.keys[n]);
       return {level: value.level, keys: keys};
     } catch (error) {
-      write(false, null);  // a key from an earlier publish, or damaged
+      write(false, null);
       return null;
     }
   }
@@ -204,8 +215,6 @@
       write(true, {salt: header.kdf.salt, level: result.level, wrapping: toBase64(result.wrapping)});
     }
   }
-
-  function forget() { write(false, null); write(true, null); }
 
   function showForm(text) {
     explain(text || '');
@@ -284,10 +293,26 @@
     }).catch(function () { return null; });
   }
 
+  // Keys that opened this publish's slots but not this page mean the page is
+  // served at an address it was not sealed for: keep the keys and say so.
+  function wrongAddress() {
+    say('');
+    explain('This address does not match the page it holds, so the page cannot be opened here.');
+    var home = document.createElement('a');
+    home.href = siteRoot.href;
+    home.textContent = 'Open the home page';
+    var line = document.createElement('p');
+    line.className = 'page-lock-text';
+    line.appendChild(home);
+    message.insertAdjacentElement('afterend', line);
+    form.hidden = true;
+  }
+
+  // True once the page is shown; false when this address does not match the page.
   async function reveal(keys) {
     var reference = keys[2] ? loadTree(keys[2]) : Promise.resolve(null);
     var sealed = fromBase64(document.getElementById('page-lock-data').textContent);
-    var candidates = sitePaths(new URL(location.href));
+    var candidates = notFound ? ['404.html'] : sitePaths(new URL(location.href));
     var plain = null;
     for (var i = 0; i < candidates.length && !plain; i++) {
       try { plain = await openFile(keys[pageLevel], candidates[i], sealed); } catch (error) {
@@ -295,6 +320,7 @@
       }
     }
     if (!plain) return false;
+    plain = unpad(plain);
     var tree = await reference;
     // nav.js reads the folder tree from here before it would load reference.tree.js.
     if (tree && typeof tree.tree === 'string') window.docsReferenceTree = tree.tree;
@@ -320,13 +346,13 @@
       explain('This browser cannot unlock the page on this connection. Open the site over HTTPS.');
       return;
     }
+    // Session keys belong to this publish (readSession checks its id), and a
+    // remembered key has just opened its slots, so a page that still does not
+    // open is at the wrong address; the keys stay.
     var session = readSession();
     if (session && session.keys[pageLevel]) {
       say('Unlocking…');
-      if (await reveal(session.keys)) return;
-      forget();
-      say('');
-      showForm('The saved key no longer opens this page. Enter the password again.');
+      if (!(await reveal(session.keys))) wrongAddress();
       return;
     }
     var wrapping = readRemembered();
@@ -337,10 +363,7 @@
       session = remembered;
       if (remembered.level >= pageLevel) {
         say('Unlocking…');
-        if (await reveal(remembered.keys)) return;
-        forget();
-        say('');
-        showForm('The saved key no longer opens this page. Enter the password again.');
+        if (!(await reveal(remembered.keys))) wrongAddress();
         return;
       }
     }
@@ -364,7 +387,7 @@
       keep(result, remember.checked);
       if (result.level < pageLevel) { say(''); needReference(); return null; }
       return reveal(result.keys).then(function (shown) {
-        if (!shown) { submit.disabled = false; say('This page could not be opened. Reload it and try again.'); }
+        if (!shown) wrongAddress();
       });
     }).catch(function () {
       submit.disabled = false;
@@ -372,9 +395,11 @@
     });
   });
 
+  // What a page serves never deletes stored keys; only a new publish or a
+  // changed password makes them stale, and readSession and readRemembered
+  // drop those.
   function begin() {
     start().catch(function () {
-      forget();
       say('');
       showForm('This page could not be opened with the saved key. Enter the password again.');
     });

@@ -25,9 +25,12 @@ Key layout:
 Level-1 pages lose their sidebar Reference section before they are sealed.
 The section and the folder tree go into ``reference.tree.js``, sealed at level
 2 and padded, which the browser loads for a reference-password reader and puts
-back where the section was. The browser side is
-``theme/components/page-lock.js``; it uses WebCrypto with the same parameters.
-Passwords never enter output, logs or error messages.
+back where the section was. The Reference index page is padded to the same
+size. HTML without the kit's sidebar that only Reference pages embed or link
+is level 2 as well. Every page is sealed with ``pad``; the root ``404.html``
+opens at any address. The browser side is ``theme/components/page-lock.js``;
+it uses WebCrypto with the same parameters. Passwords never enter output,
+logs or error messages.
 """
 from __future__ import annotations
 
@@ -60,14 +63,20 @@ NONCE_BYTES = 12
 MIN_PASSWORD_LENGTH = 20
 PASSWORD_VARIABLES = {1: 'DOCSITE_GENERAL_PASSWORD', 2: 'DOCSITE_REFERENCE_PASSWORD'}
 HTML_SUFFIXES = ('.html', '.htm')
+# The unlock writes the page with document.write, which an XML document does
+# not have, and a server-side-include page may not be served as HTML.
+REFUSED_SUFFIXES = ('.xhtml', '.xht', '.shtml', '.shtm')
 MARKDOWN_SUFFIXES = ('.md', '.markdown')
 LOCK_ASSETS = {'assets/page-lock.js': 'page-lock.js', 'assets/page-lock.css': 'page-lock.css'}
 # Body classes of pages that only the reference password opens.
 REFERENCE_CLASSES = {b'source-page', b'reference-index-page'}
 LOCKED_TREE_GLOBAL = 'docsLockedReferenceTree'
-# The sealed tree is padded to a power of two of at least this size, so its
-# length shows little about how many files the Reference section holds.
+# The sealed tree and the Reference index page are padded to the same power
+# of two of at least this size, so their lengths show little about how many
+# files the Reference section holds.
 TREE_PADDING = 1 << 16
+# GitHub Pages serves this page at every missing address.
+NOT_FOUND = '404.html'
 INSTALL_HINT = ('python -m pip install -r .docs-kit/requirements-lock.txt '
                 '(requirements-lock.txt in the kit itself)')
 TEXT_NOTICE = ('This file is locked. Open it from a page of the documentation site '
@@ -75,9 +84,17 @@ TEXT_NOTICE = ('This file is locked. Open it from a page of the documentation si
 _COMPONENTS = Path(__file__).resolve().parent.parent / 'theme/components'
 _BODY = re.compile(rb'<body\b([^>]*)>', re.I)
 _CLASS = re.compile(rb'''(?:^|\s)class\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))''', re.I)
-_HREF = re.compile(r'''\shref\s*=\s*(?:"([^"]*)"|'([^']*)')''', re.I)
+# Addresses a page embeds or links: frames, objects, embeds, images and links.
+_TARGET = re.compile(r'''\s(?:src|href|data)\s*=\s*(?:"([^"]*)"|'([^']*)')''', re.I)
+# Anything in a page that may be an address or a path, in attributes or text.
+_TOKEN = re.compile(r'''[^\s"'<>()\[\]{}|\\^`]+''')
+_SOURCE_HOST_PATH = re.compile(r'/(?:blob|tree)/[^/]+/(.+)$')
+# Any tag that still carries Reference markup, whatever the attribute order: a
+# repo-tree class or id, or a data-repo-tree attribute.
+_TREE_TAG = re.compile(r'''<[A-Za-z][^>]*(?:\b(?:class|id)\s*=\s*["']?[^"'>]*\brepo-tree|\bdata-repo-tree)''')
 # The shared shell opens the sidebar with this element; build.py fills it.
 _SIDEBAR = '<nav class="sidebar" id="sidebar">'
+_KIT_PAGE = 'id="sidebar"'
 
 
 def _aesgcm():
@@ -261,13 +278,42 @@ def tree_markup(data: bytes) -> str:
     return markup
 
 
-def lock_tree(tree: str | None, section: str | None, keyring: Keyring) -> bytes:
-    """``TREE_SCRIPT`` as a script that hands the sealed, padded tree and section to page-lock.js."""
-    data = json.dumps({'section': section, 'tree': tree}, sort_keys=True, separators=(',', ':')).encode('utf-8')
-    size = max(TREE_PADDING, 1 << (len(data) - 1).bit_length())
+def padded_size(length: int) -> int:
+    """The smallest power of two of at least ``TREE_PADDING`` that holds ``length`` bytes."""
+    return max(TREE_PADDING, 1 << (length - 1).bit_length())
+
+
+def tree_payload(tree: str | None, section: str | None) -> bytes:
+    return json.dumps({'section': section, 'tree': tree}, sort_keys=True, separators=(',', ':')).encode('utf-8')
+
+
+def lock_tree(tree: str | None, section: str | None, keyring: Keyring, size: int | None = None) -> bytes:
+    """``TREE_SCRIPT`` as a script that hands the sealed, padded tree and section to page-lock.js.
+
+    JSON ignores the trailing spaces that pad it to ``size`` bytes.
+    """
+    data = tree_payload(tree, section)
+    size = padded_size(len(data)) if size is None else size
+    if size < len(data):
+        raise ValueError(f'The page lock cannot pad {TREE_SCRIPT} to {size} bytes')
     sealed = seal(keyring.content[2], data + b' ' * (size - len(data)), file_context(TREE_SCRIPT))
     return (f'// Locked: only the reference password opens this file.\n'
             f'window.{LOCKED_TREE_GLOBAL} = "{_b64(sealed)}";\n').encode('ascii')
+
+
+def pad(data: bytes, size: int | None = None) -> bytes:
+    """A page sealed as itself, one 0x80 byte and zero bytes up to ``size``; ``unpad`` removes them."""
+    size = len(data) + 1 if size is None else size
+    if size <= len(data):
+        raise ValueError('The page lock cannot pad a page into fewer bytes than it has')
+    return data + b'\x80' + bytes(size - len(data) - 1)
+
+
+def unpad(data: bytes) -> bytes:
+    end = len(data.rstrip(b'\x00'))
+    if not end or data[end - 1] != 0x80:
+        raise ValueError('Malformed page padding')
+    return data[:end - 1]
 
 
 def _utf8(name: str, data: bytes) -> str:
@@ -285,14 +331,17 @@ def lock_text(name: str, level: int, data: bytes, keyring: Keyring) -> bytes:
 
 
 def lock_page(name: str, level: int, data: bytes, keyring: Keyring, versions: Mapping[str, str],
-              section_at: int | None = None) -> bytes:
+              section_at: int | None = None, *, size: int | None = None) -> bytes:
     """The lock page served at ``name`` instead of the page itself.
 
     ``section_at`` is the byte offset in ``data`` where a reference-password
-    reader's browser puts the sidebar's Reference section back.
+    reader's browser puts the sidebar's Reference section back. The page is
+    sealed padded (``pad``), to ``size`` bytes when given. The site's root
+    ``404.html`` opens at any address, because the host serves it at every
+    missing one.
     """
     _utf8(name, data)
-    sealed = seal(keyring.content[level], data, file_context(name))
+    sealed = seal(keyring.content[level], pad(data, size), file_context(name))
     up = posixpath.relpath('.', posixpath.dirname(name) or '.')
     prefix = '' if up == '.' else up + '/'
 
@@ -303,24 +352,93 @@ def lock_page(name: str, level: int, data: bytes, keyring: Keyring, versions: Ma
             if 'assets/base.css' in versions else '')
     header = json.dumps(keyring.header, sort_keys=True, separators=(',', ':')).replace('<', '\\u003c')
     values = {'{{ROOT}}': html.escape(prefix or './', quote=True), '{{LEVEL}}': str(level),
-              '{{SECTION_AT}}': '' if section_at is None else f' data-section-at="{section_at}"',
+              '{{ATTRIBUTES}}': ('' if section_at is None else f' data-section-at="{section_at}"')
+                                + (' data-not-found' if name == NOT_FOUND else ''),
               '{{BASE_CSS}}': base, '{{LOCK_CSS}}': asset('assets/page-lock.css'),
               '{{LOCK_JS}}': asset('assets/page-lock.js'), '{{KEYS}}': header, '{{DATA}}': _b64(sealed)}
     text = (_COMPONENTS / 'page-lock.html').read_text()
     return re.sub(r'\{\{[A-Z_]+\}\}', lambda match: values[match[0]], text).encode('utf-8')
 
 
-def _linked(markup: str, name: str, routes: set[str]) -> set[str]:
-    """Reference routes that a page links by address."""
+def _addresses(markup: str, name: str) -> set[str]:
+    """Bundle paths a page embeds or links through its src, href or data attributes."""
     found = set()
-    for match in _HREF.finditer(markup):
-        url = urlsplit(html.unescape(match[1] if match[1] is not None else match[2]))
-        if url.scheme or url.netloc or not url.path:
+    for match in _TARGET.finditer(markup):
+        try:
+            url = urlsplit(html.unescape(match[1] if match[1] is not None else match[2]))
+        except ValueError:
             continue
-        target = posixpath.normpath(posixpath.join(posixpath.dirname(name), unquote(url.path)))
-        if target in routes:
-            found.add(target)
+        if not url.scheme and not url.netloc and url.path:
+            found.add(posixpath.normpath(posixpath.join(posixpath.dirname(name), unquote(url.path))))
     return found
+
+
+def reference_names(built: Mapping, markdown: set[str]) -> dict[str, str]:
+    """Each name a page can use for a Reference file, mapped to the file's repository path.
+
+    A Reference page has its route and its repository path; a locked Markdown
+    file has its bundle path, which is its repository path.
+    """
+    names = {}
+    for route, source in built.get('source_pages', {}).items():
+        names[route] = names[source] = source
+    for path in markdown:
+        names[path] = path
+    return names
+
+
+def named_references(markup: str, name: str, names: Mapping[str, str]) -> set[str]:
+    """The Reference files a page names anywhere: in any attribute or in its text.
+
+    Every token that may be an address or a path is decoded and compared with
+    every name: as written, resolved from the page's folder, resolved from the
+    site root, and, on a source host, the repository path after
+    ``/blob/<ref>/`` or ``/tree/<ref>/``. No attribute name is relied on, so a
+    source link counts whatever marks it.
+    """
+    found = set()
+    for token in _TOKEN.findall(html.unescape(markup)):
+        try:
+            url = urlsplit(token)
+        except ValueError:
+            continue
+        path = unquote(url.path).rstrip('.,;:!')
+        if url.netloc:
+            match = _SOURCE_HOST_PATH.search(path)
+            candidates = [match[1]] if match else []
+        else:
+            joined = posixpath.normpath(posixpath.join(posixpath.dirname(name), path)) if path else ''
+            candidates = [path, joined, re.sub(r'^(?:\.\./)+', '', joined)]
+        found.update(names[candidate] for candidate in candidates if candidate in names)
+    return found
+
+
+def html_levels(texts: Mapping[str, str], reference: set[str]) -> dict[str, int]:
+    """The level of each HTML file.
+
+    Reference pages (``reference``, or a Reference body class) need the
+    reference password. HTML without the kit's sidebar, such as a frame or an
+    exported HTML file, needs it too when only such pages embed or link it;
+    one that a general page uses, or that no page uses, opens with the general
+    password, like every other page.
+    """
+    levels = {name: 2 if name in reference or is_reference_page(text.encode('utf-8')) else 1
+              for name, text in texts.items()}
+    others = {name for name, text in texts.items() if levels[name] == 1 and _KIT_PAGE not in text}
+    users = {name: set() for name in others}
+    for name, text in texts.items():
+        for target in _addresses(text, name) & others - {name}:
+            users[target].add(name)
+    for name in others:
+        if users[name]:
+            levels[name] = 2
+    changed = True
+    while changed:
+        changed = False
+        for name in others:
+            if levels[name] == 2 and any(levels[user] == 1 for user in users[name]):
+                levels[name], changed = 1, True
+    return levels
 
 
 def _counts(counter: Counter) -> str:
@@ -350,7 +468,8 @@ class PageLock:
         script = shared.get('script', '').removeprefix('html/') or None
         if (bundle / TREE_SCRIPT).exists() != (script == TREE_SCRIPT):
             raise ValueError(f'The page lock writes {TREE_SCRIPT}, which the bundle holds without the build')
-        reference = set(built.get('source_pages', {})) | {shared.get('index', '').removeprefix('html/')} - {''}
+        index = shared.get('index', '').removeprefix('html/')
+        reference = set(built.get('source_pages', {})) | {index} - {''}
         keyring = make_keyring(self.passwords, iterations=self.iterations)
         files = {path.relative_to(bundle).as_posix(): path for path in sorted(bundle.rglob('*'))
                  if path.is_file() or path.is_symlink()}
@@ -359,27 +478,39 @@ class PageLock:
         if 'assets/base.css' in files:
             versions['assets/base.css'] = hashlib.sha256(files['assets/base.css'].read_bytes()).hexdigest()[:10]
 
-        pages: dict[str, tuple[int, bytes, int | None]] = {}
-        sections, linked = set(), set()
+        texts = {}
         for name, path in files.items():
             if path.is_symlink():
                 raise ValueError(f'The page lock cannot follow a symlink: {name}')
-            if not name.lower().endswith(HTML_SUFFIXES):
-                continue
-            data = path.read_bytes()
-            text = _utf8(name, data)
-            if name in reference or is_reference_page(data):
-                pages[name] = (2, data, None)
+            if name.lower().endswith(REFUSED_SUFFIXES):
+                raise ValueError(f'The page lock cannot lock {name}: it unlocks pages that browsers read as HTML. '
+                                 'Rename it to .html or leave it out of the bundle.')
+            if name.lower().endswith(HTML_SUFFIXES):
+                texts[name] = _utf8(name, path.read_bytes())
+        levels = html_levels(texts, reference)
+        markdown = {name for name in files if name.lower().endswith(MARKDOWN_SUFFIXES)}
+        names = reference_names(built, markdown)
+        pages: dict[str, tuple[int, bytes, int | None]] = {}
+        sections, named = set(), set()
+        for name, text in texts.items():
+            if levels[name] == 2:
+                pages[name] = (2, text.encode('utf-8'), None)
                 continue
             stripped, section, at = split_reference(text, name)
+            # Fail closed: a changed shell must not leave the tree in a general page.
+            if _TREE_TAG.search(stripped):
+                raise ValueError(f'The page lock found Reference markup in {name}, which the general password opens')
             if section is not None:
                 sections.add(section)
-            linked |= _linked(stripped, name, reference)
+            named |= named_references(stripped, name, names)
             pages[name] = (1, stripped.encode('utf-8'), None if at is None else len(stripped[:at].encode('utf-8')))
         if len(sections) > 1:
             raise ValueError('The page lock found different Reference sections on pages outside the Reference')
         tree = tree_markup(files[TREE_SCRIPT].read_bytes()) if script else None
-        envelope = lock_tree(tree, next(iter(sections), None), keyring)
+        section = next(iter(sections), None)
+        # The Reference index lists the whole tree: it gets the tree file's padded size.
+        size = padded_size(max(len(tree_payload(tree, section)), len(pages[index][1]) + 1 if index in pages else 0))
+        envelope = lock_tree(tree, section, keyring, size)
         keyring.header['tree'] = hashlib.sha256(envelope).hexdigest()[:10]
 
         locked = {1: Counter(), 2: Counter()}
@@ -388,7 +519,8 @@ class PageLock:
             suffix = PurePath(name).suffix.lower() or '(no suffix)'
             if name in pages:
                 level, data, at = pages[name]
-                path.write_bytes(lock_page(name, level, data, keyring, versions, at))
+                path.write_bytes(lock_page(name, level, data, keyring, versions, at,
+                                           size=size if name == index else None))
                 locked[level][suffix] += 1
             elif name.lower().endswith(MARKDOWN_SUFFIXES):
                 path.write_bytes(lock_text(name, 2, path.read_bytes(), keyring))
@@ -405,10 +537,10 @@ class PageLock:
                  f'only the reference password opens {sum(locked[2].values())} more ({_counts(locked[2])}).',
                  f'Page lock: {sum(readable.values())} files stay readable without a password '
                  f'({_counts(readable)}).']
-        if linked:
-            lines.append(f'Page lock: pages the general password opens link to {len(linked)} Reference '
-                         f'page{"" if len(linked) == 1 else "s"} by address (navigation, site map or text); '
-                         'general-password readers see those links.')
+        if named:
+            lines.append(f'Page lock: pages the general password opens name {len(named)} Reference '
+                         f'file{"" if len(named) == 1 else "s"} (links, source links or text); '
+                         'general-password readers see those names.')
         return '\n'.join(lines)
 
 

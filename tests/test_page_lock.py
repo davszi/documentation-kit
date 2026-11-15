@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import re
 import secrets
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -19,8 +20,8 @@ from unittest.mock import patch
 
 import page_lock
 from page_lock import (ITERATIONS, PASSWORD_VARIABLES, PageLock, derive_key, derive_salt, file_context, lock_text,
-                       lock_tree, make_keyring, open_keyring, open_slots, prepare_lock, read_passwords, seal,
-                       split_reference, tree_markup, unseal)
+                       lock_tree, make_keyring, named_references, open_keyring, open_slots, pad, prepare_lock,
+                       read_passwords, reference_names, seal, split_reference, tree_markup, unpad, unseal)
 import page_lock_fixture
 from source_tree import TreeFile, tree_html, tree_script
 
@@ -204,15 +205,18 @@ def files(root: Path) -> dict[str, bytes]:
     return {path.relative_to(root).as_posix(): path.read_bytes() for path in sorted(root.rglob('*')) if path.is_file()}
 
 
+def sealed_page(data: bytes) -> bytes:
+    return base64.b64decode(re.search(r'id="page-lock-data">([A-Za-z0-9+/=]+)<', data.decode())[1])
+
+
 def opened(data: bytes, name: str, keys: dict[int, bytes]) -> tuple[int, bytes]:
-    """Decrypt a locked page or text file as the browser would."""
+    """Decrypt a locked page or text file as the browser would; pages are sealed padded."""
     text = data.decode()
     if name.endswith('.md'):
         level, sealed = re.search(r'^docsite-lock/1 level ([12])\n([A-Za-z0-9+/=]+)$', text, re.M).groups()
-    else:
-        level = re.search(r'data-level="([12])"', text)[1]
-        sealed = re.search(r'id="page-lock-data">([A-Za-z0-9+/=]+)<', text)[1]
-    return int(level), unseal(keys[int(level)], base64.b64decode(sealed), file_context(name))
+        return int(level), unseal(keys[int(level)], base64.b64decode(sealed), file_context(name))
+    level = int(re.search(r'data-level="([12])"', text)[1])
+    return level, unpad(unseal(keys[level], sealed_page(data), file_context(name)))
 
 
 def opened_tree(data: bytes, keys: dict[int, bytes]) -> dict:
@@ -307,8 +311,105 @@ class LockBundle(unittest.TestCase):
         self.assertEqual(summary, 'Page lock: the general password opens 2 files (.html 2); only the reference '
                                   'password opens 5 more (.html 3, .js 1, .md 1).\nPage lock: 5 files stay readable '
                                   'without a password (.css 2, .js 1, .json 1, .svg 1).\nPage lock: pages the general '
-                                  'password opens link to 1 Reference page by address (navigation, site map or '
-                                  'text); general-password readers see those links.')
+                                  'password opens name 1 Reference file (links, source links or text); '
+                                  'general-password readers see those names.')
+
+    def reset(self, changes):
+        """Write the bundle again from the originals, with ``changes``."""
+        shutil.rmtree(self.bundle)
+        for name, data in {**self.original, **changes}.items():
+            path = self.bundle / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(data)
+
+    def levels(self):
+        return {name: int(re.search(rb'data-level="([12])"', data)[1])
+                for name, data in files(self.bundle).items() if name.endswith('.html')}
+
+    def test_pages_are_sealed_padded(self):
+        self.assertEqual(unpad(pad(b'<p>x</p>')), b'<p>x</p>')
+        self.assertEqual(len(pad(b'abc', 64)), 64)
+        self.assertEqual(unpad(pad(b'\x80\x00', 9)), b'\x80\x00')
+        with self.assertRaisesRegex(ValueError, 'Malformed'):
+            unpad(b'abc\x00')
+        with self.assertRaisesRegex(ValueError, 'fewer bytes'):
+            pad(b'abc', 3)
+
+    def test_reference_index_is_padded_like_the_tree_file(self):
+        # The index lists every Reference file; unpadded, its length showed the size of the tree.
+        def sizes():
+            locked = files(self.bundle)
+            tree = re.search(r'"([A-Za-z0-9+/=]+)"', locked['reference.tree.js'].decode())[1]
+            return len(sealed_page(locked['reference.index.html'])), len(base64.b64decode(tree))
+        self.apply()
+        self.assertEqual(sizes(), (65536 + 28, 65536 + 28))
+        index = kit_page('reference.index.html', 'reference-page reference-index-page')
+        self.reset({'reference.index.html': index.replace(b'</main>', b'x' * 70000 + b'</main>')})
+        self.apply()
+        self.assertEqual(sizes(), (131072 + 28, 131072 + 28))
+
+    def test_frames_only_reference_pages_use_need_the_reference_password(self):
+        rule = kit_page('rule.html', 'source-page reference-page').replace(
+            b'</main>', b'<iframe src="_media/a/report.html"></iframe><iframe src="_media/b/both.html"></iframe></main>')
+        home = kit_page('index.html').replace(b'</main>', b'<iframe src="_media/b/both.html"></iframe></main>')
+        self.reset({'rule.html': rule, 'index.html': home,
+                    '_media/a/report.html': b'<p>report</p><iframe src="nested.html"></iframe>',
+                    '_media/a/nested.html': b'<p>nested</p>', '_media/b/both.html': b'<p>both</p>',
+                    '_media/c/alone.html': b'<p>alone</p>'})
+        self.apply()
+        levels = self.levels()
+        self.assertEqual({name: levels[name] for name in levels if name.startswith('_media/')},
+                         {'_media/a/report.html': 2, '_media/a/nested.html': 2, '_media/b/both.html': 1,
+                          '_media/c/alone.html': 1, '_media/media/frame.html': 1})
+
+    def test_root_404_page_opens_at_any_address(self):
+        self.reset({'404.html': b'<p>missing</p>', 'docs/404.html': b'<p>other</p>'})
+        self.apply()
+        locked = files(self.bundle)
+        self.assertIn(b' data-not-found', locked['404.html'])
+        self.assertNotIn(b'data-not-found', locked['docs/404.html'])
+        self.assertNotIn(b'data-not-found', locked['index.html'])
+        self.assertEqual(self.levels()['404.html'], 1)
+
+    def test_xhtml_and_shtml_are_refused(self):
+        for name in ('media/page.xhtml', 'media/page.XHT', 'ssi/page.shtml', 'ssi/page.shtm'):
+            with self.subTest(name=name):
+                self.reset({name: b'<p>x</p>'})
+                with self.assertRaisesRegex(ValueError, f'cannot lock {re.escape(name)}: .*Rename it to .html'):
+                    self.apply()
+
+    def test_reference_markup_left_in_a_general_page_fails_closed(self):
+        # With the sidebar's attributes in another order the cut finds nothing; the final check refuses.
+        moved = kit_page('index.html').replace(b'<nav class="sidebar" id="sidebar">',
+                                               b'<nav id="sidebar" class="sidebar">')
+        self.reset({'index.html': moved})
+        with self.assertRaisesRegex(ValueError, 'found Reference markup in index.html'):
+            self.apply()
+        self.assertEqual((self.bundle / 'index.html').read_bytes(), moved)
+        # A loader attribute alone is Reference markup too; a route that merely contains the word is not.
+        self.reset({'index.html': kit_page('index.html').replace(b'<main', b'<p data-repo-tree-src="x"></p><main')})
+        with self.assertRaisesRegex(ValueError, 'found Reference markup in index.html'):
+            self.apply()
+        self.reset({'index.html': kit_page('index.html').replace(
+            b'</main>', b'<a href="docs.repo-tree.md.html" title="repo-tree">repo-tree</a></main>')})
+        self.apply()
+
+    def test_summary_names_every_reference_file_a_general_page_points_at(self):
+        built = {'source_pages': {'rule.html': 'policy/rule.md', 'listed.html': 'docs/listed.md',
+                                  'notes.a.md.html': 'notes/a.md', 'notes.b.md.html': 'notes/b.md',
+                                  'c.md.html': 'c.md', 'notes.d.md.html': 'notes/d.md'}}
+        names = reference_names(built, {'notes/record.md'})
+        page = ('<a href="rule.html#x">route</a>'
+                '<a href="https://github.com/o/r/blob/main/docs/listed.md#L2">source host</a>'
+                '<a data-repo-path="notes/a.md" href="#">today\'s marker</a>'
+                '<a data-source-file="notes/b.md" href="#">any other marker</a>'
+                '<a href="notes/record.md">exported Markdown</a>'
+                '<p>Text that names c.md.</p>'
+                '<a href="../../notes/d.md">logical source path</a>')
+        self.assertEqual(named_references(page, 'index.html', names),
+                         {'policy/rule.md', 'docs/listed.md', 'notes/a.md', 'notes/b.md', 'notes/record.md', 'c.md',
+                          'notes/d.md'})
+        self.assertEqual(named_references('<p>notes/ab.md xc.md rule.htm</p>', 'index.html', names), set())
 
     def test_site_without_reference_still_gets_a_sealed_tree_and_section_offsets(self):
         for name in ('rule.html', 'listed.html', 'reference.index.html', 'reference.tree.js'):
@@ -431,11 +532,11 @@ class PublishWithLock(unittest.TestCase):
         self.assertIn('notes.record.md.html', built['source_pages'])
         self.assertEqual(built['reference_tree'], {'script': 'html/reference.tree.js',
                                                    'index': 'html/reference.index.html'})
-        reference_pages = set(built['source_pages']) | {'reference.index.html'}
+        # A frame that only a Reference page embeds needs the reference password too.
+        reference_pages = set(built['source_pages']) | {'reference.index.html', '_media/policy/report.html'}
         self.assertIn(f'only the reference password opens {len(reference_pages) + 2} more '
                       f'(.html {len(reference_pages)}, .js 1, .md 1).', result.stdout)
         self.assertIn('files stay readable without a password', result.stdout)
-        self.assertIn('link to 1 Reference page by address', result.stdout)
 
         plain = files(self.plain_bundle(project))
         self.assertEqual(set(locked) - set(plain), {'assets/page-lock.js', 'assets/page-lock.css'})
@@ -445,25 +546,35 @@ class PublishWithLock(unittest.TestCase):
         tree = opened_tree(locked['reference.tree.js'], keys)
         self.assertEqual(tree['tree'], tree_markup(plain['reference.tree.js']))
         self.assertIn(page_lock_fixture.MARKERS['title'], tree['tree'])
-        levels = {}
+        levels, named = {}, set()
+        names = reference_names(built, {'notes/record.md'})
         for name, data in plain.items():
             if name == 'reference.tree.js':
                 continue
             if name.endswith(('.html', '.md')):
                 levels[name], page = opened(locked[name], name, keys)
                 if levels[name] == 1:
-                    # What a general-password reader decrypts names no Reference file.
+                    # What a general-password reader decrypts holds no Reference tree.
                     self.assertEqual(opened(locked[name], name, general)[1], page)
                     for hidden in (b'repo-tree', page_lock_fixture.MARKERS['title'].encode(), b'reference.tree.js',
                                    b'notes.record.md.html', b'docs.worklog.md.html'):
                         self.assertNotIn(hidden, page, name)
+                    named |= named_references(page.decode(), name, names)
                 # Locking is a layer over the ordinary bundle; nothing else changes.
                 self.assertEqual(joined(page, locked[name], tree['section']), data, name)
             else:
                 self.assertEqual(locked[name], data, name)
         self.assertEqual({name for name, level in levels.items() if level == 2}, reference_pages | {'notes/record.md'})
         self.assertEqual({name for name, level in levels.items() if level == 1},
-                         {'guide.html', 'index.html', 'widgets.html', '_media/media/frame.html'})
+                         {'guide.html', 'index.html', 'widgets.html', '_media/media/frame.html', '404.html'})
+        # General pages still name Reference files: a route, source links and an exported Markdown file.
+        self.assertEqual(named, {'policy/rule.md', 'notes/record.md', 'docs/PROJECT_CONTEXT.md', 'docs/open/OPEN.md',
+                                 'docs/topics/guide/guide.md'})
+        self.assertIn(f'name {len(named)} Reference files (links, source links or text)', result.stdout)
+        self.assertIn(b' data-not-found', locked['404.html'])
+        index = sealed_page(locked['reference.index.html'])
+        self.assertEqual(len(index), len(base64.b64decode(
+            re.search(r'"([A-Za-z0-9+/=]+)"', locked['reference.tree.js'].decode())[1])))
 
     def test_lock_off_output_is_byte_identical(self):
         absent, absent_out = self.publish(lock=None, name='absent')

@@ -36,6 +36,8 @@ MARKERS = {
     'reference': 'REFERENCE-MARKER-a93d27',
     'markdown': 'MARKDOWN-MARKER-0b6e44',
     'title': 'TITLE-MARKER-9f31aa',
+    'reference_frame': 'REFFRAME-MARKER-3d7e52',
+    'not_found': 'NOT-FOUND-MARKER-81c0f4',
 }
 
 GUIDE_CHAPTER = f'''
@@ -102,6 +104,16 @@ The Markdown marker {MARKERS['markdown']} is in this file.
 '''
 
 FRAME = f'<!doctype html><html lang="en"><meta charset="utf-8"><title>Frame</title><p>{MARKERS["frame"]}</p></html>\n'
+# A Reference page that embeds an HTML frame no general page uses.
+FRAMED = '''# Framed rule
+
+<iframe title="Reference frame" src="report.html" width="320" height="80"></iframe>
+'''
+REPORT = (f'<!doctype html><html lang="en"><meta charset="utf-8"><title>Report</title>'
+          f'<p>{MARKERS["reference_frame"]}</p></html>\n')
+# The host serves this page at every missing address.
+NOT_FOUND = (f'<!doctype html><html lang="en"><meta charset="utf-8"><title>Not found</title>'
+             f'<p>{MARKERS["not_found"]}</p></html>\n')
 DOT = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="160" height="160">'
        '<circle cx="20" cy="20" r="16" fill="#39d2c0"/></svg>\n')
 
@@ -136,7 +148,10 @@ def make_project(root: Path, *, lock: bool | None = True, remote: str = '') -> P
     write('notes/record.md', RECORD)
     write('media/frame.html', FRAME)
     write('media/dot.svg', DOT)
-    write('docs/site/public.json', json.dumps({'files': ['notes/record.md']}) + '\n')
+    write('policy/framed.md', FRAMED)
+    write('policy/report.html', REPORT)
+    write('404.html', NOT_FOUND)
+    write('docs/site/public.json', json.dumps({'files': ['notes/record.md', '404.html']}) + '\n')
     config = root / 'docs/site/site.toml'
     config.write_text(config.read_text() + '''
 [[nav]]
@@ -148,6 +163,10 @@ group = "guide"
 source = "policy/rule.md"
 slug = "rule"
 description = "A rule kept as Markdown."
+
+[[source_pages]]
+source = "policy/framed.md"
+slug = "framed"
 
 [publication]
 assets_manifest = "docs/site/public.json"
@@ -175,7 +194,9 @@ def vectors() -> dict:
         if path.endswith('.md'):
             entry['envelope'] = page_lock.lock_text(path, level, data, keyring).decode()
         else:
-            entry['sealed'] = base64.b64encode(page_lock.seal(keyring.content[level], data,
+            # Pages are sealed padded, as lock_page seals them; one to a fixed size.
+            padded = page_lock.pad(data, 8192 if level == 2 else None)
+            entry['sealed'] = base64.b64encode(page_lock.seal(keyring.content[level], padded,
                                                               page_lock.file_context(path))).decode()
         files.append(entry)
     return {'header': keyring.header, 'again': again.header, 'changed': changed.header,

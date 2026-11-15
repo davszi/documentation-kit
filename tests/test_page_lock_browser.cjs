@@ -20,7 +20,11 @@ const kit = path.resolve(__dirname, '..');
 const python = process.env.DOCS_PYTHON || 'python3';
 const output = path.join(kit, '.build/page-lock-review');
 const MARKERS = {topic: 'TOPIC-MARKER-5e1f0c', widgets: 'WIDGETS-MARKER-7d20b9', frame: 'FRAME-MARKER-c41a83',
-  reference: 'REFERENCE-MARKER-a93d27', markdown: 'MARKDOWN-MARKER-0b6e44', title: 'TITLE-MARKER-9f31aa'};
+  reference: 'REFERENCE-MARKER-a93d27', markdown: 'MARKDOWN-MARKER-0b6e44', title: 'TITLE-MARKER-9f31aa',
+  referenceFrame: 'REFFRAME-MARKER-3d7e52', notFound: 'NOT-FOUND-MARKER-81c0f4'};
+// Addresses the server answers like GitHub Pages: a missing one gets 404.html,
+// and moved.html serves guide.html's lock page at an address it was not sealed for.
+const MISSING = 'no-such-page';
 const throwaway = () => crypto.randomBytes(24).toString('base64url');
 let general = throwaway();
 const reference = throwaway();
@@ -38,9 +42,14 @@ const server = http.createServer((req, res) => {
     const site = roots[base];
     let file = path.resolve(site, '.' + pathname.slice(base.length - 1));
     if (file !== site && !file.startsWith(site + path.sep)) throw Error('outside the bundle');
+    if (file === path.join(site, 'moved.html')) file = path.join(site, 'guide.html');
     if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, 'index.html');
-    // GitHub Pages serves page.html at /page as well.
+    // GitHub Pages serves page.html at /page as well, and 404.html at a missing address.
     if (!fs.existsSync(file) && fs.existsSync(file + '.html')) file += '.html';
+    if (!fs.existsSync(file) && fs.existsSync(path.join(site, '404.html'))) {
+      res.statusCode = 404;
+      file = path.join(site, '404.html');
+    }
     res.setHeader('Content-Type', mime[path.extname(file)] || 'application/octet-stream');
     res.end(fs.readFileSync(file));
   } catch { res.statusCode = 404; res.end('Not found'); }
@@ -97,7 +106,9 @@ async function referenceTree(page) {
   const errors = [];
   const watch = page => {
     page.on('pageerror', error => errors.push(error.message));
-    page.on('response', response => { if (response.status() >= 400) errors.push(response.url() + ': ' + response.status()); });
+    page.on('response', response => {
+      if (response.status() >= 400 && !response.url().includes(MISSING)) errors.push(response.url() + ': ' + response.status());
+    });
     return page;
   };
   const results = {};
@@ -282,6 +293,27 @@ async function referenceTree(page) {
     await next.goto(url('index.html'));
     await waitUnlocked(next);
     assert.ok(await referenceTree(next), 'the remembered reference key brings the tree');
+    // A frame that only a Reference page embeds opens for the reference password.
+    await next.goto(url('framed.html'));
+    await waitUnlocked(next);
+    const referenceFrame = next.frameLocator('iframe[title="Reference frame"]');
+    await referenceFrame.locator('p').waitFor({state: 'visible', timeout: 20000});
+    assert.equal(await referenceFrame.locator('p').textContent(), MARKERS.referenceFrame);
+    // The site's 404.html opens at a missing address; a page served at an address it was not
+    // sealed for says so. Neither deletes the stored keys.
+    const keysOf = tab => tab.evaluate(() => JSON.stringify({local: {...localStorage}, session: {...sessionStorage}}));
+    const keysBefore = await keysOf(next);
+    await next.goto(url(MISSING));
+    await waitUnlocked(next);
+    assert.ok((await next.content()).includes(MARKERS.notFound));
+    await next.goto(url('moved.html'));
+    await next.locator('#page-lock-message').waitFor({state: 'visible', timeout: 20000});
+    assert.match(await next.textContent('#page-lock-message'), /This address does not match the page it holds/);
+    assert.equal(await next.locator('#page-lock-form').isVisible(), false);
+    assert.equal(await keysOf(next), keysBefore, 'a mismatched address keeps the keys');
+    await next.goto(url('widgets.html'));
+    await waitUnlocked(next);
+    results.addresses = {notFound: 'opened', moved: 'told, keys kept', referenceFrame: 'opened at level 2'};
     roots['/lock-fixture/'] = publish('project', 'site-2');
     await next.goto(url('rule.html'));
     await waitUnlocked(next);

@@ -89,6 +89,14 @@ does not turn it on gets the same bundle as before, byte for byte.
 The lock is not access control. The encrypted files are public, and anyone who
 has a password can read and pass on everything it opens.
 
+The lock protects only the published bundle. The source repository, its
+Actions logs and its workflow artifacts hold the same text unencrypted, so all
+of them must stay private; with a public source the lock is pointless. GitHub's
+[plan overview](https://docs.github.com/en/get-started/learning-about-github/githubs-plans)
+lists GitHub Pages in public repositories for GitHub Free, and in private
+repositories under GitHub Pro and GitHub Team; publishing a site privately, with
+access control, needs an organization on GitHub Enterprise Cloud.
+
 ### Turn it on
 
 1. Install the optional dependency wherever `publish` runs:
@@ -131,16 +139,26 @@ readers through a separate channel.
   needed for every page the build records as a Reference page: a route in
   `source_pages` of `site-build.json`, which includes the
   [automatically listed](authoring.md#automatic-reference-listing) files, the
-  Reference index page, or a page whose body has the class `source-page`. The
-  general password opens every other HTML file, including pages shown in
-  frames.
+  Reference index page, or a page whose body has the class `source-page`. HTML
+  without the kit's sidebar, such as a frame or an exported HTML file, needs
+  the reference password when only Reference pages embed or link it. The
+  general password opens every other HTML file, including a frame that a
+  general page uses or no page uses. `publish` refuses `.xhtml`, `.xht`,
+  `.shtml` and `.shtm` files: the unlock rewrites the page with
+  `document.write`, which an XML page lacks, and a server-side-include page may
+  not be served as HTML. Rename such a file to `.html` or leave it out.
+- The site's root `404.html`, which GitHub Pages serves at every missing
+  address. Its lock page opens at any address, so keep it free of Reference
+  content; the general password opens it. Any other locked page served at an
+  address it was not sealed for says so and leaves the reader's keys in place.
 - The sidebar's Reference section. With the lock on, the build writes the
   folder tree once as `reference.tree.js`, whatever its size, and `publish`
   cuts the section out of every page the general password opens. The tree
   file holds the tree and that section, encrypted for the reference password
-  and padded to a power of two of at least 64 KiB. A reader with the reference
-  password gets the section back on every page, with the current file marked;
-  a reader with the general password sees no Reference section.
+  and padded to a power of two of at least 64 KiB; the Reference index page is
+  padded to the same size. A reader with the reference password gets the
+  section back on every page, with the current file marked; a reader with the
+  general password sees no Reference section.
 - Every Markdown file the bundle exports, under the reference password. The
   file keeps its address and holds a short notice and the encrypted text. A
   link to it from an unlocked page opens the text, unless `filelinks.js`
@@ -149,13 +167,16 @@ readers through a separate channel.
   the pages and are locked with them.
 
 Images, plots, videos, stylesheets, scripts, fonts and every other file, such
-as JSON data, stay readable for anyone who has their address. `publish` ends
-with a summary: how many files each password opens, and how many files stay
-readable, by type. Check it for data files that should not be public. When
-pages that the general password opens link to Reference pages, through a
-`[[nav]]` entry, a site-map card or a link in the text, the summary counts
-those Reference pages: their link text and address stay visible to readers
-with the general password.
+as JSON data, stay readable for anyone who has their address. With a source
+remote configured, the readable `assets/filelinks.js` carries the repository's
+address. `publish` ends with a summary: how many files each password opens,
+and how many files stay readable, by type. Check it for data files that should
+not be public. When pages that the general password opens name Reference files,
+the summary counts those files: readers with the general password see their
+names. It counts every Reference page route, repository path or exported
+Markdown path that appears anywhere in such a page, in a link, a source link
+to a source host, any attribute or the text, so a `[[nav]]` entry, a site-map
+card and a source link all count.
 
 ### Reading a locked site
 
@@ -185,6 +206,8 @@ authenticated data. `tooling/page_lock.py` encrypts;
 
 ### Limits
 
+- The lock covers only the bundle. A public source repository, or readable
+  Actions logs or workflow artifacts, give the text away unencrypted.
 - Anyone can download the encrypted files and test password guesses offline,
   as fast as their hardware allows, with no lockout and no trace. Only a long
   random passphrase protects the text; the iteration count only makes each
@@ -210,8 +233,12 @@ authenticated data. `tooling/page_lock.py` encrypts;
   address, such as `readme.md.html`, and learn from the lock page that the
   file exists. Above 64 KiB, the size of the tree file shows the size of the
   tree within a factor of two.
-- Links from pages the general password opens to Reference pages keep their
-  text and address; `publish` counts them.
+- Names of Reference files in pages the general password opens stay visible
+  to those readers; `publish` counts them.
+- A lock page that holds a page with the shared sidebar carries
+  `data-section-at`, a byte offset in the page as built. It shows how long the
+  page's head and sidebar are, on every such page, whether or not the site has
+  a Reference section.
 - Pages need JavaScript. A project script that fetches an HTML or Markdown
   file from the bundle receives the locked file.
 - Search engines stop listing the site, because they see only lock pages.
@@ -219,3 +246,6 @@ authenticated data. `tooling/page_lock.py` encrypts;
   clears the site's data. Any page served from the same origin, such as
   another GitHub Pages site of the same account, can read the stored keys,
   remembered or not.
+- The kit's checks run the lock in Chromium only. Other browsers are untested.
+  Safari may delete remembered keys of a site that a reader has not visited for
+  some days; that is untested too.
