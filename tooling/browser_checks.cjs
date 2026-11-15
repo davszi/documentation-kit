@@ -218,12 +218,20 @@ async function readerChecks(page, {url, expectedChapters, check = async (_label,
 // - `clipped`: text cut off by a box that hides its overflow, the canvas included;
 // - `outside`: parts that stick out of the canvas, with the px they stick out;
 // - `emptyBand`: height in px of the largest horizontal band of the canvas that holds nothing:
-//   no text, image, figure, background or border. It is information only and never a problem.
-// `problems` lists, in words, a 16:9 face that does not fit, sideways overflow, clipped text and
-// parts outside the face; a face is in order when it is empty. Page styles can add space that the
-// deck lacks, so check faces in their page as well as in the deck.
+//   no text, image, figure, background or border. It is information only and never a problem;
+// - `drawingText`: the smallest rendered size of the text inside the face's inline SVG drawings,
+//   `{px, text, below}`, where `below` counts the labels under LABEL_MIN_PX; null without such
+//   text. The size is the font size times the drawing's scale on screen, so a drawing that shrinks
+//   to a phone column shrinks its labels with it. Text in an SVG loaded as an image is not read.
+// `problems` lists, in words, a 16:9 face that does not fit, sideways overflow, clipped text,
+// parts outside the face and drawing labels under LABEL_MIN_PX; a face is in order when it is
+// empty. Page styles can add space that the deck lacks, so check faces in their page as well as in
+// the deck.
+// The label limit of rules/writing/figures.md: charts carry labels of at least 11 px.
+const LABEL_MIN_PX = 11;
+
 async function slideFaces(page, {within = null} = {}) {
-  return page.evaluate(within => {
+  return page.evaluate(([within, labelMin]) => {
     const scope = within ? [...document.querySelectorAll(within)] : [document];
     const faces = [...new Set(scope.flatMap(root => [...(root.matches?.('[data-slide-face]') ? [root] : []),
       ...root.querySelectorAll('[data-slide-face]')]))];
@@ -325,17 +333,34 @@ async function slideFaces(page, {within = null} = {}) {
         if (reach >= bottom) break;
       }
       emptyBand = Math.max(emptyBand, bottom - reach);
+      // Drawing labels: each SVG text element with text of its own, at its size on screen.
+      let drawingText = null;
+      for (const node of canvas.querySelectorAll('svg text, svg tspan, svg textPath')) {
+        const own = [...node.childNodes].filter(child => child.nodeType === 3).map(child => child.data).join('').trim();
+        if (!own || !node.getClientRects().length || !visible(node)) continue;
+        const matrix = node.getScreenCTM();
+        if (!matrix) continue;
+        const px = parseFloat(getComputedStyle(node).fontSize) * Math.sqrt(Math.abs(matrix.a * matrix.d - matrix.b * matrix.c));
+        if (!(px > 0)) continue;
+        if (!drawingText) drawingText = {px, text: own, below: 0};
+        else if (px < drawingText.px) Object.assign(drawingText, {px, text: own});
+        if (px < labelMin) drawingText.below += 1;
+      }
+      if (drawingText) drawingText = {...drawingText, px: Math.round(drawingText.px * 10) / 10,
+        text: drawingText.text.replace(/\s+/g, ' ').slice(0, 60)};
       sideways = Math.round(sideways);
       const problems = [];
       if (!fits) problems.push('the content does not fit the 16:9 canvas');
       if (sideways > 1) problems.push(`overflows sideways by ${sideways} px`);
       for (const item of clipped) problems.push(`clips text "${item.text}" in ${item.in} by ${item.by} px`);
       for (const item of outside) problems.push(`${item.part} sticks out of the face by ${item.by} px`);
+      if (drawingText && drawingText.px < labelMin)
+        problems.push(`${drawingText.below} drawing label(s) render below ${labelMin} px, the smallest at ${drawingText.px} px: "${drawingText.text}"`);
       return {chapter, shown: true, width: canvas.clientWidth, height: canvas.clientHeight, compact, fits,
-              sideways, clipped, outside, emptyBand: Math.max(0, Math.round(emptyBand)), problems,
+              sideways, clipped, outside, emptyBand: Math.max(0, Math.round(emptyBand)), drawingText, problems,
               bridge: !!face.parentElement.querySelector(':scope > .slide-bridge, .slide-bridge')};
     });
-  }, within);
+  }, [within, LABEL_MIN_PX]);
 }
 
 // Fails with every problem of every shown face; returns the rows. `expectShown` guards against

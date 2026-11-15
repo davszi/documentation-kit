@@ -63,6 +63,13 @@ These are known on 2026-11-15 and are not fixed in 5.0.0:
   of its own. The
   [findings record](upgrade-to-4.0.0-findings.md#decided-and-still-owed)
   says what each face now shows. deivid has not yet looked at them.
+- **adaptation's drawing labels.** The browser check now fails a face whose
+  drawing labels render below 11 px. On a clone of adaptation at `e28472e`,
+  built with this kit, 14 of its 33 faces carry inline SVG labels: 7 fail at
+  1600 px, the smallest label at 7.4 px, and all 14 fail at 390 px, the
+  smallest at 2.3 px, because their wide drawings shrink into the phone
+  column. adaptation meets this at its upgrade, in the migration step on
+  slide-face checks.
 - **ADP was not built with the new default.** ADP's tracked files hold about
   6.6 GB (6,591,531,630 bytes in the local checkout on 2026-11-15), and its
   site has not been built with the automatic listing on. The kit owner reports

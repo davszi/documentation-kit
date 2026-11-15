@@ -63,7 +63,8 @@ async function reviewSmallReaders(browser) {
 
 // Slide faces with the real slide-face stylesheet: a stacked face at 390 px that overflows
 // sideways, clips text or lets a part stick out is reported; a sound face reports nothing; the
-// empty band is information only; a face the page does not show is not measured.
+// empty band is information only; a face the page does not show is not measured. A drawing whose
+// labels shrink below 11 px with the phone column is reported, and the same drawing passes wide.
 async function reviewSlideFaces(browser) {
   const css = await fs.readFile(path.join(__dirname, '../theme/components/slide-face.css'), 'utf8');
   const face = (id, main, extra = '') => `<section id="${id}"${extra}><div class="slide-face" data-slide-face><div class="slide-canvas">
@@ -82,10 +83,13 @@ async function reviewSlideFaces(browser) {
       ${face('outside', sound + '<div style="position:relative;left:-30px;width:40px;height:20px;background:#a33"></div>')}
       ${face('page-style', '<img alt="" style="display:block;width:300px;height:80px;background:#345" src="data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="300" height="80"/>') + '">', ' class="in-page"')}
       ${face('hidden', sound, ' style="display:none"')}
+      ${face('labels', '<svg viewBox="0 0 1200 240" style="display:block;width:100%" role="img" aria-label="Drawing">'
+        + '<rect width="1200" height="240" fill="#234"/><text x="20" y="120" font-size="16" fill="#fff">wide label</text>'
+        + '<text x="600" y="120" font-size="28" fill="#fff">large <tspan font-size="14">small part</tspan></text></svg>')}
     </main>`);
     await settle(page);
     const rows = Object.fromEntries((await slideFaces(page)).map(row => [row.chapter, row]));
-    assert.deepEqual(Object.keys(rows), ['sound', 'wide', 'clipped', 'outside', 'page-style', 'hidden']);
+    assert.deepEqual(Object.keys(rows), ['sound', 'wide', 'clipped', 'outside', 'page-style', 'hidden', 'labels']);
     assert.equal(rows.sound.shown, true);
     assert.equal(rows.sound.compact, true, 'A face narrower than 720 px stacks');
     assert.deepEqual(rows.sound.problems, [], 'A sound stacked face reports nothing: ' + JSON.stringify(rows.sound));
@@ -98,6 +102,11 @@ async function reviewSlideFaces(browser) {
     assert.ok(rows['page-style'].problems.length > 0, 'A page style that pushes a part out of the face is reported in the page: '
       + JSON.stringify(rows['page-style']));
     assert.deepEqual(rows.hidden, {chapter:'hidden', shown:false, problems:[]}, 'A face the page does not show is not measured');
+    assert.equal(rows.sound.drawingText, null, 'A face without an SVG drawing has no drawing text');
+    const labels = rows.labels.drawingText;
+    assert.ok(labels && labels.text === 'small part' && labels.px < 11 && labels.below === 3
+        && rows.labels.problems.some(item => /^3 drawing label\(s\) render below 11 px, the smallest at [\d.]+ px: "small part"$/.test(item)),
+      'Drawing labels below 11 px at phone width are reported with the smallest: ' + JSON.stringify(rows.labels));
     // `within` limits the rows; the assertion fails with every problem and passes on a sound face.
     assert.deepEqual((await slideFaces(page, {within:'#sound'})).map(row => row.chapter), ['sound']);
     await assertSlideFaces(page, {within:'#sound'});
@@ -112,6 +121,8 @@ async function reviewSlideFaces(browser) {
     assert.equal(wide.sound.fits, true);
     assert.ok(wide.sound.emptyBand > 150 && wide.sound.problems.length === 0,
       'A face with little on it reports a large empty band and no problem: ' + JSON.stringify(wide.sound));
+    assert.ok(wide.labels.drawingText.px >= 11 && wide.labels.drawingText.below === 0 && wide.labels.problems.length === 0,
+      'The same drawing at a wide window keeps its labels at 11 px or more: ' + JSON.stringify(wide.labels));
     await page.evaluate(() => {
       document.querySelector('#sound .slide-main').insertAdjacentHTML('beforeend',
         '<div style="height:360px;background:#234"></div>');

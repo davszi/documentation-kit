@@ -2,6 +2,41 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Measure drawing labels on slide faces
+
+- Why: `slideFaces` passed a face whose SVG labels render at a few pixels at
+  390 px, because a wide drawing shrinks into the phone column with its text.
+  [Figures](../rules/writing/figures.md#figures-and-comparisons) already says
+  that charts carry labels of at least 11 px; the check uses that number.
+- What: per shown face, `slideFaces` reports `drawingText`, the smallest
+  rendered size of a label in the face's inline SVG drawings (font size times
+  the drawing's scale on screen), with its text and the number of labels
+  below 11 px, or null. A label below 11 px is a problem, so
+  `assertSlideFaces` fails on it at every width. An SVG loaded as an image is
+  not read.
+- Found, with the helper at 1600 and 390 px, after each chapter settled:
+  - the kit's four example faces pass. Smallest labels: "Get started" 14.7 px
+    wide and 12.2 px at 390; "Build a site" 14.3 and 12.2; the starter's
+    slide-face face 13.9 and 11.4; the starter's ownership face is a matrix in
+    HTML and has no SVG labels.
+  - adaptation, a clone of `e28472e` built with this kit after removing its
+    adapter settings in the clone: 33 faces, 25 on `cursor-rerun` and 8 on
+    `robotics`; 14 carry SVG labels. At 1600 px 7 of them fail, 173 labels in
+    all, the smallest 7.4 px on `robotics#curves`; at 390 px all 14 fail, 394
+    labels, the smallest 2.3 px on `cursor-rerun#evidence-families` (an
+    11 px font in a drawing scaled by 0.21). The first pass of the scratch
+    harness also reported sideways overflow on 31 faces at 1600 px; it came
+    from measuring before the reader's chapter transition ended and is gone
+    with a wait, so it is not a finding.
+- Rules and records: [reusable browser checks](../rules/site/validation.md#reusable-browser-checks)
+  describes `drawingText`; the [slide-face rule](../rules/writing/pages.md#slide-faces)
+  says the labels keep the 11 px at every width; the 5.0.0 release row, the
+  migration step on slide-face checks, the open record of the release, which
+  lists adaptation's case, and one sentence on "Documentation and writing".
+- Tests: `tests/test_browser_checks.cjs` adds a face whose drawing labels
+  fall below 11 px at 390 px and pass at 1600 px; with the new problem
+  disabled the suite fails.
+
 ## 2026-11-15 — Compile every formula on the built pages in lint
 
 - Why: ADP keeps its own test, `tools/docs/test_content_math.cjs`, that

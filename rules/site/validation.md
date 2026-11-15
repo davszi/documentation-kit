@@ -44,7 +44,13 @@ expected counts, screenshots and domain assertions. The shared module provides:
   parts that stick out of the face (`outside`) and `problems`, these faults in
   words. `emptyBand` is the height in pixels of the largest horizontal band of
   the canvas that holds nothing; it is information for the reviewer, fails
-  nothing and has no threshold. A face the page does not show, such as one in
+  nothing and has no threshold. `drawingText` is the smallest size at which a
+  label of the face's inline SVG drawings renders, the font size times the
+  drawing's scale on screen, with that label's text and the number of labels
+  below 11 px; a label below the 11 px that
+  [figures](../writing/figures.md#figures-and-comparisons) asks of chart
+  labels is a problem. A drawing that shrinks into a phone column shrinks its
+  labels with it; an SVG loaded as an image is not read. A face the page does not show, such as one in
   an inactive reader chapter, has `shown: false` and no measurements.
   `assertSlideFaces(page, {within?, expectShown = 1})` fails with every problem
   of every shown face, and when fewer faces than `expectShown` are shown.
