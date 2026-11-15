@@ -2,6 +2,13 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — deivid agrees that chapter figures are material
+
+- Shown the proposal that a chapter's figures and numbers are material for a
+  slide face, not its fixed picture, deivid answered: "and on the meterial
+  thing i agree". That confirms the direction of the entry below. He has not
+  read the rule sentences themselves.
+
 ## 2026-11-15 — Visual ambition for chapters and slide faces
 
 - deivid asked whether the slide wording forces agents to make single
