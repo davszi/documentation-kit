@@ -1,6 +1,5 @@
 """Exercise real Git consumer roots, source boundaries and portable commands."""
 import re
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -447,24 +446,26 @@ private_prefixes = ["configs/"]
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('Untracked', result.stderr)
 
-    def test_declared_evidence_mismatch_fails_lint(self):
+    def test_removed_copy_settings_fail_build_and_lint(self):
         config = self.root / 'docs/site/site.toml'
-        config.write_text('evidence_manifests = ["docs/evidence/locations.json"]\n' + config.read_text())
-        frozen = self.root / 'docs/topics/example/evidence/original.md'
-        frozen.parent.mkdir(parents=True)
-        frozen.write_text('immutable\n')
-        manifest = {'schema_version': 1, 'source_revision': 'a' * 40,
-                    'documents': [{'original_path': 'docs/open/original.md',
-                                   'path': str(frozen.relative_to(self.root)), 'bytes': 10,
-                                   'sha256': hashlib.sha256(b'immutable\n').hexdigest()}]}
-        manifest_path = self.root / 'docs/evidence/locations.json'
-        manifest_path.parent.mkdir(parents=True, exist_ok=True)
-        manifest_path.write_text(json.dumps(manifest))
-        frozen.write_text('changed\n')
+        original = config.read_text()
+        values = {'evidence_manifests': '["docs/evidence/locations.json"]',
+                  'legacy_files': '{ "docs/old.md" = "docs/topics/guide/guide.md" }'}
+        for key, value in values.items():
+            with self.subTest(key=key):
+                config.write_text(f'{key} = {value}\n' + original)
+                self.track()
+                message = f'site.toml: {key} was removed in kit 5.0.0'
+                result = invoke('build', '--project', self.root)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(message, result.stderr)
+                self.assertIn('Remove the adapter hooks', result.stderr)
+                result = invoke('lint', '--project', self.root)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(message, result.stdout + result.stderr)
+        config.write_text(original)
         self.track()
-        result = invoke('lint', '--project', self.root)
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn('Evidence identity mismatch', result.stderr)
+        self.assertEqual(invoke('build', '--project', self.root).returncode, 0)
 
     def test_local_css_cannot_replace_shared_theme(self):
         css = self.root / 'docs/site/assets/base.css'

@@ -11,15 +11,8 @@ SITE = DOCS / "site"
 KIT_SITE = Path(__file__).resolve().parents[1] / "theme"
 OUTPUT_ROOT = REPO / ".build" / "docs"
 HTML = OUTPUT_ROOT / "html"
-_config_path = SITE / "site.toml"
-_config = tomllib.loads(_config_path.read_text()) if _config_path.is_file() else {}
 _TOPIC_GROUPS = _topics.topic_group_folders(REPO)
 _ALIASES = ((Path("docs/html"), Path(".build/docs/html")),)
-# Optional historical identities belong to the consuming project.
-LEGACY_FILES = {Path(old): Path(new) for old, new in _config.get("legacy_files", {}).items()}
-for old, new in LEGACY_FILES.items():
-    if old.is_absolute() or new.is_absolute() or ".." in old.parts or ".." in new.parts:
-        raise ValueError("legacy_files paths must stay inside the project")
 
 
 def _topic_groups(root):
@@ -59,31 +52,22 @@ def local_artifacts_manifest(root=REPO, *, site=None):
     return source
 
 
-def resolve_legacy_path(path, root=REPO, *, recorded_roots=()):
+def resolve_site_path(path, root=REPO):
     """The current file for a link target: the kit's own resolution only.
 
-    The logical `docs/html/` origin maps to the build output, `legacy_files`
-    maps single files, and `recorded_roots` rebase absolute paths of a
-    declared evidence collection. A project adapter (`path_resolver`) was
-    removed in 5.0.0; the build rejects the setting.
+    The logical `docs/html/` origin maps to the build output; every other
+    path is itself. The project adapter `path_resolver`, the single-file map
+    `legacy_files` and the exact-byte collections of `evidence_manifests` were
+    removed in 5.0.0; the build rejects each setting.
     """
     root = Path(root).resolve()
     path = Path(path)
     absolute = Path(os.path.abspath(path if path.is_absolute() else root / path))
-    for recorded in recorded_roots:
-        if not isinstance(recorded, (str, Path)):
-            raise ValueError("Recorded source_root must be an absolute project path")
-        origin = Path(recorded)
-        if not origin.is_absolute() or origin.parent == origin or origin.as_posix() != str(recorded) or ".." in origin.parts:
-            raise ValueError("Invalid recorded source_root")
-        if not absolute.is_relative_to(root) and absolute.is_relative_to(origin):
-            absolute = root / absolute.relative_to(origin)
     try:
         relative = absolute.relative_to(root)
     except ValueError:
         return absolute
     for old, current in _ALIASES:
         if relative.is_relative_to(old):
-            relative = current / relative.relative_to(old)
-            break
-    return root / LEGACY_FILES.get(relative, relative)
+            return root / current / relative.relative_to(old)
+    return root / relative

@@ -13,7 +13,7 @@ import re
 import subprocess
 from urllib.parse import quote, unquote, urlsplit
 
-from site_paths import REPO, DOCS, resolve_legacy_path, local_artifacts_manifest
+from site_paths import REPO, DOCS, resolve_site_path, local_artifacts_manifest
 
 ATTR = re.compile(r'(?<![\w-])(href|src|poster)="([^"]*)"')
 TAG = re.compile(r'<(a|img|video|audio|source|iframe)\b[^>]*>', re.I)
@@ -26,7 +26,7 @@ class SiteBundle:
         self.repository = site['gh_repo'].rstrip('/')
         self.ref = site.get('gh_ref', 'main')
         result = subprocess.run(['git', 'ls-files', '-z'], cwd=root, capture_output=True, check=True)
-        self.tracked = {resolve_legacy_path(root / path, root=root)
+        self.tracked = {resolve_site_path(root / path, root=root)
                         for path in result.stdout.decode().split('\0') if path}
         self.resources: dict[str, bytes] = {}
         # Output name to tracked source, so publication can apply source policy.
@@ -68,7 +68,7 @@ class SiteBundle:
             if not url.path or url.scheme or url.netloc:
                 return None
             logical = self.root / posixpath.normpath('docs/html/' + unquote(url.path))
-            dest = resolve_legacy_path(logical, root=self.root)
+            dest = resolve_site_path(logical, root=self.root)
             if not dest.is_relative_to(self.root):
                 raise ValueError('Website link escapes the repository: ' + raw)
             public = (logical.is_relative_to(self.root / 'docs/html')

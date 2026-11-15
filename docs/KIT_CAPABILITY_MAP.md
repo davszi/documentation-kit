@@ -12,7 +12,7 @@ is generated from Python imports; never edit it. After adding a row or
 changing an import, run `python docsite.py capability-map --project .`, and
 lint fails while the column is out of date. It does not show code that is
 loaded by file path or run as a command: `tooling/lint.py` loads
-`tooling/site_paths.py` and `tooling/evidence_documents.py` by path and runs
+`tooling/site_paths.py` by path and runs
 `tooling/build.py`, and `docsite.py` runs `build.py`, `lint.py`, `slides.py`
 and `capability_map.py`. Node scripts under `tests/` load
 `tooling/browser_checks.cjs`.
@@ -23,7 +23,7 @@ and `capability_map.py`. Node scripts under `tests/` load
 |---|---|---|---|
 | Run the kit's commands from a project without copying the kit into it | [docsite.py](../docsite.py) | exists | no Python imports |
 | Render topic pages and Markdown records into a static site, and check that the generated site is fresh | [build.py](../tooling/build.py), [site_bundle.py](../tooling/site_bundle.py) | exists | `tests/test_asset_versions.py`, `tests/test_brand_mark.py`, `tests/test_chapter_layout.py`, `tests/test_math_rendering.py`, `tests/test_slide_faces.py` |
-| Find a project's documentation paths wherever the kit is installed, and map historical paths to current files | [site_paths.py](../tooling/site_paths.py) | exists | `tests/test_portability.py`, `tooling/build.py`, `tooling/site_bundle.py`, `tooling/slides.py` |
+| Find a project's documentation paths wherever the kit is installed, and map the logical `docs/html/` origin to the build output | [site_paths.py](../tooling/site_paths.py) | exists | `tests/test_portability.py`, `tooling/build.py`, `tooling/site_bundle.py`, `tooling/slides.py` |
 | Load a project's own tracked Python module that its site settings name, the content transform | [project_extensions.py](../tooling/project_extensions.py) | exists | `tooling/build.py` |
 | Fit the sections of an existing page into the chapter reader without editing its source | [chapter_layout.py](../tooling/chapter_layout.py) | exists | `tests/test_chapter_layout.py`, `tests/test_slide_faces.py`, `tooling/build.py`, `tooling/page_lock.py`, `tooling/publication.py`, `tooling/reader_content.py`, `tooling/slide_face_checks.py`, `tooling/slides.py` |
 | Show that the chapter reader keeps every word, link and figure of a page | [reader_content.py](../tooling/reader_content.py) | exists | `tests/test_chapter_layout.py`, `tooling/build.py` |
@@ -34,7 +34,6 @@ and `capability_map.py`. Node scripts under `tests/` load
 | Check links, HTML links to repository files included, anchors, snippets, figures, markers and record formats before a push | [lint.py](../tooling/lint.py) | exists | `tests/test_capability_map.py`, `tests/test_lint.py`, `tests/test_page_numbers.py`, `tests/test_record_notes.py` |
 | List the pages that explain a record section that changed | [record_changes.py](../tooling/record_changes.py) | exists | `tests/test_record_notes.py`, `tooling/lint.py`, `tooling/page_numbers.py` |
 | List numbers on a page that none of its linked records state | [page_numbers.py](../tooling/page_numbers.py) | exists | `tests/test_page_numbers.py`, `tooling/lint.py` |
-| Verify exact-byte evidence collections that a project declares | [evidence_documents.py](../tooling/evidence_documents.py) | exists | no Python imports |
 | Detect a kit pin that nobody else can fetch | [kit_pin.py](../tooling/kit_pin.py) | exists | `tests/test_kit_pin.py`, `tooling/lint.py` |
 | Check that a project's tooling is listed in its capability map, and find who imports each part | [capability_map.py](../tooling/capability_map.py) | exists | `tests/test_capability_map.py`, `tooling/build.py`, `tooling/lint.py` |
 | Export a public bundle of the site into a publication tree | [publication.py](../tooling/publication.py) | exists | `docsite.py`, `tests/test_page_lock.py`, `tests/test_publication.py`, `tests/test_publish_project.py` |

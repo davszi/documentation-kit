@@ -19,18 +19,22 @@ under `--strict`. A missing file that the manifest does not list is an error.
 
 The kit resolves every link with its own rules: a page body from the logical
 `docs/html/` origin, a record from its own folder. It loads no project adapter
-for paths or evidence. The settings `path_resolver` and `evidence_validator`,
-and with the latter the evidence adapter's `document_origin`, were removed in
-5.0.0; a `site.toml` that still names one fails the build, and lint prints the
-build's error. They existed so that a project could keep old documents as
-unedited copies in its live tree and still pass the link check. A finished
+for paths or evidence, maps no old path to a current file and verifies no
+kept copy of an old document. Four settings were removed in 5.0.0: the
+adapters `path_resolver` and `evidence_validator`, with the latter the
+evidence adapter's `document_origin`; `evidence_manifests`, which declared
+collections of copies that had to stay byte for byte; and `legacy_files`,
+which mapped single old paths to current files. A `site.toml` that still
+names one of the four fails the build, and lint prints the build's error.
+They existed so that a project could keep old documents as unedited copies in
+its live tree and still pass the link check. A finished
 working document is now deleted and cited from Git, as
 [finished working documents](../records.md#finished-working-documents) says,
 so a link names a current file or a file at its commit. Links in old worklog
 entries that name a moved or deleted file stop being checked through
 `worklog_links_checked_from`, described below. The
 [5.0.0 migration guide](../../docs/topics/releases/migrations/5.0.0.md#remove-the-adapter-hooks) gives
-the steps for a project that named a hook.
+the steps for a project that named one of them.
 
 For generated or sealed content formats, `content_transform` may name a tracked
 project module exporting `transform(body, *, metadata, source, root)`. The hook
@@ -66,4 +70,4 @@ whose target exists stays a link, and a fragment that no longer matches an
 anchor of a registered page is not checked. In entries from that day on, a
 missing target fails the build as on any registered page.
 
-Validate [generated-figure provenance](../writing/figures.md#figures-and-comparisons) and the identities of documents listed in an evidence manifest separately from link resolution and presentation.
+Validate [generated-figure provenance](../writing/figures.md#figures-and-comparisons) separately from link resolution and presentation. A hash that a record states for a document is checked against the document at its commit in Git, as [finished working documents](../records.md#finished-working-documents) says.

@@ -156,8 +156,7 @@ building a consuming site.
 
 The build packages tracked resources only, rejects missing media and symlink
 escapes, checks resource closure and detects stray generated files. Local-only
-captures require explicit configuration. Optional `evidence_manifests` enable
-exact-byte verification without requiring any platform-specific collection.
+captures require explicit configuration.
 See [maintenance](rules/maintenance.md) for source paths and extension points.
 
 Chapters can open with a 16:9 [slide face](rules/site/authoring.md#slide-faces-and-decks);

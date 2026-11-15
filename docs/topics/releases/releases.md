@@ -49,7 +49,7 @@ reasons:
   chapter with more than one slide face, on a face that does not open its
   chapter and on a face outside every chapter. Up to 4.0.0 such a page built
   and linted clean. A project in that case passed before and fails now.
-- **The path and evidence adapter hooks are removed.** The kit no longer loads
+- **The path and evidence adapter hooks and the kept-copy settings are removed.** The kit no longer loads
   a project module named by `path_resolver` or `evidence_validator`, nor the
   evidence adapter's `document_origin`. A `site.toml` that still names one of
   the two settings fails the build, and the links that only the adapter
@@ -58,7 +58,12 @@ reasons:
   live tree, which the rule on
   [finished working documents](../../../rules/records.md#finished-working-documents)
   ended in 4.0.0. At this release adaptation still names both settings; ADP
-  and Tempo name none.
+  and Tempo name none. Two settings of the kit's own that served the same
+  practice go with them: `evidence_manifests`, which declared collections of
+  copies that had to stay byte for byte, and `legacy_files`, which mapped
+  single old paths to current files. A `site.toml` that names either fails the
+  build the same way. deivid decided it: "Yes, remove both". No known project
+  sets either.
 - **A new lint error for HTML links to repository files.** Lint now checks a
   link written as `<a href="…">` that points at a repository file, in a topic
   page, a fragment it includes or a registered source page: the target must
@@ -71,8 +76,8 @@ reasons:
   gone, 41 because they name paths only the adapter mapped and one because
   its target exists nowhere.
 
-Apart from the two adapter settings, no command, flag, configuration key or
-marker is removed.
+Apart from the two adapter settings and the two kept-copy settings, no
+command, flag, configuration key or marker is removed.
 No section anchor under `rules/` is removed or renamed: every heading of every
 file under `rules/` at `v4.0.0` is still present.
 `rules/site/authoring.md` gains the sections "Automatic reference listing" and
@@ -80,7 +85,7 @@ file under `rules/` at `v4.0.0` is still present.
 with five subsections. `rules/engineering/code.md` gains "Name the need first"
 and "The capability map" with its subsection "The check";
 `rules/experiments/workflow.md` gains "Show the total" and "Step back across
-experiments". Apart from the slide-face checks, a removed adapter setting
+experiments". Apart from the slide-face checks, a removed adapter or kept-copy setting
 and a dead HTML link to a repository file, a project that does not set
 `tooling_roots` gets no new lint warning or error; a problem in an
 automatically listed file is a lint note, which never fails. The slide-face
@@ -134,7 +139,7 @@ Known open points are in the [open record](../../open/release-5.0.0-waits.md).
 | Theme | The Reference section now ends the sidebar of every page whenever at least one file is listed, also on a site without `[[source_pages]]` tables | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages), [shared reading layout](../../../rules/site/reader.md#shared-reading-layout) |
 | Build | On a source page, a link to a tracked Markdown file that is listed automatically now goes to that file's page. In 4.0.0 it was a source link to the repository | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
 | Build output | Above 60 listed files, or with the page lock on, the folder tree is written once as `reference.tree.js` and as the page `reference.index.html` in the html root, and each page carries a short form of the section. `site-build.json` gains `reference_tree`, which names both files or is `null`; its `source_pages` also maps every automatic route to its file. The name `reference.index.html` is reserved in that case: another page with that address fails the build with `route collision` | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
-| Configuration | Removed: the settings `path_resolver` and `evidence_validator`, and the evidence adapter's optional `document_origin`. A `site.toml` that names either setting fails the build with `site.toml: <setting> was removed in kit 5.0.0`, which points to the migration step, and lint prints that error. The kit resolves links with its own rules only, so a link that only the project's adapter mapped is a dead link or a missing anchor in lint. `content_transform`, `evidence_manifests`, `legacy_files` and `worklog_links_checked_from` stay | [Resources](../../../rules/site/resources.md#resource-closure-and-evidence) |
+| Configuration | Removed: the settings `path_resolver` and `evidence_validator`, and the evidence adapter's optional `document_origin`. A `site.toml` that names either setting fails the build with `site.toml: <setting> was removed in kit 5.0.0`, which points to the migration step, and lint prints that error. The kit resolves links with its own rules only, so a link that only the project's adapter mapped is a dead link or a missing anchor in lint. `content_transform` and `worklog_links_checked_from` stay | [Resources](../../../rules/site/resources.md#resource-closure-and-evidence) |
 | Publication | New optional page lock: `lock = true` in `[publication]`, the passwords `DOCSITE_GENERAL_PASSWORD` and `DOCSITE_REFERENCE_PASSWORD` from the environment of the `publish` step, and the optional dependency `requirements-lock.txt`. The general password opens the topic pages; the reference password also opens the Reference pages and the exported Markdown files. It is not access control; its limits are listed in the rule. A project that does not set `lock = true` gets the same bundle as from `publish` without the lock | [Page lock](../../../rules/site/publication.md#page-lock) |
 | Publication | `publish` refuses a `[[source_pages]]` table whose file the private prefixes or suffixes cover, with `Private source cannot be published as a page` | [Configured publication](../../../rules/site/publication.md#configured-publication) |
 | Publication | Fix: an exported source link carries `data-repo-exported`, and `filelinks.js` leaves it alone. With a source remote, a link to an admitted file such as `tools/fit.py` no longer becomes a GitHub address with a wrong `docs/html/` part. This changes the published bytes of admitted links | [Configured publication](../../../rules/site/publication.md#configured-publication) |
@@ -152,6 +157,7 @@ Known open points are in the [open record](../../open/release-5.0.0-waits.md).
 | Theme | Fix: in a chapter narrower than 520 px the slide face that opens it bled 22 px into a chapter body padded 14 px, so the chapter scrolled sideways by 8 px and cut the face's edges at phone width. The bleed now matches the padding | [Slide faces and decks](../../../rules/site/authoring.md#slide-faces-and-decks) |
 | Rules | A claim and its limit are one finding: the visual carries the claim and the face shows the limit second, smaller. Two findings that do not depend on each other do not share a title; the face takes the main one and the chapter keeps the other. A stacked face does not overflow sideways, cut text or let a part stick out | [Slide faces](../../../rules/writing/pages.md#slide-faces) |
 | Rules | Faces are checked in their page as well as in the deck, because page styles add space the deck lacks. A review by eye says for each face what draws the eye first and whether a band of the canvas is empty; "no band left over" and the designer's standard stay judgment with no number. The kit's lint checks the slide-face part of the numbers rule; the ledger of sources stays the project's | [Validation and review](../../../rules/site/validation.md#validation-and-review), [numbers and staleness](../../../rules/records.md#numbers-and-staleness) |
+| Configuration | Removed: the settings `evidence_manifests` and `legacy_files`. Lint no longer verifies the bytes of a declared collection of copies, resolves a copy's links from its original path, applies a collection's recorded `source_root` to worklog links, or maps single old paths to current files. A `site.toml` that names either setting fails the build with `site.toml: <setting> was removed in kit 5.0.0`, which points to the migration step. `worklog_links_checked_from` stays the way to stop checking links in old worklog entries; the declared local evidence of `local_artifacts_manifest` and `local_media` is unchanged | [Resources](../../../rules/site/resources.md#resource-closure-and-evidence) |
 | Configuration | New optional top-level settings `tooling_roots`, `capability_map` and `experiment_roots` turn on the capability map check. A wrong value, or `capability_map` or `experiment_roots` without `tooling_roots`, fails the build with a `site.toml:` error. With the check on, lint fails when the map is missing or untracked, when a tracked file or folder directly under a tooling root has no row, when a link in the map is dead wherever it lies, and when the generated Imported by column is out of date; a Python file under a tooling root that imports from an experiment folder is a warning. The new command `docsite.py capability-map` rewrites the Imported by column from Python imports. Without `tooling_roots` nothing is checked | [Capability map settings](../../../rules/site/authoring.md#capability-map-settings), [the check](../../../rules/engineering/code.md#the-check) |
 | Rules | An experiment's folder holds only that experiment's own code, inputs and records. Code that other experiments or tools reuse lives in the project's tooling or source tree, and is moved there before a second user imports it | [Where code lives](../../../rules/engineering/code.md#where-code-lives) |
 | Build output | Changed shared files get a new `?v=` query on every page that loads them: `base.css`, `chapter-reader.css`, `chapter-reader.js`, `filelinks.js`, `lightbox.js`, `nav.js`, `plot-toggles.js` and `slide-face.css`. A locked bundle also holds `assets/page-lock.js` and `assets/page-lock.css` | [Authoring and configuration](../../../rules/site/authoring.md) |
@@ -481,7 +487,7 @@ migration steps.
 | Stable in 1.x | Provisional in 1.x (may change in a minor release, with a note here) |
 |---|---|
 | `docsite.py` commands and flags (`init`, `build`, `lint`, `slides`) | `tooling/svg_figures.py`, `tooling/number_ledger.py`, `tooling/verbatim_blocks.py` |
-| `site.toml` keys and `[[nav]]` keys; page frontmatter keys | `tooling/browser_checks.cjs` exports |
+| `site.toml` keys and `[[nav]]` keys (`evidence_manifests` and `legacy_files` were removed in 5.0.0); page frontmatter keys | `tooling/browser_checks.cjs` exports |
 | Markers: `<!-- include: … -->`, `<!-- site-map -->`, `<!-- slide -->`, `<!-- page-end -->`, typed folds | `tooling/publication.py` (`export_pages`) |
 | Shared components by name and their authoring markup | Theme CSS class names other than documented authoring markup |
 | Project adapter signatures (`content_transform`; `path_resolver` and `evidence_validator` were removed in 5.0.0) | |

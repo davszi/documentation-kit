@@ -2,6 +2,46 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Remove `evidence_manifests` and `legacy_files` in 5.0.0
+
+- Why: both settings served the practice that the rule on finished working
+  documents ended in 4.0.0, keeping old documents as copies in the live tree.
+  `evidence_manifests` declared collections of copies that had to stay byte
+  for byte; `legacy_files` mapped single old paths to current files and was
+  described in no rule. No project sets either: ADP, adaptation and Tempo
+  were read on 2026-11-15, and neither the kit's own `docs/site/site.toml`,
+  the starter's `site.toml.tmpl` nor any test fixture other than one lint test
+  sets them. Asked whether to remove both in 5.0.0 with the adapter hooks,
+  deivid answered: "Yes, remove both".
+- A `site.toml` that names either setting now fails the build with
+  `site.toml: <setting> was removed in kit 5.0.0`, which points to the
+  migration step "Remove the adapter hooks", and lint prints that error.
+- Removed with them: `tooling/evidence_documents.py` (68 lines), the
+  verification of declared collections at the start of lint, the resolution
+  of a copy's links from its original path, the worklog handling of a
+  collection's recorded `source_root` and relocated targets, and the
+  `legacy_files` and recorded-roots parts of the path resolution in
+  `tooling/site_paths.py`. What stays: the mapping of the logical `docs/html/`
+  origin to the build output, which every page link needs, now named
+  `resolve_site_path`; `worklog_links_checked_from`; and the declared local
+  evidence of `local_artifacts_manifest` and `local_media`, which serves files
+  that exist on one machine only, not kept copies.
+- Rules and records: [resources](../rules/site/resources.md#resource-closure-and-evidence)
+  names the four removed settings and checks a stated hash against the file at
+  its commit; the 5.0.0 release notes, the migration step, the capability map,
+  `README.md` and `docs/KIT_CONTEXT.md` follow. The
+  [frozen-record record](open/simplify-frozen-record-machinery.md) is reduced
+  to adaptation's cleanup at its upgrade, which is all that remains; it is kept
+  rather than deleted because two worklog entries of 2026-11-15 link it, and
+  deleting it would mean moving `worklog_links_checked_from` past today.
+- Tests: `tests/test_portability.py` checks that each setting fails build and
+  lint with the message. Two tests went: the lint test of a byte mismatch in a
+  declared collection, and the test that a relocated document resolves its
+  links from its original path. Both encoded the assumption that the kit
+  keeps and checks copies of old documents, which no longer holds.
+- Checks: build, `lint --strict` (0 warnings), `build --check-reader` and the
+  300 Python tests.
+
 ## 2026-11-15 — deivid accepts the four example slide faces
 
 - Shown the old and the new faces side by side at 1600 px and the new ones at

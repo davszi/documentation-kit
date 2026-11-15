@@ -23,18 +23,17 @@ Checks (the shared guides under rules/ are the spec):
   7. worklog format: ## YYYY-MM-DD sections newest-first; probe-line shape
   8. .build/docs/html freshness (`build.py --check`)
   9. built html loads no external resources (external <a> navigation is fine)
- 10. relocated evidence records retain their manifest bytes and identities
- 11. the project's pinned kit commit is on a remote branch of the kit
- 12. topic structure: each topic page, docs/topics/<topic>/index.md or one level
+ 10. the project's pinned kit commit is on a remote branch of the kit
+ 11. topic structure: each topic page, docs/topics/<topic>/index.md or one level
      deeper in a folder named by `topic_group_folders`, has a record beside it
      (another .md outside evidence/) or declares `page_only = "<reason>"`;
      an empty page_only is an error, an unneeded one a warning; home exempt
- 13. capability map, only when site.toml names `tooling_roots`: the map exists
+ 12. capability map, only when site.toml names `tooling_roots`: the map exists
      and is tracked; every tracked file or folder directly under a tooling root
      is linked from its table; its generated Imported by column matches the Python
      imports (errors); a tooling module that imports from a folder under
      `experiment_roots` is a warning. The map's links are checked as in 1.
- 14. slide faces in the built pages (`slide_face_checks.py`): a chapter with more
+ 13. slide faces in the built pages (`slide_face_checks.py`): a chapter with more
      than one face, a face that does not open its chapter and a face outside
      every chapter are errors; a number shown on a face and nowhere else in its
      chapter is a warning; a `data-face-only` mark that is unusable or no
@@ -111,55 +110,16 @@ _paths = importlib.util.module_from_spec(_paths_spec)
 _paths_spec.loader.exec_module(_paths)
 
 
-def resolve_path(path: Path, *, recorded_roots=()) -> Path:
-    """Resolve the public/historical documentation layout to current files."""
-    return _paths.resolve_legacy_path(path, root=REPO, recorded_roots=recorded_roots)
+def resolve_path(path: Path) -> Path:
+    """Resolve the logical `docs/html/` origin to the build output."""
+    return _paths.resolve_site_path(path, root=REPO)
 
 
-_evidence_spec = importlib.util.spec_from_file_location(
-    "docsite_evidence_documents", Path(__file__).with_name("evidence_documents.py"))
-_evidence = importlib.util.module_from_spec(_evidence_spec)
-_evidence_spec.loader.exec_module(_evidence)
 import worklog_entries as _worklog_entries
-
-
-def evidence_document_locations() -> dict[Path, Path]:
-    """Historical origins from all exact-byte relocation collections."""
-    if not any((REPO / manifest).is_file() for manifest in _evidence.MANIFESTS):
-        return {}
-    rows, _ = _evidence.manifest_documents(REPO)
-    return {REPO / row["original_path"]: REPO / row["path"] for row in rows}
-
-
-def recorded_source_roots(source: Path | None = None) -> tuple[str, ...]:
-    """Explicit host origins apply only to their frozen collection or chronology."""
-    roots = []
-    for relative in _evidence.MANIFESTS:
-        path = REPO / relative
-        if not path.is_file():
-            continue
-        manifest = json.loads(path.read_text())
-        if "source_root" not in manifest:
-            continue
-        origin = manifest["source_root"]
-        # Validate even if there is no rebasing to perform for this source.
-        resolve_path(REPO, recorded_roots=(origin,))
-        if (source is None or is_entry(source, "worklog")
-                or any(REPO / row["path"] == source for row in manifest["documents"])):
-            roots.append(origin)
-    return tuple(dict.fromkeys(roots))
-
-
-def markdown_origin(path: Path) -> Path:
-    """Where a document's links resolve from: its original path when a declared
-    evidence collection relocated it, otherwise its own path."""
-    return next((old for old, current in evidence_document_locations().items()
-                 if current == path), path)
 
 
 def md_files() -> list[Path]:
     files = set(DOCS.rglob("*.md"))
-    files.update(path for path in evidence_document_locations().values() if path.is_file())
     for extra in (REPO / "AGENTS.md", REPO / "CLAUDE.md", REPO / "README.md"):
         if extra.is_file():
             files.add(extra)
@@ -240,7 +200,7 @@ def check_md_links() -> None:
         text = f.read_text()
         if is_entry(f, "worklog"):
             text = link_checked_worklog_text(text)
-        chunks = [(text, markdown_origin(f).parent)]
+        chunks = [(text, f.parent)]
         if _paths.is_topic_page(f, REPO):
             page, _, tail = text.partition("<!-- page-end -->")
             chunks = [(page, DOCS / "html"), (tail, f.parent)]
@@ -318,9 +278,6 @@ def link_checked_worklog_text(text: str) -> str:
 
 
 def _check_chunk_links(f: Path, text: str, base: Path) -> None:
-        locations = evidence_document_locations()
-        frozen_source = f in locations.values()
-        origins = recorded_source_roots(f) if frozen_source or is_entry(f, "worklog") else ()
         for target in LINK_RE.findall(strip_code(text)):
             if target.startswith(("http://", "https://", "mailto:")):
                 continue
@@ -331,33 +288,10 @@ def _check_chunk_links(f: Path, text: str, base: Path) -> None:
                 if frag and frag not in md_anchors(f):
                     error(f"{rel}: dead same-file anchor #{frag}")
                 continue
-            dest = resolve_path(base / path_part, recorded_roots=origins)
+            dest = resolve_path(base / path_part)
             # The built page carries this link as a source link too; the HTML
             # source-link check leaves it to this check.
             markdown_checked.add((f, dest, unquote(frag)))
-            if ((frozen_source or is_entry(f, "worklog")) and Path(path_part).is_absolute()
-                    and not dest.is_relative_to(REPO)):
-                error(f"{rel}: unknown historical checkout root in {target}")
-                continue
-            relocated = locations.get(dest)
-            if relocated is not None:
-                # Frozen source links resolve in their recorded historical layout,
-                # including other frozen originals that now also have a live plan.
-                # Live sources validate a surviving reduced plan's actual contents.
-                historical_log = is_entry(f, "worklog")
-                # Keep dated worklog entries append-only. A reduced surviving
-                # original can lose an old anchor; consult its exact record only
-                # when that specific historical anchor exists there. Current
-                # sources still fail on stale anchors and neither target may
-                # conceal a genuinely missing worklog anchor.
-                historical_anchor = (historical_log and frag and dest.suffix == ".md"
-                                     and dest.exists() and frag not in md_anchors(dest)
-                                     and relocated.exists() and frag in md_anchors(relocated))
-                if frozen_source or (historical_log and not dest.exists()) or historical_anchor:
-                    dest = relocated
-                elif not dest.exists():
-                    error(f"{rel}: stale evidence document link {target}; use {relocated.relative_to(REPO)}")
-                    continue
             if not dest.exists():
                 if retained_locally(dest):
                     notice(f"{rel}: artifact retained locally, omitted from push: {target}")
@@ -487,7 +421,7 @@ def check_snippets() -> None:
             src, lo, hi, body = m.group(1), int(m.group(2)), int(m.group(3)), m.group(4)
             src_path = resolve_path(REPO / src)
             if not src_path.is_file():
-                src_path = resolve_path(markdown_origin(f).parent / src)
+                src_path = resolve_path(f.parent / src)
             if not src_path.is_file():
                 error(f"{rel}: snippet source missing: {src}")
                 continue
@@ -537,7 +471,7 @@ def check_figures() -> None:
             if "figures/" in target:
                 if Path(target).suffix.lower() not in {".png", ".svg", ".jpg", ".jpeg", ".gif", ".webp"}:
                     continue
-                figure = resolve_path(markdown_origin(f).parent / target)
+                figure = resolve_path(f.parent / target)
                 if _paths.is_topic_page(f, REPO) and not figure.is_file():
                     # Page-body links use the emitted HTML location, as above.
                     figure = resolve_path(DOCS / "html" / target)
@@ -597,10 +531,7 @@ def without_code(text: str) -> str:
 
 def check_markers(dump: bool = False) -> None:
     registry = []
-    historical = set(evidence_document_locations().values())
     for f in sorted(DOCS.rglob("*.md")):
-        if f in historical:
-            continue  # Historical declarations are provenance, not current rules.
         rel = f.relative_to(REPO)
         raw_lines = f.read_text().splitlines()
         for i, line in enumerate(without_code("\n".join(raw_lines)).split("\n"), 1):
@@ -740,12 +671,6 @@ def main() -> int:
         check_markers(dump=True)
         return 1 if errors else 0
 
-    try:
-        _evidence.verify(REPO, require_all_manifests=True)
-        recorded_source_roots()
-    except (ValueError, OSError) as problem:
-        print(f"ERROR: evidence document verification failed: {problem}", file=sys.stderr)
-        return 1
     check_md_links()
     check_source_links()
     check_html()

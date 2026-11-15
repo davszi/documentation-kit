@@ -67,6 +67,10 @@ NAV_KEYS = {"label", "file", "group", "short", "hidden"}
 # project never builds without the mapping or evidence gate it relied on. The
 # evidence adapter's optional `document_origin` went with `evidence_validator`.
 REMOVED_HOOKS = ("path_resolver", "evidence_validator")
+# Kept-copy settings removed in 5.0.0, for the same reason: exact-byte copies of
+# old documents (`evidence_manifests`) and single old paths mapped to current
+# files (`legacy_files`). A finished working document is cited from Git instead.
+REMOVED_COPY_SETTINGS = ("evidence_manifests", "legacy_files")
 INCLUDE_DEPTH = 8
 KNOWN_COMPONENTS = ("toc", "nav", "tabs", "diagram", "code", "filelinks",
                     "lightbox", "plot-toggles", "carousel", "panel-switcher",
@@ -692,7 +696,7 @@ def automatic_link_checks(site: dict, declared_local: set[str]):
     files of one checkout. Media must also be packageable: tracked, no
     symlink, nothing under `[publication]` private prefixes or suffixes.
     """
-    from site_paths import resolve_legacy_path
+    from site_paths import resolve_site_path
     tracked = consumer_tracked_paths()
     folders = {parent for path in tracked for parent in path.parents if parent.is_relative_to(REPO)}
     local = {REPO / name for name in declared_local}
@@ -702,8 +706,8 @@ def automatic_link_checks(site: dict, declared_local: set[str]):
                     for key in ("private_prefixes", "private_suffixes"))
 
     def candidates(path: Path) -> tuple[Path, ...]:
-        # The kit's own mapping, as for every other page: build output and `legacy_files`.
-        return (path, resolve_legacy_path(path, root=REPO))
+        # The kit's own mapping, as for every other page: the build output.
+        return (path, resolve_site_path(path, root=REPO))
 
     def exists(path: Path) -> bool:
         for item in candidates(path):
@@ -749,7 +753,7 @@ def build_source_page(page, routes: dict[str, str], site: dict, shell: str,
     """
     from source_pages import (exists_in, first_heading, origin_banner, quiet_text, read_source, rewrite_links,
                               table_of_contents, tolerate_raw_html, wrap_tables)
-    from site_paths import resolve_legacy_path
+    from site_paths import resolve_site_path
     from worklog_entries import configured_entry
 
     name = page.source
@@ -783,7 +787,7 @@ def build_source_page(page, routes: dict[str, str], site: dict, shell: str,
                 note(problem)
         worklog = configured_entry(site, "worklog")
         is_worklog = isinstance(worklog, str) and posixpath.normpath(worklog) == page.source and not page.automatic
-        exists, media_ok = automatic_checks if page.automatic else (exists_in(REPO, resolve_legacy_path), None)
+        exists, media_ok = automatic_checks if page.automatic else (exists_in(REPO, resolve_site_path), None)
         content, problems, unchecked[page.route] = rewrite_links(
             wrap_tables(content), page, routes, REPO, exists,
             site.get("_links_checked_from") if is_worklog else None, media_ok=media_ok)
@@ -1081,6 +1085,11 @@ def main() -> int:
     for key in REMOVED_HOOKS:
         if key in site:
             ap.error(f"site.toml: {key} was removed in kit 5.0.0; the kit no longer loads a project adapter. "
+                     "Follow \"Remove the adapter hooks\" in the kit's docs/topics/releases/migrations/5.0.0.md, "
+                     f"then delete the {key} setting")
+    for key in REMOVED_COPY_SETTINGS:
+        if key in site:
+            ap.error(f"site.toml: {key} was removed in kit 5.0.0; the kit no longer keeps or maps copies of old documents. "
                      "Follow \"Remove the adapter hooks\" in the kit's docs/topics/releases/migrations/5.0.0.md, "
                      f"then delete the {key} setting")
     if not isinstance(site.get("nav", []), list):
