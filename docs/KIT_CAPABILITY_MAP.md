@@ -42,7 +42,7 @@ and `capability_map.py`. Node scripts under `tests/` load
 | Extract chapter slide faces from built pages into one deck | [slides.py](../tooling/slides.py) | exists | `tests/test_slide_faces.py`, `tooling/slide_face_checks.py` |
 | Check in the built pages that each chapter opens with at most one slide face and that every number a face shows also appears in its chapter, with no list from the project | [slide_face_checks.py](../tooling/slide_face_checks.py) | exists | `tests/test_slide_face_checks.py`, `tooling/lint.py` |
 | Check that every formula on a project's built pages compiles with the KaTeX the kit ships, and that none is split by Markdown or left unclosed | [formula_checks.py](../tooling/formula_checks.py), [formula_compile.cjs](../tooling/formula_compile.cjs) | exists | `tests/test_formula_checks.py`, `tooling/lint.py` |
-| Write inline SVG figures from a project's figure generator | [svg_figures.py](../tooling/svg_figures.py) | exists | `tests/test_figure_tooling.py` |
+| Write inline SVG figures from a project's figure generator | [svg_figures.py](../tooling/svg_figures.py) | exists | `docs/topics/approval-failed-open/draw_figures.py`, `tests/test_figure_tooling.py` |
 | Check rendered pages in a real browser: layout, overflow, visible media, and slide faces in their page or deck, stacked below 720 px included | [browser_checks.cjs](../tooling/browser_checks.cjs) | exists | not scanned: no Python code |
 
 ## Seen but not built

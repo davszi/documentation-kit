@@ -346,7 +346,7 @@ async function reviewPresentation(page, origin, viewport, failures) {
 
       // Pages for people use the chapter reader; rendered records are plain reference pages.
       const peoplePages = ['getting-started', 'build-a-site', 'engineering-practices',
-                           'writing-practices', 'experiments'];
+                           'writing-practices', 'experiments', 'approval-failed-open'];
       for (const slug of pages.filter(slug => slug !== 'index')) {
         await page.goto(`${origin}/html/${slug}.html`, {waitUntil:'networkidle'});
         const chapters = await page.locator('section.card[data-reader-chapter]').count();

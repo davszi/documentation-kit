@@ -1,0 +1,111 @@
+== series: first nonzero, peak, value on 2026-10-01, current
+code_attended: first 2026-10-28 peak 25330 on 2026-11-13 10-01 0 now 4588
+code_doctools: first 2026-07-20 peak 2492 on 2026-11-01 10-01 836 now 0
+code_evidencetools: first 2026-11-09 peak 1219 on 2026-11-09 10-01 0 now 163
+code_pool: first 2026-10-18 peak 8151 on 2026-11-05 10-01 0 now 8063
+code_harness: first 2026-10-08 peak 132652 on 2026-11-05 10-01 0 now 132638
+code_pq_other: first 2026-09-27 peak 101630 on 2026-11-15 10-01 7140 now 101630
+code_product: first 2026-07-01 peak 90602 on 2026-11-05 10-01 40254 now 90261
+code_other_code: first 2026-07-02 peak 79164 on 2026-11-09 10-01 35592 now 79142
+files_attended: first 2026-10-28 peak 48 on 2026-11-13 10-01 0 now 6
+files_doctools: first 2026-07-20 peak 11 on 2026-10-17 10-01 2 now 0
+files_evidencetools: first 2026-11-09 peak 3 on 2026-11-09 10-01 0 now 2
+files_pool: first 2026-10-18 peak 27 on 2026-11-05 10-01 0 now 25
+files_harness: first 2026-10-08 peak 480 on 2026-11-05 10-01 0 now 480
+files_pq_other: first 2026-09-27 peak 368 on 2026-11-15 10-01 34 now 368
+files_product: first 2026-07-01 peak 376 on 2026-11-05 10-01 209 now 374
+files_other_code: first 2026-07-02 peak 490 on 2026-11-09 10-01 228 now 490
+open_lines: first 2026-07-20 peak 15785 on 2026-10-16 10-01 7130 now 5202
+open_files: first 2026-07-20 peak 76 on 2026-10-11 10-01 32 now 21
+worklog_lines: first 2026-07-16 peak 10835 on 2026-11-15 10-01 2719 now 10835
+docs_evidence_files: first 2026-10-17 peak 419 on 2026-11-09 10-01 0 now 405
+docs_evidence_lines: first 2026-10-17 peak 229055 on 2026-11-09 10-01 0 now 128526
+frozen_doc_copy_files: first 2026-10-17 peak 42 on 2026-11-09 10-01 0 now 0
+frozen_doc_copy_lines: first 2026-10-17 peak 6225 on 2026-11-09 10-01 0 now 0
+locations_files: first 2026-10-17 peak 2 on 2026-10-17 10-01 0 now 0
+locations_documents: first 2026-10-17 peak 53 on 2026-10-18 10-01 0 now 0
+locations_distinct_originals: first 2026-10-17 peak 53 on 2026-10-18 10-01 0 now 0
+sessions_lines: first 2026-11-04 peak 139 on 2026-11-05 10-01 0 now 0
+exp_files_npz: first 2026-09-28 peak 1132 on 2026-11-09 10-01 340 now 1132
+exp_bytes_npz: first 2026-09-28 peak 2727467662 on 2026-11-09 10-01 266802422 now 2727467662
+exp_files_json: first 2026-09-27 peak 15931 on 2026-11-09 10-01 650 now 15922
+exp_bytes_json: first 2026-09-27 peak 1490552084 on 2026-11-09 10-01 7167494 now 1490488467
+exp_files_gz: first 2026-09-27 peak 13311 on 2026-11-12 10-01 318 now 13292
+exp_bytes_gz: first 2026-09-27 peak 756730893 on 2026-11-12 10-01 159338234 now 744913311
+exp_files_jsonl: first 2026-09-27 peak 1222 on 2026-11-05 10-01 25 now 1221
+exp_bytes_jsonl: first 2026-09-27 peak 582474647 on 2026-11-05 10-01 2470280 now 582474647
+exp_files_py: first 2026-07-20 peak 47578 on 2026-11-09 10-01 660 now 47530
+exp_bytes_py: first 2026-07-20 peak 422011225 on 2026-11-13 10-01 6787087 now 420585358
+exp_files_other: first 2026-09-27 peak 4374 on 2026-11-09 10-01 283 now 4331
+exp_bytes_other: first 2026-09-27 peak 281448691 on 2026-11-09 10-01 12555962 now 280863992
+code_supporting_total: first 2026-07-20 peak 269241 on 2026-11-10 10-01 7976 now 247082
+exp_files_total: first 2026-07-20 peak 83494 on 2026-11-12 10-01 2276 now 83428
+exp_bytes_total: first 2026-07-20 peak 6259985923 on 2026-11-12 10-01 455121479 now 6246793437
+commits_total: first 2026-07-02 peak 73 on 2026-07-19 10-01 1 now 10 sum=1029
+commits_attended: first 2026-10-28 peak 10 on 2026-10-28 10-01 0 now 2 sum=38
+commits_doctools: first 2026-07-20 peak 10 on 2026-10-17 10-01 0 now 0 sum=44
+commits_evidencetools: first 2026-11-09 peak 5 on 2026-11-09 10-01 0 now 0 sum=10
+commits_pool: first 2026-10-18 peak 5 on 2026-11-05 10-01 0 now 3 sum=12
+commits_harness: first 2026-10-08 peak 15 on 2026-10-11 10-01 0 now 2 sum=120
+commits_pq_other: first 2026-09-27 peak 16 on 2026-10-11 10-01 0 now 4 sum=139
+commits_product: first 2026-07-02 peak 65 on 2026-07-04 10-01 0 now 3 sum=332
+commits_other_code: first 2026-07-02 peak 25 on 2026-10-05 10-01 1 now 0 sum=187
+commits_docs_open: first 2026-07-20 peak 37 on 2026-10-05 10-01 1 now 8 sum=484
+commits_worklog: first 2026-07-16 peak 38 on 2026-07-19 10-01 1 now 9 sum=697
+commits_sessions: first 2026-11-04 peak 4 on 2026-11-05 10-01 0 now 0 sum=8
+added_lines_open: first 2026-07-20 peak 4868 on 2026-10-08 10-01 192 now 514 sum=27408
+added_words_open: first 2026-07-20 peak 50588 on 2026-10-08 10-01 1868 now 4527 sum=315985
+added_lines_sessions: first 2026-11-04 peak 114 on 2026-11-04 10-01 0 now 0 sum=221
+added_words_sessions: first 2026-11-04 peak 966 on 2026-11-04 10-01 0 now 0 sum=2245
+added_lines_worklog: first 2026-07-16 peak 734 on 2026-10-12 10-01 30 now 20 sum=10913
+added_words_worklog: first 2026-07-16 peak 6241 on 2026-10-12 10-01 267 now 1674 sum=107992
+
+== text written, by period (lines/words)
+build open 22848 268837
+build sessions 217 2218
+build worklog 9170 83278
+cleanup open 2933 29228
+cleanup sessions 4 27
+cleanup worklog 224 11192
+
+== approval statements (first occurrences) by period and category
+before 9 {'guide/other': 3, 'worklog': 4, 'plan/open-work': 2} | commit messages: 2
+build 181 {'plan/open-work': 57, 'topic/experiment record': 58, 'guide/other': 18, 'session/handoff': 1, 'worklog': 47} | commit messages: 3
+cleanup 147 {'worklog': 74, 'plan/open-work': 40, 'topic/experiment record': 32, 'guide/other': 1} | commit messages: 103
+naming the developer: 148 | generic user/owner/human: 189
+
+== approval statements within 7 days before (and on) each subsystem's first day, keyword-filtered
+- attended (Plan 11, recorder) (2026-10-28): 0 doc lines, 0 commit messages
+- attended_parts (Plan 11 implementation) (2026-11-04): 3 doc lines, 0 commit messages
+    2026-11-02 1afda78b docs/open/platform-refactor/11-attended-evidence-parts.md 3 | **Status: adopted 2026-11-02 (the developer: "lets build it now fully"); implementation
+    2026-10-29 b846a167 docs/open/platform-refactor/execution-plan.md 276 | s cancellation. Native operation remains unqualified. Apply the user-approved no-total-attended-timer/120-second responsiveness policy; head
+    2026-10-29 b846a167 docs/worklog.md 24 | Implement the developer's approved attended responsiveness policy: no total timer,
+- native pool / slot (2026-11-05): 7 doc lines, 0 commit messages
+    2026-11-05 7eb8d6c7 docs/project/conventions.md 173 | The human-approved headroom-v2 release supersedes the historical single-job
+    2026-11-05 6ab9e0ad experiments/platform_qualification/sdk_integration/plan05_lifecycle_preparation_20261104-policy-v2.md 164 | budget versus an automatically inferred limit, the user said “yes lets use an
+    2026-11-05 9c8642a6 docs/project/sessions/2026-11-04-platform-coordination.md 35 | The human requested updated budgets and isolation for two simulator runs while
+    2026-11-05 9c8642a6 docs/topics/isaac-sim-runtime-qualification/isaac-sim-runtime-qualification.md 72 | The human requested two simulator runs in parallel. The implementation candidate
+    2026-11-04 d45f8cb9 experiments/platform_qualification/sdk_integration/plan05_mixed_ending_review_20261104.md 17 | owner's approved `_drive_release` fingerprint addition stays with that owner.
+    2026-11-02 0d45558a docs/worklog.md 31 | - **GC pause (user-approved):** cyclic GC is off inside one frame-budget
+- per-experiment harnesses (sdk_reuse) (2026-10-08): 3 doc lines, 0 commit messages
+    2026-10-08 a93ab550 docs/open/platform-refactor/README.md 1180 | vehicle stay paused. The user authorized committing and pushing all preserved
+    2026-10-08 a93ab550 docs/worklog.md 25 | SDK traces through Git LFS. User requested all preserved work be committed
+    2026-10-06 5c2f5217 docs/open/platform-refactor/01-model-and-execution-qualification.md 142 | The 2026-10-06 sequencing discussion is retained here; the user authorized saving
+- run output in Git (2026-10-04): 1 doc lines, 0 commit messages
+    2026-09-28 13cd6e2c docs/open/platform-refactor/parked-vehicle-work.md 236 | round is separately user-authorized; committing its deliverable does not approve
+- frozen document copies (2026-10-17): 2 doc lines, 0 commit messages
+    2026-10-17 9410e4f9 docs/open/platform-refactor/reconciliation.md 30 | r proposal to retain two active GT3 variants | Not adopted; user chose one active identity | Use one active GT3 direction and deliberate mig
+    2026-10-13 8db3ff4a experiments/platform_qualification/sdk_reuse/README.md 54 | tact evidence awaits frozen preparation and execution after the user-requested pause.
+- central evidence store (2026-11-09): 1 doc lines, 0 commit messages
+    2026-11-02 0d45558a docs/worklog.md 21 | - **Saved-drive format 2 (user-approved):** `bounded-finalized-run/2` stores
+- documentation tooling (2026-07-20): 1 doc lines, 1 commit messages
+    2026-07-19 8bb690fd docs/writing-docs.md 119 | anything — docs, figures, content — is USER-approved, always.)
+
+== cleanup commits (net_removal=1)
+from 2026-11-04 40 commits: lines - 243416 + 102371 files - 309 + 60 bytes - 23935134 | by group: attended 25340 pool 1135 doctools 3036 evidencetools 1183 docs/open 1915 docs evidence 192626
+from 2026-11-10 34 commits: lines - 145353 + 7524 files - 221 + 29 bytes - 22589792 | by group: attended 25340 pool 1135 doctools 1241 evidencetools 1178 docs/open 1584 docs evidence 100829
+
+== commit messages with approval statements: distinct commits per period
+before 2 matches in 2 commits
+build 3 matches in 3 commits
+cleanup 103 matches in 80 commits
