@@ -174,9 +174,8 @@ readers through a separate channel.
   the pages and are locked with them.
 
 Images, plots, videos, stylesheets, scripts, fonts and every other file, such
-as JSON data, stay readable for anyone who has their address. With a source
-remote configured, the readable `assets/filelinks.js` carries the repository's
-address. `publish` ends with a summary: how many files each password opens,
+as JSON data, stay readable for anyone who has their address. `publish` ends
+with a summary: how many files each password opens,
 and how many files stay readable, by type. Check it for data files that should
 not be public. When pages that the general password opens name Reference files,
 the summary counts those files: readers with the general password see their
@@ -233,6 +232,8 @@ authenticated data. `tooling/page_lock.py` encrypts;
   with the old password or without one.
 - Images, plots, scripts and data files are not locked. Their addresses often
   follow repository paths, so they can be guessed.
+- `assets/filelinks.js` stays readable. With a source remote configured it
+  carries the repository's address.
 - A lock page shows the size of the page it holds and which password it
   needs. The salt changes exactly when a password changes, so anyone can see
   that it changed.
