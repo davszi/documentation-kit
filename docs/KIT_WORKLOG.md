@@ -2,6 +2,25 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Sync three pages with the removed adapters and kept copies
+
+- Sentence-level sync after the removal of the adapter hooks and of
+  `evidence_manifests` and `legacy_files`; lint listed these pages for reread.
+- "Documentation and writing": the project's path adapter no longer maps an
+  old path for lint; a later `worklog_links_checked_from` does that for
+  worklog entries, as [rendered pages are for people](../rules/documentation.md#rendered-pages-are-for-people-records-stay-markdown)
+  says. The fold on the archive staging layer said a byte-exact copy of a
+  superseded document may be kept; since 4.0.0 none is, and Git keeps the
+  bytes.
+- "Build a site": the reference-guide table no longer names adapters or path
+  adapters; the resources row names old links in the worklog instead.
+- "Get started": the route for existing documentation said Markdown is
+  published as registered records; since the automatic listing every tracked
+  Markdown file becomes a source page unless excluded, and the example says
+  the project settles what the Reference section lists.
+- Checks: build, `lint --strict` (0 warnings) and `build --check-reader`. Text
+  only; no capture was taken.
+
 ## 2026-11-15 — Give the built-page source map a public name
 
 - `tooling/lint.py` imported the private `_page_names` from

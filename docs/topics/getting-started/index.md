@@ -409,7 +409,7 @@ Each file has one job so that nobody has to guess where something goes, and an a
 </ol><p><b>Stays as is:</b> nothing yet; the starter gives you the full structure.</p></div>
 <div class="bs-part bs-violet" id="route-existing"><span class="bs-label">You already have docs</span><h3 id="route-existing-documentation">Existing documentation</h3><ol>
 <li>Add the submodule; skip <code>init</code> and add <code>docs/site/site.toml</code> deliberately.</li>
-<li>Publish existing Markdown in place as <a href="build-a-site.html#existing-markdown">registered records</a>; nothing moves.</li>
+<li>Publish existing Markdown in place: every tracked file becomes a <a href="build-a-site.html#existing-markdown">source page</a> unless you exclude it; nothing moves.</li>
 <li>Keep historical public routes with the <a href="publication.html">publication exporter</a>.</li>
 <li>Replace a copied shared rule only once its project-specific parts have a linked home.</li>
 </ol><p><b>Stays as is:</b> your content, destinations and history; the <a href="migrate-1-1-0.html#prepare-the-deliverable">migration guide</a> shows the review steps.</p></div>
@@ -425,7 +425,7 @@ All three routes share the same core: a pinned submodule and router rows. They d
 
 <div class="bs-grid g2">
 <div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>Run <code>init</code> over existing docs</h3><p>If any starter file already exists, <code>init</code> refuses and writes nothing; forcing a copy by hand would overwrite or duplicate the project's own records.</p></div>
-<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>Register what is already there</h3><p>The project adds <code>site.toml</code>, registers its existing records as source pages and keeps every file where it was.</p></div>
+<div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>Register what is already there</h3><p>The project adds <code>site.toml</code>, settles which existing Markdown files its Reference section lists and keeps every file where it was.</p></div>
 </div>
 
 </section>

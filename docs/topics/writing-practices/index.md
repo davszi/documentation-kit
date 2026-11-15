@@ -320,7 +320,7 @@ Coding agents read a repository's entry file before they act. The guide keeps th
 
 <!-- fold: dead-end When a page drifts toward agents -->
 
-When a page becomes predominantly agent-facing, its agent material moves into records and its human-facing core stays in a page. Removing the page from navigation or publication follows the deletion gate. When dated links, such as those in old worklog entries, still point to a removed page, the owner decides how they keep resolving. A hidden stub with the former anchors also keeps the published address. The project's path adapter maps the old path for lint and lets the address go. In the files it checks, lint rejects a dated link that neither covers.
+When a page becomes predominantly agent-facing, its agent material moves into records and its human-facing core stays in a page. Removing the page from navigation or publication follows the deletion gate. When dated links, such as those in old worklog entries, still point to a removed page, the owner decides how they keep resolving. A hidden stub with the former anchors also keeps the published address. For worklog entries, a later `worklog_links_checked_from` date stops lint checking the links of the entries before it and lets the address go. In the files it checks, lint rejects a dated link that neither covers.
 
 <!-- /fold -->
 
@@ -411,7 +411,7 @@ A page may carry drafts that belong to its topic below a <code>&lt;!-- page-end 
 
 <!-- fold: dead-end Why there is no archive staging layer -->
 
-An archive folder for superseded files feels cautious. In practice it becomes one more place where facts live on without an owner. The guide skips that step: once the removal of a superseded source is approved, it goes in the same commit that lands its replacement. A byte-exact copy of a superseded document is kept only for a specific citation, source pin or reproduction dependency. That limit is about superseded documents; what an experiment retains is a separate list in the record rules.
+An archive folder for superseded files feels cautious. In practice it becomes one more place where facts live on without an owner. The guide skips that step: once the removal of a superseded source is approved, it goes in the same commit that lands its replacement. No copy of a superseded document stays in the tree: Git keeps its exact bytes, and whatever still needs it cites the commit and path. That limit is about superseded documents; what an experiment retains is a separate list in the record rules.
 
 A related point concerns labels. The invariants of a project live in the owning records and in cross-cutting conventions. A page may still show one as a marked statement: `**INVARIANT:**` for a constraint that must survive edits, `**DON'T-REDO:**` for a settled decision. A marker that starts an unindented paragraph, with a blank line after it, becomes a labelled card. Anywhere else, such as inside a sentence, a list item or a quote, the raw label would show on the page, so such a statement gets an unindented paragraph of its own.
 
