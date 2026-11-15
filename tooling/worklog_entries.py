@@ -1,6 +1,8 @@
 """Which file is the worklog, how its entries are dated, and which keep checked links.
 
-Lint and build share these rules. A worklog entry is a level-two section whose
+Lint and build share these rules, and `fenced_spans`, which finds the fenced
+code blocks of Markdown source for every caller that must skip them, such as
+the build's marker cards. A worklog entry is a level-two section whose
 heading starts with its date, `## YYYY-MM-DD`. A level-two section without a
 date belongs to the dated entry above it; text before the first dated heading
 belongs to no entry.
@@ -52,7 +54,7 @@ def links_checked_from(site: dict) -> str | None:
     raise ValueError(CUTOFF_ERROR)
 
 
-def _fenced_spans(text: str) -> list[tuple[int, int]]:
+def fenced_spans(text: str) -> list[tuple[int, int]]:
     """(start, end) offsets of fenced code blocks in Markdown source.
 
     A block opens at a line of three or more backticks or tildes and closes at
@@ -75,7 +77,7 @@ def _fenced_spans(text: str) -> list[tuple[int, int]]:
 
 def markdown_entry_dates(text: str) -> list[str]:
     """The dates of the dated entry headings in Markdown source, in file order."""
-    fenced = _fenced_spans(text)
+    fenced = fenced_spans(text)
     dates = []
     for match in MARKDOWN_HEADING.finditer(text):
         dated = _DATE.match(match.group(1).strip())
@@ -94,7 +96,7 @@ def unchecked_spans(text: str, first: str | None, heading: re.Pattern = MARKDOWN
     """
     if first is None:
         return []
-    fenced = _fenced_spans(text) if heading is MARKDOWN_HEADING else []
+    fenced = fenced_spans(text) if heading is MARKDOWN_HEADING else []
     spans: list[tuple[int, int]] = []
     entry_date, start = None, 0
     for match in heading.finditer(text):

@@ -55,6 +55,20 @@ A rendered page body above `<!-- page-end -->` uses the logical public `docs/htm
 
 Prefer `.html` links when the purpose is reading a page and explicit source links when inspecting source is intended. Raw Markdown viewing does not apply generated-origin interpretation. Preserve source path and fragment metadata so local and hosted source links retain identity.
 
+Lint checks every link to a repository file, whether written in Markdown or as
+HTML, `<a href="…">`. A Markdown link is checked in its source file. An HTML
+link is checked in the built page, where the build has resolved it, with a
+source remote or without one: this covers the body of a topic page, the
+fragments it includes and a registered source page. The target must exist, and
+a fragment into a Markdown file must match one of its anchors, as for a
+Markdown link. Each failure is an error that names the page's source, the
+built page and the repository path. On an automatically listed page it is a
+note, and links in worklog entries dated before `worklog_links_checked_from`
+are not checked. A file the local-artifact manifest lists under
+`omitted_files` gets a note when it is absent. An existing file that Git does
+not track passes, as for a Markdown link, although the published source link
+to it leads nowhere.
+
 Includes select a matching shared theme file first (for example,
 `components/chapter-reader.html`); project fragments otherwise resolve from
 `docs/site/`. Include paths stay relative and contained. `page_css = ["build-sheet.css"]`
@@ -94,7 +108,9 @@ next shared tone in order.
 A page that lists `plot-toggles` in its `components` gives every inline SVG
 figure (class `inline-fig`) one chip per group of elements whose `id` is
 `tg-<group>--<n>`; a chip hides and shows its group, on the page and in the
-lightbox. The chip shows the group key. A `[plot_toggle_labels]` table in
+lightbox. The chip shows the group key and a dot in the colour of its series,
+in the lightbox too. A chip keeps its label on one line; when the chips do not
+fit beside each other, the bar wraps whole chips onto a new row. A `[plot_toggle_labels]` table in
 `site.toml` gives a key a label for the whole site, such as
 `"corridor" = "road corridor"`; each value must be text. The build writes the
 table into each page that loads the component, and a key the table does not
@@ -290,7 +306,8 @@ with `body_class = "reference-page"`.
 Topic-page markers are not interpreted in a registered file: includes, typed
 folds, registry callouts and `<!-- page-end -->` stay literal, so a record can
 show them as examples. Lint checks a registered file's Markdown links as an
-ordinary record.
+ordinary record, and its HTML links to repository files in the built page, as
+[authoring paths](#authoring-paths) describes.
 
 ### Automatic reference listing
 

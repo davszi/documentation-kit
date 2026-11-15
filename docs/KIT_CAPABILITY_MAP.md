@@ -24,13 +24,14 @@ and `capability_map.py`. Node scripts under `tests/` load
 | Run the kit's commands from a project without copying the kit into it | [docsite.py](../docsite.py) | exists | no Python imports |
 | Render topic pages and Markdown records into a static site, and check that the generated site is fresh | [build.py](../tooling/build.py), [site_bundle.py](../tooling/site_bundle.py) | exists | `tests/test_asset_versions.py`, `tests/test_brand_mark.py`, `tests/test_chapter_layout.py`, `tests/test_math_rendering.py`, `tests/test_slide_faces.py` |
 | Find a project's documentation paths wherever the kit is installed, and map historical paths to current files | [site_paths.py](../tooling/site_paths.py) | exists | `tests/test_portability.py`, `tooling/build.py`, `tooling/site_bundle.py`, `tooling/slides.py` |
-| Load a project's own tracked adapters, such as a path resolver or an evidence validator | [project_extensions.py](../tooling/project_extensions.py) | exists | `tooling/build.py`, `tooling/lint.py`, `tooling/site_paths.py` |
+| Load a project's own tracked Python module that its site settings name, the content transform | [project_extensions.py](../tooling/project_extensions.py) | exists | `tooling/build.py` |
 | Fit the sections of an existing page into the chapter reader without editing its source | [chapter_layout.py](../tooling/chapter_layout.py) | exists | `tests/test_chapter_layout.py`, `tests/test_slide_faces.py`, `tooling/build.py`, `tooling/page_lock.py`, `tooling/publication.py`, `tooling/reader_content.py`, `tooling/slide_face_checks.py`, `tooling/slides.py` |
 | Show that the chapter reader keeps every word, link and figure of a page | [reader_content.py](../tooling/reader_content.py) | exists | `tests/test_chapter_layout.py`, `tooling/build.py` |
 | Render a whole repository Markdown file as a page, and list such files in a folder tree | [source_pages.py](../tooling/source_pages.py), [source_tree.py](../tooling/source_tree.py) | exists | `tests/test_page_lock.py`, `tests/test_reference_listing.py`, `tests/test_source_tree.py`, `tooling/build.py`, `tooling/page_lock.py` |
 | Pair each topic page with the record it explains | [topic_structure.py](../tooling/topic_structure.py) | exists | `tests/test_record_notes.py`, `tooling/build.py`, `tooling/lint.py`, `tooling/record_changes.py`, `tooling/site_paths.py`, `tooling/slide_face_checks.py`, `tooling/source_pages.py` |
 | Find the chronology file, date its entries and decide which entries keep checked links | [worklog_entries.py](../tooling/worklog_entries.py) | exists | `tooling/build.py`, `tooling/lint.py`, `tooling/source_pages.py` |
-| Check links, anchors, snippets, figures, markers and record formats before a push | [lint.py](../tooling/lint.py) | exists | `tests/test_capability_map.py`, `tests/test_lint.py`, `tests/test_page_numbers.py`, `tests/test_record_notes.py` |
+| Find the fenced code blocks of Markdown source, so that a check or a conversion can leave code alone | [worklog_entries.py](../tooling/worklog_entries.py) | exists | `tooling/build.py`, `tooling/lint.py`, `tooling/source_pages.py` |
+| Check links, HTML links to repository files included, anchors, snippets, figures, markers and record formats before a push | [lint.py](../tooling/lint.py) | exists | `tests/test_capability_map.py`, `tests/test_lint.py`, `tests/test_page_numbers.py`, `tests/test_record_notes.py` |
 | List the pages that explain a record section that changed | [record_changes.py](../tooling/record_changes.py) | exists | `tests/test_record_notes.py`, `tooling/lint.py`, `tooling/page_numbers.py` |
 | List numbers on a page that none of its linked records state | [page_numbers.py](../tooling/page_numbers.py) | exists | `tests/test_page_numbers.py`, `tooling/lint.py` |
 | Verify exact-byte evidence collections that a project declares | [evidence_documents.py](../tooling/evidence_documents.py) | exists | no Python imports |
@@ -65,5 +66,7 @@ decision. An entry without a decision says where the question waits.
   image changed. Seen 2026-11-15 in the same report. Decision: not taken; same
   record.
 - Check that a link written as HTML to a repository file resolves. Seen
-  2026-11-09 and 2026-11-10. Decision: not taken; the choice between an error,
-  a warning and a note waits in [the open record](open/lint-html-source-links.md).
+  2026-11-09 and 2026-11-10. Decision 2026-11-15 by deivid: add it to 5.0.0;
+  his word: "add it". Built as a lint error in `lint.py`, which reads the
+  source links the build marks in the built pages; the row "Check links, HTML
+  links to repository files included, …" covers it.

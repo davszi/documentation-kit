@@ -52,7 +52,7 @@ except ImportError:  # pragma: no cover
 
 from site_paths import DOCS, REPO, SITE as SRC, TOPICS as PAGES, HTML as OUT, OUTPUT_ROOT, KIT_SITE, topic_pages
 from site_bundle import SiteBundle, validate_resources
-from worklog_entries import links_checked_from
+from worklog_entries import fenced_spans, links_checked_from
 
 COMPONENTS = KIT_SITE / "components"
 KATEX_SRC = KIT_SITE / "assets" / "vendor" / "katex"
@@ -63,6 +63,10 @@ FRONTMATTER_KEYS = {"title", "slug", "brand", "brand_sub", "body_class", "math",
 # A [[nav]] table accepts only these keys. TOML assigns every key written after a table header to that
 # table, so a top-level setting placed below the first [[nav]] silently becomes part of a nav entry.
 NAV_KEYS = {"label", "file", "group", "short", "hidden"}
+# Project adapters removed in 5.0.0. A site.toml that still names one fails, so a
+# project never builds without the mapping or evidence gate it relied on. The
+# evidence adapter's optional `document_origin` went with `evidence_validator`.
+REMOVED_HOOKS = ("path_resolver", "evidence_validator")
 INCLUDE_DEPTH = 8
 KNOWN_COMPONENTS = ("toc", "nav", "tabs", "diagram", "code", "filelinks",
                     "lightbox", "plot-toggles", "carousel", "panel-switcher",
@@ -193,20 +197,42 @@ TAB_RE = re.compile(r"^<!--\s*tab:\s*(.+?)\s*-->\s*$", re.M)
 # Registry markers render as human-readable callout cards (the label chip
 # comes from CSS ::before); the raw **INVARIANT:**/**DON'T-REDO:** tags stay
 # in the md source for `lint --registry`. A marker paragraph = the token at
-# line start through the next blank line.
+# line start through the next blank line or fenced code block.
 _CALLOUT_RES = (
     (re.compile(r"(?m)^\*\*INVARIANT:\*\*\s*((?:[^\n]+\n?)+?)(?=\n\s*\n|\Z)"), "inv"),
     (re.compile(r"(?m)^\*\*DON'T-REDO:\*\*\s*((?:[^\n]+\n?)+?)(?=\n\s*\n|\Z)"), "redo"),
 )
 
 
-def markers_to_callouts(body: str) -> str:
+def _marker_cards(text: str) -> str:
     for rx, kind in _CALLOUT_RES:
-        body = rx.sub(
+        text = rx.sub(
             lambda m, k=kind: f'<div class="callout {k}">\n\n{m.group(1).rstrip()}\n\n</div>\n',
-            body,
+            text,
         )
-    return body
+    return text
+
+
+def markers_to_callouts(body: str) -> str:
+    """Marker paragraphs as cards, outside fenced code blocks.
+
+    A marker inside a fenced block, with backticks or tildes and also one left
+    open to the end, stays text, so a page can show the source form. Only the
+    text between fenced blocks is converted, so a marker paragraph that runs
+    into a fence ends where the fence starts; a blank line then separates the
+    card's closing tag from the fence, which would otherwise stay inside the
+    HTML block.
+    """
+    parts, position = [], 0
+    for start, end in fenced_spans(body):
+        text = body[position:start]
+        converted = _marker_cards(text)
+        if converted != text and not converted.endswith("\n\n"):
+            converted += "\n"
+        parts += [converted, body[start:end]]
+        position = end
+    parts.append(_marker_cards(body[position:]))
+    return "".join(parts)
 HEADING_ID_RE = re.compile(r"\s*\{#([A-Za-z0-9][A-Za-z0-9_-]*)\}\s*$")
 
 _errors: list[str] = []
@@ -676,10 +702,8 @@ def automatic_link_checks(site: dict, declared_local: set[str]):
                     for key in ("private_prefixes", "private_suffixes"))
 
     def candidates(path: Path) -> tuple[Path, ...]:
-        try:
-            return (path, resolve_legacy_path(path, root=REPO))
-        except (ValueError, OSError):
-            return (path,)
+        # The kit's own mapping, as for every other page: build output and `legacy_files`.
+        return (path, resolve_legacy_path(path, root=REPO))
 
     def exists(path: Path) -> bool:
         for item in candidates(path):
@@ -1054,6 +1078,11 @@ def main() -> int:
     args = ap.parse_args()
 
     site = tomllib.loads(local_resource(SRC / "site.toml").read_text())
+    for key in REMOVED_HOOKS:
+        if key in site:
+            ap.error(f"site.toml: {key} was removed in kit 5.0.0; the kit no longer loads a project adapter. "
+                     "Follow \"Remove the adapter hooks\" in the kit's docs/topics/releases/migrations/5.0.0.md, "
+                     f"then delete the {key} setting")
     if not isinstance(site.get("nav", []), list):
         ap.error("site.toml: nav must be a list of [[nav]] tables")
     for entry in site.get("nav", []):

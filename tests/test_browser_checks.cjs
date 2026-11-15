@@ -1,4 +1,5 @@
-/* Optional real-browser regression for the shared review helpers.
+/* Optional real-browser regression for the shared review helpers, and for the plot toggle
+ * chips in the lightbox, which need a real browser to compute colours and line breaks.
  * Run as one owned, serialized job; requires the same Playwright/Chromium
  * environment as visual_review.cjs. No site build or application runtime. */
 'use strict';
@@ -121,10 +122,80 @@ async function reviewSlideFaces(browser) {
   } finally {await page.close();}
 }
 
+// Plot toggle chips with the real plot-toggles.js and lightbox.js: in the zoomed figure every
+// dot has its series colour, as on the page, and at 390 px a long label stays on one line while
+// the chip bar wraps whole chips onto new rows. PLOT_CHIP_CAPTURES=<folder> saves the zoomed
+// figure at both widths for a look by eye.
+async function reviewPlotToggleChips(browser) {
+  const read = file => fs.readFile(path.join(__dirname, '../theme/components', file), 'utf8');
+  const [toggles, lightbox] = await Promise.all(['plot-toggles.js', 'lightbox.js'].map(read));
+  const labels = {joints:'Menger joints (default)', corridor:'road corridor', fit:'least-squares fit (smoothed, 5-point window)',
+    samples:'measured samples', limit:'stability limit'};
+  // Colours given four ways: a stroke attribute, a class styled inside the SVG, a fill on a
+  // path with no stroke, and a stroke on a path inside a group.
+  const svg = `<svg class="inline-fig" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300">
+    <style>.corr{stroke:#76b041;fill:none}</style><rect width="600" height="300" fill="#101319"/>
+    <path id="tg-joints--0" d="M20 250 L580 40" stroke="#e4572e" stroke-width="3" fill="none"/>
+    <path id="tg-corridor--0" class="corr" d="M20 200 L580 200" stroke-width="3"/>
+    <path id="tg-fit--0" d="M20 150 Q300 20 580 150" stroke="#29b6f6" stroke-width="3" fill="none"/>
+    <path id="tg-samples--0" d="M100 100 h12 v12 h-12 z M300 80 h12 v12 h-12 z" fill="#ffc914" stroke="none"/>
+    <g id="tg-limit--0"><path d="M20 60 L580 60" stroke="#b07aa1" stroke-width="2" fill="none"/></g></svg>`;
+  const expected = ['rgb(228, 87, 46)', 'rgb(118, 176, 65)', 'rgb(41, 182, 246)', 'rgb(255, 201, 20)',
+    'rgb(176, 122, 161)'];
+  const html = `<!doctype html><style>body{margin:0;background:#0b0e13;color:#dce5ef;font:15px system-ui}
+    main{padding:16px}svg.inline-fig{width:100%;height:auto}</style><main>${svg}</main>
+    <script type="application/json" id="plot-toggle-labels">${JSON.stringify(labels)}</script>
+    <script>${toggles}</script><script>${lightbox}</script>`;
+  const chipState = (scope) => [...document.querySelectorAll(`${scope} .fig-chip`)].map(chip => {
+    const range = document.createRange();
+    range.selectNodeContents([...chip.childNodes].find(node => node.nodeType === Node.TEXT_NODE));
+    const box = chip.getBoundingClientRect();
+    return {label:chip.textContent, dot:getComputedStyle(chip.querySelector('.fig-dot')).backgroundColor,
+      lines:new Set([...range.getClientRects()].map(rect => Math.round(rect.top))).size,
+      top:Math.round(box.top), left:box.left, right:box.right, width:innerWidth};
+  });
+  const captures = process.env.PLOT_CHIP_CAPTURES;
+  const results = {};
+  for (const [width, height] of [[1600, 1000], [390, 844]]) {
+    const page = await browser.newPage({viewport:{width, height}});
+    try {
+      const errors = [];
+      page.on('pageerror', error => errors.push(error.message));
+      await page.setContent(html);
+      const onPage = await page.evaluate(chipState, 'main');
+      assert.deepEqual(onPage.map(chip => chip.dot), expected, 'page chips show the series colours');
+      await page.locator('main svg.inline-fig').click({position:{x:40, y:20}});
+      await page.locator('.lb-overlay .fig-chip').first().waitFor();
+      const zoomed = await page.evaluate(chipState, '.lb-overlay');
+      assert.deepEqual(zoomed.map(chip => chip.label), Object.values(labels));
+      assert.deepEqual(zoomed.map(chip => chip.dot), expected,
+        `${width} px: the zoomed figure's chips show the series colours, not the grey fallback`);
+      for (const chip of [...onPage, ...zoomed]) {
+        assert.equal(chip.lines, 1, `${width} px: "${chip.label}" stays on one line`);
+        assert.ok(chip.left >= 0 && chip.right <= chip.width + 0.5, `${width} px: "${chip.label}" stays inside the window`);
+      }
+      const rows = new Set(zoomed.map(chip => chip.top)).size;
+      if (width === 390) assert.ok(rows > 1, '390 px: the zoomed chip bar wraps whole chips onto new rows');
+      // A toggle in the zoomed figure still reaches the page figure.
+      await page.locator('.lb-overlay .fig-chip').first().click();
+      assert.equal(await page.locator('main #tg-joints--0').evaluate(node => node.style.display), 'none');
+      if (captures) {
+        await fs.mkdir(captures, {recursive:true});
+        await page.locator('.lb-overlay .fig-chip').first().click();
+        await page.screenshot({path:path.join(captures, `plot-chips-zoomed-${width}.png`)});
+      }
+      assert.deepEqual(errors, []);
+      results[width] = rows;
+    } finally {await page.close();}
+  }
+  return results;
+}
+
 (async () => {
   const browser = await chromium.launch({headless:true});
   try {
     await reviewSlideFaces(browser);
+    await reviewPlotToggleChips(browser);
     const page = await browser.newPage({viewport:{width:480,height:320}});
     await page.setContent(`<!doctype html><style>
       body {margin:0} img {width:40px;height:40px;position:absolute;left:0}
@@ -174,6 +245,6 @@ async function reviewSlideFaces(browser) {
     await fs.rm(shot, {force:true});
     await page.close();
     await reviewSmallReaders(browser);
-    console.log('Verified shared browser helpers: stacked slide faces at 390 px (sideways overflow, clipped text, parts outside, page styles) and the empty band at 1600 px, one/two/three-chapter scope, clipped/inactive lazy media, visible broken media, contained scrolling, root overflow, element capture.');
+    console.log('Verified shared browser helpers: stacked slide faces at 390 px (sideways overflow, clipped text, parts outside, page styles) and the empty band at 1600 px, plot toggle chips in the zoomed figure at 1600 and 390 px (series colours, one-line labels, wrapping bar), one/two/three-chapter scope, clipped/inactive lazy media, visible broken media, contained scrolling, root overflow, element capture.');
   } finally {await browser.close();}
 })().catch(error => {console.error(error);process.exitCode = 1;});

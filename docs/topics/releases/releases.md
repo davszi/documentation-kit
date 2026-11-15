@@ -29,7 +29,7 @@ shows the new warnings.
 ## 5.0.0 — Reference section by default, page lock and Presentation view
 
 5.0.0 is a major release under
-[what a version number promises](#what-a-version-number-promises) for three
+[what a version number promises](#what-a-version-number-promises) for five
 reasons:
 
 - **A default now publishes more.** Every tracked Markdown file of a project
@@ -49,8 +49,30 @@ reasons:
   chapter with more than one slide face, on a face that does not open its
   chapter and on a face outside every chapter. Up to 4.0.0 such a page built
   and linted clean. A project in that case passed before and fails now.
+- **The path and evidence adapter hooks are removed.** The kit no longer loads
+  a project module named by `path_resolver` or `evidence_validator`, nor the
+  evidence adapter's `document_origin`. A `site.toml` that still names one of
+  the two settings fails the build, and the links that only the adapter
+  resolved fail lint. deivid decided it, asked which of three options: "remove
+  all 3". The hooks let a project keep old documents as unedited copies in its
+  live tree, which the rule on
+  [finished working documents](../../../rules/records.md#finished-working-documents)
+  ended in 4.0.0. At this release adaptation still names both settings; ADP
+  and Tempo name none.
+- **A new lint error for HTML links to repository files.** Lint now checks a
+  link written as `<a href="…">` that points at a repository file, in a topic
+  page, a fragment it includes or a registered source page: the target must
+  exist, and a fragment into a Markdown file must match an anchor. Up to 4.0.0
+  only Markdown links were checked, so a dead HTML link passed strict lint. A
+  project in that case passed before and fails now. deivid decided it: "add
+  it". Measured on 2026-11-15 with this check: ADP's 129 such links, read from
+  its last build output, all resolve;
+  adaptation at `e28472e` has 78, of which 42 fail once its path adapter is
+  gone, 41 because they name paths only the adapter mapped and one because
+  its target exists nowhere.
 
-No command, flag, configuration key, marker or adapter signature is removed.
+Apart from the two adapter settings, no command, flag, configuration key or
+marker is removed.
 No section anchor under `rules/` is removed or renamed: every heading of every
 file under `rules/` at `v4.0.0` is still present.
 `rules/site/authoring.md` gains the sections "Automatic reference listing" and
@@ -58,7 +80,8 @@ file under `rules/` at `v4.0.0` is still present.
 with five subsections. `rules/engineering/code.md` gains "Name the need first"
 and "The capability map" with its subsection "The check";
 `rules/experiments/workflow.md` gains "Show the total" and "Step back across
-experiments". Apart from the slide-face checks, a project that does not set
+experiments". Apart from the slide-face checks, a removed adapter setting
+and a dead HTML link to a repository file, a project that does not set
 `tooling_roots` gets no new lint warning or error; a problem in an
 automatically listed file is a lint note, which never fails. The slide-face
 checks apply to every project with slide faces: the error above, and a
@@ -111,7 +134,7 @@ Known open points are in the [open record](../../open/release-5.0.0-waits.md).
 | Theme | The Reference section now ends the sidebar of every page whenever at least one file is listed, also on a site without `[[source_pages]]` tables | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages), [shared reading layout](../../../rules/site/reader.md#shared-reading-layout) |
 | Build | On a source page, a link to a tracked Markdown file that is listed automatically now goes to that file's page. In 4.0.0 it was a source link to the repository | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
 | Build output | Above 60 listed files, or with the page lock on, the folder tree is written once as `reference.tree.js` and as the page `reference.index.html` in the html root, and each page carries a short form of the section. `site-build.json` gains `reference_tree`, which names both files or is `null`; its `source_pages` also maps every automatic route to its file. The name `reference.index.html` is reserved in that case: another page with that address fails the build with `route collision` | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
-| Adapter | Within one build or lint run the kit asks the path adapter once per distinct path, root and recorded roots and reuses the answer. The adapter now also receives the link targets of every automatically listed file. Its answer must not change during a run. For an automatically listed page a `ValueError` or `OSError` from the adapter counts as "no mapping"; any other exception stops the build | [Resources](../../../rules/site/resources.md#resource-closure-and-evidence) |
+| Configuration | Removed: the settings `path_resolver` and `evidence_validator`, and the evidence adapter's optional `document_origin`. A `site.toml` that names either setting fails the build with `site.toml: <setting> was removed in kit 5.0.0`, which points to the migration step, and lint prints that error. The kit resolves links with its own rules only, so a link that only the project's adapter mapped is a dead link or a missing anchor in lint. `content_transform`, `evidence_manifests`, `legacy_files` and `worklog_links_checked_from` stay | [Resources](../../../rules/site/resources.md#resource-closure-and-evidence) |
 | Publication | New optional page lock: `lock = true` in `[publication]`, the passwords `DOCSITE_GENERAL_PASSWORD` and `DOCSITE_REFERENCE_PASSWORD` from the environment of the `publish` step, and the optional dependency `requirements-lock.txt`. The general password opens the topic pages; the reference password also opens the Reference pages and the exported Markdown files. It is not access control; its limits are listed in the rule. A project that does not set `lock = true` gets the same bundle as from `publish` without the lock | [Page lock](../../../rules/site/publication.md#page-lock) |
 | Publication | `publish` refuses a `[[source_pages]]` table whose file the private prefixes or suffixes cover, with `Private source cannot be published as a page` | [Configured publication](../../../rules/site/publication.md#configured-publication) |
 | Publication | Fix: an exported source link carries `data-repo-exported`, and `filelinks.js` leaves it alone. With a source remote, a link to an admitted file such as `tools/fit.py` no longer becomes a GitHub address with a wrong `docs/html/` part. This changes the published bytes of admitted links | [Configured publication](../../../rules/site/publication.md#configured-publication) |
@@ -131,9 +154,12 @@ Known open points are in the [open record](../../open/release-5.0.0-waits.md).
 | Rules | Faces are checked in their page as well as in the deck, because page styles add space the deck lacks. A review by eye says for each face what draws the eye first and whether a band of the canvas is empty; "no band left over" and the designer's standard stay judgment with no number. The kit's lint checks the slide-face part of the numbers rule; the ledger of sources stays the project's | [Validation and review](../../../rules/site/validation.md#validation-and-review), [numbers and staleness](../../../rules/records.md#numbers-and-staleness) |
 | Configuration | New optional top-level settings `tooling_roots`, `capability_map` and `experiment_roots` turn on the capability map check. A wrong value, or `capability_map` or `experiment_roots` without `tooling_roots`, fails the build with a `site.toml:` error. With the check on, lint fails when the map is missing or untracked, when a tracked file or folder directly under a tooling root has no row, when a link in the map is dead wherever it lies, and when the generated Imported by column is out of date; a Python file under a tooling root that imports from an experiment folder is a warning. The new command `docsite.py capability-map` rewrites the Imported by column from Python imports. Without `tooling_roots` nothing is checked | [Capability map settings](../../../rules/site/authoring.md#capability-map-settings), [the check](../../../rules/engineering/code.md#the-check) |
 | Rules | An experiment's folder holds only that experiment's own code, inputs and records. Code that other experiments or tools reuse lives in the project's tooling or source tree, and is moved there before a second user imports it | [Where code lives](../../../rules/engineering/code.md#where-code-lives) |
-| Build output | Changed shared files get a new `?v=` query on every page that loads them: `base.css`, `chapter-reader.css`, `chapter-reader.js`, `filelinks.js`, `nav.js` and `slide-face.css`. A locked bundle also holds `assets/page-lock.js` and `assets/page-lock.css` | [Authoring and configuration](../../../rules/site/authoring.md) |
+| Build output | Changed shared files get a new `?v=` query on every page that loads them: `base.css`, `chapter-reader.css`, `chapter-reader.js`, `filelinks.js`, `lightbox.js`, `nav.js`, `plot-toggles.js` and `slide-face.css`. A locked bundle also holds `assets/page-lock.js` and `assets/page-lock.css` | [Authoring and configuration](../../../rules/site/authoring.md) |
 | Starter | The starter's `site.toml` explains the listing and excludes `CLAUDE.md`, and carries the capability map settings commented out. The starter adds an empty `docs/CAPABILITY_MAP.md` with a short explanation, linked from `docs/index.md`, and its `AGENTS.md` gains the route "Building tooling, a harness or other supporting code". The guide's text on slide faces describes the layout as one example | [Automatic reference listing](../../../rules/site/authoring.md#automatic-reference-listing), [slide faces](../../../rules/writing/pages.md#slide-faces), [the capability map](../../../rules/engineering/code.md#the-capability-map) |
-| Kit checks | `requirements-lock.txt` pins `cryptography` 50.0.2 for the page-lock checks; the Pages workflow installs it. New checks: `tests/test_reference_listing.py`, `tests/test_capability_map.py`, `tests/test_page_lock.py`, `tests/test_slide_face_checks.py`, the WebCrypto cross-check and two browser suites, `tests/test_reference_tree.cjs` and `tests/test_page_lock_browser.cjs`. `tests/test_browser_checks.cjs` now checks stacked slide faces at 390 px | [README](../../../README.md#develop-the-kit) |
+| Build | Fix: a `**INVARIANT:**` or `**DON'T-REDO:**` marker inside a fenced code block, with backticks or tildes and also one left open to the end of the page, stays text in the block. Up to 4.0.0 it became a card and broke the block, which failed the reader build or showed a stray closing tag. A marker paragraph followed by a fence without a blank line ends where the fence starts. `lint --registry` no longer lists a marker inside a fenced block or a code span, and lint no longer warns about a line that names the markers in code spans | [Rules for changes and chronology](../../../rules/documentation.md#rules-for-changes-and-chronology) |
+| Theme | Fix: in the zoomed figure the plot toggle chips show the colour of their series; up to 4.0.0 every dot there was grey, because the lightbox built its chips on a copy of the figure that was not yet in the page, and a detached element has no computed colour. A chip keeps its label on one line, and the zoomed figure's chip bar spans the window less a margin and wraps whole chips; up to 4.0.0 the bar was half the window wide, so at 390 px a label such as "Menger joints (default)" broke inside its chip. A click beside the chips still closes the zoomed figure | [Authoring paths](../../../rules/site/authoring.md#authoring-paths) |
+| Lint | New error: a link written as HTML, `<a href="…">`, to a repository file whose target does not exist, or whose fragment into a Markdown file matches no anchor. Lint reads the source links the build marked in the built pages, so it uses the build's resolution, with a source remote and without one. It covers topic pages, the fragments they include and registered source pages; the message names the page's source, the built page and the repository path. On an automatically listed page the problem is a note; links in worklog entries before `worklog_links_checked_from` are not checked. A built relative link without a source remote is no longer also reported as `dead relative href` | [Authoring paths](../../../rules/site/authoring.md#authoring-paths) |
+| Kit checks | `requirements-lock.txt` pins `cryptography` 50.0.2 for the page-lock checks; the Pages workflow installs it. New checks: `tests/test_reference_listing.py`, `tests/test_capability_map.py`, `tests/test_page_lock.py`, `tests/test_slide_face_checks.py`, `tests/test_markers.py`, `tests/test_source_links.py`, the WebCrypto cross-check and two browser suites, `tests/test_reference_tree.cjs` and `tests/test_page_lock_browser.cjs`. `tests/test_browser_checks.cjs` now checks stacked slide faces at 390 px and the plot toggle chips in the zoomed figure | [README](../../../README.md#develop-the-kit) |
 
 ## 4.0.0 — finished working documents, neutral theme names and group colours
 
@@ -458,7 +484,7 @@ migration steps.
 | `site.toml` keys and `[[nav]]` keys; page frontmatter keys | `tooling/browser_checks.cjs` exports |
 | Markers: `<!-- include: … -->`, `<!-- site-map -->`, `<!-- slide -->`, `<!-- page-end -->`, typed folds | `tooling/publication.py` (`export_pages`) |
 | Shared components by name and their authoring markup | Theme CSS class names other than documented authoring markup |
-| Project adapter signatures (`path_resolver`, `evidence_validator`, `content_transform`) | |
+| Project adapter signatures (`content_transform`; `path_resolver` and `evidence_validator` were removed in 5.0.0) | |
 | `rules/` policies (wording may be refined) | |
 
 ### What 1.0.0 contains (since 0.1.0)

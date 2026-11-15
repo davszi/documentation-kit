@@ -1,4 +1,8 @@
-"""Explicit, tracked project adapters for historical paths and evidence policy."""
+"""Load a project's own tracked Python module that site.toml names.
+
+The one such setting is `content_transform`. The path and evidence adapters
+(`path_resolver`, `evidence_validator`) were removed in 5.0.0.
+"""
 import importlib.util
 from pathlib import Path
 import subprocess

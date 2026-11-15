@@ -61,6 +61,259 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   six browser suites pass. Reviewed by eye in the page at 1600 × 1000 and
   390 × 844 and in the Presentation view at 1600 × 1000; deivid has not yet
   looked at them.
+## 2026-11-15 — Lint checks HTML links to repository files
+
+- Decision: deivid decided to add the check to 5.0.0; his word: "add it".
+  5.0.0 is a major release, the only kind that may add a lint error. The open
+  record held the evidence: on 2026-11-09 the 2.0.0 starter home page linked
+  a `PROJECT_CONTEXT.md` that did not exist, and on 2026-11-10 a reviewer put
+  an HTML link to a removed kit anchor into a page body; strict lint passed
+  both.
+- How it works: the build already resolves every link from a page to a
+  repository file in `SiteBundle.rewrite_page` and marks it with
+  `data-repo-path` and `data-repo-fragment`, with a source remote and without
+  one. `check_source_links` in `tooling/lint.py` reads those marks in the
+  built pages, so it uses the build's resolution and no second resolver: the
+  target must exist, a fragment into a Markdown file must match an anchor
+  from `md_anchors`, and one into an HTML file an `id`, as for a Markdown
+  link. It covers topic pages, the fragments they include and registered
+  source pages. A link that the Markdown check already checked in the same
+  source is left to it, so each dead link is reported once; without a source
+  remote the built relative link is no longer also reported as `dead relative
+  href`. On an automatically listed page a problem is a note; in the worklog's
+  page the entries before `worklog_links_checked_from` are skipped; a file
+  listed under `omitted_files` gets a note. The page's source comes from the
+  mapping `slide_face_checks._page_names` already builds, imported rather
+  than copied.
+- Level: an error. No class of links was found that the kit's resolution
+  cannot decide. Its limits are those of the Markdown check: an existing file
+  that Git does not track passes, although its published source link leads
+  nowhere, and a link into a submodule that is not checked out fails.
+- Measured with this check, links counted once per built page:
+  - The kit: 1 HTML link in a topic page and 11 links on automatically listed
+    pages that no Markdown check covers, 0 failing.
+  - adaptation, cloned at `e28472e` into a scratch folder, its kit submodule
+    checked out at its pin `df089ef`, its two adapter settings removed and
+    built with this kit: 78 HTML links on its three topic pages (94
+    occurrences), 42 failing; Markdown links: 322 checked, 0 failing. Each
+    failing link was given to adaptation's own `docs/site/layout_paths.py` to
+    classify it. 34 name an old path that the adapter mapped to a tracked file
+    (for example `configs/cursor-rerun-v2.json` to
+    `studies/cursor/configs/cursor-rerun-v2.json`, and 20 links to
+    `minigroot/reports/` on the robotics page). 7 name an old path that the
+    adapter mapped to a file listed under `omitted_files`, which would have
+    been a note. 1 is dead: `results/cursor-exploration-next-2026-10-29/digest-profile/review.json`,
+    which the adapter leaves alone and which exists neither in the clone nor
+    in the live checkout. None is a fault of the check. With the adapter
+    removed by deivid's decision, the 41 are adaptation's cleanup at its
+    upgrade: repoint each to its current path. The kit owner's rough count,
+    83 links with 40 unresolved, used a script that ignored the adapter.
+  - ADP: no clone and no build, as deivid decided. The check's functions ran
+    on ADP's last build output, written on 2026-11-15 at 02:38 by its pinned
+    kit 4.0.0, and on its sources in place, with bytecode writing off; no file
+    in ADP changed during the run. 129 HTML links in topic pages (167
+    occurrences) and 2,582 Markdown links, 0 failing. No topic page or
+    fragment was newer than that build output; 6 other files under `docs/`
+    were. The kit owner's rough count was 173 links with 0 unresolved.
+- Tests: new `tests/test_source_links.py`, 8 tests on a fixture project: a
+  dead target and a missing anchor in a page body, a dead target in an
+  included fragment, a missing anchor in a registered page, one report per
+  link without a source remote, a note on an automatically listed page, and
+  old worklog entries skipped. Against the previous `lint.py` 7 fail; the
+  eighth is the clean case. `tests/test_source_pages.py`
+  › `test_no_remote_source_links_build_lint_and_export_locally` expected
+  `dead relative href` for a missing Markdown link target; that encoded the
+  assumption that the built-href check reports source links in a project
+  without a remote. It now expects the Markdown check's message once and no
+  `dead relative href`.
+- Rules: `rules/site/authoring.md` › Authoring paths describes the check and
+  › Registered source pages names it; `rules/site/validation.md` lists it
+  among the lint checks. No anchor changed.
+- Records: the 5.0.0 release notes give the new error as a fifth reason for
+  the major release, with the measurements, and gain a row; the migration
+  guide gains "Repoint or remove dead HTML links" with its row; the
+  capability map records deivid's decision on the need; the release-waits
+  record notes that his two decisions of this day make the release major on
+  their own. `docs/open/lint-html-source-links.md` and its line in
+  `docs/open/KIT_OPEN.md` are deleted, as the record and the rule on finished
+  working documents ask.
+- Checks after the last code and test edit of the day: on the kit
+  `docsite.py build`, `lint --strict` (0 warnings) and `build --check-reader`
+  (5 reader pages); `DOCS_REQUIRE_BROWSER=1 bash tests/run_checks.sh` exits 0
+  with 301 Python tests and the six browser suites, each run alone under a
+  4 GB memory limit after another agent's browser run had finished. This
+  worklog text was the only edit after that run.
+
+## 2026-11-15 — Remove the path and evidence adapter hooks
+
+- Decision: deivid decided to remove the kit's three adapter hooks,
+  `path_resolver`, `evidence_validator` and the evidence adapter's
+  `document_origin`, in 5.0.0. Asked which of three options, he answered
+  "remove all 3". Why, with evidence, is in
+  [the frozen-record record](open/simplify-frozen-record-machinery.md): the
+  hooks let a project keep old documents as unedited copies in its live tree
+  and still pass the link check, which the rule on finished working documents
+  ended. State read from each `docs/site/site.toml` on this day: adaptation
+  names `path_resolver` and `evidence_validator` (`docs/site/layout_paths.py`);
+  ADP and Tempo name no hook; no project sets `evidence_manifests` or
+  `legacy_files`.
+- Removed: in `tooling/site_paths.py` the adapter loading and the per-run
+  answer cache added on this branch (16 lines out); in `tooling/lint.py` the
+  evidence adapter swap and the `document_origin` branch of
+  `markdown_origin` (21 lines out); in `tooling/build.py` the exception
+  handling that treated an adapter error on an automatically listed page as
+  "no mapping". No file is deleted.
+- Kept, with what needs it: `tooling/project_extensions.py`, which also loads
+  `content_transform`; `resolve_legacy_path` in `tooling/site_paths.py`, now
+  the kit's own resolution only (build output alias, `legacy_files`, and the
+  recorded roots of evidence collections); `tooling/evidence_documents.py` and
+  the relocation and worklog handling in `tooling/lint.py`, which the kit's
+  own `evidence_manifests` setting drives, not a hook. The record's plan named
+  that worklog handling as going with the hooks; `worklog_links_checked_from`
+  replaces it only for entries before its date, so it stays while
+  `evidence_manifests` stays. Whether `evidence_manifests` and `legacy_files`
+  also go is left to deivid in the record. Automatically listed pages still
+  ask the kit's own resolution, as every other page does.
+- New: the build fails on `path_resolver` or `evidence_validator` in
+  `site.toml` with `site.toml: <setting> was removed in kit 5.0.0`, naming the
+  migration step "Remove the adapter hooks"; lint prints the build's error.
+  The adapter module is never executed.
+- Tests: `tests/test_portability.py` checks that each removed setting fails
+  build and lint with that message and runs no module, and that the project
+  builds again without it. The test that the kit used a project's adapters is
+  gone, because it encoded the removed behaviour. The two tests that an
+  untracked or symlinked module is refused before it runs now name
+  `content_transform`, the remaining user of the same loader; they assumed
+  `path_resolver` only as a convenient key. In `tests/test_lint.py` the two
+  `document_origin` tests are replaced by one test of the relocation fallback
+  that remains.
+- Rules: `rules/site/resources.md` › Resource closure and evidence describes
+  the kit's own resolution and the removal instead of the adapters;
+  `rules/documentation.md` › Rendered pages are for people names a later
+  `worklog_links_checked_from` instead of the path adapter for dated links;
+  `rules/conformance.md` item 9 no longer names a path adapter as an example.
+  No anchor changed. Not synced, because another agent is redesigning these
+  pages: the writing-practices page still says the path adapter maps old
+  paths for lint, and the build-a-site page's table names adapters and path
+  adapters.
+- Records: the 5.0.0 release notes give the removal as a fourth reason for
+  the major release, replace the adapter cache row with the removal row, and
+  mark the two settings removed in the list of stable interfaces; the 5.0.0
+  migration guide replaces "Check the path adapter" with "Remove the adapter
+  hooks", where each deletion of a document stays the owner's decision; the
+  frozen-record record gains the decision and a new next step, and its route
+  in `docs/open/KIT_OPEN.md` says what remains; `docs/KIT_CONTEXT.md` and the
+  resources page description follow; the capability map row of
+  `project_extensions.py` now names the content transform.
+- Checks before the commit: on the kit `docsite.py build`, `lint --strict`
+  (0 warnings) and `build --check-reader`; the starter builds and lints
+  strictly; 293 Python tests pass. The browser suites run after the last
+  change of the day.
+
+## 2026-11-15 — Plot toggle chips in the zoomed figure
+
+- Decision: deivid asked for the fix before the 5.0.0 release ("fix now").
+- Grey dots, cause confirmed: the lightbox calls `buildChips` on its clone of
+  the figure before the clone is in the page. In Chromium a detached path's
+  computed `stroke` is the empty string (probe: page figure
+  `rgb(228, 87, 46)`, detached clone `""`, the same clone attached
+  `rgb(228, 87, 46)`), so `strokeOf` fell back to `#9aa4b2`. Fix in
+  `theme/components/plot-toggles.js`: a chip's dot takes its colour from the
+  page figure's group when there is one, which is the case in the lightbox.
+- Wrapped label, cause found: the zoomed figure's chip bar was placed with
+  `left: 50%` and `translateX(-50%)`, so its width was limited to the right
+  half of the window, about 195 px at 390 px, and a chip's label broke inside
+  it. Fix: the bar in `theme/components/lightbox.js` spans the window less 4vw
+  on each side and wraps whole chips; `.fig-chip` keeps its label on one line
+  (`white-space: nowrap`). The bar ignores pointer events and only the chips
+  take them, so a click beside the chips still closes the zoomed figure, as
+  before when the bar was only as wide as its chips.
+- Built scratch page with the kit theme at 390 px, before: every dot
+  `rgb(154, 164, 178)`, and the chips "Menger joints (default)" and
+  "least-squares fit (smoothed)" 62 px high, two lines, against 44 px for one
+  line; after: each dot in its series colour, every chip 44 px high, and the
+  bar in three rows of whole chips. At 1600 px the four chips stand in one row
+  before and after; only the colour changed.
+- Test: `reviewPlotToggleChips` in `tests/test_browser_checks.cjs` loads the
+  real `plot-toggles.js` and `lightbox.js` with five series coloured four ways
+  (stroke attribute, a class styled inside the SVG, fill only, a path inside a
+  group), opens the zoomed figure at 1600 and 390 px, and checks the dot
+  colours on the page and zoomed, one line per label, chips inside the window,
+  more than one row at 390 px, and that a zoomed toggle still hides the page
+  group. Against the old two files it fails on the grey dots; with only the
+  colour fix it fails at 390 px on the label "least-squares fit (smoothed,
+  5-point window)", which the fixture uses because its system font is
+  narrower than the kit's and "Menger joints (default)" alone fits there.
+- Reviewed by eye: the zoomed figure with its chips on the built scratch page
+  at 1600×1000 and 390×844 after the fix, and the test fixture at both widths.
+  Dots match the lines; labels sit on one line; at 390 px the chips wrap
+  under each other centred and stay above the figure.
+- Rules: `rules/site/authoring.md` › Authoring paths says the dot has its
+  series colour in the lightbox too, and that labels stay on one line while
+  the bar wraps whole chips. No anchor changed.
+- Records: `docs/open/plot-toggle-chips-in-lightbox.md` and its line in
+  `docs/open/KIT_OPEN.md` are deleted, as the record asked; the 5.0.0 release
+  notes gain a row and name `lightbox.js` and `plot-toggles.js` among the
+  shared files with a new `?v=` query. No capability map row changes; the
+  theme is not a tooling root.
+- The entry of 2026-11-14 "Close the findings of the review before the 4.0.0
+  tag" links the deleted record, and the worklog is not rewritten, so
+  `worklog_links_checked_from` in `docs/site/site.toml` moves from 2026-11-12
+  to 2026-11-15, as the resources rule asks. Lint no longer checks links in
+  the entries of 2026-11-12 to 2026-11-14; on the worklog's page a link there
+  whose target is gone shows as unlinked text.
+- Checks before the commit: on the kit `docsite.py build`, `lint --strict`
+  (0 warnings) and `build --check-reader`; `tests/test_browser_checks.cjs`
+  and `tests/visual_review.cjs` pass, each run alone under a 4 GB memory
+  limit. The other browser suites run after the last change of the day.
+
+## 2026-11-15 — A marker inside a code block stays text
+
+- Decision: deivid asked for the fix before the 5.0.0 release ("fix now",
+  recorded in the entry on his decisions below).
+- Cause, reproduced before the change: `markers_to_callouts` in
+  `tooling/build.py` rewrote every marker at line start before Markdown was
+  rendered, inside fenced code blocks too. A fixture page with markers in
+  three fences failed the build with `chapter layout: Mismatched document
+  closing tag: div`; rendered without the reader, the block showed the card's
+  opening tag as code and a stray `</div>` followed it.
+- Fix: the conversion now runs only on the text between fenced blocks.
+  `fenced_spans` in `tooling/worklog_entries.py`, which already found the
+  fences for the worklog's dated headings, is now public and is the one fence
+  reader for both; it covers backtick and tilde fences, a closing fence at
+  least as long as the opening one, and a fence left open to the end. A marker
+  paragraph that runs into a fence without a blank line now ends where the
+  fence starts, with a blank line written after the card so the fence is not
+  swallowed by the card's HTML block.
+- Lint, the second case of the open record: `check_markers` warned about a
+  line that named the markers in code spans when the line also held bold
+  text, as ADP met on 2026-11-11, and `lint --registry` listed markers inside
+  code. Both now read the line with fenced blocks and code spans blanked, so
+  the registry lists what the build turns into cards, plus markers that stay
+  text outside code (list items, quotes, inside a sentence).
+- Left as they are, with the reason in the rule text: a marker in a list item
+  or a quote stays a bold label, because a card is a block of its own and the
+  conversion does not parse containers; a marker without a blank line after
+  it takes the following lines into its card up to the next blank line or
+  fence, which is how Markdown continues the paragraph. `rules/documentation.md`
+  › Rules for changes and chronology now says both, and that a marker inside
+  a fenced block or code span is an example that stays text. No anchor
+  changed. The writing-practices page explains this rule; its sentences stay
+  true and were not touched, because another agent is redesigning that page.
+- New `tests/test_markers.py`, six tests on a fixture page: cards only outside
+  code, markers kept in a backtick fence, a tilde fence holding a shorter
+  backtick fence, a fence after a card and an open fence at the end; the list
+  item keeps its label; the registry and the warning skip code. With the old
+  `build.py` and `lint.py` five tests fail; with the old `lint.py` alone two.
+- Records: `docs/open/marker-in-fenced-code.md` and its line in
+  `docs/open/KIT_OPEN.md` are deleted, as the record asked once the defect is
+  closed. The capability map gains a row for finding fenced code blocks; the
+  5.0.0 release notes gain a row.
+- Checks before the commit: on the kit `docsite.py build`, `lint --strict`
+  (0 warnings) and `build --check-reader` (5 reader pages); the starter
+  builds and lints strictly; 294 Python tests pass, 288 before plus the six
+  new ones. The browser suites were not run for this change, which touches no
+  theme file; they run after the last change of the day.
 
 ## 2026-11-15 — Decisions by deivid on the open list
 

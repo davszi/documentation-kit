@@ -119,11 +119,14 @@ pages = ["shared-rule.html", "other-rule.html"]
         self.assertNotIn('data-repo-path="notes/record.md"', public)
         self.assertEqual((destination / 'notes/record.md').read_text(), '# Record\n\n## Kept\n')
 
-        # Local identity must still expose a genuinely missing source to lint.
+        # Local identity must still expose a genuinely missing source to lint,
+        # once: the Markdown check owns this Markdown link, and the built
+        # relative href is a marked source link that the href check leaves alone.
         (self.root / 'notes/record.md').unlink()
         lint = invoke('lint', '--project', self.root, '--strict')
         self.assertNotEqual(lint.returncode, 0)
-        self.assertIn('dead relative href ../../notes/record.md#kept', lint.stderr)
+        self.assertEqual(lint.stderr.count('policy/rule.md: dead link ../notes/record.md#kept'), 1, lint.stderr)
+        self.assertNotIn('dead relative href', lint.stderr)
 
     def test_source_origin_routes_media_and_literal_markers(self):
         result = self.build()

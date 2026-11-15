@@ -13,7 +13,11 @@ the branch `integration-next`: [release notes](../topics/releases/releases.md#50
    not confirmed it. The reasons are in the release notes: the automatic
    Reference listing changes a default so that a site publishes content it did
    not publish before, and `publish` now refuses a `[[source_pages]]` table
-   whose file the private prefixes or suffixes cover.
+   whose file the private prefixes or suffixes cover. Two of deivid's own
+   decisions of 2026-11-15 add major changes on their own: the removed path
+   and evidence adapter hooks ("remove all 3"), and the new lint error for a
+   dead HTML link to a repository file ("add it"). With them a 4.1.0 is no
+   longer possible under the promise as written.
    - If deivid chooses 4.1.0, the rename touches `VERSION`, the release notes
      section and its anchor, the migration guide's file name and title, and
      the links to them in `README.md`, `docs/KIT_CONTEXT.md`,

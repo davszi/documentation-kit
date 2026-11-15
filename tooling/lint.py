@@ -6,12 +6,17 @@
 Checks (the shared guides under rules/ are the spec):
   1. markdown links + anchors resolve (docs/**, AGENTS.md, CLAUDE.md, README.md);
      worklog entries dated before `worklog_links_checked_from` are skipped
-  2. built-html internal anchors + relative hrefs resolve
+  2. built-html internal anchors + relative hrefs resolve; links to repository
+     files, which the build marks with data-repo-path, must exist and a
+     fragment into a Markdown file must match an anchor, `<a href>` in page
+     bodies, included fragments and registered source pages included (errors;
+     notes on automatically listed pages)
   3. snippet drift: fenced blocks tagged `source=<path>#L<a>-L<b>` must appear
      in their source file (error), at the stated lines (warning otherwise)
   4. figure manifest: files ↔ entries both ways, generator scripts exist,
      doc-referenced figures are in the manifest; unreferenced figure = warning
-  5. INVARIANT / DON'T-REDO marker form (bold, colon); never in worklog/OPEN
+  5. INVARIANT / DON'T-REDO marker form (bold, colon); never in worklog/OPEN;
+     fenced code blocks and code spans are skipped, as the build skips them
      (--registry dumps the marker registry and exits)
   6. OPEN.md format: every bullet links its owning doc; no strikethrough /
      checkboxes / DONE markers (lines get deleted, not struck)
@@ -53,6 +58,7 @@ Exit 0 clean (warnings print unless --strict fails them), 1 on errors.
 from __future__ import annotations
 
 import argparse
+import html
 import importlib.util
 import json
 import os
@@ -61,6 +67,7 @@ import subprocess
 import sys
 import tomllib
 from pathlib import Path
+from urllib.parse import unquote
 
 REPO = Path(os.environ.get("DOCSITE_PROJECT_ROOT", Path.cwd())).resolve()
 DOCS = REPO / "docs"
@@ -113,13 +120,7 @@ _evidence_spec = importlib.util.spec_from_file_location(
     "docsite_evidence_documents", Path(__file__).with_name("evidence_documents.py"))
 _evidence = importlib.util.module_from_spec(_evidence_spec)
 _evidence_spec.loader.exec_module(_evidence)
-from project_extensions import load_extension
 import worklog_entries as _worklog_entries
-_project_evidence = load_extension(REPO, 'evidence_validator')
-if _project_evidence is not None:
-    if not all(callable(getattr(_project_evidence, name, None)) for name in ('manifest_documents', 'verify')) or not hasattr(_project_evidence, 'MANIFESTS'):
-        raise ValueError('evidence_validator must export MANIFESTS, manifest_documents and verify')
-    _evidence = _project_evidence
 
 
 def evidence_document_locations() -> dict[Path, Path]:
@@ -150,21 +151,8 @@ def recorded_source_roots(source: Path | None = None) -> tuple[str, ...]:
 
 
 def markdown_origin(path: Path) -> Path:
-    resolver = getattr(_evidence, "document_origin", None)
-    if resolver is not None:
-        if not callable(resolver):
-            raise ValueError("evidence_validator document_origin must be callable")
-        origin = resolver(path, root=REPO)
-        if origin is not None:
-            if not isinstance(origin, (str, Path)) or not str(origin):
-                raise ValueError("document_origin must return a repository path or None")
-            origin = Path(origin)
-            origin = Path(os.path.abspath(origin if origin.is_absolute() else REPO / origin))
-            if (not origin.is_relative_to(REPO) or not origin.resolve().is_relative_to(REPO)
-                    or any(parent.is_symlink() for parent in (origin, *origin.parents)
-                           if parent.is_relative_to(REPO))):
-                raise ValueError("document_origin must stay inside the project without symlinks")
-            return origin
+    """Where a document's links resolve from: its original path when a declared
+    evidence collection relocated it, otherwise its own path."""
     return next((old for old, current in evidence_document_locations().items()
                  if current == path), path)
 
@@ -260,6 +248,9 @@ def check_md_links() -> None:
             _check_chunk_links(f, chunk, base)
 
 
+# (source file, resolved target, fragment) of every Markdown link checked above.
+markdown_checked: set[tuple[Path, Path, str]] = set()
+
 _entry_cache: dict = {}
 
 
@@ -341,6 +332,9 @@ def _check_chunk_links(f: Path, text: str, base: Path) -> None:
                     error(f"{rel}: dead same-file anchor #{frag}")
                 continue
             dest = resolve_path(base / path_part, recorded_roots=origins)
+            # The built page carries this link as a source link too; the HTML
+            # source-link check leaves it to this check.
+            markdown_checked.add((f, dest, unquote(frag)))
             if ((frozen_source or is_entry(f, "worklog")) and Path(path_part).is_absolute()
                     and not dest.is_relative_to(REPO)):
                 error(f"{rel}: unknown historical checkout root in {target}")
@@ -376,12 +370,81 @@ def _check_chunk_links(f: Path, text: str, base: Path) -> None:
                 error(f"{rel}: anchor #{frag} not found in {path_part}")
 
 
+SOURCE_LINK_RE = re.compile(r'<a\b[^>]*?\sdata-repo-path="([^"]*)"\s+data-repo-fragment="([^"]*)"[^>]*>', re.I)
+
+
+def built_page_sources() -> tuple[dict[str, str], set[str], set[str]]:
+    """Built page name to its source, the registered sources and the automatic ones."""
+    from slide_face_checks import _page_names
+    names = _page_names(REPO)
+    config = DOCS / "site" / "site.toml"
+    site = tomllib.loads(config.read_text()) if config.is_file() else {}
+    entries = site.get("source_pages", []) if isinstance(site.get("source_pages"), list) else []
+    registered = {entry["source"] for entry in entries if isinstance(entry, dict) and isinstance(entry.get("source"), str)}
+    try:
+        listed = set(json.loads((resolve_path(DOCS / "html").parent / "site-build.json").read_text())["source_pages"].values())
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        listed = set()
+    return names, registered, listed - registered
+
+
+def check_source_links() -> None:
+    """Links in built pages to repository files, `<a href>` in a page body included.
+
+    The build resolves every such link and marks it with `data-repo-path`, the
+    repository file it found, and `data-repo-fragment`, with a source remote and
+    without one. This check reads those marks, so it uses the build's own
+    resolution: the target must exist, and a fragment into a Markdown file must
+    match one of its anchors, as for a Markdown link. It covers topic pages, the
+    fragments they include and registered source pages; links that the Markdown
+    check already checked in the same source are left to it. On an
+    automatically listed page a problem is a note. Links in worklog entries
+    dated before `worklog_links_checked_from` are not checked.
+    """
+    names, registered, automatic = built_page_sources()
+    worklog = entry_path("worklog")
+    for f in sorted(resolve_path(DOCS / "html").glob("*.html")):
+        source = names.get(f.name)
+        source_path = REPO / source if source else None
+        label = f"{source} ({f.name})" if source else f.relative_to(REPO).as_posix()
+        report = notice if source in automatic else error
+        markup = f.read_text()
+        old = []
+        if source_path is not None and worklog is not None and source_path == worklog:
+            old = _worklog_entries.unchecked_spans(markup, worklog_links_checked_from(),
+                                                   _worklog_entries.HTML_HEADING)
+        seen = set()
+        for match in SOURCE_LINK_RE.finditer(markup):
+            if _worklog_entries.within(old, match.start()):
+                continue
+            path = html.unescape(match[1])
+            fragment = unquote(html.unescape(match[2]))
+            dest = REPO / path
+            if (source_path, dest, fragment) in markdown_checked or (path, fragment) in seen:
+                continue
+            seen.add((path, fragment))
+            shown = path + ("#" + fragment if fragment else "")
+            if not dest.exists():
+                if retained_locally(dest):
+                    notice(f"{label}: artifact retained locally, omitted from push: {shown}")
+                else:
+                    report(f"{label}: dead link to repository file {shown}")
+            elif fragment and dest.suffix == ".md" and fragment not in md_anchors(dest):
+                report(f"{label}: anchor #{fragment} not found in {path}")
+            elif fragment and dest.suffix == ".html" and fragment not in html_ids(dest):
+                report(f"{label}: anchor #{fragment} not found in {path}")
+
+
 def check_html() -> None:
     for f in sorted(resolve_path(DOCS / "html").glob("*.html")):
         text = f.read_text()
         ids = html_ids(f)
         rel = f.relative_to(REPO)
+        # Source links are checked by check_source_links from the build's marks.
+        source_links = [(m.start(), m.end()) for m in SOURCE_LINK_RE.finditer(text)]
         for m in re.finditer(r'href="([^"]+)"', text):
+            if _worklog_entries.within(source_links, m.start()):
+                continue
             href = m.group(1)
             if href.startswith(("http://", "https://", "mailto:", "vscode:")):
                 continue
@@ -518,6 +581,20 @@ MARKER_RE = re.compile(r"INVARIANT|DON'T-REDO")
 MARKER_OK_RE = re.compile(r"\*\*(INVARIANT:|DON'T-REDO:)\*\*")
 
 
+CODE_SPAN_RE = re.compile(r"(`+)[^\n]*?\1")
+
+
+def without_code(text: str) -> str:
+    """The text with fenced code blocks and code spans blanked, lines kept.
+
+    The build converts no marker inside a fenced block, so a marker there, or
+    in a code span, is an example: neither listed nor warned about.
+    """
+    for start, end in reversed(_worklog_entries.fenced_spans(text)):
+        text = text[:start] + re.sub(r"[^\n]", "", text[start:end]) + text[end:]
+    return CODE_SPAN_RE.sub("", text)
+
+
 def check_markers(dump: bool = False) -> None:
     registry = []
     historical = set(evidence_document_locations().values())
@@ -525,7 +602,8 @@ def check_markers(dump: bool = False) -> None:
         if f in historical:
             continue  # Historical declarations are provenance, not current rules.
         rel = f.relative_to(REPO)
-        for i, line in enumerate(f.read_text().splitlines(), 1):
+        raw_lines = f.read_text().splitlines()
+        for i, line in enumerate(without_code("\n".join(raw_lines)).split("\n"), 1):
             if not MARKER_RE.search(line):
                 continue
             if is_entry(f, "worklog") or is_entry(f, "open_work"):
@@ -534,7 +612,7 @@ def check_markers(dump: bool = False) -> None:
                     error(f"{rel}:{i}: INVARIANT/DON'T-REDO declarations belong on pages or class docs, not {f.name}")
                 continue
             if MARKER_OK_RE.search(line):
-                registry.append(f"{rel}:{i}: {line.strip()}")
+                registry.append(f"{rel}:{i}: {raw_lines[i - 1].strip()}")
             elif "**" in line and ("INVARIANT" in line or "DON'T-REDO" in line):
                 warn(f"{rel}:{i}: marker-ish line not in **INVARIANT:** / **DON'T-REDO:** form")
     if dump:
@@ -669,6 +747,7 @@ def main() -> int:
         print(f"ERROR: evidence document verification failed: {problem}", file=sys.stderr)
         return 1
     check_md_links()
+    check_source_links()
     check_html()
     check_snippets()
     check_figures()

@@ -17,6 +17,7 @@
       font-size: 12.5px; color: #cdd6e0; background: rgba(30, 36, 48, .6);
       border: 1px solid rgba(255,255,255,.12); border-radius: 999px;
       padding: 3px 11px; cursor: pointer; user-select: none;
+      white-space: nowrap;
       transition: opacity .15s, background .15s; }
     .fig-chip:hover { background: rgba(55, 65, 85, .8); }
     .fig-chip.off { opacity: .38; }
@@ -74,7 +75,10 @@
       if (els[0].style.display === "none") chip.classList.add("off");
       const dot = document.createElement("span");
       dot.className = "fig-dot";
-      dot.style.background = strokeOf(els);
+      // The lightbox builds its chips on a clone that is not in the page
+      // yet, and a detached element has no computed stroke, so the colour
+      // comes from the page figure when there is one.
+      dot.style.background = strokeOf(mirrorGroups?.[key] || els);
       chip.append(dot, document.createTextNode(label(key)));
       chip.addEventListener("click", (e) => {
         e.stopPropagation();
