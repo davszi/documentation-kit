@@ -2,6 +2,28 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Decisions by deivid on the open list
+
+- The step-back review after every third finished experiment: "Yes, every
+  third".
+- Five choices the implementer of 4.0.0 made on its own stay as released: old
+  worklog entries also tolerate a missing image and a stale anchor; a wrong
+  date in `worklog_links_checked_from` fails the build; `[plot_toggle_labels]`
+  is a stable setting; `DOCS_CHROMIUM` is removed; `package.json` has no name.
+  His word: "thats fine".
+- The kit's own four example slide faces are redone under the changed rule
+  before the release: "redo them".
+- The two open defects, a marker inside a code block and the chips in the
+  zoomed figure, are fixed before the release: "fix now".
+- No trial build of ADP with the new Reference default before the release:
+  "we wont run the build now". ADP's first build with it happens at its
+  upgrade. ADP's tracked tree is 6.59 GB in 84,850 files; its 329 Markdown
+  files are 6.1 MB.
+- Deleted with his yes: 15 old log files and the folders
+  `experiment-guides-20261107`, `page-tools`, `qa` and `review` under
+  `.build/`, and the two merged agent worktrees with their branches.
+  `.build/panel-switcher` stays; a current test writes there.
+
 ## 2026-11-15 — Lint and browser checks for slide faces
 
 - Decision: deivid decided to build the slide-face checks in the kit before
