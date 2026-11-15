@@ -2,6 +2,63 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Plot toggle chips in the zoomed figure
+
+- Decision: deivid asked for the fix before the 5.0.0 release ("fix now").
+- Grey dots, cause confirmed: the lightbox calls `buildChips` on its clone of
+  the figure before the clone is in the page. In Chromium a detached path's
+  computed `stroke` is the empty string (probe: page figure
+  `rgb(228, 87, 46)`, detached clone `""`, the same clone attached
+  `rgb(228, 87, 46)`), so `strokeOf` fell back to `#9aa4b2`. Fix in
+  `theme/components/plot-toggles.js`: a chip's dot takes its colour from the
+  page figure's group when there is one, which is the case in the lightbox.
+- Wrapped label, cause found: the zoomed figure's chip bar was placed with
+  `left: 50%` and `translateX(-50%)`, so its width was limited to the right
+  half of the window, about 195 px at 390 px, and a chip's label broke inside
+  it. Fix: the bar in `theme/components/lightbox.js` spans the window less 4vw
+  on each side and wraps whole chips; `.fig-chip` keeps its label on one line
+  (`white-space: nowrap`). The bar ignores pointer events and only the chips
+  take them, so a click beside the chips still closes the zoomed figure, as
+  before when the bar was only as wide as its chips.
+- Built scratch page with the kit theme at 390 px, before: every dot
+  `rgb(154, 164, 178)`, and the chips "Menger joints (default)" and
+  "least-squares fit (smoothed)" 62 px high, two lines, against 44 px for one
+  line; after: each dot in its series colour, every chip 44 px high, and the
+  bar in three rows of whole chips. At 1600 px the four chips stand in one row
+  before and after; only the colour changed.
+- Test: `reviewPlotToggleChips` in `tests/test_browser_checks.cjs` loads the
+  real `plot-toggles.js` and `lightbox.js` with five series coloured four ways
+  (stroke attribute, a class styled inside the SVG, fill only, a path inside a
+  group), opens the zoomed figure at 1600 and 390 px, and checks the dot
+  colours on the page and zoomed, one line per label, chips inside the window,
+  more than one row at 390 px, and that a zoomed toggle still hides the page
+  group. Against the old two files it fails on the grey dots; with only the
+  colour fix it fails at 390 px on the label "least-squares fit (smoothed,
+  5-point window)", which the fixture uses because its system font is
+  narrower than the kit's and "Menger joints (default)" alone fits there.
+- Reviewed by eye: the zoomed figure with its chips on the built scratch page
+  at 1600×1000 and 390×844 after the fix, and the test fixture at both widths.
+  Dots match the lines; labels sit on one line; at 390 px the chips wrap
+  under each other centred and stay above the figure.
+- Rules: `rules/site/authoring.md` › Authoring paths says the dot has its
+  series colour in the lightbox too, and that labels stay on one line while
+  the bar wraps whole chips. No anchor changed.
+- Records: `docs/open/plot-toggle-chips-in-lightbox.md` and its line in
+  `docs/open/KIT_OPEN.md` are deleted, as the record asked; the 5.0.0 release
+  notes gain a row and name `lightbox.js` and `plot-toggles.js` among the
+  shared files with a new `?v=` query. No capability map row changes; the
+  theme is not a tooling root.
+- The entry of 2026-11-14 "Close the findings of the review before the 4.0.0
+  tag" links the deleted record, and the worklog is not rewritten, so
+  `worklog_links_checked_from` in `docs/site/site.toml` moves from 2026-11-12
+  to 2026-11-15, as the resources rule asks. Lint no longer checks links in
+  the entries of 2026-11-12 to 2026-11-14; on the worklog's page a link there
+  whose target is gone shows as unlinked text.
+- Checks before the commit: on the kit `docsite.py build`, `lint --strict`
+  (0 warnings) and `build --check-reader`; `tests/test_browser_checks.cjs`
+  and `tests/visual_review.cjs` pass, each run alone under a 4 GB memory
+  limit. The other browser suites run after the last change of the day.
+
 ## 2026-11-15 — A marker inside a code block stays text
 
 - Decision: deivid asked for the fix before the 5.0.0 release ("fix now",

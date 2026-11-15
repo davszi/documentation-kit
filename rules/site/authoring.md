@@ -94,7 +94,9 @@ next shared tone in order.
 A page that lists `plot-toggles` in its `components` gives every inline SVG
 figure (class `inline-fig`) one chip per group of elements whose `id` is
 `tg-<group>--<n>`; a chip hides and shows its group, on the page and in the
-lightbox. The chip shows the group key. A `[plot_toggle_labels]` table in
+lightbox. The chip shows the group key and a dot in the colour of its series,
+in the lightbox too. A chip keeps its label on one line; when the chips do not
+fit beside each other, the bar wraps whole chips onto a new row. A `[plot_toggle_labels]` table in
 `site.toml` gives a key a label for the whole site, such as
 `"corridor" = "road corridor"`; each value must be text. The build writes the
 table into each page that loads the component, and a key the table does not

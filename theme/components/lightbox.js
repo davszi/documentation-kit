@@ -15,9 +15,13 @@
       box-shadow: 0 8px 40px rgba(0,0,0,.6); border-radius: 4px;
       background: #101319; margin: 0; }
     .lb-overlay img.lb-drag, .lb-overlay svg.lb-drag { cursor: grabbing; }
-    .lb-overlay .fig-chips { position: fixed; top: 12px; left: 50%;
-      transform: translateX(-50%); z-index: 1001; margin: 0;
-      max-width: 92vw; cursor: default; }
+    /* The bar spans the window less a 4vw margin on each side and wraps
+       whole chips; centred with left: 50% it shrank to half the window and
+       broke long labels inside their chips. Only the chips take clicks, so
+       a click beside them still closes the lightbox. */
+    .lb-overlay .fig-chips { position: fixed; top: 12px; left: 4vw;
+      right: 4vw; z-index: 1001; margin: 0; pointer-events: none; }
+    .lb-overlay .fig-chip { pointer-events: auto; cursor: pointer; }
     .lb-hint { position: fixed; bottom: 14px; left: 50%;
       transform: translateX(-50%); color: #9aa4b2; font-size: 12px;
       font-family: inherit; pointer-events: none; }

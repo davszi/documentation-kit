@@ -12,7 +12,7 @@ page_number_notes = true
 # mistaken for a consuming project's docs/worklog.md or docs/open/OPEN.md.
 worklog = "docs/KIT_WORKLOG.md"
 # Older entries link files that were deleted later; entries are never rewritten.
-worklog_links_checked_from = "2026-11-12"
+worklog_links_checked_from = "2026-11-15"
 open_work = "docs/open/KIT_OPEN.md"
 # Every other tracked Markdown file is listed under Reference automatically.
 # CLAUDE.md only points agents at AGENTS.md, and the starter's sample record
