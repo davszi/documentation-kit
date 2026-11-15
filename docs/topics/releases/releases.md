@@ -112,11 +112,6 @@ not valid for the new setting.
 
 What is provisional:
 
-- **The version number.** The kit owner recommends 5.0.0 because of the
-  changed default. deivid has not confirmed the number; the
-  [open record](../../open/release-5.0.0-waits.md) keeps the question. Without
-  the publication default, the publish refusal and the slide-face lint error
-  above still make the release major under the promise as written.
 - **The page lock's rule text.** Details of the
   [page lock](../../../rules/site/publication.md#page-lock) are still being
   finished. This record names its settings; the rule section owns how it
@@ -136,7 +131,7 @@ What is provisional:
   and classes are build output or theme internals. None is in the
   [stable list](#100--first-stable-version).
 
-Known open points are in the [open record](../../open/release-5.0.0-waits.md).
+Known open points are in the [open record](../../open/known-open-after-5.0.0.md).
 
 Measured by the code review on 2026-11-15: lint on the kit takes 1.52 s
 against 1.00 s at 4.0.0, and on a synthetic project with 300 topic pages and

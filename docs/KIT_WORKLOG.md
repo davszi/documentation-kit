@@ -2,6 +2,27 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Release 5.0.0
+
+- deivid gave the go: "Yes, release 5.0.0". The ask named what the go covers:
+  moving `main` to the release state, the number 5.0.0, the merge of the
+  source-link fix branch `fix/local-source-links-20261114` (in `ee5ae78`),
+  the tag `v5.0.0`, and the push of `main` and the tag, which publishes the
+  kit's own site. It also gave the size: 56 commits after `v4.0.0`, 141
+  files changed, 18,137 lines added and 1,116 removed, and a migration guide
+  of 3,896 words.
+- The release state was reviewed at `93d0b58`. The independent reviewer's
+  verdict on the last fix: fit to release, no blocker and no major finding.
+- This commit only closes records. `docs/open/release-5.0.0-waits.md` is
+  deleted with its route: all three of its questions are answered. Its open
+  points, with three more from the final reviews, are now in
+  [known open after 5.0.0](open/known-open-after-5.0.0.md). The release
+  notes no longer call the version number provisional. Two links to the
+  deleted record in older entries below are now plain paths.
+- Checks on this commit: `build`, `lint --strict` and `build --check-reader`
+  of the kit pass, and `DOCS_REQUIRE_BROWSER=1 bash tests/run_checks.sh`
+  passes with 347 Python tests and seven browser suites.
+
 ## 2026-11-15 — Show only raster images on automatically listed pages
 
 - Why: a review of the allowlist found every listed page clean, in three
@@ -1165,7 +1186,7 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
 - Compared with `v4.0.0`: no heading of any file under `rules/` is removed or
   renamed; `rules/site/authoring.md` and `rules/site/publication.md` gain
   sections.
-- The open record [release 5.0.0 waits](open/release-5.0.0-waits.md) holds the
+- The open record `docs/open/release-5.0.0-waits.md` holds the
   go to tag and push, the number, the merge of the source-link fix branch and
   six known open points. The slide-face findings record now lists only what
   is still owed.
@@ -1296,7 +1317,7 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
 - deivid approved publishing that branch and pinning a consuming project to
   it. He has been told that it is merged into the release state; he has not
   said in words to merge it. The
-  [open record](open/release-5.0.0-waits.md) keeps the question.
+  open record `docs/open/release-5.0.0-waits.md` keeps the question.
 
 ## 2026-11-15 — Presentation view and a Slides switch for All chapters
 
