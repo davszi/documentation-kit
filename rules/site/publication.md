@@ -254,6 +254,12 @@ authenticated data. `tooling/page_lock.py` encrypts;
   clears the site's data. Any page served from the same origin, such as
   another GitHub Pages site of the same account, can read the stored keys,
   remembered or not.
-- The kit's checks run the lock in Chromium only. Other browsers are untested.
-  Safari may delete remembered keys of a site that a reader has not visited for
-  some days; that is untested too.
+- The kit's checks run the lock in Chromium. With `DOCS_BROWSER=firefox`, the
+  same browser suite passes in the Firefox 153 that Playwright 1.62.1 installs
+  on Linux: unlocking, the Reference tree after the page is rewritten,
+  Markdown opened as text, fragments, the Presentation view, back and forward,
+  remembered keys across publishes, and pages opened from disk. WebKit, the
+  engine behind Safari, could not start on the test machine for lack of system
+  libraries, so the lock is untested in WebKit. Safari on macOS or iOS is not
+  WebKit on Linux and is untested as well. Safari may delete remembered keys of
+  a site that a reader has not visited for some days; that is untested too.

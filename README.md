@@ -184,7 +184,9 @@ optional page lock needs. The page-lock checks need it too:
 `tests/test_page_lock.py`, the WebCrypto cross-check
 `tests/test_page_lock_webcrypto.cjs` and the browser suite
 `tests/test_page_lock_browser.cjs`. Without it the script skips them, and
-`DOCS_REQUIRE_BROWSER=1` turns that into a failure.
+`DOCS_REQUIRE_BROWSER=1` turns that into a failure. The browser suite runs in
+Chromium; after `npx playwright install firefox webkit`, run it alone with
+`DOCS_BROWSER=firefox` or `DOCS_BROWSER=webkit` to try another engine.
 
 `npm ci` installs the Playwright version that `package.json` and
 `package-lock.json` pin into the kit's own `node_modules/`, which Git ignores;

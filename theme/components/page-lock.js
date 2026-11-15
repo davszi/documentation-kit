@@ -331,10 +331,20 @@
     document.addEventListener('click', markdownLinks(keys));
     window.addEventListener('load', function () {
       var id = location.hash.slice(1);
-      if (!id || document.querySelector(':target')) return;
-      var target;
-      try { target = document.getElementById(decodeURIComponent(id)); } catch (error) { return; }
-      if (target) target.scrollIntoView();
+      var target = null;
+      try { target = id ? document.getElementById(decodeURIComponent(id)) : null; } catch (error) { target = null; }
+      // The chapter reader routes its own fragments.
+      if (!target || target.closest('[data-reader-chapter]')) return;
+      // An engine may scroll to the fragment before images, frames and fonts of
+      // the written page have loaded (Firefox does), so the target ends up lower
+      // than on a normal load. Scroll to it once more, unless the reader moved.
+      var moved = false;
+      ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (type) {
+        window.addEventListener(type, function () { moved = true; }, {once: true, passive: true});
+      });
+      (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () {
+        requestAnimationFrame(function () { if (!moved) target.scrollIntoView(); });
+      });
     });
     document.write(markup);
     document.close();
