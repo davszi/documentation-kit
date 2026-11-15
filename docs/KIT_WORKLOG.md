@@ -2,6 +2,31 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Correct and shorten the 5.0.0 guide and release notes
+
+- Why: a review followed the 5.0.0 guide on a clone of adaptation and found
+  steps that mislead, and deivid's concern stands: "we're bloating the docs".
+- The guide: the listing check needs a passing build and fails on a
+  `site-build.json` without `reference_tree`; a build error that names a
+  removed or renamed setting is fixed in the step below and the agent comes
+  back; narrowing a private suffix sends the agent back to the first step; the
+  adapter file goes once a search finds no other user; links in pages locked
+  by hash need an approved revision first; the Markdown link check no longer
+  reaches records outside `docs/` that only the removed evidence settings
+  brought in, and a command lists their dead links; the own-keys search
+  includes `formula_check_required`; a file that exists on one machine only;
+  where Playwright comes from. "Adopt the capability map" became the required
+  "Set the tooling folders". The lists of changes that need no edit became a
+  table of what a project's own checks meet and a command that lists the
+  changed rule files. 4,558 words before, 3,867 after.
+- Release notes: a seventh reason for a major release, the missing
+  `tooling_roots`; `tooling_roots` joins the stable keys; the sections "Where
+  code lives" and "Formula check" are named; the bleed fix links slide faces;
+  one of adaptation's dead links is an ignored local file, not a missing one;
+  the code fixes of this day are in their rows; lint timings measured by the
+  code review are stated.
+- Checks: listed in the entry "Fix the findings of the code review".
+
 ## 2026-11-15 — Settle the nine questions of the upgrades to 4.0.0
 
 - Why: `docs/open/upgrade-to-4.0.0-findings.md` held nine questions for

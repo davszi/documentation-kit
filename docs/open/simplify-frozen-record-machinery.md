@@ -33,8 +33,9 @@ name none of the removed settings; adaptation names `path_resolver` and
 `evidence_validator`, both `docs/site/layout_paths.py`; none sets
 `evidence_manifests` or `legacy_files`.
 
-adaptation removes its two settings and `docs/site/layout_paths.py` at its
-upgrade to 5.0.0, deletes the frozen copies its owner approves, and repoints or
+adaptation removes its two settings at its upgrade to 5.0.0, and
+`docs/site/layout_paths.py` once a search finds no other user (its own tests
+import it), deletes the frozen copies its owner approves, and repoints or
 removes the links that needed the adapter, following the
 [migration step](../topics/releases/migrations/5.0.0.md#remove-the-adapter-hooks).
 The size of that cleanup, measured on a clone, is in the worklog entry of
