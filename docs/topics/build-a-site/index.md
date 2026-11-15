@@ -182,10 +182,10 @@ Inside a page, link to other pages by their generated name, such as `records.htm
 <p class="bs-lead">Create <code>docs/topics/&lt;name&gt;/index.md</code>, give it frontmatter, write one card per claim and add a <code>[[nav]]</code> entry; the build does the rest.</p>
 
 <figure id="fig-topic-page">
-<div class="bs-flow" role="img" aria-label="A topic page file with frontmatter holds chapter cards. Each card has a claim heading, a one-sentence lead, one visual, the reason, an example and optional folds. The build turns each card into a reader chapter, and a nav entry puts the page in the menu.">
+<div class="bs-flow" role="img" aria-label="A topic page file with frontmatter holds chapter cards. Each card has a claim heading, a one-sentence lead, the visual that fits the claim, the reason, an example and optional folds. The build turns each card into a reader chapter, and a nav entry puts the page in the menu.">
 <div class="bs-node bs-teal"><span class="bs-label">One file</span><b>Topic file</b><ul><li><code>docs/topics/guide/index.md</code></li><li>frontmatter: title, description, components</li><li>one <code>&lt;section class="card"&gt;</code> per chapter</li></ul></div>
 <div class="bs-arrow"><span>each card</span></div>
-<div class="bs-node bs-violet"><span class="bs-label">One claim</span><b>Chapter card</b><ul><li><code>##</code> heading that states the claim</li><li>lead sentence, then one visual</li><li>why, an example, optional folds</li></ul></div>
+<div class="bs-node bs-violet"><span class="bs-label">One claim</span><b>Chapter card</b><ul><li><code>##</code> heading that states the claim</li><li>lead sentence, then the visual that fits the claim</li><li>why, an example, optional folds</li></ul></div>
 <div class="bs-arrow"><span>build</span></div>
 <div class="bs-node bs-orange"><span class="bs-label">Generated</span><b>Page</b><ul><li><code>guide.html</code></li><li>a reader chapter per card</li><li>in the menu through <code>[[nav]]</code></li><li>optional slide face per card</li></ul></div>
 </div>
@@ -213,7 +213,7 @@ toc = []
 
 <p class="bs-lead">Run the full checks on the exact commit, then tag it.</p>
 
-…one visual, the reason, an example, optional folds…
+…the visual that fits the claim, the reason, an example, optional folds…
 
 </section>
 ```

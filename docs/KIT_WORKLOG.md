@@ -2,6 +2,26 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Apply deivid's rule decisions and correct rule wording
+
+- User names: deivid said "username we dont do". [Page design](../rules/writing/pages.md#page-design)
+  now says a user name inside a path is a name and is replaced before the page
+  is published; the 4.0.0 guide's step on names and "Documentation and
+  writing" say the same.
+- Tones: the slide-face rule no longer gives the accent and warm tones to the
+  compared methods, because the kit's own figures use them otherwise; each
+  tone keeps one meaning across a project's slides, and `is-alert` and
+  `is-held` keep theirs. "Documentation and writing" follows.
+- Wording that gave two readings: a face shape "one decisive number" is gone,
+  since tiles of numbers are boxes; a reported path is a link's text and its
+  target stays as the record writes links; "attempt" is each run of the
+  experiment's procedure, the agent that finishes an experiment counts for
+  the step-back review, and the running total is not one of the registries
+  the workflow forbids; "Where code lives" copies reused code out of a
+  finished experiment instead of moving it. "Documentation and writing" no
+  longer makes a slide figure a view of a numbered chapter figure, and "Build
+  a site" no longer gives a chapter card one visual.
+
 ## 2026-11-15 — Fix the findings of the code review
 
 - Why: an independent review of the code and checks found two defects that

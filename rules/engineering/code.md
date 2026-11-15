@@ -33,9 +33,9 @@ An experiment's folder holds only that experiment's own code, inputs and
 records. Code that other experiments or tools reuse, such as a run harness, a
 supervisor or a judge, lives in the project's tooling or source tree, and the
 experiment imports it from there. When a second user appears, move the code
-before adding the second import. A finished experiment is not edited for the
-move: its [source pin](../records.md#numbers-and-staleness) stands for the
-code it ran.
+before adding the second import. From a finished experiment, copy it into the
+tooling tree instead: the finished experiment keeps its copy, its links and
+its [source pin](../records.md#numbers-and-staleness).
 
 ## Name the need first
 

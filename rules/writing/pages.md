@@ -4,7 +4,7 @@
 
 Give each section one coherent purpose: answer a question, show a construction or compare alternatives. Split when the purpose changes; merge thin sections into their concept. Heading levels do not require separate cards. Use cards, tiles, tabs and callouts for distinct roles, without arbitrary word limits or one-screen constraints.
 
-Titles state the takeaway. A one-sentence `bs-lead` states the claim before the evidence. When reporting on the reader's questions, use each question as a heading, answer directly, then show evidence. Follow the [explanation prerequisites](explanations.md#story-and-reading-layers) and keep a formal, plain human voice. Internal registry tags, bug-hunt narratives, file-routing tables and debugging chronology stay off rendered surfaces. A page that explains how something works names the people who do that work by role, not by name: one role word for each role, such as "the developer", throughout the page. A name stays where the page states who decided, approved or said something, and in a method's name, a citation or a contact line.
+Titles state the takeaway. A one-sentence `bs-lead` states the claim before the evidence. When reporting on the reader's questions, use each question as a heading, answer directly, then show evidence. Follow the [explanation prerequisites](explanations.md#story-and-reading-layers) and keep a formal, plain human voice. Internal registry tags, bug-hunt narratives, file-routing tables and debugging chronology stay off rendered surfaces. A page that explains how something works names the people who do that work by role, not by name: one role word for each role, such as "the developer", throughout the page. A name stays where the page states who decided, approved or said something, and in a method's name, a citation or a contact line. A user name inside a path is a name too and is replaced before the page is published.
 
 When the purpose of a section is to explain a mechanism or spatial
 relationship, place the figure after the heading or a one-sentence takeaway. Follow it with the
@@ -68,7 +68,7 @@ Slide faces are added when a person wants them. Build the page's chapters first.
 
 A face earns its place by its visual. Make each one a slide worth presenting on its own: one finding, shown by visuals that fill the canvas, with labels a person can read from the back of a room. The limit is on the message, not on the picture: a face makes one point, and any number of visual parts may carry it.
 
-Design each face for its own content. Decide what the finding is and what shape its evidence has: a comparison, a sequence, a trend, parts of a whole, one decisive number, a place on a drawing. That shape sets the layout. No arrangement is prescribed, and two faces of a page share one only when their content has the same shape. A face may be one figure across the whole canvas with labels on its parts, a figure with a few points beside it, a row of steps above two conclusions, a matrix, or pictures in columns with a caption each.
+Design each face for its own content. Decide what the finding is and what shape its evidence has: a comparison, a sequence, a trend, parts of a whole, a place on a drawing. That shape sets the layout. No arrangement is prescribed, and two faces of a page share one only when their content has the same shape. A face may be one figure across the whole canvas with labels on its parts, a figure with a few points beside it, a row of steps above two conclusions, a matrix, or pictures in columns with a caption each.
 
 The frame is what a project's faces share, not the body: the label row and the title at the top, the scope line at the bottom, the type roles and the tones.
 
@@ -94,7 +94,7 @@ A review of existing faces sorts each one into three groups and gives the reason
 - No fact exists only on a slide. Every number and claim on it is stated, with its evidence, in the chapter below; update both in the same edit. This is the one sanctioned repetition of a fact: the slide is a view of the chapter, never its owner. Lint warns about a number that a face shows and its chapter does not, as [slide faces and decks](../site/authoring.md#slide-faces-and-decks) describes; claims stay with the review.
 - Keep the canvas uncrowded. A face that does not fit 16:9 has too much content for one slide; move detail into the chapter instead of shrinking type. Below 720 px the face stacks into a readable column: nothing on it overflows sideways, no text is cut off and no part sticks out of the face. At every width the labels of its drawings keep the 11 px that [figures](figures.md#figures-and-comparisons) asks of chart labels. The shared [browser check](../site/validation.md#reusable-browser-checks) reports each of these.
 - A figure on a face gets a short caption without a new number; a figure taken from the chapter may name the chapter figure it comes from.
-- Give each tone one meaning across all of a project's slides: the accent and warm tones identify the compared methods, `is-alert` marks failures and warnings, `is-held` marks held-out, hidden or pending items, and everything else stays neutral.
+- Give each tone one meaning across all of a project's slides: `is-alert` marks failures and warnings, `is-held` marks held-out, hidden or pending items, and everything else stays neutral.
 
 ## Completion and review
 

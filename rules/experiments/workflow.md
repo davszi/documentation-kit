@@ -14,7 +14,7 @@ Read first. These limits never waive the required content.
 - Before adding a run, check, document or gate, name the decision it changes
   and the error it would catch. If you cannot, do not add it.
 - Add no registries, receipts, templates, approval steps, audit files or status
-  boards unless the project asks.
+  boards beyond the running total unless the project asks.
 - Import no other field's methods (preregistration, ablation grids,
   [learned-model practices](#learned-or-fitted-models-only)) unless the results
   depend on them.
@@ -81,7 +81,7 @@ before completion is reported.
 
 ## Show the total
 
-At each attempt, add one line to the experiment's record with the running
+At each attempt, each run of the experiment's procedure, add one line to the experiment's record with the running
 total: attempts so far, usable results, lines of supporting code and of its
 tests, and the person's minutes used. For example:
 
@@ -113,7 +113,8 @@ total has no threshold and stops nothing. The person reads it and decides.
 
 After every third finished experiment, unless the project's context names
 another interval, and whenever the person asks, a fresh agent looks at the
-whole. It only reads: the capability map, the experiment records with their
+whole. The agent that finishes an experiment counts the finished ones in the
+worklog and asks for the review. It only reads: the capability map, the experiment records with their
 totals, the tooling tree and the worklog. It changes nothing and answers
 three questions:
 
