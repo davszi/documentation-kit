@@ -11,7 +11,8 @@ Checks (the shared guides under rules/ are the spec):
      in their source file (error), at the stated lines (warning otherwise)
   4. figure manifest: files ↔ entries both ways, generator scripts exist,
      doc-referenced figures are in the manifest; unreferenced figure = warning
-  5. INVARIANT / DON'T-REDO marker form (bold, colon); never in worklog/OPEN
+  5. INVARIANT / DON'T-REDO marker form (bold, colon); never in worklog/OPEN;
+     fenced code blocks and code spans are skipped, as the build skips them
      (--registry dumps the marker registry and exits)
   6. OPEN.md format: every bullet links its owning doc; no strikethrough /
      checkboxes / DONE markers (lines get deleted, not struck)
@@ -518,6 +519,20 @@ MARKER_RE = re.compile(r"INVARIANT|DON'T-REDO")
 MARKER_OK_RE = re.compile(r"\*\*(INVARIANT:|DON'T-REDO:)\*\*")
 
 
+CODE_SPAN_RE = re.compile(r"(`+)[^\n]*?\1")
+
+
+def without_code(text: str) -> str:
+    """The text with fenced code blocks and code spans blanked, lines kept.
+
+    The build converts no marker inside a fenced block, so a marker there, or
+    in a code span, is an example: neither listed nor warned about.
+    """
+    for start, end in reversed(_worklog_entries.fenced_spans(text)):
+        text = text[:start] + re.sub(r"[^\n]", "", text[start:end]) + text[end:]
+    return CODE_SPAN_RE.sub("", text)
+
+
 def check_markers(dump: bool = False) -> None:
     registry = []
     historical = set(evidence_document_locations().values())
@@ -525,7 +540,8 @@ def check_markers(dump: bool = False) -> None:
         if f in historical:
             continue  # Historical declarations are provenance, not current rules.
         rel = f.relative_to(REPO)
-        for i, line in enumerate(f.read_text().splitlines(), 1):
+        raw_lines = f.read_text().splitlines()
+        for i, line in enumerate(without_code("\n".join(raw_lines)).split("\n"), 1):
             if not MARKER_RE.search(line):
                 continue
             if is_entry(f, "worklog") or is_entry(f, "open_work"):
@@ -534,7 +550,7 @@ def check_markers(dump: bool = False) -> None:
                     error(f"{rel}:{i}: INVARIANT/DON'T-REDO declarations belong on pages or class docs, not {f.name}")
                 continue
             if MARKER_OK_RE.search(line):
-                registry.append(f"{rel}:{i}: {line.strip()}")
+                registry.append(f"{rel}:{i}: {raw_lines[i - 1].strip()}")
             elif "**" in line and ("INVARIANT" in line or "DON'T-REDO" in line):
                 warn(f"{rel}:{i}: marker-ish line not in **INVARIANT:** / **DON'T-REDO:** form")
     if dump:

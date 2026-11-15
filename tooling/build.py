@@ -52,7 +52,7 @@ except ImportError:  # pragma: no cover
 
 from site_paths import DOCS, REPO, SITE as SRC, TOPICS as PAGES, HTML as OUT, OUTPUT_ROOT, KIT_SITE, topic_pages
 from site_bundle import SiteBundle, validate_resources
-from worklog_entries import links_checked_from
+from worklog_entries import fenced_spans, links_checked_from
 
 COMPONENTS = KIT_SITE / "components"
 KATEX_SRC = KIT_SITE / "assets" / "vendor" / "katex"
@@ -193,20 +193,42 @@ TAB_RE = re.compile(r"^<!--\s*tab:\s*(.+?)\s*-->\s*$", re.M)
 # Registry markers render as human-readable callout cards (the label chip
 # comes from CSS ::before); the raw **INVARIANT:**/**DON'T-REDO:** tags stay
 # in the md source for `lint --registry`. A marker paragraph = the token at
-# line start through the next blank line.
+# line start through the next blank line or fenced code block.
 _CALLOUT_RES = (
     (re.compile(r"(?m)^\*\*INVARIANT:\*\*\s*((?:[^\n]+\n?)+?)(?=\n\s*\n|\Z)"), "inv"),
     (re.compile(r"(?m)^\*\*DON'T-REDO:\*\*\s*((?:[^\n]+\n?)+?)(?=\n\s*\n|\Z)"), "redo"),
 )
 
 
-def markers_to_callouts(body: str) -> str:
+def _marker_cards(text: str) -> str:
     for rx, kind in _CALLOUT_RES:
-        body = rx.sub(
+        text = rx.sub(
             lambda m, k=kind: f'<div class="callout {k}">\n\n{m.group(1).rstrip()}\n\n</div>\n',
-            body,
+            text,
         )
-    return body
+    return text
+
+
+def markers_to_callouts(body: str) -> str:
+    """Marker paragraphs as cards, outside fenced code blocks.
+
+    A marker inside a fenced block, with backticks or tildes and also one left
+    open to the end, stays text, so a page can show the source form. Only the
+    text between fenced blocks is converted, so a marker paragraph that runs
+    into a fence ends where the fence starts; a blank line then separates the
+    card's closing tag from the fence, which would otherwise stay inside the
+    HTML block.
+    """
+    parts, position = [], 0
+    for start, end in fenced_spans(body):
+        text = body[position:start]
+        converted = _marker_cards(text)
+        if converted != text and not converted.endswith("\n\n"):
+            converted += "\n"
+        parts += [converted, body[start:end]]
+        position = end
+    parts.append(_marker_cards(body[position:]))
+    return "".join(parts)
 HEADING_ID_RE = re.compile(r"\s*\{#([A-Za-z0-9][A-Za-z0-9_-]*)\}\s*$")
 
 _errors: list[str] = []

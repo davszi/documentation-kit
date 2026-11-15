@@ -2,6 +2,54 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — A marker inside a code block stays text
+
+- Decision: deivid asked for the fix before the 5.0.0 release ("fix now",
+  recorded in the entry on his decisions below).
+- Cause, reproduced before the change: `markers_to_callouts` in
+  `tooling/build.py` rewrote every marker at line start before Markdown was
+  rendered, inside fenced code blocks too. A fixture page with markers in
+  three fences failed the build with `chapter layout: Mismatched document
+  closing tag: div`; rendered without the reader, the block showed the card's
+  opening tag as code and a stray `</div>` followed it.
+- Fix: the conversion now runs only on the text between fenced blocks.
+  `fenced_spans` in `tooling/worklog_entries.py`, which already found the
+  fences for the worklog's dated headings, is now public and is the one fence
+  reader for both; it covers backtick and tilde fences, a closing fence at
+  least as long as the opening one, and a fence left open to the end. A marker
+  paragraph that runs into a fence without a blank line now ends where the
+  fence starts, with a blank line written after the card so the fence is not
+  swallowed by the card's HTML block.
+- Lint, the second case of the open record: `check_markers` warned about a
+  line that named the markers in code spans when the line also held bold
+  text, as ADP met on 2026-11-11, and `lint --registry` listed markers inside
+  code. Both now read the line with fenced blocks and code spans blanked, so
+  the registry lists what the build turns into cards, plus markers that stay
+  text outside code (list items, quotes, inside a sentence).
+- Left as they are, with the reason in the rule text: a marker in a list item
+  or a quote stays a bold label, because a card is a block of its own and the
+  conversion does not parse containers; a marker without a blank line after
+  it takes the following lines into its card up to the next blank line or
+  fence, which is how Markdown continues the paragraph. `rules/documentation.md`
+  › Rules for changes and chronology now says both, and that a marker inside
+  a fenced block or code span is an example that stays text. No anchor
+  changed. The writing-practices page explains this rule; its sentences stay
+  true and were not touched, because another agent is redesigning that page.
+- New `tests/test_markers.py`, six tests on a fixture page: cards only outside
+  code, markers kept in a backtick fence, a tilde fence holding a shorter
+  backtick fence, a fence after a card and an open fence at the end; the list
+  item keeps its label; the registry and the warning skip code. With the old
+  `build.py` and `lint.py` five tests fail; with the old `lint.py` alone two.
+- Records: `docs/open/marker-in-fenced-code.md` and its line in
+  `docs/open/KIT_OPEN.md` are deleted, as the record asked once the defect is
+  closed. The capability map gains a row for finding fenced code blocks; the
+  5.0.0 release notes gain a row.
+- Checks before the commit: on the kit `docsite.py build`, `lint --strict`
+  (0 warnings) and `build --check-reader` (5 reader pages); the starter
+  builds and lints strictly; 294 Python tests pass, 288 before plus the six
+  new ones. The browser suites were not run for this change, which touches no
+  theme file; they run after the last change of the day.
+
 ## 2026-11-15 — Decisions by deivid on the open list
 
 - The step-back review after every third finished experiment: "Yes, every
