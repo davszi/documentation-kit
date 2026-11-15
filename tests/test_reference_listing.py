@@ -118,6 +118,7 @@ class ReferenceListing(Project):
         routes = self.routes()
         self.assertEqual(routes, {
             'agents.md.html': 'AGENTS.md',
+            'docs.capability_map.md.html': 'docs/CAPABILITY_MAP.md',
             'docs.index.md.html': 'docs/index.md',
             'docs.open.open.md.html': 'docs/open/OPEN.md',
             'docs.project_context.md.html': 'docs/PROJECT_CONTEXT.md',

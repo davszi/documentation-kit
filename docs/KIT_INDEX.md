@@ -5,7 +5,8 @@ commands. [README](../README.md) owns consumer setup and upgrades.
 
 ## Engineering practices
 
-- [Code and repository practices](../rules/engineering/code.md): diagnostics, consumed output and generated files.
+- [Code and repository practices](../rules/engineering/code.md): diagnostics, consumed output, generated files, where code lives and naming the need first.
+- [Capability map](KIT_CAPABILITY_MAP.md): what the kit's tooling does, where each part lives and which files import it.
 - [Efficient implementation](../rules/engineering/performance.md): routine efficiency and workload-scoped measurements.
 - [Execution and shared resources](../rules/engineering/execution.md): environment identity, budgets, evidence, supervision and cleanup.
 - [Delivery](../rules/engineering/delivery.md): assignment, ownership, parallel work and escalation.

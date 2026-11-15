@@ -24,6 +24,11 @@ Checks (the shared guides under rules/ are the spec):
      deeper in a folder named by `topic_group_folders`, has a record beside it
      (another .md outside evidence/) or declares `page_only = "<reason>"`;
      an empty page_only is an error, an unneeded one a warning; home exempt
+ 13. capability map, only when site.toml names `tooling_roots`: the map exists
+     and is tracked; every tracked file or folder directly under a tooling root
+     is linked from its table; its generated Imported by column matches the Python
+     imports (errors); a tooling module that imports from a folder under
+     `experiment_roots` is a warning. The map's links are checked as in 1.
 
 Notes (never fail, not even under --strict): a changed record section
 (working tree vs HEAD, or vs --since <rev>) lists the topic pages that link
@@ -171,6 +176,14 @@ def md_files() -> list[Path]:
         source = entry.get("source") if isinstance(entry, dict) else None
         if isinstance(source, str) and (REPO / source).is_file():
             files.add(REPO / source)
+    # The capability map's links are checked wherever the project keeps it.
+    from capability_map import settings as capability_settings
+    try:
+        capability = capability_settings(site)
+    except ValueError:
+        capability = None  # the build reports the setting
+    if capability is not None and (REPO / capability["map"]).is_file():
+        files.add(REPO / capability["map"])
     return sorted(files)
 
 
@@ -591,6 +604,13 @@ def check_topic_structure() -> None:
     warnings.extend(found_warnings)
 
 
+def check_capability_map() -> None:
+    from capability_map import check
+    found_errors, found_warnings = check(REPO)
+    errors.extend(found_errors)
+    warnings.extend(found_warnings)
+
+
 def record_change_notes(since: str | None) -> list[str]:
     """Reminders, never failures: pages that explain a changed record section."""
     from record_changes import record_change_notes as notes
@@ -641,6 +661,7 @@ def main() -> int:
     check_worklog()
     check_tails()
     check_topic_structure()
+    check_capability_map()
     check_build()
     check_kit_pin()
     notes = record_change_notes(args.since) + page_number_notes()

@@ -1120,6 +1120,11 @@ def main() -> int:
         reference_settings(site)
     except ValueError as problem:
         ap.error(str(problem))
+    from capability_map import settings as capability_settings
+    try:
+        capability_settings(site)
+    except ValueError as problem:
+        ap.error(f"site.toml: {problem}")
     global KNOWN_COMPONENTS
     extra = site.get("extra_components", [])
     if not isinstance(extra, list) or any(not isinstance(c, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", c) or c in KNOWN_COMPONENTS for c in extra) or len(set(extra)) != len(extra):

@@ -36,6 +36,9 @@ def main():
     slides.add_argument('--select', action='append', required=True, help='slug or slug#chapter,chapter (repeatable)')
     slides.add_argument('--out', required=True, help='deck name; written to .build/slides/<name>.html')
     slides.add_argument('--title', default='Slides')
+    capability = commands.add_parser('capability-map',
+                                     help="rewrite the generated Imported by column of the project's capability map")
+    capability.add_argument('--project', type=Path, default=Path.cwd())
     publish = commands.add_parser('publish', help='build, then export a fresh public bundle configured in site.toml')
     publish.add_argument('--project', type=Path, default=Path.cwd())
     publish.add_argument('--out', type=Path, default=Path('_site'))
@@ -100,7 +103,8 @@ def main():
         options.extend(('--page', args.page))
     if getattr(args, 'since', None):
         options.extend(('--since', args.since))
-    return subprocess.run([sys.executable, str(KIT / 'tooling' / (args.command + '.py')), *options],
+    script = args.command.replace('-', '_') + '.py'
+    return subprocess.run([sys.executable, str(KIT / 'tooling' / script), *options],
                           env=env, cwd=project).returncode
 
 

@@ -22,6 +22,9 @@ Read first. These limits never waive the required content.
   Ask before exceeding it or widening the question.
 - There is no quota. Do more only when an open question matters to the next
   decision.
+- Before building a harness, judge or other supporting code,
+  [name the need first](../engineering/code.md#name-the-need-first) and read
+  the project's capability map.
 
 ## Choose the purpose
 
@@ -76,6 +79,55 @@ The run output behind the reported results is
 [tracked in the experiment directory](../records.md#numbers-and-staleness)
 before completion is reported.
 
+## Show the total
+
+At each attempt, add one line to the experiment's record with the running
+total: attempts so far, usable results, lines of supporting code and of its
+tests, and the person's minutes used. For example:
+
+`Total after attempt 7: 7 attempts, 2 usable results, 1,240 lines of supporting code and 610 lines of tests, 95 minutes of the person's time.`
+
+The total counts the machinery around the experiment: the harness, judges,
+preparation steps and other
+[supporting code](../engineering/code.md#name-the-need-first), and the
+person's time. It does not count the science: runs, seeds, controls and
+repetitions are not part of it.
+
+- A usable result is an attempt whose output the record can rest a finding or
+  verdict on, by the experiment's own criteria. An attempt that answers "no"
+  is usable; one that stopped before its output was complete is not.
+- Lines of supporting code and of its tests are counted apart. They include
+  every line written or changed for this experiment so far, in the experiment
+  folder and in the tooling tree. Name the counting command once in the
+  record and count the same way at each attempt.
+- The person's minutes are the time the person spent at the machine or
+  answering for this experiment. Take them from session records or ask the
+  person. When neither has them, write "not recorded"; never estimate them.
+
+The total is information for the person. It is not a target to keep low, and
+an experiment is never weakened to shrink it: what a good experiment needs,
+its runs, controls, repetitions and checks, is decided by its question. The
+total has no threshold and stops nothing. The person reads it and decides.
+
+## Step back across experiments
+
+After every third finished experiment, unless the project's context names
+another interval, and whenever the person asks, a fresh agent looks at the
+whole. It only reads: the capability map, the experiment records with their
+totals, the tooling tree and the worklog. It changes nothing and answers
+three questions:
+
+- Which needs were solved more than once, and where?
+- What does the person keep doing by hand?
+- What do the totals show across experiments?
+
+Its findings go to the person and into the capability map's list of needs
+seen but not built. The agent that asked for the review writes them there,
+each with its decision open, and brings the person the options that
+[name the need first](../engineering/code.md#name-the-need-first) lists.
+Where the runtime cannot start a fresh agent, the review is a separate step
+that reads everything before anything is written, and its report says so.
+
 ## Learned or fitted models only
 
 Skip this section unless results depend on a model learned or fitted from data.
@@ -96,4 +148,5 @@ Checks: [verification](verification.md). Resources and cleanup:
 [run visuals](../writing/figures.md#run-visuals-and-experiment-lifecycle). Benchmarks:
 [performance](../engineering/performance.md). Placement of records:
 [documentation policy](../documentation.md). Placement of code:
-[where code lives](../engineering/code.md#where-code-lives).
+[where code lives](../engineering/code.md#where-code-lives). Supporting code
+and the capability map: [name the need first](../engineering/code.md#name-the-need-first).

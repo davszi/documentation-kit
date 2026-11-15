@@ -72,6 +72,7 @@ The guides are records for agents and own the complete rules. This page explains
 |---|---|
 | Project purpose, repository map, run and build instructions, named documentation routes | `docs/PROJECT_CONTEXT.md` |
 | Reading routes to development guidance, topics, evidence, sessions and open work | `docs/index.md` |
+| What the project's tooling does: each need with its code, state and importers, and the needs seen but not built | `docs/CAPABILITY_MAP.md` |
 | Mechanisms, accepted specifications, methods, scoped results and limits | `docs/topics/<topic>/<topic>.md` and further descriptively named records; every topic has one unless its page declares `page_only` |
 | Human explanation of a topic: current conclusions, figures, decisions and blockers | `docs/topics/<topic>/index.md`, when a person asked for a page |
 | Unfinished delivery, prospective acceptance and unresolved choices with their owners | Named unfinished plans and decision records |

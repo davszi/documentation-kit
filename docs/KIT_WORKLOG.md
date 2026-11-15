@@ -2,6 +2,67 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Capability map, need first, running totals and a step-back review
+
+- Evidence, read by deivid in ADP on 2026-11-15: ADP built 10,125 lines of
+  code and 7,194 lines of tests in ten days to check one kind of run,
+  attended sessions, inside one experiment's folder. 18 sessions used about
+  3.8 hours of the person's time at the machine, and none passed all parts.
+  General tools import from that experiment folder. Recording what a run did
+  was solved three times in three forms. The total cost was first written
+  down after everything was built. The kit's budget named time, compute and
+  files, not supporting code or the person's time, and nothing made anyone
+  look at the whole. These numbers are as reported; not checked here.
+- deivid's words: "i think another failure is that we build something for a
+  single experiment instead of looking for the big picture and ithinking ifwe
+  need for ex the journal thing". On who holds the big picture: "i think there
+  should be a written map cuz its the only object ive one which cannot fail".
+  On unlisted tooling: "yes it should fail". On the proposals: "your proposal
+  i like aside from the 3 strickes one, and regarding count evertyhing im
+  scared the agent will not do good experiments cuz its scared". Then:
+  "build". So there is no rule that stops work after a number of failed
+  attempts, and no cap on what an experiment may cost.
+- `rules/engineering/code.md`: new sections "Name the need first" (write the
+  need in one sentence without the experiment, read the map, and when it is
+  not met stop and bring three options; building stays the person's
+  decision, noticing is the agent's duty) and "The capability map" with "The
+  check". `rules/experiments/workflow.md`: "Show the total" (one line per
+  attempt with attempts, usable results, lines of supporting code and tests,
+  and the person's minutes; information, not a target, no threshold) and
+  "Step back across experiments" (a fresh read-only agent after every third
+  finished experiment or on request). The interval of three is this
+  session's choice; deivid did not name one.
+- `tooling/capability_map.py` and lint check 13: off unless `site.toml`
+  names `tooling_roots`. Then the map (default `docs/CAPABILITY_MAP.md`, or
+  `capability_map`) must exist and be tracked, every tracked file or folder
+  directly under a tooling root needs a row, the map's links are checked
+  wherever it lies, and its Imported by column must match what
+  `docsite.py capability-map` generates from Python imports; these are
+  errors. A tool that imports from a folder under `experiment_roots` is a
+  warning. The build rejects wrong values of the three settings.
+- The kit's own map, `docs/KIT_CAPABILITY_MAP.md`, covers the 21 entries of
+  `tooling/` plus `docsite.py`, and the kit's `site.toml` turns the check on.
+  Writing it changed the design: the generated column was first called "Used
+  by", but static imports miss `lint.py` loading `site_paths.py` and
+  `evidence_documents.py` by path and running `build.py`, so it is named
+  "Imported by", says "no Python imports" instead of a dash, and marks a row
+  without Python code as not scanned. The map's opening text names those
+  users by hand. Needs seen but not built in the kit are the slide-face
+  checks and the HTML source-link check, each with its decision still open.
+- Starter: an empty map, the settings commented out in `site.toml`, a link
+  from `docs/index.md` and a router row in `AGENTS.md`. The kit's own
+  `AGENTS.md` gains the same row. `rules/conformance.md` gains a capability
+  map item; `rules/documentation.md` lists the map among the canonical homes;
+  `rules/site/authoring.md` gains "Capability map settings". Release notes
+  and the 5.0.0 migration guide have the change and the optional step "Adopt
+  the capability map"; the format and check are listed as provisional.
+- Pages synced in a sentence each: the experiments page and the canonical
+  homes table of the writing-practices page. The build-a-site page's snippet
+  from the workflow guide moved three lines.
+- Not reviewed independently. Checks: build, strict lint, `--check-reader`
+  and `tests/run_checks.sh` with the browser suites required; the commit
+  message has the counts. The commit hash is assigned by its landing commit.
+
 ## 2026-11-15 — deivid agrees that chapter figures are material
 
 - Shown the proposal that a chapter's figures and numbers are material for a

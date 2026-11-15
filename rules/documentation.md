@@ -10,12 +10,13 @@ This guide owns where a document lives, the order in which documentation is writ
 |---|---|
 | `docs/PROJECT_CONTEXT.md` | Project purpose, repository map, run/build instructions and named documentation routes |
 | `docs/index.md` | Documentation reading index: routes to development guidance, topics, evidence, sessions and open work |
+| `docs/CAPABILITY_MAP.md` | What the project's tooling does: each need with its code, state and importers, and the needs seen but not built with the person's decisions; see [the capability map](engineering/code.md#the-capability-map) |
 | `docs/development/`, including conventions when needed | Project-specific engineering choices, commands and current repository invariants |
 | `.docs-kit/rules/documentation.md` | Documentation placement, order of work, lifecycle and agent routing |
 | `.docs-kit/rules/records.md` | What a record says and how it is written: format, honest claims, measured numbers and finished working documents |
 | `.docs-kit/rules/writing.md` and `writing/` | Index and focused guides for pages written for people: page design, explanations, figures, mathematics and code |
 | `.docs-kit/rules/maintenance.md` and `site/` | Index and focused authoring, reader, resources, validation and publication guides, including page review and the publishing gate |
-| `.docs-kit/rules/engineering/code.md` | Logging, consumed program output and generated-file practices |
+| `.docs-kit/rules/engineering/code.md` | Logging, consumed program output, generated files, dependencies, where code lives, naming the need first, the capability map and refactoring |
 | `.docs-kit/rules/engineering/performance.md` | Routine efficiency, representative workloads and measured performance claims |
 | `.docs-kit/rules/engineering/execution.md` | Execution identity, conditional shared-resource budgeting, supervision and cleanup |
 | `.docs-kit/rules/engineering/git.md` | Commit scope, messages, validation and safety when sharing a Git checkout |

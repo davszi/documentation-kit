@@ -1,0 +1,26 @@
+# Capability map
+
+This map lists what the project's tooling does, one need per row, so that a
+need is solved once and found again. Read it before building tooling, a
+harness or other supporting code. **Name the need first** and **The
+capability map** in `.docs-kit/rules/engineering/code.md` say how to use it
+and what each column holds.
+
+Write a need without naming any experiment, such as "record what a native run
+did", link the files or folders that meet it, and give its state: `exists`,
+`partly` or `missing`. The Imported by column is generated from Python
+imports; never type it. `python .docs-kit/docsite.py capability-map --project .`
+rewrites it, once `tooling_roots` in `docs/site/site.toml` names the project's
+tooling folders. Lint then also fails when a file or folder directly under a
+tooling root has no row.
+
+## Capabilities
+
+| Need | Code | State | Imported by |
+|---|---|---|---|
+
+## Seen but not built
+
+Each entry gives a need that was noticed and not built, when and where it was
+seen, and the person's decision with its date: build it once as a tool, build
+the minimum inside the experiment, or do not build it.

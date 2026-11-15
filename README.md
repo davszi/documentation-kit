@@ -145,6 +145,7 @@ python .docs-kit/docsite.py build --project . --page guide
 python .docs-kit/docsite.py build --project . --check
 python .docs-kit/docsite.py build --project . --check-reader
 python .docs-kit/docsite.py lint --project . --registry
+python .docs-kit/docsite.py capability-map --project .
 python .docs-kit/docsite.py slides --project . --select guide --select other#intro,result --out review --title "Review"
 ```
 

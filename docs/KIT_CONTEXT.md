@@ -11,7 +11,7 @@ The [README](../README.md) owns consumer setup and update commands;
 | `tooling/`, `docsite.py` | Consumer-root-independent build/lint and safe initialization |
 | `examples/starter/` | Neutral consuming project and visual guide; its entry files are `*.tmpl` templates that `init` writes under their real names |
 | `docs/topics/`, `docs/site/` | The kit's own records and its reference website: pages for people plus the guides rendered as reference pages |
-| `docs/KIT_*.md`, `docs/open/KIT_OPEN.md` | The kit's own context, reading index, worklog and open work; `KIT_` names keep them apart from a consuming project's files |
+| `docs/KIT_*.md`, `docs/open/KIT_OPEN.md` | The kit's own context, reading index, capability map, worklog and open work; `KIT_` names keep them apart from a consuming project's files |
 | `tests/` | Portability, content preservation, formulas, links and optional browser review |
 
 Extraction history (record, policy map, source hashes, initial receipts and

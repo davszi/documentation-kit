@@ -39,6 +39,7 @@ The experiment guides do not restate what other guides own. When an experiment t
 - Run visuals and live experiment reports: [figures](figures.html#run-visuals-and-experiment-lifecycle), one of the page guides.
 - Benchmarks: [performance](performance.html).
 - Placement: [documentation policy](documentation-system.html).
+- Supporting code such as a harness or a judge, and the capability map: [name the need first](code-practices.html#name-the-need-first).
 
 See [use the existing owners](experiment-workflow.html#use-the-existing-owners).
 
@@ -60,7 +61,7 @@ See [use the existing owners](experiment-workflow.html#use-the-existing-owners).
 <div class="bs-check"><span class="bs-badge bs-bad">Unless needed</span><h3>Import no other field's methods</h3><p>No preregistration, ablation grids or learned-model practices unless the results depend on them.</p></div>
 </div>
 
-Without this limit, an experiment grows by additions that each look careful: another sweep, another check, another file. An addition that changes no decision and catches no error costs time and compute without telling anyone more. The rule therefore asks for a reason before each addition, not a minimum amount of work: there is no quota.
+Without this limit, an experiment grows by additions that each look careful: another sweep, another check, another file. An addition that changes no decision and catches no error costs time and compute without telling anyone more. The rule therefore asks for a reason before each addition, not a minimum amount of work: there is no quota. Supporting code is no exception: before building a harness or a judge, [name the need first](code-practices.html#name-the-need-first) and read the project's capability map.
 
 <p><b>Illustrative case:</b> does a higher steering-controller gain reduce overshoot in a simulated lane change?</p>
 

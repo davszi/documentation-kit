@@ -271,7 +271,7 @@ A single scroll is still available as **All chapters**, and it is what print and
 </div>
 <div id="view-markdown" data-panel="markdown">
 
-```markdown source=rules/experiments/workflow.md#L36-L38
+```markdown source=rules/experiments/workflow.md#L39-L41
 - A **qualification** gives a pass, fail or inconclusive verdict on a named
   system, build or model: platform qualification, a benchmark contract, a
   parity check, model release evaluation.

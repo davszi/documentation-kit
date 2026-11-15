@@ -24,7 +24,7 @@ python .docs-kit/docsite.py build --project . --check
 python .docs-kit/docsite.py lint --project .
 ```
 
-Use `--page <slug>` with build for targeted iteration. Lint supports `--strict` and `--registry`. The kit README owns installation and shared-engine development checks. The project's `docs/PROJECT_CONTEXT.md` records its tested environment and additional checks. Pin dependency versions; documentation builds must not require importing the consuming application's runtime or initializing a GPU.
+Use `--page <slug>` with build for targeted iteration. Lint supports `--strict` and `--registry`. The `capability-map` command rewrites the generated column of the project's capability map; see [capability map settings](#capability-map-settings). The kit README owns installation and shared-engine development checks. The project's `docs/PROJECT_CONTEXT.md` records its tested environment and additional checks. Pin dependency versions; documentation builds must not require importing the consuming application's runtime or initializing a GPU.
 
 Set `gh_repo = ""` when the project has no source remote. Source links then
 keep their local identity relative to the logical `docs/html/` origin, and
@@ -182,6 +182,33 @@ Moving a topic changes these paths in the same change:
 
 Lint reports a link it can no longer resolve as a dead link, and the build
 rejects a registered source or stylesheet that is missing.
+
+### Capability map settings
+
+Three top-level settings turn on the check of the project's
+[capability map](../engineering/code.md#the-capability-map). Like every
+top-level setting they go above the first `[[nav]]` table:
+
+```toml
+tooling_roots = ["tools/"]
+capability_map = "docs/CAPABILITY_MAP.md"
+experiment_roots = ["experiments/"]
+```
+
+- `tooling_roots` lists the project's tooling folders. Every tracked file or
+  folder directly under one of them needs a row in the map. Naming at least
+  one folder turns the check on; without the setting nothing is checked.
+- `capability_map` names the map when it is not at the default
+  `docs/CAPABILITY_MAP.md`. It must be a Markdown file inside the project.
+  Lint checks its links wherever it lies.
+- `experiment_roots` lists the folders whose subfolders are experiments. A
+  Python file under a tooling root that imports from one gets a warning.
+
+Each folder is a path relative to the project root, with or without a
+trailing slash, and no folder may lie inside another named folder. The build
+fails with a `site.toml:` error for a wrong type or path, and for
+`capability_map` or `experiment_roots` set without `tooling_roots`. Lint
+fails when a named folder holds no tracked file.
 
 ### Registered source pages
 

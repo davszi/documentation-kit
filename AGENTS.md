@@ -17,6 +17,7 @@ expands. These routes grant no execution or publication permission.
 | Before… | Read… |
 |---|---|
 | Changing source, tests or repository configuration | `rules/engineering/code.md` and the owning topic or implementation contract |
+| Building tooling, a harness or other supporting code | `docs/KIT_CAPABILITY_MAP.md`, then **Name the need first** in `rules/engineering/code.md` |
 | Changing runtime cost or making performance claims | `rules/engineering/performance.md` |
 | Designing or running an experiment, qualification or benchmark | `rules/experiments/workflow.md` and the project's owning experiment records |
 | Choosing or changing experiment checks or interpreting their failures | `rules/experiments/verification.md` and the project's accepted verification contract |
