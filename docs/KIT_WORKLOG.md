@@ -2,6 +2,15 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Slide-face tooling gaps reported by adaptation
+
+- Adaptation's session listed what the project had to build or catch itself
+  for slide faces: no lint check for facts on a face, none for one face per
+  chapter, none below 720 px, no supported chapter-figure view, `!important`
+  on every local declaration, and a home card picture that changes silently.
+- Added to `docs/open/upgrade-to-4.0.0-findings.md`. Nothing is built.
+- Checks: build and strict lint.
+
 ## 2026-11-15 — Where reused code lives
 
 - deivid asked in ADP's session for a second kit rule. ADP's reusable

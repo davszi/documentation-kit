@@ -186,6 +186,27 @@ directly after it (adaptation commit `09ec123`, 2026-11-14).
   3. Project slide classes need `!important` on every declaration to win over
      the shared ones.
 
+## Tooling a project had to build itself for slide faces
+
+Adaptation's session compared the kit at `3dd3e1f` with what the project
+wrote for its faces, on 2026-11-15. Reported by that session; not checked
+here beyond the two items already listed above.
+
+1. **No check that every fact on a face is in its chapter.** The rule states
+   it; lint has no slide check. Adaptation wrote its own test, which compares
+   the numbers on a face with its chapter.
+2. **No check for one face per chapter.** Two faces in a chapter build clean.
+3. **No check of faces below 720 px.** The shared browser check measures
+   overflow only on the 16:9 canvas, so stacking faults on phones are found
+   by eye; the session found six.
+4. **No supported way to put a chapter figure on a face.** Already above:
+   only the helper `slide_svg` exists.
+5. **Project slide classes need `!important` on every declaration.** Already
+   above; with thirty layouts each line is a place to forget it.
+6. **Home card picture.** A card falls back to the first image of the page
+   body. Removing a face changed a card silently; nothing warns when the
+   fallback picture changes or disappears.
+
 ## Decided and still owed
 
 deivid decided on 2026-11-14, when asked whether a face with a real visual but
