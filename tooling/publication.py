@@ -60,12 +60,17 @@ def _relative(page: str, target: str) -> str:
 
 
 def _opening(markup: str, node, changes: Mapping[str, str | None]) -> str:
-    """Change whole attribute tokens without matching inside another value."""
+    """Change whole attribute tokens without matching inside another value.
+
+    A name in `changes` that the tag lacks is added with its value; `None`
+    removes an attribute and adds nothing."""
     original = markup[node.start:node.opening_end]
     edits = []
+    seen = set()
     tag_end = re.match(r'<\s*[^\s/>]+', original).end()
     for match in _ATTRIBUTE.finditer(original, tag_end):
         name = match['name'].lower()
+        seen.add(name)
         if name not in changes:
             continue
         value = changes[name]
@@ -82,6 +87,11 @@ def _opening(markup: str, node, changes: Mapping[str, str | None]) -> str:
         edits.append((match.start(group), match.end(group), escaped))
     for start, end, replacement in reversed(edits):
         original = original[:start] + replacement + original[end:]
+    added = ''.join(f' {name}="{html.escape(value, quote=True)}"' for name, value in changes.items()
+                    if value is not None and name not in seen)
+    if added:
+        close = re.search(r'\s*/?>$', original)
+        original = original[:close.start()] + added + original[close.start():]
     return original
 
 
@@ -121,8 +131,10 @@ def _rewrite(markup: str, *, page: str, root: Path,
                             and not repository_path.endswith(private_suffixes)
                             and not repository_path.startswith(private_prefixes)):
                         fragment = node.attrs.get('data-repo-fragment', '')
+                        # filelinks.js leaves an exported link alone, with or without a remote.
                         changes.update({'href': _relative(page, repository_path) + ('#' + fragment if fragment else ''),
-                                        'data-repo-path': None, 'data-repo-fragment': None})
+                                        'data-repo-path': None, 'data-repo-fragment': None,
+                                        'data-repo-exported': ''})
             if changes:
                 updated = _opening(markup, node, changes)
                 if updated != markup[node.start:node.opening_end]:
@@ -290,6 +302,11 @@ def publish_project(root: Path, destination: Path, *, kit: Path) -> None:
     for name, origin in built.get('resource_origins', {}).items():
         if name.startswith('html/'):
             require_public(origin)
+    # A page rendered from a private file is private too, whatever listed it.
+    for route, origin in built.get('source_pages', {}).items():
+        if origin.endswith(suffixes) or origin.startswith(prefixes):
+            raise ValueError(f'Private source cannot be published as a page: {origin} ({route}); '
+                             'remove its [[source_pages]] table or its private suffix or prefix')
     for path in generated.rglob('*'):
         if path.is_file():
             require_public(path.relative_to(generated).as_posix())
@@ -301,6 +318,10 @@ def publish_project(root: Path, destination: Path, *, kit: Path) -> None:
             path = _contained(output, name)
             path.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(source(name), path)
+        if not config.get('gh_repo'):
+            # Without a source remote a source link has no target but the published copy,
+            # so every generated page is rewritten, not only the configured ones.
+            pages = sorted({*pages, *(path.name for path in generated.glob('*.html'))})
         export_pages(generated, output, root=root, tracked=tracked, pages=pages, public_files=public,
                      private_suffixes=suffixes, private_prefixes=prefixes)
         locked = lock.apply(output, built) if lock else ''

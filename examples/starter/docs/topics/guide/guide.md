@@ -26,8 +26,8 @@ The numbered figures on the guide are authored by hand in the page source. Figur
 The guide demonstrates slide faces on two chapters, following `.docs-kit/rules/writing/pages.md` (Slide faces):
 
 - Faces come after the chapters. Build the chapters first, then ask the person whether the page should get faces; add none without a yes.
-- A face shows one finding with a real visual: the chapter's own figure, drawn large enough to fill most of the canvas below the lead, with its parts numbered 01, 02 and so on.
-- Beside the figure, three to five numbered points (`slide-points`) each give a short claim in bold and a sentence or two that explain it, separated by thin rules. Only the points the title names are emphasised (`is-key`); a warning point carries a cross (`is-alert`). A closing row (`slide-facts`) gives facts the chapter states, each as a small label over a value, and the scope line ends the face.
+- A face shows one finding with a real visual: the chapter's own figure, drawn large enough to fill most of the canvas between the title and the scope line, with its parts numbered 01, 02 and so on.
+- The shape of the content sets the layout. The guide's face is one example: beside the figure, numbered points (`slide-points`) each give a short claim in bold and a sentence or two that explain it, separated by thin rules. Only the points the title names are emphasised (`is-key`); a warning point carries a cross (`is-alert`). A closing row (`slide-facts`) gives facts the chapter states, each as a small label over a value, and the scope line ends the face. Another face may be one figure across the canvas with labels on its parts, a row of steps or a matrix.
 - Boxes of text are not a visual. A face whose main area only repeats the title and lead in boxes is removed, and a chapter with nothing to show gets no face.
 - When a chapter needs a figure and has none, make the figure for the chapter first, from what exists; never draw invented data.
 - No fact exists only on a slide: every statement on a face is also in its chapter.

@@ -59,7 +59,8 @@ class PublicationTests(unittest.TestCase):
         self.put(self.generated, '_media/docs/chart.svg')
         expected = (source.replace('src="_media/docs/chart.svg"', 'src="docs/chart.svg"')
                     .replace('href="https://example.test/blob/report" data-repo-path="evidence/report.html" data-repo-fragment="details"',
-                             'href="evidence/report.html#details"')
+                             # The marker keeps filelinks.js from sending the link to a remote.
+                             'href="evidence/report.html#details" data-repo-exported=""')
                     .replace('<a href="https://example.test/blob/local" data-repo-path="results/local.html" data-repo-fragment="x"><b>Local label</b></a>',
                              '<span class="local-evidence" title="Local evidence file; not published"><b>Local label</b></span>'))
         exported = self.export(private_suffixes=('.md', '.py', '.toml'), private_prefixes=('configs/',))
@@ -105,7 +106,7 @@ class PublicationTests(unittest.TestCase):
         expected = source.replace("src='_media/fig.svg?mode=one&amp;x=2#part'", "src='fig.svg?mode=one&amp;x=2#part'")
         expected = expected.replace('src=_media/fig.svg#bare', 'src=fig.svg#bare')
         expected = expected.replace("href='https://source/paper' data-repo-path='paper.html' data-repo-fragment='a&amp;b'",
-                                    "href='paper.html#a&amp;b'")
+                                    "href='paper.html#a&amp;b' data-repo-exported=\"\"")
         self.export()
         self.assertEqual((self.destination / 'index.html').read_bytes(), expected.encode())
 
@@ -154,7 +155,7 @@ class PublicationTests(unittest.TestCase):
         self.put(self.generated, 'static/plain.json', b'{"href":"index.html"}\n')
         self.export(pages=('index.html', 'chapters/topic.html'))
         expected = source.replace("href='https://source/snapshot' data-repo-path='research/snapshot.html' data-repo-fragment='equation&amp;value'",
-                                  "href='../research/snapshot.html#equation&amp;value'")
+                                  "href='../research/snapshot.html#equation&amp;value' data-repo-exported=\"\"")
         self.assertEqual((self.destination / 'chapters/topic.html').read_text(), expected)
         self.assertEqual((self.destination / 'index.html').read_text(), '<a href="chapters/topic.html#original">Topic</a>')
         self.assertEqual((self.destination / 'static/plain.json').read_bytes(), b'{"href":"index.html"}\n')
@@ -183,7 +184,8 @@ class PublicationTests(unittest.TestCase):
         self.put(self.generated, 'index.html',
                  '<a href="https://source/report" data-repo-path="evidence/report.html">Report</a>')
         self.export()
-        self.assertEqual((self.destination / 'index.html').read_text(), '<a href="evidence/report.html">Report</a>')
+        self.assertEqual((self.destination / 'index.html').read_text(),
+                         '<a href="evidence/report.html" data-repo-exported="">Report</a>')
         self.assertEqual((self.destination / 'evidence/report.html').read_text(), '<p>Report</p>')
 
     def test_only_explicit_pages_are_rewritten(self):

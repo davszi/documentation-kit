@@ -198,9 +198,10 @@ async function referenceTree(page) {
     results.widgets = {tabs: true, plotToggles: true, lightbox: true, frame: true, markdownWithAndWithoutFilelinks: true};
     await context.close();
 
-    // 4. With a source remote, filelinks.js sends the exported Markdown link to the remote, as it does
-    //    in the same page without the lock (the decrypted page is the plain page byte for byte), and
-    //    the lock leaves that link alone.
+    // 4. With a source remote, the exported Markdown link keeps its published address, as it does
+    //    in the same page without the lock (the decrypted page is the plain page byte for byte):
+    //    the exporter marks it data-repo-exported, so filelinks.js leaves it alone, and the lock
+    //    tells this general-password reader that the Markdown needs the reference password.
     const remote = await browser.newContext({viewport: {width: 1400, height: 900}});
     const remotePage = watch(await remote.newPage());
     await remotePage.route('https://github.com/**', route => route.fulfill({contentType: 'text/plain', body: 'remote source'}));
@@ -209,9 +210,11 @@ async function referenceTree(page) {
     await waitUnlocked(remotePage);
     const remoteLink = remotePage.locator('#locked-detail a', {hasText: 'the record source'});
     const remoteHref = await remoteLink.getAttribute('href');
-    assert.ok(remoteHref.startsWith('https://github.com/example/project/blob/main/'), remoteHref);
+    assert.equal(remoteHref, 'notes/record.md');
     await remoteLink.click();
-    await remotePage.waitForURL(remoteHref);
+    await remotePage.locator('[role=alert]').waitFor({state: 'visible'});
+    assert.match(await remotePage.textContent('[role=alert]'), /needs the reference password/);
+    assert.ok(!remotePage.url().startsWith('https:'), remotePage.url());
     results.remoteMarkdownLink = remoteHref;
     await remote.close();
 

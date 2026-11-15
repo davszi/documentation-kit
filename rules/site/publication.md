@@ -31,7 +31,9 @@ supported keys. A fifth key, `lock = true`, turns on the
 - `assets_manifest` names a tracked JSON file with a `files` array of
   repository paths. Each file is published at the same path.
 - `private_suffixes` and `private_prefixes` mark repository paths that must not
-  be published.
+  be published. A page rendered from such a file is private too: `publish`
+  fails when a `[[source_pages]]` table registers one, and the automatic
+  listing skips them.
 
 The private checks cover admitted files, generated files and the repository
 source of each generated asset or medium. A renamed project asset therefore
@@ -40,11 +42,14 @@ fail.
 
 Every generated page is published, the pages of the
 [automatic reference listing](authoring.md#automatic-reference-listing)
-included, with the media they package. That listing skips files under
-`private_prefixes`, and its pages do not package media that the private
-prefixes or suffixes cover, so it cannot make a publication fail. It still
-publishes every other tracked Markdown file as a page: exclude private files
-with `reference_exclude`, or set `reference_listing = false`.
+included, with the media they package. That listing skips files that the
+private prefixes or suffixes cover, and its pages do not package media they
+cover, so it cannot make a publication fail. With `private_suffixes` holding
+`.md`, as in the example above, it lists no file at all. It still publishes
+every other tracked Markdown file as a page: exclude private files with
+`reference_exclude`, or set `reference_listing = false`. Without a source
+remote, `publish` also rewrites the source links of pages not named in
+`pages`; see [a project without a source remote](authoring.md#tooling-and-ownership).
 
 The output directory must not exist yet. The bundle is written to a temporary
 directory next to it and moved into place only after every check passes.
@@ -84,7 +89,8 @@ directory.
 The page lock is an optional last step of `publish`. It stores the text of the
 public bundle encrypted, and a reader unlocks it in the browser with a
 password. Local `build` output and `export_pages` stay plain. A project that
-does not turn it on gets the same bundle as before, byte for byte.
+does not turn it on gets, byte for byte, the bundle an unlocked `publish` of
+the same kit version writes.
 
 The lock is not access control. The encrypted files are public, and anyone who
 has a password can read and pass on everything it opens.
@@ -143,8 +149,9 @@ readers through a separate channel.
   a reader with the general password sees no Reference section.
 - Every Markdown file the bundle exports, under the reference password. The
   file keeps its address and holds a short notice and the encrypted text. A
-  link to it from an unlocked page opens the text, unless `filelinks.js`
-  already sent the link to the configured source remote.
+  link to it from an unlocked page opens the text; `filelinks.js` leaves
+  links the exporter pointed at a published file alone, with or without a
+  source remote.
 - The kit writes no search index. Navigation and the site map are part of
   the pages and are locked with them.
 

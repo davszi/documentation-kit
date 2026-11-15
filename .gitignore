@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 .venv/
 node_modules/
+# Agent worktrees and settings of local coding agents.
+.claude/

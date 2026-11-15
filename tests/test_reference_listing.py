@@ -326,6 +326,137 @@ class ReferenceListing(Project):
         self.assertNotIn('source-origin-edit', page)
 
 
+class ReleaseReview(Project):
+    """Defects the 4.x release review found in the automatic listing."""
+
+    def publication(self, suffixes, prefixes=()):
+        self.config.write_text(self.config.read_text() + '\n[publication]\npages = ["guide.html"]\n'
+                               f'private_suffixes = {json.dumps(list(suffixes))}\n'
+                               f'private_prefixes = {json.dumps(list(prefixes))}\n')
+
+    def test_private_suffixes_are_never_listed(self):
+        self.write('notes/plan.private.md', '# Private plan\n')
+        self.publication(['.private.md'])
+        self.assertEqual(self.build().returncode, 0)
+        self.assertNotIn('notes/plan.private.md', self.routes().values())
+        self.assertIn('notes/plan.md', self.routes().values())
+        destination = self.root / '_site'
+        result = invoke('publish', '--project', self.root, '--out', destination)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertFalse(any('private' in path.name for path in destination.rglob('*.html')))
+
+    def test_the_example_publication_config_lists_no_markdown(self):
+        # rules/site/publication.md: private_suffixes = [".md", ".py", ".toml"].
+        self.publication(['.md', '.py', '.toml'], ['configs/'])
+        self.assertEqual(self.build().returncode, 0)
+        self.assertEqual(self.routes(), {})
+        destination = self.root / '_site'
+        result = invoke('publish', '--project', self.root, '--out', destination)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(sorted(path.name for path in destination.rglob('*.md.html')), [])
+
+    def test_publish_refuses_a_registered_page_from_a_private_file(self):
+        self.publication(['.md'])
+        self.config.write_text(self.config.read_text().replace(
+            '\n[publication]', '\n[[source_pages]]\nsource = "notes/plan.md"\nslug = "plan"\n\n[publication]', 1))
+        self.assertEqual(self.build().returncode, 0)
+        self.assertEqual(self.routes(), {'plan.html': 'notes/plan.md'})
+        destination = self.root / '_site'
+        result = invoke('publish', '--project', self.root, '--out', destination)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Private source cannot be published as a page: notes/plan.md (plan.html)', result.stderr)
+        self.assertFalse(destination.exists())
+
+    def test_raw_html_cannot_run_script_or_load_from_outside(self):
+        (self.root / 'notes/media').mkdir()
+        (self.root / 'notes/media/kept.png').write_bytes(b'\x89PNG\r\n\x1a\nfixture')
+        self.write('notes/raw.md', '\n'.join([
+            '# Raw',
+            '',
+            '<p><img src="media/kept.png" alt="kept" onerror="alert(1)"></p>',
+            '<div onmouseover=alert(2)>hover</div>',
+            '<details ontoggle="alert(3)" open><summary>s</summary>x</details>',
+            '<p><a href=javascript:alert(4)>bare script link</a> <a href="java&#x09;script:alert(5)">tab</a></p>',
+            "<p><img src='https://example.com/single.png' alt='single'></p>",
+            '<p><img src=https://example.com/bare.png alt=bare></p>',
+            '<p><img srcset="https://example.com/set.png 2x" src="media/kept.png" alt="set"></p>',
+            '<svg><image href="https://example.com/svg.png"/></svg>',
+            '<p><image src="https://example.com/image.png"></p>',
+            "<video poster='https://example.com/poster.png'></video>",
+            '<p style="background:url(\'https://example.com/style.png\')">styled</p>',
+            '<p><a href="https://example.com/ok" ping="https://example.com/ping">kept link</a></p>',
+        ]) + '\n')
+        result = self.build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        page = self.page('notes.raw.md.html')
+        body = page[page.index('class="source-origin"'):page.index('</article>') if '</article>' in page else None]
+        for forbidden in ('onerror', 'onmouseover', 'ontoggle', 'javascript:', 'java\tscript', 'srcset', 'ping=',
+                          '<svg', '<image', 'poster=', "src='", 'src="https:', 'src=https', 'url('):
+            self.assertNotIn(forbidden, body, forbidden)
+        self.assertIn('<a href="https://example.com/single.png">single</a>', body)
+        self.assertIn('<a href="https://example.com/bare.png">bare</a>', body)
+        self.assertIn(GONE + 'bare script link</span>', body)
+        self.assertIn('src="_media/notes/media/kept.png"', body)
+        self.assertIn('<a href="https://example.com/ok">kept link</a>', body)
+        lint = invoke('lint', '--project', self.root, '--strict')
+        self.assertEqual(lint.returncode, 0, lint.stdout + lint.stderr)
+        self.assertIn('raw HTML attribute(s) that run script or load content removed', lint.stdout)
+
+    def test_symlinked_markdown_is_not_listed(self):
+        outside = tempfile.TemporaryDirectory(prefix='docs-kit-outside-')
+        self.addCleanup(outside.cleanup)
+        (Path(outside.name) / 'secret.md').write_text('# Outside the project\n')
+        (self.root / 'notes/inside-link.md').symlink_to('plan.md')
+        (self.root / 'notes/outside-link.md').symlink_to(Path(outside.name) / 'secret.md')
+        (self.root / 'linked').symlink_to('notes', target_is_directory=True)
+        result = self.build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        tracked = subprocess.run(['git', 'ls-files', '-s', 'notes/inside-link.md', 'notes/outside-link.md', 'linked'],
+                                 cwd=self.root, capture_output=True, text=True, check=True).stdout
+        self.assertEqual(tracked.count('120000'), 3, tracked)  # Git tracks all three as symlinks
+        listed = set(self.routes().values())
+        self.assertIn('notes/plan.md', listed)
+        for source in ('notes/inside-link.md', 'notes/outside-link.md'):
+            self.assertNotIn(source, listed)
+        self.assertFalse(any('Outside the project' in path.read_text()
+                             for path in (self.root / '.build/docs/html').glob('*.html')))
+
+    def test_dot_folders_are_not_listed_but_can_be_registered(self):
+        self.write('.github/pull_request_template.md', '# Pull request\n')
+        self.write('.claude/agents/helper.md', '# Helper\n')
+        self.write('docs/.draft.md', '# Draft\n')
+        self.config.write_text(self.config.read_text()
+                               + '\n[[source_pages]]\nsource = ".github/pull_request_template.md"\nslug = "pr-template"\n')
+        result = self.build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        routes = self.routes()
+        self.assertEqual(routes['pr-template.html'], '.github/pull_request_template.md')
+        for source in ('.claude/agents/helper.md', 'docs/.draft.md'):
+            self.assertNotIn(source, routes.values())
+        self.assertFalse(any(route.startswith('-') for route in routes))
+
+    def test_no_remote_publish_points_every_page_at_admitted_sources(self):
+        self.config.write_text(self.config.read_text().replace(
+            'gh_repo = "https://github.com/example/project"', 'gh_repo = ""')
+            + '\n[publication]\npages = ["guide.html"]\nassets_manifest = "docs/site/public.json"\n')
+        self.write('docs/site/public.json', json.dumps({'files': ['notes/plan.md']}))
+        git(self.root, 'add', '-A')
+        destination = self.root / '_site'
+        result = invoke('publish', '--project', self.root, '--out', destination)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        page = (destination / 'notes.plan.md.html').read_text()  # not named in pages
+        self.assertIn('class="source-origin-path" href="notes/plan.md"', page)
+        self.assertNotIn('href="../../notes/plan.md"', page)
+        self.assertTrue((destination / 'notes/plan.md').is_file())
+
+    def test_an_invalid_exclude_class_fails_with_a_message(self):
+        self.settings('reference_exclude = ["[z-a]"]')
+        result = self.build()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("site.toml: reference_exclude pattern '[z-a]' is not a valid glob", result.stderr)
+        self.assertNotIn('Traceback', result.stderr)
+
+
 class TreeSize(Project):
     """The Reference tree is inlined up to INLINE_TREE_LIMIT files and written once above it."""
 

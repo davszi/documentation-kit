@@ -23,6 +23,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import hashlib
 import html
+from html.parser import HTMLParser
 import os
 from pathlib import Path
 import posixpath
@@ -131,6 +132,11 @@ def reference_settings(site: dict) -> tuple[bool, tuple[str, ...]]:
                 or any(part in {"", ".", ".."} for part in pattern.rstrip("/").split("/"))):
             raise ValueError(f"site.toml: reference_exclude pattern {pattern!r} must be a repository-relative "
                              'glob without a leading slash, backslashes, "." or ".." parts, such as "experiments/**"')
+        try:
+            glob_regex(pattern)
+        except re.error as problem:
+            raise ValueError(f"site.toml: reference_exclude pattern {pattern!r} is not a valid glob ({problem}); "
+                             'write a character class in order, such as "[a-z]"') from None
     return enabled, tuple(patterns)
 
 
@@ -210,9 +216,10 @@ def automatic_pages(site: dict, root: Path, tracked: frozenset[Path], explicit: 
                     taken_routes: set[str], kit_root: Path | None = None) -> tuple[list[SourcePage], list[str]]:
     """Every tracked Markdown file a [[source_pages]] table does not register.
 
-    Skipped: files inside a submodule or the kit, topic entry pages, files that
-    start with `+++` frontmatter, symlinked files, files matching
-    `reference_exclude` and files under `[publication] private_prefixes`.
+    Skipped: files inside a submodule or the kit, files in a folder or with a
+    name that starts with a dot, topic entry pages, files that start with `+++`
+    frontmatter, symlinked files, files matching `reference_exclude` and files
+    that `[publication] private_prefixes` or `private_suffixes` mark private.
     Returns the pages, in path order, and notes about what was tolerated.
     Settings must have passed `reference_settings`.
     """
@@ -220,9 +227,10 @@ def automatic_pages(site: dict, root: Path, tracked: frozenset[Path], explicit: 
     if not enabled:
         return [], []
     excludes = [glob_regex(pattern) for pattern in patterns]
-    publication = site.get("publication")
-    prefixes = publication.get("private_prefixes", []) if isinstance(publication, dict) else []
-    prefixes = tuple(prefix for prefix in prefixes if isinstance(prefix, str) and prefix) if isinstance(prefixes, list) else ()
+    publication = site.get("publication") if isinstance(site.get("publication"), dict) else {}
+    prefixes, suffixes = (tuple(value for value in publication.get(key, []) if isinstance(value, str) and value)
+                          if isinstance(publication.get(key, []), list) else ()
+                          for key in ("private_prefixes", "private_suffixes"))
     registered = {page.source for page in explicit}
     groups = topic_group_folders(root)
     kit = kit_root.resolve() if kit_root is not None else None
@@ -236,7 +244,10 @@ def automatic_pages(site: dict, root: Path, tracked: frozenset[Path], explicit: 
             continue  # a tracked parent is a gitlink: the file belongs to a submodule
         if kit is not None and kit != root and path.is_relative_to(kit):
             continue
-        if any(pattern.fullmatch(source) for pattern in excludes) or source.startswith(prefixes):
+        if any(part.startswith(".") for part in source.split("/")):
+            continue  # .github/, .claude/ and other dot folders hold tool files, not records
+        if (any(pattern.fullmatch(source) for pattern in excludes) or source.startswith(prefixes)
+                or source.endswith(suffixes)):
             continue
         if (any(parent.is_symlink() for parent in (path, *path.parents) if parent.is_relative_to(root) and parent != root)
                 or not path.is_file() or is_topic_page(path, root, groups)):
@@ -397,19 +408,85 @@ def rewrite_links(markup: str, page: SourcePage, routes: dict[str, str], root: P
 
 _COMMENT = re.compile(r"<!--[\s\S]*?-->")
 # Raw HTML that would load a resource, run, swallow the rest of the page or
-# change the document: shown as text on an automatically listed page.
-_UNSAFE_TAG = re.compile(r"<(/?)(script|style|link|meta|base|object|embed|form|frame|frameset|iframe|textarea"
-                         r"|title|noscript|template|plaintext|xmp)\b", re.I)
+# change the document: shown as text on an automatically listed page. SVG and
+# MathML are included, because their own elements can load or link content.
+_UNSAFE_TAG = re.compile(r"<(/?)(script|style|link|meta|base|object|embed|applet|param|portal|form|frame|frameset"
+                         r"|iframe|textarea|title|noscript|noembed|noframes|template|plaintext|xmp|listing|svg|math)"
+                         r"(?![\w-])", re.I)
 _CSS_URL = re.compile(r"url\((?=\s*['\"]?(?:https?:)?//)", re.I)
 _QUOTED_ATTRIBUTE = re.compile(r"""\s[^\s"'<>/=]+\s*=\s*(?:"[^"]*"|'[^']*')""")
+# Attributes that load content or name another document's address.
+_LOADING_ATTRIBUTES = {"srcset", "imagesrcset", "background", "lowsrc", "dynsrc", "longdesc", "ping", "action",
+                       "formaction", "data", "codebase", "archive", "classid", "xlink:href", "srcdoc", "manifest",
+                       "profile", "attributionsrc", "itemtype"}
+_ADDRESS_ATTRIBUTES = {"href": {"a"}, "src": {"img", "video", "audio", "source"}, "poster": {"video"}}
+_STYLE_LOAD = re.compile(r"url\s*\(|image-set\s*\(|expression\s*\(|@import|behavior\s*:|binding\s*:", re.I)
+
+
+class _AttributeFilter(HTMLParser):
+    """Re-serializes raw HTML with every attribute double-quoted and without
+    event handlers, loading attributes or addresses on elements that do not
+    take them, so the link checks see every address that remains."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=False)
+        self.out: list[str] = []
+        self.removed = 0
+
+    def _tag(self, tag: str, attrs: list, closing: str) -> None:
+        tag = "img" if tag == "image" else tag  # the HTML parser turns <image> into <img>
+        kept = []
+        for name, value in attrs:
+            allowed = _ADDRESS_ATTRIBUTES.get(name)
+            if (name.startswith("on") or name in _LOADING_ATTRIBUTES or (allowed is not None and tag not in allowed)
+                    or (name == "style" and value and _STYLE_LOAD.search(value))):
+                self.removed += 1
+                continue
+            kept.append(name if value is None else f'{name}="{html.escape(value, quote=True)}"')
+        self.out.append("<" + tag + "".join(" " + item for item in kept) + closing)
+
+    def handle_starttag(self, tag, attrs):
+        self._tag(tag, attrs, ">")
+
+    def handle_startendtag(self, tag, attrs):
+        self._tag(tag, attrs, " />")
+
+    def handle_endtag(self, tag):
+        self.out.append(f"</{'img' if tag == 'image' else tag}>")
+
+    def handle_data(self, data):
+        self.out.append(data)
+
+    def handle_entityref(self, name):
+        self.out.append(f"&{name};")
+
+    def handle_charref(self, name):
+        self.out.append(f"&#{name};")
+
+    # Declarations, processing instructions and comments never show.
+    def handle_decl(self, decl):
+        pass
+
+    def unknown_decl(self, data):
+        pass
+
+    def handle_pi(self, data):
+        pass
+
+    def handle_comment(self, data):
+        pass
 
 
 def tolerate_raw_html(markup: str, source: str) -> tuple[str, list[str]]:
     """Make raw HTML in an automatically listed file harmless before links are resolved.
 
     Complete HTML comments are dropped, since they never show; an unclosed
-    comment opener and the tags in `_UNSAFE_TAG` are shown as text. Code
-    blocks are already escaped, so only real raw HTML is touched.
+    comment opener and the tags in `_UNSAFE_TAG` are shown as text. Every
+    remaining tag is written again with double-quoted attributes, without
+    event handlers, loading attributes or addresses on elements that do not
+    take one, so no script runs and every remaining address is resolved by
+    `rewrite_links`. Code blocks are already escaped, so only real raw HTML
+    is touched.
     """
     notes = []
     markup = _COMMENT.sub("", markup)
@@ -419,6 +496,12 @@ def tolerate_raw_html(markup: str, source: str) -> tuple[str, list[str]]:
     markup, count = _UNSAFE_TAG.subn(lambda m: "&lt;" + m[1] + m[2], markup)
     if count:
         notes.append(f"{source}: {count} raw HTML tag(s) that load, run or enclose content shown as text")
+    parser = _AttributeFilter()
+    parser.feed(markup)
+    parser.close()
+    markup = "".join(parser.out)
+    if parser.removed:
+        notes.append(f"{source}: {parser.removed} raw HTML attribute(s) that run script or load content removed")
     return markup, notes
 
 
