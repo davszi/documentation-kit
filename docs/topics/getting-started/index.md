@@ -13,57 +13,111 @@ page_only = "Explains the kit as a whole; its records are README.md and the guid
 <section class="card" id="what-the-kit-provides">
 
 <!-- slide -->
+<style>
+/* Local to this face: one timeline across the canvas; a tall drawing replaces it below 720 px. */
+.slide-main.fx-pin {justify-content:flex-start!important;gap:0!important;}
+.fx-pin > figure {flex:1 1 0!important;min-height:0!important;display:flex!important;flex-direction:column!important;gap:.4cqi!important;margin:0!important;}
+.fx-pin svg {display:block!important;width:100%!important;}
+.fx-pin svg.fx-wide {flex:1 1 0!important;min-height:0!important;height:100%!important;}
+.fx-pin svg.fx-tall {display:none!important;}
+.fx-pin figcaption {font:1cqi/1.3 "IBM Plex Mono",monospace!important;color:var(--sf-dim)!important;text-align:right!important;}
+@container (max-width: 719.98px) {
+  .fx-pin > figure {flex:none!important;}
+  .fx-pin svg.fx-wide {display:none!important;}
+  .fx-pin svg.fx-tall {display:block!important;height:auto!important;}
+  .fx-pin figcaption {font-size:12px!important;text-align:left!important;}
+}
+</style>
 <p class="slide-eyebrow">Documentation kit</p>
-<p class="slide-title">Rules live once in the kit; each project pins its revision</p>
-<p class="slide-lead">Add one submodule; keep your content and decide when to upgrade.</p>
-<div class="slide-main"><div class="slide-split">
-<figure class="slide-figure">
-<!-- Same drawing as Figure 1 below; change both together. -->
-<svg class="inline-fig" viewBox="0 0 600 400" role="img" aria-label="Two projects share one kit. The kit repository is a line of revisions; a rule fix lands there once. Each project holds the kit as a .docs-kit submodule pinned to the revision it chose, next to its own records, pages, commands and exceptions. Project A is still pinned to an older revision; project B moved its pin and has the fix.">
-<text x="8" y="30" font-size="25" fill="#bc8cff" text-anchor="start" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">KIT REPOSITORY</text>
-<path d="M20 70H584" stroke="#bc8cff" stroke-width="3" opacity=".55"/>
-<circle cx="60" cy="70" r="9" fill="#0d1117" stroke="#bc8cff" stroke-width="3"/>
-<circle cx="170" cy="70" r="9" fill="#0d1117" stroke="#bc8cff" stroke-width="3"/>
-<circle cx="280" cy="70" r="9" fill="#0d1117" stroke="#bc8cff" stroke-width="3"/>
-<circle cx="390" cy="70" r="12" fill="#39d2c0" stroke="#39d2c0" stroke-width="3"/>
-<circle cx="520" cy="70" r="9" fill="#0d1117" stroke="#bc8cff" stroke-width="3"/>
-<text x="390" y="110" font-size="25" fill="#39d2c0" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',system-ui,sans-serif">rule fix lands once</text>
-<rect x="8" y="130" width="286" height="266" rx="16" fill="none" stroke="#2f3b4a" stroke-width="2"/>
-<text x="24" y="162" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="600" font-family="'IBM Plex Sans',system-ui,sans-serif">project A</text>
-<rect x="24" y="176" width="254" height="84" rx="10" fill="#17142a" stroke="#bc8cff" stroke-width="2.5"/>
-<text x="40" y="210" font-size="28" fill="#bc8cff" text-anchor="start" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">.docs-kit/</text>
-<text x="40" y="246" font-size="25" fill="#a9b4c2" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">older pin</text>
-<rect x="24" y="272" width="254" height="110" rx="10" fill="#0f1d22" stroke="#39d2c0" stroke-width="2.5"/>
-<text x="40" y="304" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">own records,</text>
-<text x="40" y="333" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">pages, commands,</text>
-<text x="40" y="362" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">exceptions</text>
-<path d="M170 82V176" stroke="#bc8cff" stroke-width="3" stroke-dasharray="7 6"/>
-<circle cx="170" cy="176" r="6" fill="#bc8cff"/>
-<rect x="306" y="130" width="286" height="266" rx="16" fill="none" stroke="#2f3b4a" stroke-width="2"/>
-<text x="322" y="162" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="600" font-family="'IBM Plex Sans',system-ui,sans-serif">project B</text>
-<rect x="322" y="176" width="254" height="84" rx="10" fill="#17142a" stroke="#bc8cff" stroke-width="2.5"/>
-<text x="338" y="210" font-size="28" fill="#bc8cff" text-anchor="start" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">.docs-kit/</text>
-<text x="338" y="246" font-size="25" fill="#39d2c0" text-anchor="start" font-weight="600" font-family="'IBM Plex Sans',system-ui,sans-serif">moved its pin</text>
-<rect x="322" y="272" width="254" height="110" rx="10" fill="#0f1d22" stroke="#39d2c0" stroke-width="2.5"/>
-<text x="338" y="304" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">own records,</text>
-<text x="338" y="333" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">pages, commands,</text>
-<text x="338" y="362" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">exceptions</text>
-<path d="M520 82V176" stroke="#bc8cff" stroke-width="3" stroke-dasharray="7 6"/>
-<circle cx="520" cy="176" r="6" fill="#bc8cff"/>
-<circle cx="262" cy="24" r="22" fill="#0d1117" stroke="#bc8cff" stroke-width="3"/><text x="262" y="33" font-size="25" fill="#bc8cff" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">01</text>
-<circle cx="274" cy="278" r="22" fill="#0d1117" stroke="#39d2c0" stroke-width="3"/><text x="274" y="287" font-size="25" fill="#39d2c0" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">02</text>
-<circle cx="574" cy="182" r="22" fill="#0d1117" stroke="#39d2c0" stroke-width="3"/><text x="574" y="191" font-size="25" fill="#39d2c0" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">03</text>
+<p class="slide-title">A rule fixed once in the kit reaches each project that moves its pin</p>
+<div class="slide-main fx-pin">
+<figure>
+<svg class="inline-fig fx-wide" viewBox="0 0 1200 526" role="img" aria-label="The kit repository is one line of revisions. A rule fix lands there once. Project A is still pinned to an older revision, so the fix has not reached it yet; it arrives when A moves its pin. Project B moved its pin past the fix and has it. A guide copied into a project and edited there never receives the fix. Each project keeps its own records, pages, commands and exceptions.">
+<g font-family="'IBM Plex Sans',system-ui,sans-serif">
+<text x="40" y="40" font-size="19" fill="#bc8cff" font-weight="600" letter-spacing="3" font-family="'IBM Plex Mono',ui-monospace,monospace">KIT REPOSITORY</text>
+<text x="262" y="40" font-size="19" fill="#7d8896">one line of revisions</text>
+<path d="M40 92H1150" stroke="#bc8cff" stroke-width="4" stroke-opacity=".45"/>
+<path d="M1170 92l-20-9v18z" fill="#bc8cff" fill-opacity=".45"/>
+<path d="M800 92H960" stroke="#39d2c0" stroke-width="7" stroke-linecap="round"/>
+<circle cx="800" cy="92" r="40" fill="#39d2c0" fill-opacity=".13"/>
+<circle cx="800" cy="92" r="18" fill="#39d2c0"/>
+<text x="800" y="44" font-size="27" fill="#39d2c0" font-weight="600" text-anchor="middle">rule fix lands once</text>
+<g fill="#0d1117" stroke="#bc8cff" stroke-width="4"><circle cx="150" cy="92" r="11"/><circle cx="340" cy="92" r="11"/><circle cx="530" cy="92" r="11"/><circle cx="1110" cy="92" r="11"/></g>
+<circle cx="960" cy="92" r="12" fill="#0d1117" stroke="#39d2c0" stroke-width="5"/>
+<path d="M150 104V196" stroke="#ff7b72" stroke-width="3" stroke-dasharray="8 7"/>
+<text x="164" y="158" font-size="18" fill="#ff7b72">copied, then edited</text>
+<path d="M530 104V196" stroke="#bc8cff" stroke-width="3" stroke-dasharray="8 7"/><circle cx="530" cy="196" r="6" fill="#bc8cff"/>
+<text x="544" y="158" font-size="18" fill="#a9b4c2">pinned</text>
+<path d="M960 105V196" stroke="#39d2c0" stroke-width="4"/><circle cx="960" cy="196" r="7" fill="#39d2c0"/>
+<text x="974" y="158" font-size="18" fill="#39d2c0" font-weight="600">pin moved</text>
+<rect x="30" y="196" width="340" height="320" rx="16" fill="#1a1619" stroke="#ff7b72" stroke-width="2" stroke-opacity=".7" stroke-dasharray="10 7"/>
+<text x="54" y="236" font-size="17" fill="#ff7b72" font-weight="600" letter-spacing="2" font-family="'IBM Plex Mono',ui-monospace,monospace">COPIED RULE</text>
+<text x="54" y="282" font-size="25" fill="#e6edf3" font-weight="600">a pasted guide</text>
+<text x="54" y="312" font-size="20" fill="#a9b4c2">edited inside the project</text>
+<path d="M54 344H346" stroke="#2f3b4a" stroke-width="2"/>
+<text x="54" y="394" font-size="26" fill="#ff7b72" font-weight="600">never gets the fix</text>
+<circle cx="330" cy="385" r="17" fill="none" stroke="#ff7b72" stroke-width="3"/><path d="M322 377l16 16M338 377l-16 16" stroke="#ff7b72" stroke-width="3.5" stroke-linecap="round"/>
+<text x="54" y="430" font-size="19" fill="#a9b4c2">and nobody can tell which</text>
+<text x="54" y="456" font-size="19" fill="#a9b4c2">sentences are shared</text>
+<rect x="430" y="196" width="340" height="320" rx="16" fill="#121a24" stroke="#2f3b4a" stroke-width="2"/>
+<text x="454" y="236" font-size="17" fill="#7d8896" font-weight="600" letter-spacing="2" font-family="'IBM Plex Mono',ui-monospace,monospace">PROJECT A</text>
+<text x="454" y="282" font-size="25" fill="#bc8cff" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">.docs-kit/</text>
+<text x="454" y="312" font-size="20" fill="#a9b4c2">older pin</text>
+<path d="M454 344H746" stroke="#2f3b4a" stroke-width="2"/>
+<text x="454" y="394" font-size="26" fill="#e6edf3" font-weight="600">fix not here yet</text>
+<text x="454" y="430" font-size="19" fill="#a9b4c2">it arrives when A moves its pin</text>
+<text x="454" y="486" font-size="17" fill="#7d8896">own records, pages, commands</text>
+<text x="454" y="508" font-size="17" fill="#7d8896">and exceptions</text>
+<rect x="830" y="196" width="340" height="320" rx="16" fill="#0f1d22" stroke="#39d2c0" stroke-width="3"/>
+<text x="854" y="236" font-size="17" fill="#7d8896" font-weight="600" letter-spacing="2" font-family="'IBM Plex Mono',ui-monospace,monospace">PROJECT B</text>
+<text x="854" y="282" font-size="25" fill="#bc8cff" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">.docs-kit/</text>
+<text x="854" y="312" font-size="20" fill="#a9b4c2">moved its pin</text>
+<path d="M854 344H1146" stroke="#2a5f5a" stroke-width="2"/>
+<text x="854" y="394" font-size="28" fill="#39d2c0" font-weight="600">has the rule fix</text>
+<circle cx="1130" cy="385" r="17" fill="#39d2c0"/><path d="M1121 385l6 6 12-12" fill="none" stroke="#0d1117" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="854" y="430" font-size="19" fill="#a9b4c2">picked up when B moved its pin</text>
+<text x="854" y="486" font-size="17" fill="#7d8896">own records, pages, commands</text>
+<text x="854" y="508" font-size="17" fill="#7d8896">and exceptions</text>
+</g>
 </svg>
-<figcaption class="slide-legend"><span><b>01–03</b>the points</span><span>View of Figure 1</span></figcaption>
+<svg class="inline-fig fx-tall" viewBox="0 0 340 720" role="img" aria-label="The kit repository is one line of revisions. A rule fix lands there once. A guide copied into a project and edited there never receives the fix. Project A is still pinned to an older revision; the fix arrives when A moves its pin. Project B moved its pin past the fix and has it.">
+<g font-family="'IBM Plex Sans',system-ui,sans-serif">
+<text x="0" y="18" font-size="15" fill="#bc8cff" font-weight="600" letter-spacing="2" font-family="'IBM Plex Mono',ui-monospace,monospace">KIT REPOSITORY</text>
+<path d="M14 34V692" stroke="#bc8cff" stroke-width="3" stroke-opacity=".45"/>
+<path d="M14 712l-8-18h16z" fill="#bc8cff" fill-opacity=".45"/>
+<path d="M14 452V530" stroke="#39d2c0" stroke-width="6" stroke-linecap="round"/>
+<g fill="#0d1117" stroke="#bc8cff" stroke-width="3"><circle cx="14" cy="70" r="8"/><circle cx="14" cy="226" r="8"/><circle cx="14" cy="262" r="8"/><circle cx="14" cy="676" r="8"/></g>
+<circle cx="14" cy="452" r="22" fill="#39d2c0" fill-opacity=".14"/><circle cx="14" cy="452" r="11" fill="#39d2c0"/>
+<text x="40" y="458" font-size="18" fill="#39d2c0" font-weight="600">rule fix lands once</text>
+<circle cx="14" cy="530" r="9" fill="#0d1117" stroke="#39d2c0" stroke-width="4"/>
+<path d="M22 70H40" stroke="#ff7b72" stroke-width="2.5" stroke-dasharray="5 4"/>
+<rect x="40" y="44" width="298" height="166" rx="12" fill="#1a1619" stroke="#ff7b72" stroke-width="1.5" stroke-opacity=".7" stroke-dasharray="8 6"/>
+<text x="56" y="72" font-size="15" fill="#ff7b72" font-weight="600" letter-spacing="1.5" font-family="'IBM Plex Mono',ui-monospace,monospace">COPIED RULE</text>
+<text x="56" y="100" font-size="17" fill="#a9b4c2">a pasted guide, edited</text>
+<text x="56" y="122" font-size="17" fill="#a9b4c2">inside the project</text>
+<text x="56" y="160" font-size="20" fill="#ff7b72" font-weight="600">never gets the fix</text>
+<text x="56" y="188" font-size="16" fill="#a9b4c2">nobody can tell what is shared</text>
+<path d="M22 262H40" stroke="#bc8cff" stroke-width="2.5" stroke-dasharray="5 4"/>
+<rect x="40" y="236" width="298" height="184" rx="12" fill="#121a24" stroke="#2f3b4a" stroke-width="1.5"/>
+<text x="56" y="264" font-size="15" fill="#7d8896" font-weight="600" letter-spacing="1.5" font-family="'IBM Plex Mono',ui-monospace,monospace">PROJECT A</text>
+<text x="56" y="294" font-size="19" fill="#bc8cff" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">.docs-kit/</text>
+<text x="178" y="294" font-size="17" fill="#a9b4c2">older pin</text>
+<text x="56" y="334" font-size="20" fill="#e6edf3" font-weight="600">fix not here yet</text>
+<text x="56" y="360" font-size="16" fill="#a9b4c2">it arrives when A moves its pin</text>
+<text x="56" y="398" font-size="15" fill="#7d8896">own records, pages, commands</text>
+<path d="M23 530H40" stroke="#39d2c0" stroke-width="3"/>
+<rect x="40" y="496" width="298" height="166" rx="12" fill="#0f1d22" stroke="#39d2c0" stroke-width="2"/>
+<text x="56" y="524" font-size="15" fill="#7d8896" font-weight="600" letter-spacing="1.5" font-family="'IBM Plex Mono',ui-monospace,monospace">PROJECT B</text>
+<text x="56" y="554" font-size="19" fill="#bc8cff" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">.docs-kit/</text>
+<text x="178" y="554" font-size="17" fill="#39d2c0" font-weight="600">moved its pin</text>
+<text x="56" y="596" font-size="22" fill="#39d2c0" font-weight="600">has the rule fix</text>
+<text x="56" y="622" font-size="16" fill="#a9b4c2">picked up with the pin</text>
+<text x="56" y="648" font-size="15" fill="#7d8896">own records, pages, commands</text>
+</g>
+</svg>
+<figcaption>Figure 1 redrawn, with the copied rule from the example below it</figcaption>
 </figure>
-<ol class="slide-points">
-<li class="is-key"><b>One home for shared rules</b><p>The kit supplies the rules, the reader, the site tools and the starter. A common rule changes in the kit, once.</p></li>
-<li><b>Specifics stay with the project</b><p>Commands, thresholds and exceptions are facts about one project, so they stay in its own records, where its contributors look.</p></li>
-<li class="is-key"><b>Each project moves its own pin</b><p>Project A is still pinned to an older kit revision; project B moved its pin and has the rule fix.</p></li>
-<li class="is-alert"><b>A copied rule is cut off</b><p>A guide pasted into a project and edited there never receives the next kit fix, and nobody can tell which sentences are shared.</p></li>
-</ol>
-</div></div>
-<dl class="slide-facts"><div><dt>Install</dt><dd>One submodule</dd></div><div><dt>Needed to use the rules</dt><dd>Router rows</dd></div><div><dt>Site build</dt><dd>Optional</dd></div></dl>
+</div>
 <p class="slide-scope">Illustration of the ownership split · no measured results</p>
 <!-- /slide -->
 

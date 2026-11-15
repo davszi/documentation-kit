@@ -2,6 +2,49 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — The kit's four example slide faces redesigned
+
+- Why: deivid decided that the kit's own example faces are redone before the
+  release: "redo them". The four faces, built on 2026-11-12, followed the
+  arrangement the rule has since dropped (figure on one side, numbered points
+  beside it, a row of facts below) and looked alike. The starter's faces are
+  the first an agent sees in a new project.
+- Each face now takes the layout that the shape of its finding asks for, and
+  no two share one:
+  - "Get started": a rule fixed once in the kit reaches each project that
+    moves its pin, and a copied rule never gets it. A sequence in time with
+    three consumers, so one timeline across the canvas, with the copied
+    rule, project A and project B hanging from the revisions they took.
+  - "Build a site": tracked Markdown in, a checked, self-contained site out,
+    with the two things that never happen as its limit. A one-way flow, so
+    one pipeline across the canvas above two ruled conclusions.
+  - Starter, ownership chapter: who writes which folder and when it changes.
+    Three parts compared factor by factor, so a three-by-three matrix.
+  - Starter, slide-face chapter: a face is a view of its chapter. A detail
+    and its place, so the face drawn large beside the chapter card it opens,
+    with a chapter without a face as the smaller limit.
+- The frame is unchanged: label row, title, scope line, type roles and
+  tones. The four faces carry no lead sentence. `theme/components/slide-face.css`
+  is unchanged. Each face keeps its local classes in a `<style>` element
+  inside the face, so they travel into an extracted deck; below 720 px the
+  matrix stacks into cards and the drawings give way to upright versions.
+- The starter's Figure 4 lost the text tiles beside its visual, which taught
+  the old arrangement; its chapter, the record `guide.md`, the two fragment
+  comments, the slide list on "Build a site" and three sentences on
+  "Documentation and writing" now describe the new faces.
+- `tests/test_slide_face_checks.py` named the old title of the starter's
+  slide-face face; it now names the new one. The obsolete assumption was that
+  example face's wording, not any behaviour of the check.
+  `tests/own_site_review.cjs` clicked the first drawing on the presented face
+  to open the lightbox and assumed it was shown; below 720 px the wide
+  drawing gives way to the upright one, so the test now clicks the drawing
+  that is shown.
+- Checks: `build`, `lint --strict` (0 warnings), `build --check-reader` and
+  `DOCS_REQUIRE_BROWSER=1 bash tests/run_checks.sh` with 288 Python tests and
+  six browser suites pass. Reviewed by eye in the page at 1600 × 1000 and
+  390 × 844 and in the Presentation view at 1600 × 1000; deivid has not yet
+  looked at them.
+
 ## 2026-11-15 — Decisions by deivid on the open list
 
 - The step-back review after every third finished experiment: "Yes, every

@@ -148,7 +148,8 @@ async function reviewPresentation(page, origin, viewport, failures) {
   await waitPresent(page, FACE_CHAPTER);
   // The slide is still the chapter's focus target after a control kept the focus.
   await page.locator('[data-reader-chapter].topic-active').focus();
-  await page.locator('[data-reader-chapter].topic-active .present-slide svg.inline-fig').first().click();
+  // A face may swap a wide drawing for an upright one below 720 px; click the drawing that is shown.
+  await page.locator('[data-reader-chapter].topic-active .present-slide svg.inline-fig:visible').first().click();
   await page.waitForSelector('.lb-overlay');
   await page.keyboard.press('ArrowRight');
   await page.keyboard.press('Escape');

@@ -225,7 +225,7 @@ class LintCommand(unittest.TestCase):
         self.assertEqual(invoke('init', self.root).returncode, 0)
         self.page = self.root / 'docs/topics/guide/index.md'
         self.text = self.page.read_text()
-        self.assertIn('<p class="slide-title">Open a chapter with one slide, then read on</p>', self.text)
+        self.assertIn('<p class="slide-title">A face shows the finding; its chapter keeps every fact</p>', self.text)
 
     def lint(self, text: str, *flags: str):
         self.page.write_text(text)
@@ -248,8 +248,8 @@ class LintCommand(unittest.TestCase):
                       'a chapter opens with at most one', result.stderr)
 
     def test_a_number_only_on_a_face_fails_strict_until_it_is_accepted(self):
-        title = '<p class="slide-title">Open a chapter with one slide, then read on</p>'
-        text = self.text.replace(title, title.replace('one slide', 'one slide in 37 seconds'), 1)
+        title = '<p class="slide-title">A face shows the finding; its chapter keeps every fact</p>'
+        text = self.text.replace(title, title.replace('the finding', 'the finding in 37 seconds'), 1)
         loose = self.lint(text)
         self.assertEqual(loose.returncode, 0, loose.stdout + loose.stderr)
         self.assertIn('WARN: docs/topics/guide/index.md (guide.html), chapter "slides": numbers shown only on '

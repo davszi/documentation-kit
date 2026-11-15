@@ -53,11 +53,12 @@ These are known on 2026-11-15 and are not fixed in 5.0.0:
   and passes there. Safari on macOS or iOS, real phones and screen readers are
   not tested, and the Presentation view and the Reference tree outside the
   lock suite were run in Chromium only.
-- **The kit's own example faces.** The four slide faces of the kit, one on
-  "Get started", one on "Build a site" and two on the starter guide, still
-  follow the old prescribed arrangement. The
+- **The kit's own example faces.** Done on 2026-11-15: the four slide faces
+  of the kit, one on "Get started", one on "Build a site" and two on the
+  starter guide, are redesigned under the changed rule, each with a layout
+  of its own. The
   [findings record](upgrade-to-4.0.0-findings.md#decided-and-still-owed)
-  keeps this as owed.
+  says what each face now shows. deivid has not yet looked at them.
 - **ADP was not built with the new default.** ADP's tracked files hold about
   6.6 GB (6,591,531,630 bytes in the local checkout on 2026-11-15), and its
   site has not been built with the automatic listing on. The kit owner reports

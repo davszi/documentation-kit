@@ -14,47 +14,109 @@ page_only = "Explains building a site; its records are the site guides in rules/
 <section class="card" id="how-a-build-works">
 
 <!-- slide -->
+<style>
+/* Local to this face: a one-way pipeline across the canvas above the two things that never happen; a tall drawing replaces the pipeline below 720 px. */
+.slide-main.fx-build {justify-content:space-between!important;gap:1.6cqi!important;}
+.fx-build > figure {flex:1 1 0!important;min-height:0!important;display:flex!important;flex-direction:column!important;gap:.4cqi!important;margin:0!important;}
+.fx-build svg {display:block!important;width:100%!important;}
+.fx-build svg.fx-wide {flex:1 1 0!important;min-height:0!important;height:100%!important;}
+.fx-build svg.fx-tall {display:none!important;}
+.fx-build figcaption {font:1cqi/1.3 "IBM Plex Mono",monospace!important;color:var(--sf-dim)!important;text-align:right!important;}
+.fx-never {display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:3cqi!important;margin:0!important;padding:0!important;list-style:none!important;}
+.fx-never > li {display:grid!important;grid-template-columns:2.6cqi minmax(0,1fr)!important;column-gap:.8cqi!important;margin:0!important;padding:.9cqi 0 0!important;border-top:1px solid color-mix(in srgb,var(--sf-alert) 45%,var(--sf-line))!important;}
+.fx-never > li::before {content:"\00d7"!important;grid-row:1 / span 2!important;font:700 2.4cqi/1 "IBM Plex Sans",sans-serif!important;color:var(--sf-alert)!important;}
+.fx-never b {font:600 1.7cqi/1.2 "IBM Plex Sans",sans-serif!important;color:var(--sf-ink)!important;}
+.fx-never p {grid-column:2!important;margin:.3cqi 0 0!important;font-size:1.35cqi!important;line-height:1.38!important;color:var(--sf-sub)!important;}
+.fx-never code {font:1.25cqi "IBM Plex Mono",monospace!important;color:var(--sf-ink)!important;background:none!important;padding:0!important;white-space:nowrap!important;}
+@container (max-width: 719.98px) {
+  .fx-build > figure {flex:none!important;}
+  .fx-build svg.fx-wide {display:none!important;}
+  .fx-build svg.fx-tall {display:block!important;height:auto!important;}
+  .fx-build figcaption {font-size:12px!important;text-align:left!important;}
+  .fx-never {grid-template-columns:1fr!important;gap:14px!important;}
+  .fx-never > li {grid-template-columns:24px minmax(0,1fr)!important;column-gap:8px!important;padding-top:10px!important;}
+  .fx-never > li::before {font-size:22px!important;}
+  .fx-never b {font-size:16px!important;}
+  .fx-never p {font-size:14px!important;}
+  .fx-never code {font-size:13px!important;white-space:normal!important;}
+}
+</style>
 <p class="slide-eyebrow">Build a site</p>
-<p class="slide-title">Tracked Markdown in, a checked self-contained site out</p>
-<p class="slide-lead">One command reads tracked sources through the pinned kit and writes plain HTML.</p>
-<div class="slide-main"><div class="slide-split">
-<figure class="slide-figure">
-<!-- Same drawing as Figure 1 below; change both together. -->
-<svg class="inline-fig" viewBox="0 0 600 400" role="img" aria-label="docsite.py build reads only the project&#x27;s tracked sources, pages, records, site.toml, figures and media, through the pinned kit, which renders them with the reader, theme, fonts and math and checks links. An untracked file is not read. The build writes plain HTML, assets and a manifest into .build/docs. Output never flows back into source.">
-<rect x="8" y="8" width="330" height="140" rx="12" fill="#0f1d22" stroke="#39d2c0" stroke-width="2.5"/>
-<text x="26" y="42" font-size="26" fill="#39d2c0" text-anchor="start" font-weight="600" font-family="'IBM Plex Sans',system-ui,sans-serif">tracked in Git</text>
-<text x="26" y="76" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">pages and records</text>
-<text x="26" y="105" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">site.toml</text>
-<text x="26" y="134" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">figures and media</text>
-<rect x="370" y="8" width="222" height="104" rx="12" fill="none" stroke="#7d8896" stroke-width="2" stroke-dasharray="9 7"/>
-<text x="481" y="48" font-size="25" fill="#a9b4c2" text-anchor="middle" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">untracked file</text>
-<text x="481" y="84" font-size="25" fill="#ff7b72" text-anchor="middle" font-weight="600" font-family="'IBM Plex Sans',system-ui,sans-serif">not read</text>
-<path d="M481 112V136" stroke="#7d8896" stroke-width="3" stroke-dasharray="6 6"/>
-<circle cx="481" cy="156" r="19" fill="#0d1117" stroke="#ff7b72" stroke-width="3"/><path d="M473 148L489 164M489 148L473 164" stroke="#ff7b72" stroke-width="3.5" stroke-linecap="round"/>
-<path d="M173 148 L173 182" stroke="#a9b4c2" stroke-width="3" fill="none"/><path d="M173 196L180.0 182.0L166.0 182.0Z" fill="#a9b4c2"/>
-<rect x="84" y="196" width="508" height="84" rx="12" fill="#17142a" stroke="#bc8cff" stroke-width="2.5"/>
-<text x="102" y="230" font-size="26" fill="#bc8cff" text-anchor="start" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">docsite.py build</text>
-<text x="102" y="264" font-size="25" fill="#e6edf3" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">pinned kit: reader, theme, checks</text>
-<path d="M300 280 L300 301" stroke="#a9b4c2" stroke-width="3" fill="none"/><path d="M300 312L305.5 301.0L294.5 301.0Z" fill="#a9b4c2"/>
-<rect x="130" y="312" width="462" height="84" rx="12" fill="none" stroke="#ffa657" stroke-width="2" stroke-dasharray="9 7"/>
-<text x="150" y="346" font-size="28" fill="#ffa657" text-anchor="start" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">.build/docs/</text>
-<text x="150" y="382" font-size="25" fill="#a9b4c2" text-anchor="start" font-weight="400" font-family="'IBM Plex Sans',system-ui,sans-serif">HTML, assets, manifest</text>
-<path d="M130 354 L40 354 L40 162" stroke="#ff7b72" stroke-width="3" fill="none" stroke-dasharray="10 8"/><path d="M40 148L33.0 162.0L47.0 162.0Z" fill="#ff7b72"/>
-<circle cx="40" cy="238" r="19" fill="#0d1117" stroke="#ff7b72" stroke-width="3"/><path d="M32 230L48 246M48 230L32 246" stroke="#ff7b72" stroke-width="3.5" stroke-linecap="round"/>
-<circle cx="316" cy="30" r="22" fill="#0d1117" stroke="#39d2c0" stroke-width="3"/><text x="316" y="39" font-size="25" fill="#39d2c0" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">01</text>
-<circle cx="570" cy="218" r="22" fill="#0d1117" stroke="#bc8cff" stroke-width="3"/><text x="570" y="227" font-size="25" fill="#bc8cff" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">02</text>
-<circle cx="570" cy="334" r="22" fill="#0d1117" stroke="#ffa657" stroke-width="3"/><text x="570" y="343" font-size="25" fill="#ffa657" text-anchor="middle" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">03</text>
+<p class="slide-title">Tracked Markdown in, a checked, self-contained site out</p>
+<div class="slide-main fx-build">
+<figure>
+<svg class="inline-fig fx-wide" viewBox="0 0 1200 436" role="img" aria-label="docsite.py build reads the project's tracked sources: the topic pages, registered Markdown records, docs/site/site.toml, figures and media. An untracked file is not read. The pinned kit renders Markdown, includes and slide faces with the reader, theme, fonts and math, rewrites and checks links, and writes html, assets, media and site-build.json into .build/docs, which Git ignores. Output never flows back into source.">
+<g font-family="'IBM Plex Sans',system-ui,sans-serif">
+<path d="M1010 64V22H190V56" fill="none" stroke="#ff7b72" stroke-width="3" stroke-dasharray="10 8"/><path d="M190 70l-8-16h16z" fill="#ff7b72"/>
+<rect x="436" y="6" width="330" height="32" rx="16" fill="#0d1117"/>
+<circle cx="458" cy="22" r="14" fill="#0d1117" stroke="#ff7b72" stroke-width="3"/><path d="M452 16l12 12M464 16l-12 12" stroke="#ff7b72" stroke-width="3" stroke-linecap="round"/>
+<text x="482" y="29" font-size="20" fill="#ff7b72" font-weight="600">output never flows back</text>
+<rect x="4" y="70" width="370" height="290" rx="16" fill="#0f1d22" stroke="#39d2c0" stroke-width="3"/>
+<text x="28" y="110" font-size="17" fill="#39d2c0" font-weight="600" letter-spacing="2" font-family="'IBM Plex Mono',ui-monospace,monospace">TRACKED IN GIT</text>
+<g fill="#121a24" stroke="#39d2c0" stroke-width="2"><path d="M28 140h17l8 8v22H28z"/><path d="M28 196h17l8 8v22H28z"/><path d="M28 252h17l8 8v22H28z"/><path d="M28 308h17l8 8v22H28z"/></g>
+<text x="68" y="164" font-size="19" fill="#e6edf3" font-family="'IBM Plex Mono',ui-monospace,monospace">docs/topics/*/index.md</text>
+<text x="68" y="220" font-size="21" fill="#e6edf3">registered Markdown records</text>
+<text x="68" y="276" font-size="19" fill="#e6edf3" font-family="'IBM Plex Mono',ui-monospace,monospace">docs/site/site.toml</text>
+<text x="68" y="332" font-size="21" fill="#e6edf3">figures and media</text>
+<path d="M98 380V366" stroke="#7d8896" stroke-width="3" stroke-dasharray="5 4"/>
+<path d="M86 384h17l8 8v22H86z" fill="none" stroke="#7d8896" stroke-width="2" stroke-dasharray="4 3"/>
+<text x="124" y="410" font-size="20" fill="#a9b4c2">untracked file</text>
+<circle cx="282" cy="403" r="15" fill="#0d1117" stroke="#ff7b72" stroke-width="3"/><path d="M276 397l12 12M288 397l-12 12" stroke="#ff7b72" stroke-width="3" stroke-linecap="round"/>
+<text x="306" y="410" font-size="20" fill="#ff7b72" font-weight="600">not read</text>
+<path d="M382 215H436" stroke="#39d2c0" stroke-width="9"/><path d="M458 215l-24-15v30z" fill="#39d2c0"/>
+<text x="418" y="192" font-size="19" fill="#39d2c0" font-weight="600" text-anchor="middle">reads</text>
+<rect x="452" y="62" width="320" height="306" rx="20" fill="none" stroke="#bc8cff" stroke-width="12" stroke-opacity=".12"/>
+<rect x="458" y="68" width="308" height="294" rx="16" fill="#17142a" stroke="#bc8cff" stroke-width="3"/>
+<text x="482" y="110" font-size="17" fill="#bc8cff" font-weight="600" letter-spacing="2" font-family="'IBM Plex Mono',ui-monospace,monospace">PINNED KIT</text>
+<text x="482" y="158" font-size="29" fill="#bc8cff" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">docsite.py build</text>
+<g fill="#bc8cff"><circle cx="488" cy="205" r="4.5"/><circle cx="488" cy="246" r="4.5"/><circle cx="488" cy="287" r="4.5"/><circle cx="488" cy="328" r="4.5"/></g>
+<g font-size="20" fill="#e6edf3"><text x="504" y="212">Markdown and includes</text><text x="504" y="253">slide faces</text><text x="504" y="294">reader, theme, fonts, math</text><text x="504" y="335">link rewriting and checks</text></g>
+<path d="M776 215H830" stroke="#39d2c0" stroke-width="9"/><path d="M852 215l-24-15v30z" fill="#39d2c0"/>
+<text x="812" y="192" font-size="19" fill="#39d2c0" font-weight="600" text-anchor="middle">writes</text>
+<rect x="852" y="70" width="344" height="290" rx="16" fill="none" stroke="#ffa657" stroke-width="2.5" stroke-dasharray="10 7"/>
+<text x="876" y="110" font-size="17" fill="#ffa657" font-weight="600" letter-spacing="2" font-family="'IBM Plex Mono',ui-monospace,monospace">GENERATED</text>
+<text x="1176" y="110" font-size="17" fill="#7d8896" text-anchor="end">Git ignores it</text>
+<text x="876" y="160" font-size="29" fill="#ffa657" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">.build/docs/</text>
+<path d="M884 196V322M884 204h10M884 244h10M884 284h10M884 322h10" fill="none" stroke="#7d8896" stroke-width="2"/>
+<g font-size="20" fill="#e6edf3" font-family="'IBM Plex Mono',ui-monospace,monospace"><text x="902" y="211">html/*.html</text><text x="902" y="251">assets/</text><text x="902" y="291">_media/</text><text x="902" y="329">site-build.json</text></g>
+</g>
 </svg>
-<figcaption class="slide-legend"><span><b>01–03</b>the points</span><span>× not read, no way back</span><span>View of Figure 1</span></figcaption>
+<svg class="inline-fig fx-tall" viewBox="0 0 340 820" role="img" aria-label="docsite.py build reads the project's tracked sources: the topic pages, registered Markdown records, docs/site/site.toml, figures and media. An untracked file is not read. The pinned kit renders them and writes html, assets, media and site-build.json into .build/docs, which Git ignores. Output never flows back into source.">
+<g font-family="'IBM Plex Sans',system-ui,sans-serif">
+<path d="M28 760H10V40H28" fill="none" stroke="#ff7b72" stroke-width="2.5" stroke-dasharray="8 6"/><path d="M40 40l-14-7v14z" fill="#ff7b72"/>
+<rect x="0" y="380" width="22" height="196" fill="#0d1117"/>
+<text transform="translate(17 566) rotate(-90)" font-size="15" fill="#ff7b72" font-weight="600">× output never flows back</text>
+<rect x="40" y="6" width="298" height="200" rx="12" fill="#0f1d22" stroke="#39d2c0" stroke-width="2"/>
+<text x="56" y="34" font-size="15" fill="#39d2c0" font-weight="600" letter-spacing="1.5" font-family="'IBM Plex Mono',ui-monospace,monospace">TRACKED IN GIT</text>
+<text x="56" y="70" font-size="15" fill="#e6edf3" font-family="'IBM Plex Mono',ui-monospace,monospace">docs/topics/*/index.md</text>
+<text x="56" y="106" font-size="17" fill="#e6edf3">registered Markdown records</text>
+<text x="56" y="142" font-size="15" fill="#e6edf3" font-family="'IBM Plex Mono',ui-monospace,monospace">docs/site/site.toml</text>
+<text x="56" y="178" font-size="17" fill="#e6edf3">figures and media</text>
+<rect x="40" y="216" width="196" height="58" rx="10" fill="none" stroke="#7d8896" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="54" y="240" font-size="16" fill="#a9b4c2">untracked file</text>
+<text x="54" y="263" font-size="16" fill="#ff7b72" font-weight="600">× not read</text>
+<path d="M290 210V294" stroke="#39d2c0" stroke-width="6"/><path d="M290 312l-11-18h22z" fill="#39d2c0"/>
+<text x="276" y="300" font-size="15" fill="#39d2c0" font-weight="600" text-anchor="end">reads</text>
+<rect x="40" y="316" width="298" height="206" rx="12" fill="#17142a" stroke="#bc8cff" stroke-width="2"/>
+<text x="56" y="344" font-size="15" fill="#bc8cff" font-weight="600" letter-spacing="1.5" font-family="'IBM Plex Mono',ui-monospace,monospace">PINNED KIT</text>
+<text x="56" y="378" font-size="21" fill="#bc8cff" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">docsite.py build</text>
+<g font-size="16" fill="#e6edf3"><text x="56" y="412">Markdown and includes</text><text x="56" y="440">slide faces</text><text x="56" y="468">reader, theme, fonts, math</text><text x="56" y="496">link rewriting and checks</text></g>
+<path d="M290 526V560" stroke="#39d2c0" stroke-width="6"/><path d="M290 578l-11-18h22z" fill="#39d2c0"/>
+<text x="276" y="560" text-anchor="end" font-size="15" fill="#39d2c0" font-weight="600">writes</text>
+<rect x="40" y="580" width="298" height="214" rx="12" fill="none" stroke="#ffa657" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="56" y="608" font-size="15" fill="#ffa657" font-weight="600" letter-spacing="1.5" font-family="'IBM Plex Mono',ui-monospace,monospace">GENERATED</text>
+<text x="322" y="608" font-size="15" fill="#7d8896" text-anchor="end">Git ignores it</text>
+<text x="56" y="642" font-size="21" fill="#ffa657" font-weight="600" font-family="'IBM Plex Mono',ui-monospace,monospace">.build/docs/</text>
+<g font-size="15" fill="#e6edf3" font-family="'IBM Plex Mono',ui-monospace,monospace"><text x="72" y="676">html/*.html</text><text x="72" y="704">assets/</text><text x="72" y="732">_media/</text><text x="72" y="760">site-build.json</text></g>
+</g>
+</svg>
+<figcaption>Figure 1 redrawn with the paths that its reading notes name</figcaption>
 </figure>
-<ol class="slide-points">
-<li class="is-key"><b>Only tracked files go in</b><p>A stray local file cannot leak onto the site, and a file you forgot to add fails the build.</p></li>
-<li><b>The pinned kit renders</b><p>Reader, theme, fonts and math come from the kit; the site needs no web framework and no JavaScript install.</p></li>
-<li class="is-key"><b>A plain HTML site comes out</b><p>Pages, assets and a manifest land in <code>.build/docs/</code>; <code>build --check</code> confirms nothing is stale.</p></li>
-<li class="is-alert"><b>Never edit the output</b><p>It can always be deleted and rebuilt. Fix the source instead.</p></li>
-</ol>
-</div></div>
-<dl class="slide-facts"><div><dt>Reads</dt><dd>Tracked files only</dd></div><div><dt>Writes</dt><dd>.build/docs/</dd></div><div><dt>Installs</dt><dd>Nothing extra</dd></div><div><dt>Checks</dt><dd>Internal links</dd></div></dl>
+<ul class="fx-never">
+<li><b>An untracked file is not read</b><p>A stray local file cannot leak onto the site, and a file you forgot to add fails the build.</p></li>
+<li><b>An edit to the output is lost</b><p>The next build overwrites it. Fix the source and rebuild; <code>build --check</code> confirms nothing else is stale.</p></li>
+</ul>
+</div>
 <p class="slide-scope">Illustration of the build · no measured results</p>
 <!-- /slide -->
 
@@ -241,7 +303,7 @@ A single scroll is still available as **All chapters**, and it is what print and
 </ul></div>
 <div class="bs-part bs-orange"><span class="bs-label">Slides</span><h3>A slide shows the chapter's figure</h3><ul>
 <li>added last: build the chapters, then ask the person, and add faces only after a yes</li>
-<li>the chapter's own figure with its parts numbered, laid out for its content; in this example numbered points beside it each give a bold claim and a sentence or two, and a closing row lists the facts a reader asks for next (<code>slide-points</code>, <code>slide-facts</code>). Another face may use one figure across the canvas, a row of steps or a matrix.</li>
+<li>a visual made from the chapter's own figures and numbers and laid out for its finding: this page's face redraws Figure 1 as one pipeline across the canvas, with the two things that never happen below it. Another face may be a timeline, a matrix or a figure beside a decisive number.</li>
 <li>boxes of text alone are not a visual: a chapter with nothing to show gets no face</li>
 <li>write a face between <code>&lt;!-- slide --&gt;</code> and <code>&lt;!-- /slide --&gt;</code> at the start of a chapter; the first chapter of this page opens with one</li>
 <li>every fact on a slide is also in its chapter; lint checks the numbers and fails on a chapter with two faces</li>

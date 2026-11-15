@@ -12,22 +12,70 @@ math = true
 <section class="card" id="pipeline">
 
 <!-- slide -->
+<style>
+/* Local to this face: a three-by-three matrix of the folders against who writes them and how they change; below 720 px each row becomes a labelled card. */
+.slide-main.fx-own {justify-content:stretch!important;gap:.5cqi!important;}
+.fx-matrix {flex:1 1 0!important;min-height:0!important;display:grid!important;grid-template-columns:22cqi minmax(0,1fr) minmax(0,1fr) minmax(0,1.25fr)!important;grid-template-rows:auto 1fr 1fr auto 1fr!important;column-gap:0!important;margin:1.4cqi 0 0!important;}
+.fx-matrix > [role=row] {display:contents!important;}
+.fx-matrix [role=columnheader] {padding:0 1.4cqi .7cqi!important;font:500 1.1cqi/1.2 "IBM Plex Mono",monospace!important;letter-spacing:.08em!important;text-transform:uppercase!important;color:var(--sf-dim)!important;border-bottom:1px solid var(--sf-line)!important;}
+.fx-matrix [role=columnheader]:first-child {padding-left:1.2cqi!important;}
+.fx-matrix [role=rowheader],.fx-matrix [role=cell] {display:flex!important;flex-direction:column!important;justify-content:center!important;gap:.3cqi!important;padding:.8cqi 1.4cqi!important;border-bottom:1px solid var(--sf-line)!important;font-size:1.5cqi!important;line-height:1.35!important;color:var(--sf-sub)!important;}
+.fx-matrix .fx-k {display:none!important;}
+.fx-matrix [role=cell] {color:var(--sf-ink)!important;}
+.fx-matrix [role=cell]:has(b) {color:var(--sf-sub)!important;}
+.fx-matrix [role=rowheader]:has(.is-docs) {background:linear-gradient(90deg,color-mix(in srgb,var(--sf-accent) 7%,transparent),transparent)!important;}
+.fx-matrix [role=rowheader]:has(.is-kit) {background:linear-gradient(90deg,color-mix(in srgb,var(--sf-alt) 8%,transparent),transparent)!important;}
+.fx-matrix [role=rowheader]:has(.is-out) {background:linear-gradient(90deg,color-mix(in srgb,var(--sf-warm) 6%,transparent),transparent)!important;}
+.fx-matrix [role=rowheader] {padding-left:1.2cqi!important;}
+.fx-matrix [role=cell] b {font:600 2.1cqi/1.15 "IBM Plex Sans",sans-serif!important;color:var(--sf-ink)!important;}
+.fx-matrix [role=cell].is-key {background:linear-gradient(90deg,color-mix(in srgb,var(--sf-accent) 13%,transparent),color-mix(in srgb,var(--sf-accent) 4%,transparent))!important;box-shadow:inset .3cqi 0 0 var(--sf-accent)!important;}
+.fx-matrix [role=cell].is-key b {color:var(--sf-accent)!important;}
+.fx-matrix [role=cell].is-alert b {color:var(--sf-alert)!important;}
+.fx-matrix [role=cell].is-alert b::before {content:"\00d7  "!important;font-weight:700!important;}
+.fx-folder {position:relative!important;display:inline-flex!important;align-items:center!important;align-self:flex-start!important;margin-top:1cqi!important;padding:.9cqi 1.3cqi!important;border:2px solid var(--fx-tone)!important;border-radius:0 1cqi 1cqi 1cqi!important;background:color-mix(in srgb,var(--fx-tone) 10%,var(--sf-tile))!important;font:600 2.2cqi/1 "IBM Plex Mono",monospace!important;color:var(--fx-tone)!important;}
+.fx-folder::before {content:""!important;position:absolute!important;left:-2px!important;top:calc(-1cqi - 2px)!important;width:6cqi!important;height:1cqi!important;border:2px solid var(--fx-tone)!important;border-bottom:0!important;border-radius:.6cqi .6cqi 0 0!important;background:color-mix(in srgb,var(--fx-tone) 10%,var(--sf-tile))!important;}
+.fx-folder.is-docs {--fx-tone:var(--sf-accent)!important;}
+.fx-folder.is-kit {--fx-tone:var(--sf-alt)!important;}
+.fx-folder.is-out {--fx-tone:var(--sf-warm)!important;border-style:dashed!important;background:transparent!important;}
+.fx-folder.is-out::before {border-style:dashed!important;background:transparent!important;}
+.fx-folder-note {white-space:nowrap!important;font:1.15cqi/1.3 "IBM Plex Mono",monospace!important;color:var(--sf-dim)!important;}
+.fx-build-row [role=cell] {padding:.5cqi 1.4cqi!important;border-bottom:1px dashed var(--sf-line)!important;}
+.fx-build-row [role=rowheader] {padding:.5cqi 1.2cqi!important;background:none!important;border-bottom:1px dashed var(--sf-line)!important;flex-direction:row!important;justify-content:flex-start!important;align-items:center!important;gap:.8cqi!important;}
+.fx-pill {display:inline-block!important;padding:.25cqi 1.1cqi!important;border:2px solid var(--sf-sub)!important;border-radius:999px!important;font:600 1.5cqi/1.2 "IBM Plex Mono",monospace!important;color:var(--sf-ink)!important;}
+.fx-arrow {font:600 1.8cqi/1 "IBM Plex Sans",sans-serif!important;color:var(--sf-sub)!important;}
+.fx-own figcaption {font:1cqi/1.3 "IBM Plex Mono",monospace!important;color:var(--sf-dim)!important;text-align:right!important;margin:0!important;}
+@container (max-width: 719.98px) {
+  .fx-matrix {display:flex!important;flex-direction:column!important;gap:12px!important;flex:none!important;}
+  .fx-matrix > [role=row] {display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:6px!important;padding:0 0 12px!important;border-bottom:1px solid var(--sf-line)!important;}
+  .fx-matrix > [role=row].fx-head {display:none!important;}
+  .fx-matrix [role=rowheader],.fx-matrix [role=cell] {padding:4px 0!important;border:0!important;font-size:14px!important;background:none!important;}
+  .fx-folder-note {white-space:normal!important;}
+  .fx-matrix [role=cell].is-key {padding:6px 10px!important;box-shadow:inset 3px 0 0 var(--sf-accent)!important;}
+  .fx-matrix .fx-k {display:block!important;font:500 11px/1.3 "IBM Plex Mono",monospace!important;letter-spacing:.08em!important;text-transform:uppercase!important;color:var(--sf-dim)!important;}
+  .fx-matrix [role=cell] b {font-size:17px!important;}
+  .fx-folder {margin-top:12px!important;padding:8px 12px!important;border-radius:0 10px 10px 10px!important;font-size:20px!important;}
+  .fx-folder::before {top:-12px!important;width:60px!important;height:10px!important;border-radius:6px 6px 0 0!important;}
+  .fx-folder-note {font-size:12px!important;}
+  .fx-matrix > .fx-build-row {display:flex!important;padding:0 0 12px!important;border-bottom:1px dashed var(--sf-line)!important;}
+  .fx-build-row [role=cell] {display:none!important;}
+  .fx-build-row [role=rowheader] {border:0!important;padding:0!important;gap:8px!important;}
+  .fx-pill {font-size:14px!important;padding:2px 10px!important;}
+  .fx-arrow {font-size:18px!important;}
+  .fx-own figcaption {font-size:12px!important;text-align:left!important;}
+}
+</style>
 <p class="slide-eyebrow">Ownership</p>
 <p class="slide-title">The project owns its content; the kit is a pinned tool</p>
-<p class="slide-lead">Content stays in the project; one reviewed kit revision supplies the tools.</p>
-<div class="slide-main"><div class="slide-split">
-<figure class="slide-figure">
-<!-- include: fragments/ownership.html -->
-<figcaption class="slide-legend"><span><b>01–03</b>the steps</span><span>× no way back</span><span>View of Figure 1</span></figcaption>
+<figure class="slide-main fx-own">
+<div class="fx-matrix" role="table" aria-label="Three folders: who writes each and how it changes">
+<div role="row" class="fx-head"><span role="columnheader">Folder</span><span role="columnheader">Holds</span><span role="columnheader">Written by</span><span role="columnheader">Changes when</span></div>
+<div role="row"><span role="rowheader"><span class="fx-folder is-docs">docs/</span></span><span role="cell"><span class="fx-k">Holds</span>pages, records, site.toml, evidence</span><span role="cell" class="is-key"><span class="fx-k">Written by</span><b>the project</b>in its own repository</span><span role="cell"><span class="fx-k">Changes when</span><b>the project writes it</b>its review stays there too</span></div>
+<div role="row"><span role="rowheader"><span class="fx-folder is-kit">.docs-kit/</span><span class="fx-folder-note">submodule</span></span><span role="cell"><span class="fx-k">Holds</span>rules, theme, reader, validation</span><span role="cell"><span class="fx-k">Written by</span><b>the shared kit</b>one pinned revision</span><span role="cell" class="is-key"><span class="fx-k">Changes when</span><b>the project moves its pin</b>to a reviewed revision it chose</span></div>
+<div role="row" class="fx-build-row"><span role="rowheader"><span class="fx-arrow" aria-hidden="true">↓</span><span class="fx-pill">build</span><span class="fx-folder-note">reads both folders</span></span><span role="cell"></span><span role="cell"></span><span role="cell"></span></div>
+<div role="row"><span role="rowheader"><span class="fx-folder is-out">.build/docs/</span></span><span role="cell"><span class="fx-k">Holds</span>the generated HTML</span><span role="cell"><span class="fx-k">Written by</span><b>the build</b>from both folders</span><span role="cell" class="is-alert"><span class="fx-k">Changes when</span><b>never edited</b>rebuilt from source instead</span></div>
+</div>
+<figcaption>Drawn from Figure 1 and its three steps</figcaption>
 </figure>
-<ol class="slide-points">
-<li class="is-key"><b>Pin a kit revision</b><p>The project chooses which reviewed revision of rules, theme and reader to use, and when to move it.</p></li>
-<li class="is-key"><b>Write in the project</b><p>Topic records and pages, navigation, local assets, evidence and review stay in its own repository.</p></li>
-<li><b>Build</b><p>One command reads both folders and writes the site, with stable public anchors and source links.</p></li>
-<li class="is-alert"><b>Never edit the output</b><p>Generated pages do not flow back into source. Change the source, then rebuild.</p></li>
-</ol>
-</div></div>
-<dl class="slide-facts"><div><dt>Shared rules</dt><dd>One pinned revision</dd></div><div><dt>Project content</dt><dd>Local ownership</dd></div><div><dt>Generated site</dt><dd>Rebuilt from source</dd></div></dl>
 <p class="slide-scope">Illustration of ownership · no measured results</p>
 <!-- /slide -->
 
@@ -148,22 +196,101 @@ chapter_reader = true
 <section class="card" id="slides">
 
 <!-- slide -->
+<style>
+/* Local to this face: the slide drawn large beside the chapter it opens; a tall drawing replaces it below 720 px. */
+.slide-main.fx-zoom {justify-content:flex-start!important;gap:0!important;}
+.fx-zoom > figure {flex:1 1 0!important;min-height:0!important;display:flex!important;flex-direction:column!important;gap:.4cqi!important;margin:0!important;}
+.fx-zoom svg {display:block!important;width:100%!important;}
+.fx-zoom svg.fx-wide {flex:1 1 0!important;min-height:0!important;height:100%!important;}
+.fx-zoom svg.fx-tall {display:none!important;}
+.fx-zoom figcaption {font:1cqi/1.3 "IBM Plex Mono",monospace!important;color:var(--sf-dim)!important;text-align:right!important;}
+@container (max-width: 719.98px) {
+  .fx-zoom > figure {flex:none!important;}
+  .fx-zoom svg.fx-wide {display:none!important;}
+  .fx-zoom svg.fx-tall {display:block!important;height:auto!important;}
+  .fx-zoom figcaption {font-size:12px!important;text-align:left!important;}
+}
+</style>
 <p class="slide-eyebrow">Slide faces</p>
-<p class="slide-title">Open a chapter with one slide, then read on</p>
-<p class="slide-lead">A face shows the finding with one real visual; the full chapter follows it.</p>
-<div class="slide-main"><div class="slide-split">
-<figure class="slide-figure">
-<!-- include: fragments/slide-anatomy.html -->
-<figcaption class="slide-legend"><span><b>01–04</b>the parts of a face</span><span>View of Figure 4</span></figcaption>
+<p class="slide-title">A face shows the finding; its chapter keeps every fact</p>
+<div class="slide-main fx-zoom">
+<figure>
+<svg class="inline-fig fx-wide" viewBox="0 0 1200 536" role="img" aria-label="A slide face drawn large beside the chapter it opens. The face has a label row that names the subject, the finding as a sentence, a visual that is a view of the chapter's figure, laid out for this finding, and a scope line. In the reader the face sits at the top of the chapter card; the full chapter follows with its heading, its figure and every fact with its evidence. A chapter with nothing to show gets no face.">
+<g font-family="'IBM Plex Sans',system-ui,sans-serif">
+<text x="8" y="26" font-size="16" fill="#7d8896" font-weight="600" letter-spacing="2" font-family="'IBM Plex Mono',ui-monospace,monospace">THE FACE, AT 16:9</text>
+<path d="M890 60L832 44M890 218L832 508" stroke="#39d2c0" stroke-width="1.5" stroke-opacity=".45" stroke-dasharray="4 5"/>
+<g transform="translate(0 26)">
+<rect x="8" y="18" width="824" height="464" rx="18" fill="#0f1620" stroke="#39d2c0" stroke-width="3"/>
+<rect x="44" y="50" width="120" height="10" rx="5" fill="#39d2c0"/>
+<text x="180" y="60" font-size="18" fill="#a9b4c2">label row: the subject</text>
+<text x="44" y="112" font-size="38" fill="#e6edf3" font-weight="600">The finding, as a sentence</text>
+<rect x="44" y="138" width="752" height="270" rx="14" fill="#39d2c0" fill-opacity=".07" stroke="#39d2c0" stroke-width="2.5"/>
+<g stroke="#39d2c0" stroke-opacity=".22" stroke-width="2" fill="none"><path d="M84 360C180 300 250 330 330 270S470 200 540 230 680 170 756 180"/><path d="M84 330h672M84 270h672M84 210h672" stroke-dasharray="3 7"/></g>
+<text x="420" y="262" font-size="30" fill="#39d2c0" font-weight="600" text-anchor="middle">a view of the chapter's figure</text>
+<text x="420" y="298" font-size="21" fill="#a9b4c2" text-anchor="middle">laid out for this finding, filling the canvas</text>
+<text x="44" y="446" font-size="17" fill="#7d8896" letter-spacing="1" font-family="'IBM Plex Mono',ui-monospace,monospace">scope line</text>
+<path d="M162 440H796" stroke="#2f3b4a" stroke-width="2"/>
+</g>
+<g transform="translate(0 2)">
+<text x="880" y="24" font-size="16" fill="#7d8896" font-weight="600" letter-spacing="2" font-family="'IBM Plex Mono',ui-monospace,monospace">IN THE READER</text>
+<rect x="880" y="42" width="312" height="350" rx="14" fill="#121a24" stroke="#2f3b4a" stroke-width="2"/>
+<rect x="890" y="56" width="292" height="158" rx="8" fill="#0f1620" stroke="#39d2c0" stroke-width="2.5"/>
+<rect x="904" y="70" width="40" height="5" rx="2.5" fill="#39d2c0"/>
+<rect x="904" y="82" width="190" height="11" rx="3" fill="#e6edf3"/>
+<rect x="904" y="102" width="264" height="86" rx="5" fill="#39d2c0" fill-opacity=".1" stroke="#39d2c0" stroke-width="1.5"/>
+<rect x="904" y="198" width="110" height="4" rx="2" fill="#7d8896"/>
+<path d="M1036 224v16m-7-7 7 7 7-7" fill="none" stroke="#a9b4c2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1054" y="238" font-size="16" fill="#a9b4c2">read on</text>
+<text x="896" y="270" font-size="18" fill="#e6edf3" font-weight="600">the full chapter</text>
+<rect x="896" y="282" width="236" height="6" rx="3" fill="#a9b4c2" fill-opacity=".5"/>
+<rect x="896" y="300" width="128" height="52" rx="6" fill="#0f1d22" stroke="#39d2c0" stroke-width="2"/>
+<text x="960" y="332" font-size="17" fill="#39d2c0" font-weight="600" text-anchor="middle" font-family="'IBM Plex Mono',ui-monospace,monospace">Figure</text>
+<rect x="1036" y="304" width="140" height="6" rx="3" fill="#a9b4c2" fill-opacity=".5"/>
+<rect x="1036" y="318" width="120" height="6" rx="3" fill="#a9b4c2" fill-opacity=".5"/>
+<rect x="1036" y="332" width="134" height="6" rx="3" fill="#a9b4c2" fill-opacity=".5"/>
+<text x="896" y="378" font-size="16" fill="#a9b4c2">every fact, with its evidence</text>
+</g>
+<path d="M896 330H806" fill="none" stroke="#39d2c0" stroke-width="2.5" stroke-dasharray="7 5"/><path d="M798 330l14-7v14z" fill="#39d2c0"/>
+<g transform="translate(0 26)">
+<rect x="880" y="414" width="118" height="66" rx="8" fill="none" stroke="#7d8896" stroke-width="2" stroke-dasharray="7 5"/>
+<path d="M892 424l94 46M986 424l-94 46" stroke="#ff7b72" stroke-width="2.5" stroke-linecap="round"/>
+<text x="1012" y="440" font-size="18" fill="#e6edf3" font-weight="600">nothing to show</text>
+<text x="1012" y="468" font-size="18" fill="#ff7b72" font-weight="600">no face</text>
+</g>
+</g>
+</svg>
+<svg class="inline-fig fx-tall" viewBox="0 0 340 624" role="img" aria-label="A slide face: a label row that names the subject, the finding as a sentence, a visual that is a view of the chapter's figure, laid out for this finding, and a scope line. In the reader the face sits at the top of the chapter card and the full chapter follows with its figure and every fact with its evidence. A chapter with nothing to show gets no face.">
+<g font-family="'IBM Plex Sans',system-ui,sans-serif">
+<rect x="2" y="2" width="336" height="250" rx="12" fill="#0f1620" stroke="#39d2c0" stroke-width="2.5"/>
+<rect x="18" y="20" width="56" height="6" rx="3" fill="#39d2c0"/>
+<text x="84" y="27" font-size="14" fill="#a9b4c2">label row: the subject</text>
+<text x="18" y="58" font-size="21" fill="#e6edf3" font-weight="600">The finding, as a sentence</text>
+<rect x="18" y="72" width="304" height="136" rx="8" fill="#39d2c0" fill-opacity=".07" stroke="#39d2c0" stroke-width="2"/>
+<text x="170" y="134" font-size="17" fill="#39d2c0" font-weight="600" text-anchor="middle">a view of the chapter's figure</text>
+<text x="170" y="160" font-size="15" fill="#a9b4c2" text-anchor="middle">laid out for this finding</text>
+<text x="18" y="234" font-size="14" fill="#7d8896" font-family="'IBM Plex Mono',ui-monospace,monospace">scope line</text>
+<path d="M104 230H322" stroke="#2f3b4a" stroke-width="1.5"/>
+<path d="M170 262v22m-8-8 8 8 8-8" fill="none" stroke="#a9b4c2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="190" y="280" font-size="15" fill="#a9b4c2">read on</text>
+<rect x="2" y="296" width="336" height="232" rx="12" fill="#121a24" stroke="#2f3b4a" stroke-width="1.5"/>
+<text x="18" y="326" font-size="14" fill="#7d8896" font-weight="600" letter-spacing="1.5" font-family="'IBM Plex Mono',ui-monospace,monospace">IN THE READER</text>
+<text x="18" y="356" font-size="18" fill="#e6edf3" font-weight="600">the full chapter</text>
+<rect x="18" y="370" width="260" height="6" rx="3" fill="#a9b4c2" fill-opacity=".5"/>
+<rect x="18" y="390" width="140" height="64" rx="6" fill="#0f1d22" stroke="#39d2c0" stroke-width="2"/>
+<text x="88" y="428" font-size="16" fill="#39d2c0" font-weight="600" text-anchor="middle" font-family="'IBM Plex Mono',ui-monospace,monospace">Figure</text>
+<text x="176" y="418" font-size="15" fill="#39d2c0" font-weight="600">the face is</text>
+<text x="176" y="438" font-size="15" fill="#39d2c0" font-weight="600">a view of it</text>
+<text x="18" y="490" font-size="15" fill="#a9b4c2">every fact, with its evidence</text>
+<rect x="18" y="502" width="220" height="6" rx="3" fill="#a9b4c2" fill-opacity=".5"/>
+<rect x="2" y="552" width="120" height="68" rx="8" fill="none" stroke="#7d8896" stroke-width="1.5" stroke-dasharray="6 4"/>
+<path d="M14 562l96 48M110 562l-96 48" stroke="#ff7b72" stroke-width="2.5" stroke-linecap="round"/>
+<text x="140" y="580" font-size="17" fill="#e6edf3" font-weight="600">nothing to show</text>
+<text x="140" y="606" font-size="17" fill="#ff7b72" font-weight="600">no face</text>
+</g>
+</svg>
+<figcaption>Figure 4 redrawn: the face enlarged beside the chapter it opens</figcaption>
 </figure>
-<ol class="slide-points">
-<li><b>The title states the finding</b><p>A sentence, not a topic. The label row above it names the subject.</p></li>
-<li class="is-key"><b>The chapter's figure fills the canvas</b><p>Drawn large, with its parts numbered. A chapter without a figure gets one first, never with invented data.</p></li>
-<li><b>Text explains beside it</b><p>Each point is a claim and a sentence or two. Boxes that only repeat the title are not a visual.</p></li>
-<li class="is-key"><b>The chapter follows in full</b><p>Every fact on the face is also stated, with its evidence, in the chapter below.</p></li>
-</ol>
-</div></div>
-<dl class="slide-facts"><div><dt>Added</dt><dd>After the chapters</dd></div><div><dt>Needs</dt><dd>The person's yes</dd></div><div><dt>Nothing to show</dt><dd>No face</dd></div><div><dt>Canvas</dt><dd>16:9</dd></div></dl>
+</div>
 <p class="slide-scope">Wireframe of a face · no measured results</p>
 <!-- /slide -->
 
@@ -171,24 +298,24 @@ chapter_reader = true
 
 <p class="bs-lead">A slide face shows its chapter's finding with one real visual; the chapter remains the complete, readable source of every claim.</p>
 
-[Figure 4](#fig-slide-anatomy) shows the parts of a face and where its content comes from. Follow the numbers: the title states the finding (01), the chapter's figure fills most of the canvas (02), text beside it explains the figure (03), and the full chapter follows (04).
+[Figure 4](#fig-slide-anatomy) shows the parts of a face and where its content comes from. Follow the numbers: the title states the finding (01), a visual drawn from the chapter's figure fills most of the canvas (02), a scope line closes the face (03), and the full chapter follows (04).
 
 <div class="bs-grid g2">
 <figure id="fig-slide-anatomy">
 <!-- include: fragments/slide-anatomy.html -->
-<figcaption><b>Figure 4.</b> A face is a 16:9 view of its chapter: the finding as the title, one visual taken from the chapter's figure, text that explains it and a scope line. A chapter with nothing to show gets no face. This hand-authored SVG wireframe contains no measured results.</figcaption>
+<figcaption><b>Figure 4.</b> A face is a 16:9 view of its chapter: the finding as the title, a view of the chapter's figure laid out for that finding, and a scope line. A chapter with nothing to show gets no face. This hand-authored SVG wireframe contains no measured results.</figcaption>
 </figure>
 <div class="bs-part bs-orange"><span class="bs-label">Read the figure</span><h3>What a face holds</h3><ol>
 <li><b>The title states the finding.</b> A sentence, not a topic. The label row above it names the subject.</li>
-<li><b>The chapter's figure fills the canvas.</b> Drawn large, with its parts numbered. When the chapter has no figure yet, make one for the chapter first from what exists; never draw invented data.</li>
-<li><b>The content sets the layout.</b> Here points beside the figure each give a short claim in bold and a sentence or two that explain it, and a closing row gives the facts a reader would ask for next; another face may label the figure's parts or use a row of steps instead. Only what the title names is emphasised. Boxes that only repeat the title are not a visual.</li>
+<li><b>A visual fills the canvas.</b> The chapter's figures and numbers are its material: the face may crop, combine, annotate or redraw them, and shows nothing the chapter does not state. When the chapter has no figure yet, make one for the chapter first from what exists; never draw invented data.</li>
+<li><b>The scope line closes it.</b> Between the title and the scope line, the shape of the finding sets the layout: this page's two faces are a matrix of folders and the face drawn large beside its chapter; another face may be a timeline or a row of steps. Labels sit on the parts they name, and only what the title names is emphasised. Boxes that only repeat the title are not a visual.</li>
 <li><b>The chapter follows in full.</b> Every fact on the face is also stated, with its evidence, in the chapter below.</li>
 </ol></div>
 </div>
 
 **Faces come last.** Build the chapters first, so each one is complete before any slide exists. Then ask the person whether the page should get faces, and add them only after a yes. A chapter with nothing to show gets no face; on this page only the first chapter and this one have faces.
 
-Write the face between `<!-- slide -->` and `<!-- /slide -->` at the start of a chapter. The reader shows it as a 16:9 slide at the top of the card, followed by the full chapter. Both faces here include the same SVG fragment as their chapter's figure, so the slide and the figure cannot drift apart. `python docsite.py slides --project . --select guide --out guide` collects the faces into a deck that can be presented or printed. The <a href="../topics/guide/guide.md#slide-faces">agent record</a> lists these rules.
+Write the face between `<!-- slide -->` and `<!-- /slide -->` at the start of a chapter. The reader shows it as a 16:9 slide at the top of the card, followed by the full chapter. Neither face here repeats its chapter's figure unchanged: the first sets the three folders of Figure 1 against who writes them and how they change, and this one draws Figure 4's face large beside the chapter it opens. Every word on a face is also in its chapter, so a change updates both in the same edit. `python docsite.py slides --project . --select guide --out guide` collects the faces into a deck that can be presented or printed. The <a href="../topics/guide/guide.md#slide-faces">agent record</a> lists these rules.
 
 </section>
 

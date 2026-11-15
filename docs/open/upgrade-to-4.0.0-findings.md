@@ -256,8 +256,16 @@ and in the starter `docs/topics/guide/guide.md` and
 
 Owed:
 
-- The kit's own four example faces were built to the old prescribed
-  arrangement and need the review the changed rule describes.
+- Done on 2026-11-15: the kit's own four example faces, built to the old
+  prescribed arrangement, are redesigned, and no two share a layout. "Get
+  started" draws the kit's revisions as one timeline across the canvas, with
+  a copied rule, project A and project B below it. "Build a site" draws the
+  build as one pipeline above the two things that never happen. The
+  starter's ownership face is a matrix of three folders against who writes
+  them and when they change, and its slide-face face draws a face large
+  beside the chapter it opens. Each face keeps its local classes in a
+  `<style>` element inside the face. deivid has not yet looked at the
+  captures.
 - Cases 2 to 8 above, the three omissions of the guide step and the fourteen
   other gaps.
 - A trial of the changed rule on a few of adaptation's faces, to see whether
