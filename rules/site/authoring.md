@@ -447,3 +447,35 @@ The outer face is the size container and every size inside the canvas is a conta
 When a face shows a number on purpose that the chapter does not, wrap exactly that number in an element with the reason, such as `<span data-face-only="rounded from Table 3">0.47</span>`. Lint prints it as a note instead of a warning. A mark that holds no number or more than one, that gives no reason, or whose number the chapter now shows is a warning. The mark is there so that a false finding never forces a rewording; a number the chapter truly lacks belongs in the chapter.
 
 Extract a deck with `python .docs-kit/docsite.py slides --project . --select <slug>[#chapter,…] --out <name> [--title …]`. Repeat `--select` to combine pages; listed chapters keep the given order, a bare slug takes every face in reading order. Chapters are the reader's chapter sections, or the outermost `section.card` elements on pages without the reader. Slide ids are prefixed per slide so pages can share one deck; relative URLs (including `srcset`, `xlink:href` and CSS `url()`) point back into the built site, and links to the rest of a page open that page. Faces from math pages render with the vendored KaTeX. The command builds the site first and writes `.build/slides/<name>.html`, which reuses the built site's assets and stays outside the published bundle. The deck offers an overview, a presentation mode (`P`, arrow keys, `F`, `Esc`) and one-slide-per-page printing for PDF export. Serve `.build/` on loopback to open it.
+
+### Formula check
+
+`docsite.py lint` compiles every formula on the built pages with the KaTeX the
+kit ships, the same `katex.min.js` the pages load. It reads each built page
+that loads the kit's math renderer and finds the formulas as that renderer
+finds them in a browser: in the page's content, outside `pre`, `code`,
+`script` and `style`, between `$$` and `$$` or `\(` and `\)`. Three cases are
+errors, because each shows as raw text on the page, and each message names the
+page's source, the built page and the formula:
+
+- a formula that KaTeX cannot compile, with KaTeX's message;
+- a formula that Markdown split with markup, such as an `<em>` that an
+  underscore made inside `$…$`;
+- an opening delimiter whose closing one is not in the same text, for example
+  because a tag or an unbalanced brace comes between them.
+
+KaTeX is JavaScript, and building a site needs no Node.js. The check is
+therefore the one part of lint that runs Node: `DOCS_NODE` when it is set,
+otherwise `node` on `PATH`. A `DOCS_NODE` that names no program is an error.
+Without Node, lint prints a note that says how many formulas were not compiled,
+and the run passes. A project whose checks must not pass without the formula
+check sets, above the first `[[nav]]` table:
+
+```toml
+formula_check_required = true
+```
+
+Lint then fails when it finds no Node. A value other than `true` or `false`
+fails the build. After the check, lint prints how many formulas compiled and
+with which KaTeX version. The [module's description](../../tooling/formula_checks.py)
+gives the details.

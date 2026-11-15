@@ -15,7 +15,8 @@ loaded by file path or run as a command: `tooling/lint.py` loads
 `tooling/site_paths.py` by path and runs
 `tooling/build.py`, and `docsite.py` runs `build.py`, `lint.py`, `slides.py`
 and `capability_map.py`. Node scripts under `tests/` load
-`tooling/browser_checks.cjs`.
+`tooling/browser_checks.cjs`, and `tooling/formula_checks.py` runs
+`tooling/formula_compile.cjs` with Node.
 
 ## Capabilities
 
@@ -40,6 +41,7 @@ and `capability_map.py`. Node scripts under `tests/` load
 | Store the text of a published bundle encrypted behind passwords | [page_lock.py](../tooling/page_lock.py) | exists | `tests/page_lock_fixture.py`, `tests/test_page_lock.py`, `tooling/publication.py` |
 | Extract chapter slide faces from built pages into one deck | [slides.py](../tooling/slides.py) | exists | `tests/test_slide_faces.py`, `tooling/slide_face_checks.py` |
 | Check in the built pages that each chapter opens with at most one slide face and that every number a face shows also appears in its chapter, with no list from the project | [slide_face_checks.py](../tooling/slide_face_checks.py) | exists | `tests/test_slide_face_checks.py`, `tooling/lint.py` |
+| Check that every formula on a project's built pages compiles with the KaTeX the kit ships, and that none is split by Markdown or left unclosed | [formula_checks.py](../tooling/formula_checks.py), [formula_compile.cjs](../tooling/formula_compile.cjs) | exists | `tests/test_formula_checks.py`, `tooling/lint.py` |
 | Write inline SVG figures from a project's figure generator | [svg_figures.py](../tooling/svg_figures.py) | exists | `tests/test_figure_tooling.py` |
 | Check rendered pages in a real browser: layout, overflow, visible media, and slide faces in their page or deck, stacked below 720 px included | [browser_checks.cjs](../tooling/browser_checks.cjs) | exists | not scanned: no Python code |
 
@@ -69,3 +71,11 @@ decision. An entry without a decision says where the question waits.
   his word: "add it". Built as a lint error in `lint.py`, which reads the
   source links the build marks in the built pages; the row "Check links, HTML
   links to repository files included, …" covers it.
+- Check that every formula on a project's built pages compiles. Seen
+  2026-11-15: a consuming project, ADP, keeps its own test that compiles every
+  formula of its built pages with the kit's KaTeX and fails on one that does
+  not compile or that Markdown split. Decision 2026-11-15 by deivid: "lets
+  move it to kit". Built as a lint error in `formula_checks.py`, which finds
+  the formulas in Python and compiles them in Node with
+  `formula_compile.cjs`; without Node it is a note, or an error when the
+  project sets `formula_check_required = true`.

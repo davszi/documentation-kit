@@ -38,6 +38,11 @@ Checks (the shared guides under rules/ are the spec):
      every chapter are errors; a number shown on a face and nowhere else in its
      chapter is a warning; a `data-face-only` mark that is unusable or no
      longer needed is a warning, and a usable one is a note
+ 14. formulas in the built pages (`formula_checks.py`): every formula on a page
+     that loads the kit's KaTeX compiles with it, no formula is split by
+     Markdown and none is left unclosed (errors). KaTeX runs in Node.js; without
+     Node the check is a note, or an error when site.toml sets
+     `formula_check_required = true`
 
 Notes (never fail, not even under --strict): a changed record section
 (working tree vs HEAD, or vs --since <rev>) lists the topic pages that link
@@ -50,6 +55,8 @@ Each problem the build tolerated in an automatically listed reference page
 (see `reference_listing` in site.toml) is a note too.
 A number that a project accepts on one slide face with `data-face-only` is a
 note that names the number and the reason.
+A formula check skipped because Node.js is missing is a note, unless the
+project requires the check.
 
 Exit 0 clean (warnings print unless --strict fails them), 1 on errors.
 """
@@ -636,6 +643,22 @@ def check_slide_faces() -> None:
         notice(note)
 
 
+summaries: list[str] = []
+
+
+def check_formulas() -> None:
+    from formula_checks import check
+    from topic_structure import page_sources
+    config = DOCS / "site" / "site.toml"
+    site = tomllib.loads(config.read_text()) if config.is_file() else {}
+    found_errors, found_notes, summary = check(REPO, site, resolve_path(DOCS / "html"), page_sources(REPO))
+    errors.extend(found_errors)
+    for note in found_notes:
+        notice(note)
+    if summary:
+        summaries.append(summary)
+
+
 def record_change_notes(since: str | None) -> list[str]:
     """Reminders, never failures: pages that explain a changed record section."""
     from record_changes import record_change_notes as notes
@@ -684,6 +707,7 @@ def main() -> int:
     check_capability_map()
     check_build()
     check_slide_faces()
+    check_formulas()
     check_kit_pin()
     notes = record_change_notes(args.since) + page_number_notes()
 
@@ -693,6 +717,8 @@ def main() -> int:
         print(f"NOTE: {n}")
     for note in notes:
         print(note)
+    for summary in summaries:
+        print(summary)
     for e in errors:
         print(f"ERROR: {e}", file=sys.stderr)
     if errors or (args.strict and warnings):

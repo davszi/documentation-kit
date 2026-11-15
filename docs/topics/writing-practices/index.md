@@ -780,7 +780,7 @@ In Markdown:      $…$   inline     $$…$$   display
 Inside raw HTML:  \(…\)
 ```
 
-The kit renders math with its bundled KaTeX; nothing is fetched from a CDN. A long expression wraps or scrolls inside its own box, and the type is never shrunk until it is hard to read. Formulas written inside raw HTML are easy to overlook, so inspect those in the rendered page too.
+The kit renders math with its bundled KaTeX; nothing is fetched from a CDN. A long expression wraps or scrolls inside its own box, and the type is never shrunk until it is hard to read. Formulas written inside raw HTML are easy to overlook, so inspect those in the rendered page too. Lint compiles every formula of the built pages with the same KaTeX and names each one that would show as raw text.
 
 <!-- /fold -->
 

@@ -22,6 +22,9 @@ reference_exclude = ["CLAUDE.md", "examples/**"]
 # Imported by column lint checks against the Python imports.
 tooling_roots = ["tooling/"]
 capability_map = "docs/KIT_CAPABILITY_MAP.md"
+# Lint compiles every formula with the shipped KaTeX in Node.js; the kit's
+# checks always have Node, so a run without it fails instead of skipping.
+formula_check_required = true
 
 [[nav]]
 label = "Home"

@@ -152,7 +152,10 @@ python .docs-kit/docsite.py slides --project . --select guide --select other#int
 Python 3.12 is the validated runtime; the entrypoint requires at least 3.12.
 Dependencies are pinned in `requirements.txt`. Node.js 22 and the Playwright
 version pinned in `package.json` are used for kit development checks, not for
-building a consuming site.
+building a consuming site. Lint uses Node.js when it finds it, for one check:
+it compiles every formula of the built pages with the shipped KaTeX, and
+`formula_check_required = true` in `site.toml` makes a missing Node an error;
+see [formula check](rules/site/authoring.md#formula-check).
 
 The build packages tracked resources only, rejects missing media and symlink
 escapes, checks resource closure and detects stray generated files. Local-only

@@ -4,7 +4,7 @@
 
 Run checks from the consuming project root using the pinned kit. A complete validation must cover:
 
-- Full build, freshness check and link/anchor/snippet/figure lint, HTML links to repository files included.
+- Full build, freshness check and link/anchor/snippet/figure lint, HTML links to repository files and the [formula check](authoring.md#formula-check) included.
 - Shared engine regression suite and applicable project content/interaction checks.
 - Exact evidence identities and manifest closure where registered.
 - Browser rendering at wide and narrow widths, plus equal-column layout when the reader is used.

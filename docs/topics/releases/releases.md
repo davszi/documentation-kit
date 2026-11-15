@@ -29,7 +29,7 @@ shows the new warnings.
 ## 5.0.0 — Reference section by default, page lock and Presentation view
 
 5.0.0 is a major release under
-[what a version number promises](#what-a-version-number-promises) for five
+[what a version number promises](#what-a-version-number-promises) for six
 reasons:
 
 - **A default now publishes more.** Every tracked Markdown file of a project
@@ -75,6 +75,13 @@ reasons:
   adaptation at `e28472e` has 78, of which 42 fail once its path adapter is
   gone, 41 because they name paths only the adapter mapped and one because
   its target exists nowhere.
+- **A new lint error for formulas.** Lint now compiles every formula on the
+  built pages with the KaTeX the kit ships, whenever it finds Node.js, and
+  fails on a formula that does not compile, on one that Markdown split and on
+  an opening delimiter that does not close. Up to 4.0.0 such a formula showed
+  as raw text on the page and lint passed. A project in that case passed
+  before and fails now. deivid decided to move ADP's own formula test into the
+  kit: "lets move it to kit".
 
 Apart from the two adapter settings and the two kept-copy settings, no
 command, flag, configuration key or marker is removed.
@@ -85,8 +92,9 @@ file under `rules/` at `v4.0.0` is still present.
 with five subsections. `rules/engineering/code.md` gains "Name the need first"
 and "The capability map" with its subsection "The check";
 `rules/experiments/workflow.md` gains "Show the total" and "Step back across
-experiments". Apart from the slide-face checks, a removed adapter or kept-copy setting
-and a dead HTML link to a repository file, a project that does not set
+experiments". Apart from the slide-face checks, a removed adapter or kept-copy setting,
+a dead HTML link to a repository file and a formula that does not compile, a
+project that does not set
 `tooling_roots` gets no new lint warning or error; a problem in an
 automatically listed file is a lint note, which never fails. The slide-face
 checks apply to every project with slide faces: the error above, and a
@@ -94,9 +102,9 @@ warning, which fails `lint --strict`, for a number that a face shows and its
 chapter does not. The capability map check adds lint errors and one warning
 only for a project that opts in.
 
-The new top-level `site.toml` settings `reference_listing` and
-`reference_exclude` and the `[publication]` key `lock` join the stable
-interfaces as configuration keys. `site.toml` has no check for unknown
+The new top-level `site.toml` settings `reference_listing`,
+`reference_exclude` and `formula_check_required` and the `[publication]` key
+`lock` join the stable interfaces as configuration keys. `site.toml` has no check for unknown
 top-level keys, so a project that already used `reference_listing` or
 `reference_exclude` for its own value now fails the build when that value is
 not valid for the new setting.
@@ -165,7 +173,8 @@ Known open points are in the [open record](../../open/release-5.0.0-waits.md).
 | Build | Fix: a `**INVARIANT:**` or `**DON'T-REDO:**` marker inside a fenced code block, with backticks or tildes and also one left open to the end of the page, stays text in the block. Up to 4.0.0 it became a card and broke the block, which failed the reader build or showed a stray closing tag. A marker paragraph followed by a fence without a blank line ends where the fence starts. `lint --registry` no longer lists a marker inside a fenced block or a code span, and lint no longer warns about a line that names the markers in code spans | [Rules for changes and chronology](../../../rules/documentation.md#rules-for-changes-and-chronology) |
 | Theme | Fix: in the zoomed figure the plot toggle chips show the colour of their series; up to 4.0.0 every dot there was grey, because the lightbox built its chips on a copy of the figure that was not yet in the page, and a detached element has no computed colour. A chip keeps its label on one line, and the zoomed figure's chip bar spans the window less a margin and wraps whole chips; up to 4.0.0 the bar was half the window wide, so at 390 px a label such as "Menger joints (default)" broke inside its chip. A click beside the chips still closes the zoomed figure | [Authoring paths](../../../rules/site/authoring.md#authoring-paths) |
 | Lint | New error: a link written as HTML, `<a href="…">`, to a repository file whose target does not exist, or whose fragment into a Markdown file matches no anchor. Lint reads the source links the build marked in the built pages, so it uses the build's resolution, with a source remote and without one. It covers topic pages, the fragments they include and registered source pages; the message names the page's source, the built page and the repository path. On an automatically listed page the problem is a note; links in worklog entries before `worklog_links_checked_from` are not checked. A built relative link without a source remote is no longer also reported as `dead relative href` | [Authoring paths](../../../rules/site/authoring.md#authoring-paths) |
-| Kit checks | `requirements-lock.txt` pins `cryptography` 50.0.2 for the page-lock checks; the Pages workflow installs it. New checks: `tests/test_reference_listing.py`, `tests/test_capability_map.py`, `tests/test_page_lock.py`, `tests/test_slide_face_checks.py`, `tests/test_markers.py`, `tests/test_source_links.py`, the WebCrypto cross-check and two browser suites, `tests/test_reference_tree.cjs` and `tests/test_page_lock_browser.cjs`. `tests/test_browser_checks.cjs` now checks stacked slide faces at 390 px and the plot toggle chips in the zoomed figure | [README](../../../README.md#develop-the-kit) |
+| Lint | New error: a formula on a built page that does not compile with the kit's KaTeX, with KaTeX's message; a formula that Markdown split with markup; an opening `$$` or `\(` whose closing delimiter is not in the same text. Each names the page's source, the built page and the formula. Lint finds the formulas as the page's renderer does, on every page that loads it, and compiles them in Node.js: `DOCS_NODE`, or `node` on `PATH`. Building still needs no Node. Without Node lint prints a note and passes; with the new setting `formula_check_required = true` it fails, so that a project's checks cannot skip the check silently. After the check lint prints how many formulas compiled. A project test that compiles its formulas itself may be dropped | [Formula check](../../../rules/site/authoring.md#formula-check), [mathematical explanation](../../../rules/writing/math.md#mathematical-explanation) |
+| Kit checks | `requirements-lock.txt` pins `cryptography` 50.0.2 for the page-lock checks; the Pages workflow installs it. New checks: `tests/test_formula_checks.py`, `tests/test_reference_listing.py`, `tests/test_capability_map.py`, `tests/test_page_lock.py`, `tests/test_slide_face_checks.py`, `tests/test_markers.py`, `tests/test_source_links.py`, the WebCrypto cross-check and two browser suites, `tests/test_reference_tree.cjs` and `tests/test_page_lock_browser.cjs`. `tests/test_browser_checks.cjs` now checks stacked slide faces at 390 px and the plot toggle chips in the zoomed figure | [README](../../../README.md#develop-the-kit) |
 
 ## 4.0.0 — finished working documents, neutral theme names and group colours
 

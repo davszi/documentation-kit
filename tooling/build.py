@@ -1092,6 +1092,8 @@ def main() -> int:
             ap.error(f"site.toml: {key} was removed in kit 5.0.0; the kit no longer keeps or maps copies of old documents. "
                      "Follow \"Remove the adapter hooks\" in the kit's docs/topics/releases/migrations/5.0.0.md, "
                      f"then delete the {key} setting")
+    if "formula_check_required" in site and not isinstance(site["formula_check_required"], bool):
+        ap.error("site.toml: formula_check_required must be true or false")
     if not isinstance(site.get("nav", []), list):
         ap.error("site.toml: nav must be a list of [[nav]] tables")
     for entry in site.get("nav", []):

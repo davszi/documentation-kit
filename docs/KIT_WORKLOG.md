@@ -2,6 +2,59 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Compile every formula on the built pages in lint
+
+- Why: ADP keeps its own test, `tools/docs/test_content_math.cjs`, that
+  compiles the formulas of its built pages with the kit's KaTeX and fails on
+  one that does not compile or that Markdown split. The need is general and
+  the capability map did not list it. deivid decided: "lets move it to kit".
+- What: `docsite.py lint` reads every built page that loads the kit's math
+  renderer and finds the formulas as the vendored auto-render does: in the
+  `content` element, in runs of adjacent text outside `pre`, `code`,
+  `script` and `style`, between `$$` or `\(` and their closing delimiter
+  with braces balanced. `tooling/formula_compile.cjs` compiles them in one
+  Node process with `theme/assets/vendor/katex/katex.min.js`. Errors: a
+  formula that does not compile, with KaTeX's message; a formula that
+  Markdown split, ADP's guard, now for every page; an opening delimiter not
+  closed in the same text. Each names the page's source, the built page and
+  the formula. Lint then prints how many formulas compiled with which KaTeX.
+- How it runs without breaking the promise that building needs no Node.js:
+  inside lint, as its one Node step, rather than as a helper a project calls
+  like the browser checks. Inside lint every project with Node gets the check
+  without adding anything, and a project with its own test can drop it. Node
+  is `DOCS_NODE` or `node` on `PATH`; a `DOCS_NODE` that names nothing is an
+  error. Without Node lint prints a note and passes, so building and linting
+  still work without Node. A project whose checks must not skip it sets
+  `formula_check_required = true` in `site.toml`; lint then fails without
+  Node, so its CI cannot pass silently. The kit's own site sets it.
+- Level: an error, as decided for 5.0.0; a formula that does not compile
+  shows as raw text on the page.
+- Trials, all with KaTeX 0.16.11:
+  - the kit's site: 5 of 5 formulas on 1 page compile; the starter: 3 of 3
+    on 1 page;
+  - adaptation, a clone of `e28472e` built with its pin `v4.0.0` and again
+    with this kit after removing its two adapter settings in the clone: no
+    page sets `math = true`, so 0 formulas;
+  - ADP, its existing build output from 2026-11-15 read in place, ADP at
+    `b8b80e0b`: 396 of 396 formulas on 8 pages compile, 310 inline and 86
+    display. ADP's own test reads the same pages as 355 formulas, 269 inline
+    and 86 display: the 41 more are `\(…\)` formulas written in raw HTML,
+    which its pattern for the build's wrapper does not see. No formula is
+    split or unclosed.
+- Rules and records: the new section [formula check](../rules/site/authoring.md#formula-check),
+  a sentence in [mathematical explanation](../rules/writing/math.md#mathematical-explanation)
+  and in [validation and review](../rules/site/validation.md#validation-and-review),
+  the README's Node.js paragraph, a reason, a lint row and the stable key in
+  the 5.0.0 release notes, the step "Fix formulas that do not compile" in the
+  migration guide, a row and a seen-but-not-built entry with the decision in
+  the capability map, a commented setting in the starter's `site.toml`, and a
+  sentence on "Build a site" and "Documentation and writing".
+- Tests: `tests/test_formula_checks.py`, 15 tests, among them a broken formula
+  in a starter project that fails `docsite.py lint` with its page. With the
+  call in lint disabled, that test fails.
+- Checks: build, `lint --strict` (0 warnings), `build --check-reader` and the
+  316 Python tests.
+
 ## 2026-11-15 — The kit keeps its name; close the open record
 
 - Decision 2026-11-15 by deivid on the open question of the kit's name, raised
