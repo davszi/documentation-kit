@@ -6,7 +6,11 @@
 // exported Markdown links with and without a source remote, and the reader's
 // Presentation view after unlock. Run as one owned, serialized local job, like
 // the other browser suites.
-const {chromium} = require('../node_modules/playwright');
+const playwright = require('../node_modules/playwright');
+// The kit's checks run Chromium. DOCS_BROWSER=firefox or webkit runs the same
+// flow in another engine that `npx playwright install` added.
+const engine = process.env.DOCS_BROWSER || 'chromium';
+if (!['chromium', 'firefox', 'webkit'].includes(engine)) throw new Error('DOCS_BROWSER must be chromium, firefox or webkit');
 const assert = require('node:assert/strict');
 const {execFileSync} = require('node:child_process');
 const crypto = require('node:crypto');
@@ -20,7 +24,11 @@ const kit = path.resolve(__dirname, '..');
 const python = process.env.DOCS_PYTHON || 'python3';
 const output = path.join(kit, '.build/page-lock-review');
 const MARKERS = {topic: 'TOPIC-MARKER-5e1f0c', widgets: 'WIDGETS-MARKER-7d20b9', frame: 'FRAME-MARKER-c41a83',
-  reference: 'REFERENCE-MARKER-a93d27', markdown: 'MARKDOWN-MARKER-0b6e44', title: 'TITLE-MARKER-9f31aa'};
+  reference: 'REFERENCE-MARKER-a93d27', markdown: 'MARKDOWN-MARKER-0b6e44', title: 'TITLE-MARKER-9f31aa',
+  referenceFrame: 'REFFRAME-MARKER-3d7e52', notFound: 'NOT-FOUND-MARKER-81c0f4'};
+// Addresses the server answers like GitHub Pages: a missing one gets 404.html,
+// and moved.html serves guide.html's lock page at an address it was not sealed for.
+const MISSING = 'no-such-page';
 const throwaway = () => crypto.randomBytes(24).toString('base64url');
 let general = throwaway();
 const reference = throwaway();
@@ -38,9 +46,14 @@ const server = http.createServer((req, res) => {
     const site = roots[base];
     let file = path.resolve(site, '.' + pathname.slice(base.length - 1));
     if (file !== site && !file.startsWith(site + path.sep)) throw Error('outside the bundle');
+    if (file === path.join(site, 'moved.html')) file = path.join(site, 'guide.html');
     if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, 'index.html');
-    // GitHub Pages serves page.html at /page as well.
+    // GitHub Pages serves page.html at /page as well, and 404.html at a missing address.
     if (!fs.existsSync(file) && fs.existsSync(file + '.html')) file += '.html';
+    if (!fs.existsSync(file) && fs.existsSync(path.join(site, '404.html'))) {
+      res.statusCode = 404;
+      file = path.join(site, '404.html');
+    }
     res.setHeader('Content-Type', mime[path.extname(file)] || 'application/octet-stream');
     res.end(fs.readFileSync(file));
   } catch { res.statusCode = 404; res.end('Not found'); }
@@ -93,11 +106,13 @@ async function referenceTree(page) {
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const origin = `http://127.0.0.1:${server.address().port}`;
   const url = (name, base = '/lock-fixture/') => origin + base + name;
-  const browser = await chromium.launch({headless: true});
+  const browser = await playwright[engine].launch({headless: true});
   const errors = [];
   const watch = page => {
     page.on('pageerror', error => errors.push(error.message));
-    page.on('response', response => { if (response.status() >= 400) errors.push(response.url() + ': ' + response.status()); });
+    page.on('response', response => {
+      if (response.status() >= 400 && !response.url().includes(MISSING)) errors.push(response.url() + ': ' + response.status());
+    });
     return page;
   };
   const results = {};
@@ -244,19 +259,29 @@ async function referenceTree(page) {
     assert.equal(await activeChapter(deepPage), 'locked-detail');
     await deepPage.goto(url('widgets#far-heading'));
     await waitUnlocked(deepPage);
-    // The browser scrolls to a fragment when the replaced document finishes loading.
+    // The browser scrolls to a fragment when the replaced document finishes loading;
+    // fonts may still move it, so wait until the whole heading is in view.
     await deepPage.waitForFunction(() => {
       const box = document.getElementById('far-heading')?.getBoundingClientRect();
-      return box && box.height > 0 && box.top >= 0 && box.top < innerHeight;
+      return box && box.height > 0 && box.top >= 0 && box.bottom <= innerHeight;
     }, null, {timeout: 10000}).catch(() => {});
     const far = await deepPage.locator('#far-heading').evaluate(el => {
       const box = el.getBoundingClientRect();
-      return {top: Math.round(box.top), height: innerHeight, scrolled: Math.round(scrollY)};
+      return {top: Math.round(box.top), bottom: Math.round(box.bottom), height: innerHeight,
+        scrolled: Math.round(scrollY), target: document.querySelector(':target')?.id || null};
     });
-    assert.ok(far.scrolled > 1000 && far.top >= 0 && far.top < far.height, 'far heading in view: ' + JSON.stringify(far));
+    assert.ok(far.scrolled > 1000 && far.top >= 0 && far.bottom <= far.height, 'far heading in view: ' + JSON.stringify(far));
     await deepPage.goto(url('widgets.html#second-detail'));
     await waitUnlocked(deepPage);
     assert.equal(await deepPage.locator('.ptab-panel[data-ptab="1"]').isVisible(), true, 'the fragment opens its tab');
+    // As on a normal load, the target ends at the top of the window, above the image and frame
+    // that load late.
+    await deepPage.waitForFunction(() => {
+      const box = document.getElementById('second-detail').getBoundingClientRect();
+      return box.top >= 0 && box.top < 100;
+    }, null, {timeout: 10000}).catch(() => {});
+    const second = await deepPage.locator('#second-detail').evaluate(el => Math.round(el.getBoundingClientRect().top));
+    assert.ok(second >= 0 && second < 100, 'the fragment target is at the top: ' + second);
     // A level-1 reader is told that Markdown needs the reference password.
     await deepPage.goto(url('widgets.html'));
     await waitUnlocked(deepPage);
@@ -285,6 +310,27 @@ async function referenceTree(page) {
     await next.goto(url('index.html'));
     await waitUnlocked(next);
     assert.ok(await referenceTree(next), 'the remembered reference key brings the tree');
+    // A frame that only a Reference page embeds opens for the reference password.
+    await next.goto(url('framed.html'));
+    await waitUnlocked(next);
+    const referenceFrame = next.frameLocator('iframe[title="Reference frame"]');
+    await referenceFrame.locator('p').waitFor({state: 'visible', timeout: 20000});
+    assert.equal(await referenceFrame.locator('p').textContent(), MARKERS.referenceFrame);
+    // The site's 404.html opens at a missing address; a page served at an address it was not
+    // sealed for says so. Neither deletes the stored keys.
+    const keysOf = tab => tab.evaluate(() => JSON.stringify({local: {...localStorage}, session: {...sessionStorage}}));
+    const keysBefore = await keysOf(next);
+    await next.goto(url(MISSING));
+    await waitUnlocked(next);
+    assert.ok((await next.content()).includes(MARKERS.notFound));
+    await next.goto(url('moved.html'));
+    await next.locator('#page-lock-message').waitFor({state: 'visible', timeout: 20000});
+    assert.match(await next.textContent('#page-lock-message'), /This address does not match the page it holds/);
+    assert.equal(await next.locator('#page-lock-form').isVisible(), false);
+    assert.equal(await keysOf(next), keysBefore, 'a mismatched address keeps the keys');
+    await next.goto(url('widgets.html'));
+    await waitUnlocked(next);
+    results.addresses = {notFound: 'opened', moved: 'told, keys kept', referenceFrame: 'opened at level 2'};
     roots['/lock-fixture/'] = publish('project', 'site-2');
     await next.goto(url('rule.html'));
     await waitUnlocked(next);
@@ -321,8 +367,55 @@ async function referenceTree(page) {
     await plain.screenshot({path: path.join(output, '390-no-javascript.png')});
     await noScript.close();
 
+    // 8. Back and forward between unlocked pages: the engine may restore the written
+    //    document from its back/forward cache or load the lock page again; either way
+    //    the page shows, with the Reference tree that document.write left in window.
+    const back = await browser.newContext({viewport: {width: 1400, height: 900}, reducedMotion: 'reduce'});
+    const backPage = watch(await back.newPage());
+    await backPage.goto(url('guide.html'));
+    await unlockWith(backPage, reference);
+    await waitUnlocked(backPage);
+    // Survives only if the engine restores the page from its back/forward cache.
+    await backPage.evaluate(() => { window.lockHistoryMark = true; });
+    await backPage.goto(url('widgets.html'));
+    await waitUnlocked(backPage);
+    assert.equal(await backPage.evaluate(() => typeof window.docsReferenceTree), 'string');
+    assert.ok(await referenceTree(backPage), 'the tree on a general page');
+    await backPage.goBack();
+    await waitUnlocked(backPage);
+    assert.ok((await backPage.content()).includes(MARKERS.topic), 'back shows the guide');
+    await backPage.locator('[data-reader-chapter].topic-active').waitFor({state: 'attached'});
+    assert.ok(await referenceTree(backPage), 'the tree after going back');
+    const fromCache = await backPage.evaluate(() => window.lockHistoryMark === true);
+    await backPage.goForward();
+    await waitUnlocked(backPage);
+    assert.ok((await backPage.content()).includes(MARKERS.widgets), 'forward shows the widgets page');
+    results.history = {shown: 'back and forward show unlocked pages with the tree', backFromCache: fromCache};
+    await back.close();
+
+    // 9. The bundle opened from disk: the tree loads through a <script> element. Whether a key
+    //    entered on one file:// page reaches the next depends on the engine's file origins.
+    const disk = await browser.newContext({viewport: {width: 1400, height: 900}});
+    const diskPage = watch(await disk.newPage());
+    const fileUrl = name => 'file://' + path.join(roots['/lock-fixture/'], name);
+    await diskPage.goto(fileUrl('rule.html'));
+    await unlockWith(diskPage, reference);
+    await waitUnlocked(diskPage);
+    tree = await referenceTree(diskPage);
+    assert.deepEqual(tree.current, [['rule.html', 'page']]);
+    await diskPage.goto(fileUrl('guide.html'));
+    await diskPage.waitForFunction(() => !document.getElementById('page-lock')
+      || !document.getElementById('page-lock-form').hidden, null, {timeout: 20000});
+    const carried = !(await diskPage.locator('#page-lock').count());
+    if (!carried) await unlockWith(diskPage, reference);
+    await waitUnlocked(diskPage);
+    assert.ok((await diskPage.content()).includes(MARKERS.topic));
+    assert.ok(await referenceTree(diskPage), 'the tree on a general page from disk');
+    results.fromDisk = {tree: true, keyCarriedToNextFile: carried};
+    await disk.close();
+
     assert.deepEqual(errors, []);
-    console.log('Page lock browser flow passes: ' + JSON.stringify(results));
+    console.log(`Page lock browser flow passes in ${engine} ${browser.version()}: ` + JSON.stringify(results));
   } finally {
     await browser.close();
     await new Promise(resolve => server.close(resolve));

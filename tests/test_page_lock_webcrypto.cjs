@@ -53,20 +53,27 @@ const reference = throwaway();
   const joined = lock.joinSection(new TextEncoder().encode('<div id="toc">ä\n  </div>'), 16,
     '\n<div class="repo-tree"></div>');
   assert.equal(joined, '<div id="toc">ä\n<div class="repo-tree"></div>\n  </div>');
+  assert.deepEqual(lock.unpad(new Uint8Array([60, 0x80, 0, 0])), new Uint8Array([60]));
+  assert.deepEqual(lock.unpad(new Uint8Array([0x80, 0x80])), new Uint8Array([0x80]));
+  assert.throws(() => lock.unpad(new Uint8Array([60, 0, 0])), /Malformed page padding/);
 
   let checked = 0;
   for (const file of files) {
     const plain = lock.fromBase64(file.plain);
     let sealed;
+    // Text files are sealed as they are; pages are sealed padded.
+    let read = data => data;
     if (file.envelope) {
       const envelope = lock.parseEnvelope(file.envelope);
       assert.equal(envelope.level, file.level);
       sealed = envelope.sealed;
     } else {
       sealed = lock.fromBase64(file.sealed);
+      read = lock.unpad;
     }
-    assert.deepEqual(await lock.openFile(both.keys[file.level], file.path, sealed), plain, file.path);
-    if (file.level === 1) assert.deepEqual(await lock.openFile(opened.keys[1], file.path, sealed), plain);
+    if (file.level === 2 && !file.envelope) assert.equal(sealed.length, 8192 + 28, 'a padded page has its fixed size');
+    assert.deepEqual(read(await lock.openFile(both.keys[file.level], file.path, sealed)), plain, file.path);
+    if (file.level === 1) assert.deepEqual(read(await lock.openFile(opened.keys[1], file.path, sealed)), plain);
     else assert.equal(opened.keys[file.level], undefined);
     // Associated data binds the path; any changed byte fails authentication.
     await assert.rejects(lock.openFile(both.keys[file.level], 'moved/' + file.path, sealed), {name: 'OperationError'});
