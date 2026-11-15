@@ -78,12 +78,12 @@ on a face and 0.4712 in the chapter are a finding to settle by hand.
 from __future__ import annotations
 
 from html.parser import HTMLParser
-import json
 from pathlib import Path
 import re
 
 from chapter_layout import Structure
 from slides import chapters_with_faces
+from topic_structure import page_sources
 
 ACCEPT = "data-face-only"
 LISTED = 12  # numbers named per finding before the rest is counted
@@ -242,22 +242,6 @@ def _opens(page: str, chapter, face) -> bool:
     return not re.sub(r"<!--[\s\S]*?-->|<[^>]*>", "", text).strip()
 
 
-def _page_names(root: Path) -> dict[str, str]:
-    """Built page name to the source that produced it, where the kit knows it."""
-    from topic_structure import frontmatter, topic_pages
-    names = {}
-    for page in topic_pages(root):
-        meta = frontmatter(page) or {}
-        names[str(meta.get("slug", page.parent.name)) + ".html"] = page.relative_to(root).as_posix()
-    try:
-        manifest = json.loads((root / ".build/docs/site-build.json").read_text())
-        names.update({name: source for name, source in manifest.get("source_pages", {}).items()
-                      if isinstance(name, str) and isinstance(source, str)})
-    except (OSError, ValueError, AttributeError):
-        pass
-    return names
-
-
 def _listed(values: list[str]) -> str:
     more = f" and {len(values) - LISTED} more" if len(values) > LISTED else ""
     return ", ".join(values[:LISTED]) + more
@@ -317,7 +301,7 @@ def check(root: Path) -> tuple[list[str], list[str], list[str], dict]:
     """(errors, warnings, notes, counts) over every built page of the project."""
     root = Path(root)
     built = root / ".build/docs/html"
-    names = _page_names(root)
+    names = page_sources(root)
     errors: list[str] = []
     warnings: list[str] = []
     notes: list[str] = []

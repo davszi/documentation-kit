@@ -12,6 +12,7 @@ in `topic_group_folders` in `docs/site/site.toml`:
 
 from __future__ import annotations
 
+import json
 import re
 import tomllib
 from pathlib import Path
@@ -87,6 +88,26 @@ def frontmatter(page: Path) -> dict | None:
         return tomllib.loads(text[4:end])
     except tomllib.TOMLDecodeError:
         return None
+
+
+def page_sources(root: Path) -> dict[str, str]:
+    """Built page name to the source file that produced it, where the kit knows it.
+
+    Topic pages are named by their slug; registered and automatically listed
+    source pages come from `.build/docs/site-build.json` once the site is
+    built. Checks of the built pages use it to name a page's source.
+    """
+    names = {}
+    for page in topic_pages(root):
+        meta = frontmatter(page) or {}
+        names[str(meta.get("slug", page.parent.name)) + ".html"] = page.relative_to(root).as_posix()
+    try:
+        manifest = json.loads((Path(root) / ".build/docs/site-build.json").read_text())
+        names.update({name: source for name, source in manifest.get("source_pages", {}).items()
+                      if isinstance(name, str) and isinstance(source, str)})
+    except (OSError, ValueError, AttributeError):
+        pass
+    return names
 
 
 def topic_records(folder: Path) -> list[Path]:

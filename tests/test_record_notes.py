@@ -7,7 +7,7 @@ import unittest
 
 import lint
 from record_changes import changed_lines, record_change_notes
-from topic_structure import topic_structure_problems
+from topic_structure import page_sources, topic_structure_problems
 
 KIT = Path(__file__).resolve().parents[1]
 
@@ -318,6 +318,19 @@ class TopicStructure(unittest.TestCase):
         # Without the declaration neither file is a topic page, so the check has nothing to say.
         site.write_text('')
         self.assertEqual(topic_structure_problems(self.root), ([], []))
+
+    def test_page_sources_name_topic_pages_and_built_source_pages(self):
+        # Lint, the slide-face check and the formula check name a built page's
+        # source through this one public function.
+        self.page('guide', 'slug = "handbook"')
+        self.page('plain')
+        manifest = self.root / '.build/docs/site-build.json'
+        manifest.parent.mkdir(parents=True)
+        manifest.write_text('{"source_pages": {"readme.md.html": "README.md"}}')
+        self.assertEqual(page_sources(self.root), {
+            'handbook.html': 'docs/topics/guide/index.md',
+            'plain.html': 'docs/topics/plain/index.md',
+            'readme.md.html': 'README.md'})
 
     def test_records_anywhere_in_the_folder_except_evidence_count(self):
         self.page('paired')

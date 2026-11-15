@@ -309,8 +309,8 @@ SOURCE_LINK_RE = re.compile(r'<a\b[^>]*?\sdata-repo-path="([^"]*)"\s+data-repo-f
 
 def built_page_sources() -> tuple[dict[str, str], set[str], set[str]]:
     """Built page name to its source, the registered sources and the automatic ones."""
-    from slide_face_checks import _page_names
-    names = _page_names(REPO)
+    from topic_structure import page_sources
+    names = page_sources(REPO)
     config = DOCS / "site" / "site.toml"
     site = tomllib.loads(config.read_text()) if config.is_file() else {}
     entries = site.get("source_pages", []) if isinstance(site.get("source_pages"), list) else []

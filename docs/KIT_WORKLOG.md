@@ -2,6 +2,19 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Give the built-page source map a public name
+
+- `tooling/lint.py` imported the private `_page_names` from
+  `tooling/slide_face_checks.py` to name the source of a built page. The
+  function maps built pages to sources and has nothing to do with slide faces,
+  and the formula check needs it too, so it moved to
+  `tooling/topic_structure.py` as the public `page_sources(root)`. Lint and the
+  slide-face check import it from there; behaviour is unchanged.
+- The capability map's row for `topic_structure.py` names the need. A new test
+  in `tests/test_record_notes.py` checks the mapping for a topic page with its
+  own slug, a plain topic page and a source page from `site-build.json`.
+- Checks: build, `lint --strict` (0 warnings) and the 301 Python tests.
+
 ## 2026-11-15 — Remove `evidence_manifests` and `legacy_files` in 5.0.0
 
 - Why: both settings served the practice that the rule on finished working
