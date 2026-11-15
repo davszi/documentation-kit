@@ -29,7 +29,7 @@ shows the new warnings.
 ## 5.0.0 — Reference section by default, page lock and Presentation view
 
 5.0.0 is a major release under
-[what a version number promises](#what-a-version-number-promises) for four
+[what a version number promises](#what-a-version-number-promises) for five
 reasons:
 
 - **A default now publishes more.** Every tracked Markdown file of a project
@@ -59,6 +59,17 @@ reasons:
   [finished working documents](../../../rules/records.md#finished-working-documents)
   ended in 4.0.0. At this release adaptation still names both settings; ADP
   and Tempo name none.
+- **A new lint error for HTML links to repository files.** Lint now checks a
+  link written as `<a href="…">` that points at a repository file, in a topic
+  page, a fragment it includes or a registered source page: the target must
+  exist, and a fragment into a Markdown file must match an anchor. Up to 4.0.0
+  only Markdown links were checked, so a dead HTML link passed strict lint. A
+  project in that case passed before and fails now. deivid decided it: "add
+  it". Measured on 2026-11-15 with this check: ADP's 129 such links, read from
+  its last build output, all resolve;
+  adaptation at `e28472e` has 78, of which 42 fail once its path adapter is
+  gone, 41 because they name paths only the adapter mapped and one because
+  its target exists nowhere.
 
 Apart from the two adapter settings, no command, flag, configuration key or
 marker is removed.
@@ -69,9 +80,9 @@ file under `rules/` at `v4.0.0` is still present.
 with five subsections. `rules/engineering/code.md` gains "Name the need first"
 and "The capability map" with its subsection "The check";
 `rules/experiments/workflow.md` gains "Show the total" and "Step back across
-experiments". Apart from the slide-face checks and a removed adapter
-setting, a project that does not set `tooling_roots` gets no new lint warning
-or error; a problem in an
+experiments". Apart from the slide-face checks, a removed adapter setting
+and a dead HTML link to a repository file, a project that does not set
+`tooling_roots` gets no new lint warning or error; a problem in an
 automatically listed file is a lint note, which never fails. The slide-face
 checks apply to every project with slide faces: the error above, and a
 warning, which fails `lint --strict`, for a number that a face shows and its
@@ -147,7 +158,8 @@ Known open points are in the [open record](../../open/release-5.0.0-waits.md).
 | Starter | The starter's `site.toml` explains the listing and excludes `CLAUDE.md`, and carries the capability map settings commented out. The starter adds an empty `docs/CAPABILITY_MAP.md` with a short explanation, linked from `docs/index.md`, and its `AGENTS.md` gains the route "Building tooling, a harness or other supporting code". The guide's text on slide faces describes the layout as one example | [Automatic reference listing](../../../rules/site/authoring.md#automatic-reference-listing), [slide faces](../../../rules/writing/pages.md#slide-faces), [the capability map](../../../rules/engineering/code.md#the-capability-map) |
 | Build | Fix: a `**INVARIANT:**` or `**DON'T-REDO:**` marker inside a fenced code block, with backticks or tildes and also one left open to the end of the page, stays text in the block. Up to 4.0.0 it became a card and broke the block, which failed the reader build or showed a stray closing tag. A marker paragraph followed by a fence without a blank line ends where the fence starts. `lint --registry` no longer lists a marker inside a fenced block or a code span, and lint no longer warns about a line that names the markers in code spans | [Rules for changes and chronology](../../../rules/documentation.md#rules-for-changes-and-chronology) |
 | Theme | Fix: in the zoomed figure the plot toggle chips show the colour of their series; up to 4.0.0 every dot there was grey, because the lightbox built its chips on a copy of the figure that was not yet in the page, and a detached element has no computed colour. A chip keeps its label on one line, and the zoomed figure's chip bar spans the window less a margin and wraps whole chips; up to 4.0.0 the bar was half the window wide, so at 390 px a label such as "Menger joints (default)" broke inside its chip. A click beside the chips still closes the zoomed figure | [Authoring paths](../../../rules/site/authoring.md#authoring-paths) |
-| Kit checks | `requirements-lock.txt` pins `cryptography` 50.0.2 for the page-lock checks; the Pages workflow installs it. New checks: `tests/test_reference_listing.py`, `tests/test_capability_map.py`, `tests/test_page_lock.py`, `tests/test_slide_face_checks.py`, the WebCrypto cross-check and two browser suites, `tests/test_reference_tree.cjs` and `tests/test_page_lock_browser.cjs`. `tests/test_browser_checks.cjs` now checks stacked slide faces at 390 px | [README](../../../README.md#develop-the-kit) |
+| Lint | New error: a link written as HTML, `<a href="…">`, to a repository file whose target does not exist, or whose fragment into a Markdown file matches no anchor. Lint reads the source links the build marked in the built pages, so it uses the build's resolution, with a source remote and without one. It covers topic pages, the fragments they include and registered source pages; the message names the page's source, the built page and the repository path. On an automatically listed page the problem is a note; links in worklog entries before `worklog_links_checked_from` are not checked. A built relative link without a source remote is no longer also reported as `dead relative href` | [Authoring paths](../../../rules/site/authoring.md#authoring-paths) |
+| Kit checks | `requirements-lock.txt` pins `cryptography` 50.0.2 for the page-lock checks; the Pages workflow installs it. New checks: `tests/test_reference_listing.py`, `tests/test_capability_map.py`, `tests/test_page_lock.py`, `tests/test_slide_face_checks.py`, `tests/test_markers.py`, `tests/test_source_links.py`, the WebCrypto cross-check and two browser suites, `tests/test_reference_tree.cjs` and `tests/test_page_lock_browser.cjs`. `tests/test_browser_checks.cjs` now checks stacked slide faces at 390 px and the plot toggle chips in the zoomed figure | [README](../../../README.md#develop-the-kit) |
 
 ## 4.0.0 — finished working documents, neutral theme names and group colours
 

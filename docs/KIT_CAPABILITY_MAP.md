@@ -31,7 +31,7 @@ and `capability_map.py`. Node scripts under `tests/` load
 | Pair each topic page with the record it explains | [topic_structure.py](../tooling/topic_structure.py) | exists | `tests/test_record_notes.py`, `tooling/build.py`, `tooling/lint.py`, `tooling/record_changes.py`, `tooling/site_paths.py`, `tooling/slide_face_checks.py`, `tooling/source_pages.py` |
 | Find the chronology file, date its entries and decide which entries keep checked links | [worklog_entries.py](../tooling/worklog_entries.py) | exists | `tooling/build.py`, `tooling/lint.py`, `tooling/source_pages.py` |
 | Find the fenced code blocks of Markdown source, so that a check or a conversion can leave code alone | [worklog_entries.py](../tooling/worklog_entries.py) | exists | `tooling/build.py`, `tooling/lint.py`, `tooling/source_pages.py` |
-| Check links, anchors, snippets, figures, markers and record formats before a push | [lint.py](../tooling/lint.py) | exists | `tests/test_capability_map.py`, `tests/test_lint.py`, `tests/test_page_numbers.py`, `tests/test_record_notes.py` |
+| Check links, HTML links to repository files included, anchors, snippets, figures, markers and record formats before a push | [lint.py](../tooling/lint.py) | exists | `tests/test_capability_map.py`, `tests/test_lint.py`, `tests/test_page_numbers.py`, `tests/test_record_notes.py` |
 | List the pages that explain a record section that changed | [record_changes.py](../tooling/record_changes.py) | exists | `tests/test_record_notes.py`, `tooling/lint.py`, `tooling/page_numbers.py` |
 | List numbers on a page that none of its linked records state | [page_numbers.py](../tooling/page_numbers.py) | exists | `tests/test_page_numbers.py`, `tooling/lint.py` |
 | Verify exact-byte evidence collections that a project declares | [evidence_documents.py](../tooling/evidence_documents.py) | exists | no Python imports |
@@ -66,5 +66,7 @@ decision. An entry without a decision says where the question waits.
   image changed. Seen 2026-11-15 in the same report. Decision: not taken; same
   record.
 - Check that a link written as HTML to a repository file resolves. Seen
-  2026-11-09 and 2026-11-10. Decision: not taken; the choice between an error,
-  a warning and a note waits in [the open record](open/lint-html-source-links.md).
+  2026-11-09 and 2026-11-10. Decision 2026-11-15 by deivid: add it to 5.0.0;
+  his word: "add it". Built as a lint error in `lint.py`, which reads the
+  source links the build marks in the built pages; the row "Check links, HTML
+  links to repository files included, …" covers it.

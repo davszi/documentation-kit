@@ -2,6 +2,89 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Lint checks HTML links to repository files
+
+- Decision: deivid decided to add the check to 5.0.0; his word: "add it".
+  5.0.0 is a major release, the only kind that may add a lint error. The open
+  record held the evidence: on 2026-11-09 the 2.0.0 starter home page linked
+  a `PROJECT_CONTEXT.md` that did not exist, and on 2026-11-10 a reviewer put
+  an HTML link to a removed kit anchor into a page body; strict lint passed
+  both.
+- How it works: the build already resolves every link from a page to a
+  repository file in `SiteBundle.rewrite_page` and marks it with
+  `data-repo-path` and `data-repo-fragment`, with a source remote and without
+  one. `check_source_links` in `tooling/lint.py` reads those marks in the
+  built pages, so it uses the build's resolution and no second resolver: the
+  target must exist, a fragment into a Markdown file must match an anchor
+  from `md_anchors`, and one into an HTML file an `id`, as for a Markdown
+  link. It covers topic pages, the fragments they include and registered
+  source pages. A link that the Markdown check already checked in the same
+  source is left to it, so each dead link is reported once; without a source
+  remote the built relative link is no longer also reported as `dead relative
+  href`. On an automatically listed page a problem is a note; in the worklog's
+  page the entries before `worklog_links_checked_from` are skipped; a file
+  listed under `omitted_files` gets a note. The page's source comes from the
+  mapping `slide_face_checks._page_names` already builds, imported rather
+  than copied.
+- Level: an error. No class of links was found that the kit's resolution
+  cannot decide. Its limits are those of the Markdown check: an existing file
+  that Git does not track passes, although its published source link leads
+  nowhere, and a link into a submodule that is not checked out fails.
+- Measured with this check, links counted once per built page:
+  - The kit: 1 HTML link in a topic page and 11 links on automatically listed
+    pages that no Markdown check covers, 0 failing.
+  - adaptation, cloned at `e28472e` into a scratch folder, its kit submodule
+    checked out at its pin `df089ef`, its two adapter settings removed and
+    built with this kit: 78 HTML links on its three topic pages (94
+    occurrences), 42 failing; Markdown links: 322 checked, 0 failing. Each
+    failing link was given to adaptation's own `docs/site/layout_paths.py` to
+    classify it. 34 name an old path that the adapter mapped to a tracked file
+    (for example `configs/cursor-rerun-v2.json` to
+    `studies/cursor/configs/cursor-rerun-v2.json`, and 20 links to
+    `minigroot/reports/` on the robotics page). 7 name an old path that the
+    adapter mapped to a file listed under `omitted_files`, which would have
+    been a note. 1 is dead: `results/cursor-exploration-next-2026-10-29/digest-profile/review.json`,
+    which the adapter leaves alone and which exists neither in the clone nor
+    in the live checkout. None is a fault of the check. With the adapter
+    removed by deivid's decision, the 41 are adaptation's cleanup at its
+    upgrade: repoint each to its current path. The kit owner's rough count,
+    83 links with 40 unresolved, used a script that ignored the adapter.
+  - ADP: no clone and no build, as deivid decided. The check's functions ran
+    on ADP's last build output, written on 2026-11-15 at 02:38 by its pinned
+    kit 4.0.0, and on its sources in place, with bytecode writing off; no file
+    in ADP changed during the run. 129 HTML links in topic pages (167
+    occurrences) and 2,582 Markdown links, 0 failing. No topic page or
+    fragment was newer than that build output; 6 other files under `docs/`
+    were. The kit owner's rough count was 173 links with 0 unresolved.
+- Tests: new `tests/test_source_links.py`, 8 tests on a fixture project: a
+  dead target and a missing anchor in a page body, a dead target in an
+  included fragment, a missing anchor in a registered page, one report per
+  link without a source remote, a note on an automatically listed page, and
+  old worklog entries skipped. Against the previous `lint.py` 7 fail; the
+  eighth is the clean case. `tests/test_source_pages.py`
+  › `test_no_remote_source_links_build_lint_and_export_locally` expected
+  `dead relative href` for a missing Markdown link target; that encoded the
+  assumption that the built-href check reports source links in a project
+  without a remote. It now expects the Markdown check's message once and no
+  `dead relative href`.
+- Rules: `rules/site/authoring.md` › Authoring paths describes the check and
+  › Registered source pages names it; `rules/site/validation.md` lists it
+  among the lint checks. No anchor changed.
+- Records: the 5.0.0 release notes give the new error as a fifth reason for
+  the major release, with the measurements, and gain a row; the migration
+  guide gains "Repoint or remove dead HTML links" with its row; the
+  capability map records deivid's decision on the need; the release-waits
+  record notes that his two decisions of this day make the release major on
+  their own. `docs/open/lint-html-source-links.md` and its line in
+  `docs/open/KIT_OPEN.md` are deleted, as the record and the rule on finished
+  working documents ask.
+- Checks after the last code and test edit of the day: on the kit
+  `docsite.py build`, `lint --strict` (0 warnings) and `build --check-reader`
+  (5 reader pages); `DOCS_REQUIRE_BROWSER=1 bash tests/run_checks.sh` exits 0
+  with 301 Python tests and the six browser suites, each run alone under a
+  4 GB memory limit after another agent's browser run had finished. This
+  worklog text was the only edit after that run.
+
 ## 2026-11-15 — Remove the path and evidence adapter hooks
 
 - Decision: deivid decided to remove the kit's three adapter hooks,
