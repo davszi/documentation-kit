@@ -153,7 +153,8 @@ def make_project(root: Path, *, lock: bool | None = True, remote: str = '') -> P
     write('404.html', NOT_FOUND)
     write('docs/site/public.json', json.dumps({'files': ['notes/record.md', '404.html']}) + '\n')
     config = root / 'docs/site/site.toml'
-    config.write_text(config.read_text() + '''
+    config.write_text(config.read_text().replace('# reference_roots = ["docs"]', 'reference_roots = ["docs", "notes"]')
+                      + '''
 [[nav]]
 label = "Widgets"
 file = "widgets.html"

@@ -2,14 +2,15 @@ title = "{{project_title}}"
 gh_repo = "{{repository_url}}"
 gh_ref = "main"
 chapter_reader = true
-# Every tracked Markdown file of the project becomes a page, listed in the
-# sidebar's Reference section, unless it starts with +++ frontmatter or lies in
-# the kit submodule. A private repository with a public site publishes those
-# files too: exclude what must stay private, or set
-# `reference_listing = false` to list only [[source_pages]] tables.
-# CLAUDE.md only points agents at AGENTS.md.
+# Every tracked Markdown file under docs/ becomes a page, listed in the
+# sidebar's Reference section, unless it starts with +++ frontmatter. To list
+# more, name the folders or single files in reference_roots, such as
+# ["docs", "experiments", "README.md"]. A private repository with a public
+# site publishes the listed files: declare what must stay private in
+# [publication], or set `reference_listing = false` to list only
+# [[source_pages]] tables.
 # reference_listing = false
-reference_exclude = ["CLAUDE.md"]
+# reference_roots = ["docs"]
 # Every project sets tooling_roots; [] states that it has no tooling yet.
 # Once it names a folder, such as ["tools/"], every tracked file or folder
 # directly under it needs a row in docs/CAPABILITY_MAP.md, and lint checks its

@@ -11,7 +11,7 @@ import unittest
 KIT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(KIT / 'tooling'))
 
-from source_pages import automatic_pages, automatic_route_base, glob_regex, reference_settings  # noqa: E402
+from source_pages import automatic_pages, automatic_route_base, reference_settings  # noqa: E402
 from source_tree import INLINE_TREE_LIMIT, TREE_INDEX, TREE_SCRIPT  # noqa: E402
 
 GONE = '<span class="link-gone" title="The target of this link no longer exists.">'
@@ -30,29 +30,23 @@ def git(root, *args):
 
 class Settings(unittest.TestCase):
     def test_defaults_and_validation(self):
-        self.assertEqual(reference_settings({}), (True, ()))
-        self.assertEqual(reference_settings({'reference_listing': False, 'reference_exclude': ['a/**']}), (False, ('a/**',)))
-        for site in ({'reference_listing': 'no'}, {'reference_exclude': 'a/**'}, {'reference_exclude': ['a', 'a']},
-                     {'reference_exclude': [1]}, {'reference_exclude': ['/abs/*.md']},
-                     {'reference_exclude': ['../up.md']}, {'reference_exclude': ['a\\b.md']},
-                     {'reference_exclude': ['']}):
+        self.assertEqual(reference_settings({}), (True, ('docs',)))
+        self.assertEqual(reference_settings({'reference_listing': False, 'reference_roots': ['docs/', 'a/b', 'README.md']}),
+                         (False, ('docs', 'a/b', 'README.md')))
+        self.assertEqual(reference_settings({'reference_roots': []}), (True, ()))
+        for site in ({'reference_listing': 'no'}, {'reference_roots': 'docs'}, {'reference_roots': ['a', 'a/']},
+                     {'reference_roots': [1]}, {'reference_roots': ['/abs']}, {'reference_roots': ['../up']},
+                     {'reference_roots': ['a\\b']}, {'reference_roots': ['']}, {'reference_roots': ['.']},
+                     {'reference_roots': ['notes/**']}, {'reference_roots': ['notes/[a-z].md']}):
             with self.assertRaises(ValueError, msg=site):
                 reference_settings(site)
 
-    def test_globs_are_repository_relative(self):
-        def matches(pattern, path):
-            return bool(glob_regex(pattern).fullmatch(path))
-        self.assertTrue(matches('experiments/**', 'experiments/a/b/notes.md'))
-        self.assertTrue(matches('experiments/', 'experiments/a/notes.md'))
-        self.assertFalse(matches('experiments/**', 'docs/experiments/notes.md'))
-        self.assertTrue(matches('**/drafts/*.md', 'drafts/x.md'))
-        self.assertTrue(matches('**/drafts/*.md', 'docs/drafts/x.md'))
-        self.assertFalse(matches('**/drafts/*.md', 'docs/drafts/deeper/x.md'))
-        self.assertTrue(matches('CLAUDE.md', 'CLAUDE.md'))
-        self.assertFalse(matches('CLAUDE.md', 'docs/CLAUDE.md'))
-        self.assertTrue(matches('notes/[!x]*.md', 'notes/a.md'))
-        self.assertFalse(matches('notes/[!x]*.md', 'notes/x.md'))
-        self.assertTrue(matches('notes/?.md', 'notes/a.md'))
+    def test_the_removed_exclude_setting_fails_and_names_its_replacement(self):
+        with self.assertRaises(ValueError) as raised:
+            reference_settings({'reference_exclude': []})
+        for part in ('reference_exclude was removed in kit 6.0.0', 'reference_roots', 'private_prefixes',
+                     'migrations/6.0.0.md'):
+            self.assertIn(part, str(raised.exception))
 
     def test_route_base_is_path_shaped(self):
         self.assertEqual(automatic_route_base('README.md'), ('readme.md', False))
@@ -63,7 +57,13 @@ class Settings(unittest.TestCase):
 
 
 class Project(unittest.TestCase):
-    """A starter project with a few Markdown files outside its topic pages."""
+    """A starter project with a few Markdown files outside its topic pages.
+
+    The fixture names its folders and root files in `reference_roots`; a test
+    of the default removes that line.
+    """
+
+    ROOTS = 'reference_roots = ["docs", "notes", "drafts", "README.md", "AGENTS.md"]'
 
     def setUp(self):
         folder = tempfile.TemporaryDirectory(prefix='docs-kit-reference-')
@@ -78,6 +78,7 @@ class Project(unittest.TestCase):
         self.write('drafts/idea.md', '# Idea\n')
         self.write('docs/topics/guide/extra.md', '# Extra record\n')
         self.write('docs/framed.md', '+++\ntitle = "Framed"\n+++\n\n# Framed\n')
+        self.settings(self.ROOTS)
 
     def write(self, relative, text):
         path = self.root / relative
@@ -89,7 +90,8 @@ class Project(unittest.TestCase):
         """Top-level settings go above the first [[nav]] table; a key set again replaces the starter's line."""
         key = text.split('=')[0].strip()
         lines = [line for line in self.config.read_text().splitlines(keepends=True) if not line.startswith(key + ' =')]
-        self.config.write_text(''.join(lines).replace('[[nav]]', text + '\n\n[[nav]]', 1))
+        self.config.write_text(''.join(lines).replace('[[nav]]', text + '\n\n[[nav]]', 1) if text.split('=', 1)[1].strip()
+                               else ''.join(lines))
 
     def build(self, *options):
         git(self.root, 'add', '-A')
@@ -104,7 +106,7 @@ class Project(unittest.TestCase):
 
 
 class ReferenceListing(Project):
-    def test_default_lists_every_tracked_markdown_file(self):
+    def test_named_roots_list_their_tracked_markdown_files(self):
         self.write('untracked.md', '# Untracked\n')
         nested = self.root / 'vendor/lib'
         nested.mkdir(parents=True)
@@ -129,7 +131,7 @@ class ReferenceListing(Project):
             'notes.deep.inner.md.html': 'notes/deep/inner.md',
             'notes.plan.md.html': 'notes/plan.md',
             'readme.md.html': 'README.md',
-        })  # CLAUDE.md is excluded by the starter; frontmatter, topic, untracked and submodule files are skipped
+        })  # CLAUDE.md is in no root; frontmatter, topic, untracked and submodule files are skipped
         readme = self.page('readme.md.html')
         self.assertIn('href="notes.plan.md.html#steps"', readme)
         self.assertIn('<span class="repo-tree-label" id="repo-tree-label">Reference</span>', readme)
@@ -139,16 +141,44 @@ class ReferenceListing(Project):
         self.assertEqual(lint.returncode, 0, lint.stdout + lint.stderr)
         self.assertNotIn('NOTE: reference page', lint.stdout)
 
-    def test_excluded_globs_are_not_listed(self):
-        self.settings('reference_exclude = ["CLAUDE.md", "drafts/**", "notes/", "**/extra.md"]')
+    def test_default_lists_only_docs(self):
+        self.settings('reference_roots =')  # no line: the default
+        self.assertNotIn('reference_roots =', self.config.read_text().replace('# reference_roots =', ''))
         result = self.build()
         self.assertEqual(result.returncode, 0, result.stderr)
-        routes = set(self.routes().values())
-        self.assertIn('README.md', routes)
-        for source in ('drafts/idea.md', 'notes/plan.md', 'notes/deep/inner.md', 'docs/topics/guide/extra.md'):
-            self.assertNotIn(source, routes)
-        # A link to an excluded file stays a source link.
+        self.assertEqual(sorted(self.routes().values()), [
+            'docs/CAPABILITY_MAP.md', 'docs/PROJECT_CONTEXT.md', 'docs/index.md', 'docs/open/OPEN.md',
+            'docs/topics/guide/extra.md', 'docs/topics/guide/guide.md', 'docs/worklog.md'])
+        lint = invoke('lint', '--project', self.root, '--strict')
+        self.assertEqual(lint.returncode, 0, lint.stdout + lint.stderr)
+        self.assertNotIn('NOTE: reference page', lint.stdout)
+
+    def test_a_file_outside_the_roots_is_not_listed(self):
+        self.settings('reference_roots = ["docs/topics", "notes/deep/", "README.md"]')
+        result = self.build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(sorted(self.routes().values()), [
+            'README.md', 'docs/topics/guide/extra.md', 'docs/topics/guide/guide.md', 'notes/deep/inner.md'])
+        # A link to a file that is not listed stays a source link.
         self.assertIn('data-repo-path="notes/plan.md"', self.page('readme.md.html'))
+
+    def test_a_root_is_a_whole_path_segment(self):
+        self.write('notes-old/kept.md', '# Old\n')
+        self.write('README.md.bak/inner.md', '# Inner\n')
+        self.settings('reference_roots = ["notes", "README.md"]')
+        self.assertEqual(self.build().returncode, 0)
+        self.assertEqual(sorted(self.routes().values()), ['README.md', 'notes/deep/inner.md', 'notes/plan.md'])
+
+    def test_a_root_that_lists_nothing_gets_a_note(self):
+        self.settings('reference_roots = ["docs", "experiments", ".github"]')
+        self.write('.github/template.md', '# Template\n')
+        self.assertEqual(self.build().returncode, 0)
+        lint = invoke('lint', '--project', self.root, '--strict')
+        self.assertEqual(lint.returncode, 0, lint.stdout + lint.stderr)
+        for entry in ('experiments', '.github'):
+            self.assertIn(f"NOTE: reference page listing: reference_roots entry '{entry}' holds no tracked "
+                          'Markdown file that can be listed', lint.stdout)
+        self.assertNotIn("entry 'docs'", lint.stdout)
 
     def test_invalid_settings_fail_with_a_clear_message(self):
         self.settings('reference_listing = "yes"')
@@ -156,10 +186,20 @@ class ReferenceListing(Project):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('site.toml: reference_listing must be true or false', result.stderr)
         self.config.write_text(self.config.read_text().replace('reference_listing = "yes"\n', ''))
-        self.settings('reference_exclude = ["/notes/**"]')
+        self.settings('reference_roots = ["/notes"]')
         result = self.build()
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("reference_exclude pattern '/notes/**' must be a repository-relative glob", result.stderr)
+        self.assertIn("site.toml: reference_roots entry '/notes' must be a folder or Markdown file inside the project",
+                      result.stderr)
+        self.settings('reference_roots = ["docs"]')
+        self.settings('reference_exclude = ["CLAUDE.md"]')
+        result = self.build()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('site.toml: reference_exclude was removed in kit 6.0.0', result.stderr)
+        self.assertNotIn('Traceback', result.stderr)
+        lint = invoke('lint', '--project', self.root)
+        self.assertNotEqual(lint.returncode, 0)
+        self.assertIn('reference_exclude was removed in kit 6.0.0', lint.stdout + lint.stderr)
 
     def test_reference_listing_false_equals_the_explicit_registry_alone(self):
         self.settings('reference_listing = false')
@@ -179,8 +219,8 @@ class ReferenceListing(Project):
         self.assertEqual(listed.keys(), rebuilt.keys())
         self.assertEqual({name for name in listed if listed[name] != rebuilt[name]}, set())
 
-    def test_explicit_table_overrides_and_survives_an_exclude(self):
-        self.settings('reference_exclude = ["notes/**"]')
+    def test_explicit_table_overrides_and_registers_a_file_outside_the_roots(self):
+        self.settings('reference_roots = ["docs", "README.md"]')
         self.config.write_text(self.config.read_text() + '\n[[source_pages]]\nsource = "notes/plan.md"\n'
                                'slug = "plan"\ntitle = "The plan"\npinned = true\n')
         result = self.build()
@@ -207,7 +247,8 @@ class ReferenceListing(Project):
         # A route a topic or registered page already has (the build itself
         # refuses topic folders named *.md, so only the listing can show it).
         tracked = frozenset(self.root / name for name in ('README.md', 'notes/plan.md'))
-        pages, notes = automatic_pages({}, self.root, tracked, [], {'readme.md.html'})
+        pages, notes = automatic_pages({'reference_roots': ['README.md', 'notes']}, self.root, tracked, [],
+                                       {'readme.md.html'})
         self.assertEqual([page.route for page in pages], [hashed('readme', 'README.md'), 'notes.plan.md.html'])
         self.assertIn('README.md: route readme.md.html is also claimed by a topic or registered page', notes[0])
         lint = invoke('lint', '--project', self.root, '--strict')
@@ -292,6 +333,7 @@ class ReferenceListing(Project):
         (self.root / 'configs').mkdir()
         (self.root / 'configs/s.png').write_bytes(b'\x89PNG\r\n\x1a\nsecret')
         self.write('configs/notes.md', '# Private notes\n')
+        self.settings(self.ROOTS.replace('"README.md"', '"configs", "README.md"'))  # named, and still private
         self.config.write_text(self.config.read_text() + '\n[publication]\npages = ["readme.md.html"]\n'
                                'private_suffixes = [".toml"]\nprivate_prefixes = ["configs/"]\n')
         self.assertEqual(self.build().returncode, 0)
@@ -415,16 +457,11 @@ class ReleaseReview(Project):
         self.assertNotIn('href="../../notes/plan.md"', page)
         self.assertTrue((destination / 'notes/plan.md').is_file())
 
-    def test_an_invalid_exclude_class_fails_with_a_message(self):
-        self.settings('reference_exclude = ["[z-a]"]')
-        result = self.build()
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("site.toml: reference_exclude pattern '[z-a]' is not a valid glob", result.stderr)
-        self.assertNotIn('Traceback', result.stderr)
-
 
 class TreeSize(Project):
     """The Reference tree is inlined up to INLINE_TREE_LIMIT files and written once above it."""
+
+    ROOTS = Project.ROOTS.replace('"drafts"', '"drafts", "many"')
 
     def files(self, count):
         for index in range(count):

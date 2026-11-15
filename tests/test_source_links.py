@@ -39,9 +39,8 @@ class HtmlSourceLinks(unittest.TestCase):
         subprocess.run(['git', 'init', '-q', self.root], check=True)
         self.assertEqual(invoke('init', self.root).returncode, 0)
         self.config = self.root / 'docs/site/site.toml'
-        # notes/ is no page, so its links stay source links; policy/ holds a registered page.
-        self.config.write_text(self.config.read_text().replace(
-            'reference_exclude = ["CLAUDE.md"]', 'reference_exclude = ["CLAUDE.md", "notes/"]')
+        # notes/ is outside docs/ and so no page: its links stay source links; policy/ holds a registered page.
+        self.config.write_text(self.config.read_text()
             + '\n[[nav]]\nlabel = "Links"\nfile = "links.html"\n'
             + '\n[[source_pages]]\nsource = "policy/rule.md"\nslug = "rule"\n')
         self.write('docs/topics/links/index.md', PAGE)
@@ -99,10 +98,10 @@ class HtmlSourceLinks(unittest.TestCase):
         self.assertNotIn('repository file tools/also-gone.py', result.stderr)
 
     def test_automatically_listed_page_gets_a_note(self):
-        self.write('drafts/draft.md', '# Draft\n\n<p><a href="../notes/record.md#lost">Lost</a></p>\n')
+        self.write('docs/drafts/draft.md', '# Draft\n\n<p><a href="../../notes/record.md#lost">Lost</a></p>\n')
         result = self.lint()
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn('NOTE: drafts/draft.md (drafts.draft.md.html): anchor #lost not found in notes/record.md',
+        self.assertIn('NOTE: docs/drafts/draft.md (docs.drafts.draft.md.html): anchor #lost not found in notes/record.md',
                       result.stdout)
 
     def test_old_worklog_entries_are_not_checked(self):

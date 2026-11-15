@@ -8,7 +8,7 @@ A project registers an existing, tracked Markdown file under a public route:
 
 By default every other tracked Markdown file is listed too, under a route
 derived from its path (`automatic_pages`). `reference_listing = false` in
-site.toml turns that off; `reference_exclude` skips files by repository-relative glob.
+site.toml turns that off; `reference_roots` names the folders and files that are listed, by default `docs`.
 An automatically listed page never fails the build: what a registered page
 would reject is rendered tolerantly and returned as a note. Its raw HTML keeps
 only the tags and attributes of `ADMITTED_HTML` (`ListedHtml`).
@@ -116,66 +116,40 @@ def load_registry(site: dict, root: Path, tracked: frozenset[Path]) -> tuple[lis
 
 
 REFERENCE_ERROR = "site.toml: reference_listing must be true or false"
-EXCLUDE_ERROR = ('site.toml: reference_exclude must list distinct repository-relative glob patterns, '
-                 'such as "experiments/**" or "**/drafts/*.md"')
+DEFAULT_ROOTS = ("docs",)
+ROOTS_ERROR = ('site.toml: reference_roots must list distinct folders or Markdown files of the project, '
+               'such as ["docs", "experiments", "README.md"]')
+EXCLUDE_REMOVED = ('site.toml: reference_exclude was removed in kit 6.0.0; the Reference section now lists only '
+                   'what reference_roots names, by default ["docs"]. Delete the setting. To keep a file of a '
+                   'listed folder off the site, name it in [publication] private_prefixes. See "Name the '
+                   'folders the Reference section lists" in the kit\'s docs/topics/releases/migrations/6.0.0.md')
 
 
 def reference_settings(site: dict) -> tuple[bool, tuple[str, ...]]:
-    """`reference_listing` (default true) and `reference_exclude` (default empty); ValueError when invalid."""
+    """`reference_listing` (default true) and `reference_roots` (default `docs`); ValueError when invalid.
+
+    A root is a project-relative folder, whose tracked Markdown files are
+    listed at any depth, or one Markdown file. It is a plain path, not a glob.
+    """
     enabled = site.get("reference_listing", True)
     if not isinstance(enabled, bool):
         raise ValueError(REFERENCE_ERROR)
-    patterns = site.get("reference_exclude", [])
-    if (not isinstance(patterns, list) or any(not isinstance(pattern, str) for pattern in patterns)
-            or len(set(patterns)) != len(patterns)):
-        raise ValueError(EXCLUDE_ERROR)
-    for pattern in patterns:
-        if (not pattern.strip() or pattern != pattern.strip() or pattern.startswith("/") or "\\" in pattern
-                or any(part in {"", ".", ".."} for part in pattern.rstrip("/").split("/"))):
-            raise ValueError(f"site.toml: reference_exclude pattern {pattern!r} must be a repository-relative "
-                             'glob without a leading slash, backslashes, "." or ".." parts, such as "experiments/**"')
-        try:
-            glob_regex(pattern)
-        except re.error as problem:
-            raise ValueError(f"site.toml: reference_exclude pattern {pattern!r} is not a valid glob ({problem}); "
-                             'write a character class in order, such as "[a-z]"') from None
-    return enabled, tuple(patterns)
-
-
-def glob_regex(pattern: str) -> re.Pattern:
-    """A repository-relative glob as a regular expression over a whole POSIX path.
-
-    `*` and `?` stay inside one path segment, `[...]` is a character class,
-    `**` spans any number of segments and a pattern ending in `/` matches
-    everything below that folder.
-    """
-    if pattern.endswith("/"):
-        pattern += "**"
-    out, index = [], 0
-    while index < len(pattern):
-        if pattern.startswith("**/", index):
-            out.append("(?:[^/]*/)*")
-            index += 3
-        elif pattern.startswith("**", index):
-            out.append(".*")
-            index += 2
-        elif pattern[index] == "*":
-            out.append("[^/]*")
-            index += 1
-        elif pattern[index] == "?":
-            out.append("[^/]")
-            index += 1
-        elif pattern[index] == "[" and "]" in pattern[index + 2:]:
-            end = pattern.index("]", index + 2)
-            body = pattern[index + 1:end]
-            negate = body.startswith("!")
-            body = body[1:] if negate else body
-            out.append("(?!/)[" + ("^" if negate else "") + body.replace("\\", "\\\\").replace("^", "\\^") + "]")
-            index = end + 1
-        else:
-            out.append(re.escape(pattern[index]))
-            index += 1
-    return re.compile("".join(out))
+    if "reference_exclude" in site:
+        raise ValueError(EXCLUDE_REMOVED)
+    roots = site.get("reference_roots", list(DEFAULT_ROOTS))
+    if not isinstance(roots, list) or any(not isinstance(root, str) for root in roots):
+        raise ValueError(ROOTS_ERROR)
+    for root in roots:
+        if (not root.strip() or root != root.strip() or root.startswith("/") or "\\" in root
+                or any(mark in root for mark in "*?[")
+                or any(part in {"", ".", ".."} for part in root.rstrip("/").split("/"))):
+            raise ValueError(f"site.toml: reference_roots entry {root!r} must be a folder or Markdown file inside "
+                             'the project, written from its root without a leading slash, backslashes, glob '
+                             'characters, "." or ".." parts, such as "experiments"')
+    named = tuple(root.rstrip("/") for root in roots)
+    if len(set(named)) != len(named):
+        raise ValueError(ROOTS_ERROR)
+    return enabled, named
 
 
 _SEGMENT_RUN = re.compile(r"[^a-z0-9_-]+")
@@ -219,19 +193,19 @@ def read_source(path: Path) -> tuple[str, bool]:
 
 def automatic_pages(site: dict, root: Path, tracked: frozenset[Path], explicit: list[SourcePage],
                     taken_routes: set[str], kit_root: Path | None = None) -> tuple[list[SourcePage], list[str]]:
-    """Every tracked Markdown file a [[source_pages]] table does not register.
+    """Every tracked Markdown file under `reference_roots` that a [[source_pages]] table does not register.
 
     Skipped: files inside a submodule or the kit, files in a folder or with a
     name that starts with a dot, topic entry pages, files that start with `+++`
-    frontmatter, symlinked files, files matching `reference_exclude` and files
-    that `[publication] private_prefixes` or `private_suffixes` mark private.
+    frontmatter, symlinked files and files that `[publication]
+    private_prefixes` or `private_suffixes` mark private.
     Returns the pages, in path order, and notes about what was tolerated.
     Settings must have passed `reference_settings`.
     """
-    enabled, patterns = reference_settings(site)
+    enabled, roots = reference_settings(site)
     if not enabled:
         return [], []
-    excludes = [glob_regex(pattern) for pattern in patterns]
+    used: set[str] = set()
     publication = site.get("publication") if isinstance(site.get("publication"), dict) else {}
     prefixes, suffixes = (tuple(value for value in publication.get(key, []) if isinstance(value, str) and value)
                           if isinstance(publication.get(key, []), list) else ()
@@ -251,8 +225,8 @@ def automatic_pages(site: dict, root: Path, tracked: frozenset[Path], explicit: 
             continue
         if any(part.startswith(".") for part in source.split("/")):
             continue  # .github/, .claude/ and other dot folders hold tool files, not records
-        if (any(pattern.fullmatch(source) for pattern in excludes) or source.startswith(prefixes)
-                or source.endswith(suffixes)):
+        home = next((entry for entry in roots if source == entry or source.startswith(entry + "/")), None)
+        if home is None or source.startswith(prefixes) or source.endswith(suffixes):
             continue
         if (any(parent.is_symlink() for parent in (path, *path.parents) if parent.is_relative_to(root) and parent != root)
                 or not path.is_file() or is_topic_page(path, root, groups)):
@@ -267,6 +241,10 @@ def automatic_pages(site: dict, root: Path, tracked: frozenset[Path], explicit: 
             title = path.name[:-len(".md")] or path.name
             notes.append(f"{source}: no level-one heading; the title is the file name")
         candidates.append((source, *automatic_route_base(source), title))
+        used.update(entry for entry in roots if source == entry or source.startswith(entry + "/"))
+    if "reference_roots" in site:
+        notes.extend(f"listing: reference_roots entry {entry!r} holds no tracked Markdown file that can be listed"
+                     for entry in roots if entry not in used)
     claims: dict[str, list[str]] = {}
     for source, base, _, _ in candidates:
         claims.setdefault(base, []).append(source)

@@ -108,6 +108,8 @@ function buildFixture(host) {
   fs.writeFileSync(path.join(root, 'notes/payloads.md'), payloads(host));
   fs.writeFileSync(path.join(root, 'notes/registered.md'), `# Registered\n\nA registered page is not filtered.\n\n${gadget(host)}\n`);
   const config = path.join(root, 'docs/site/site.toml');
+  fs.writeFileSync(config, fs.readFileSync(config, 'utf8').replace(
+    '# reference_roots = ["docs"]', 'reference_roots = ["docs", "notes"]'));
   fs.appendFileSync(config, '\n[[source_pages]]\nsource = "notes/registered.md"\nslug = "registered"\n');
   run('git', ['add', '-A'], root);
   run(python, [path.join(kit, 'docsite.py'), 'build', '--project', root], kit);

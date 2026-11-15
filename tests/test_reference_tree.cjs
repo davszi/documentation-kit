@@ -32,6 +32,9 @@ function buildFixture() {
     fs.mkdirSync(path.dirname(file), {recursive: true});
     fs.writeFileSync(file, `# File ${index}\n\nSome text.\n`);
   }
+  const config = path.join(root, 'docs/site/site.toml');
+  fs.writeFileSync(config, fs.readFileSync(config, 'utf8').replace(
+    '# reference_roots = ["docs"]', 'reference_roots = ["docs", "many"]'));
   run('git', ['add', '-A'], root);
   run(python, [path.join(kit, 'docsite.py'), 'build', '--project', root], kit);
   return root;

@@ -309,7 +309,8 @@ class Built(unittest.TestCase):
         (cls.root / 'docs/figures/drawing.svg').write_text(
             '<svg xmlns="http://www.w3.org/2000/svg" onload="alert(1)"><script>alert(2)</script></svg>\n')
         config = cls.root / 'docs/site/site.toml'
-        config.write_text(config.read_text() + '\n[[source_pages]]\nsource = "notes/upper.md"\nslug = "upper"\n'
+        config.write_text(config.read_text().replace('# reference_roots = ["docs"]', 'reference_roots = ["docs", "notes"]')
+                          + '\n[[source_pages]]\nsource = "notes/upper.md"\nslug = "upper"\n'
                           '\n[publication]\npages = ["guide.html"]\n')
         git(cls.root, 'add', '-A')
         cls.build = invoke('build', '--project', cls.root)
