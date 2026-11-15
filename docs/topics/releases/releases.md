@@ -13,7 +13,8 @@ project may rely on. From 3.0.0 the version number means this:
 
 - A **major** release removes or renames a stable interface, including a
   section anchor under `rules/`, or adds a lint error or build failure that
-  stops a project that passed before.
+  stops a project that passed before. A major release also changes a default
+  so that a site publishes content it did not publish before.
 - A **minor** release adds to the stable interfaces. It may also add lint
   warnings, which fail `--strict`, change how the shared theme looks, and change
   or remove a provisional interface.
@@ -24,6 +25,82 @@ The release notes list every such change, and the version's migration guide
 gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
+
+## 5.0.0 — Reference section by default, page lock and Presentation view
+
+5.0.0 is a major release under
+[what a version number promises](#what-a-version-number-promises) for two
+reasons:
+
+- **A default now publishes more.** Every tracked Markdown file of a project
+  becomes a page of its site and is listed in the sidebar's Reference section,
+  unless one of the exceptions in
+  [automatic reference listing](../../../rules/site/authoring.md#automatic-reference-listing)
+  keeps it out. **A private repository with a public site publishes these
+  files at its next publish, unless it excludes them or turns the listing
+  off.** The first step of the [5.0.0 migration guide](migrations/5.0.0.md)
+  settles the list before the moved pin reaches a branch that publishes.
+- **`publish` refuses a private source page.** `publish` now fails when a
+  `[[source_pages]]` table registers a file that the project's own
+  `[publication]` `private_prefixes` or `private_suffixes` cover. Up to 4.0.0
+  such a page was published. A project in that case passed before and fails
+  now.
+
+No command, flag, configuration key, marker or adapter signature is removed.
+No section anchor under `rules/` is removed or renamed: every heading of every
+file under `rules/` at `v4.0.0` is still present.
+`rules/site/authoring.md` gains the section "Automatic reference listing", and
+`rules/site/publication.md` gains "Page lock" with five subsections. No lint
+warning or error is added; a problem in an automatically listed file is a lint
+note, which never fails.
+
+The new top-level `site.toml` settings `reference_listing` and
+`reference_exclude` and the `[publication]` key `lock` join the stable
+interfaces as configuration keys. `site.toml` has no check for unknown
+top-level keys, so a project that already used `reference_listing` or
+`reference_exclude` for its own value now fails the build when that value is
+not valid for the new setting.
+
+What is provisional:
+
+- **The version number.** The kit owner recommends 5.0.0 because of the
+  changed default. deivid has not confirmed the number; the
+  [open record](../../open/release-5.0.0-waits.md) keeps the question. Without
+  the publication default, the publish refusal above still makes the release
+  major under the promise as written.
+- **The page lock's rule text.** Details of the
+  [page lock](../../../rules/site/publication.md#page-lock) are still being
+  finished. This record names its settings; the rule section owns how it
+  works and what it does not protect.
+- **New generated files and component internals.** `reference.tree.js`,
+  `reference.index.html`, the `reference_tree` key of `site-build.json`, the
+  components `page-lock.js` and `page-lock.css`, and the reader's new controls
+  and classes are build output or theme internals. None is in the
+  [stable list](#100--first-stable-version).
+
+Known open points are in the [open record](../../open/release-5.0.0-waits.md).
+
+| Area | Consumer change | Owning contract |
+|---|---|---|
+| Configuration | Changed default: every tracked Markdown file is a source page with its own public address, listed in the Reference section. Not listed: files inside a Git submodule, the kit's `.docs-kit/` included; files whose path has a folder or file name starting with a dot; files that start with `+++` frontmatter, and topic entry pages; symbolic links and files below one; files that match `reference_exclude`; files that the `[publication]` private prefixes or suffixes cover. A file with `---` YAML frontmatter is listed and shows the frontmatter as text. A `[[source_pages]]` table still wins and is never excluded | [Automatic reference listing](../../../rules/site/authoring.md#automatic-reference-listing) |
+| Configuration | New `reference_listing = false` turns the automatic listing off; the site then lists only its `[[source_pages]]` tables, as in 4.0.0. New `reference_exclude = [...]` takes repository-relative glob patterns; `**` spans folders and a pattern ending in `/` matches everything below that folder. A wrong type or pattern fails the build with a `site.toml:` error | [Automatic reference listing](../../../rules/site/authoring.md#automatic-reference-listing) |
+| Build | An automatically listed page has a route derived from its path: lowercased parts joined with `.`, ending `.md.html`, so `README.md` becomes `readme.md.html`. Moving or renaming the file changes its address. A collision adds eight hexadecimal digits of the path's SHA-256 and never fails | [Automatic reference listing](../../../rules/site/authoring.md#automatic-reference-listing) |
+| Build | An automatically listed page never fails the build. Dead links, missing anchors, unpackageable or external images, unsafe raw HTML, a missing level-one heading and bytes that are not UTF-8 are shown tolerantly. The build prints how many problems it tolerated; `lint` prints each as a `NOTE:` line, also under `--strict`. Registered pages keep their strictness | [Automatic reference listing](../../../rules/site/authoring.md#automatic-reference-listing) |
+| Build | Raw HTML in an automatically listed file cannot run a script or load content from outside the bundle: `<script>`, `<style>`, `<iframe>`, `<svg>`, `<math>` and similar tags show as text, and every other tag loses event handlers, loading attributes and outside addresses. Registered pages are not filtered | [Automatic reference listing](../../../rules/site/authoring.md#automatic-reference-listing) |
+| Theme | The Reference section now ends the sidebar of every page whenever at least one file is listed, also on a site without `[[source_pages]]` tables | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages), [shared reading layout](../../../rules/site/reader.md#shared-reading-layout) |
+| Build | On a source page, a link to a tracked Markdown file that is listed automatically now goes to that file's page. In 4.0.0 it was a source link to the repository | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
+| Build output | Above 60 listed files, or with the page lock on, the folder tree is written once as `reference.tree.js` and as the page `reference.index.html` in the html root, and each page carries a short form of the section. `site-build.json` gains `reference_tree`, which names both files or is `null`; its `source_pages` also maps every automatic route to its file. The name `reference.index.html` is reserved in that case: another page with that address fails the build with `route collision` | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
+| Adapter | Within one build or lint run the kit asks the path adapter once per distinct path, root and recorded roots and reuses the answer. The adapter now also receives the link targets of every automatically listed file. Its answer must not change during a run. For an automatically listed page a `ValueError` or `OSError` from the adapter counts as "no mapping"; any other exception stops the build | [Resources](../../../rules/site/resources.md#resource-closure-and-evidence) |
+| Publication | New optional page lock: `lock = true` in `[publication]`, the passwords `DOCSITE_GENERAL_PASSWORD` and `DOCSITE_REFERENCE_PASSWORD` from the environment of the `publish` step, and the optional dependency `requirements-lock.txt`. The general password opens the topic pages; the reference password also opens the Reference pages and the exported Markdown files. It is not access control; its limits are listed in the rule. A project that does not set `lock = true` gets the same bundle as from `publish` without the lock | [Page lock](../../../rules/site/publication.md#page-lock) |
+| Publication | `publish` refuses a `[[source_pages]]` table whose file the private prefixes or suffixes cover, with `Private source cannot be published as a page` | [Configured publication](../../../rules/site/publication.md#configured-publication) |
+| Publication | Fix: an exported source link carries `data-repo-exported`, and `filelinks.js` leaves it alone. With a source remote, a link to an admitted file such as `tools/fit.py` no longer becomes a GitHub address with a wrong `docs/html/` part. This changes the published bytes of admitted links | [Configured publication](../../../rules/site/publication.md#configured-publication) |
+| Publication | Fix for a project without a source remote (`gh_repo = ""`): source links keep their local paths, and HTTP previews no longer rewrite them to GitHub. `publish` rewrites the source links of every generated page in the html root, not only the pages named in `[publication] pages`. A link to a tracked file that is not admitted keeps its local path, which leads outside the bundle | [Tooling and ownership](../../../rules/site/authoring.md#tooling-and-ownership) |
+| Reader | New fourth view, Presentation, on pages with at least one slide face: the slide fills the window at 16:9 and the full chapter follows when the reader scrolls. "Presentation" starts at the current chapter, "From start" at the first; the address keeps `?view=present` and the chapter. On such pages the view buttons move into the view menu at 980 px | [Shared reading layout](../../../rules/site/reader.md#shared-reading-layout) |
+| Reader | All chapters hides slide faces until its Slides switch shows them. The choice is remembered per page, and printing from All chapters follows it. One chapter, Two chapters and Presentation always show the faces | [Shared reading layout](../../../rules/site/reader.md#shared-reading-layout) |
+| Rules | Slide faces get no prescribed arrangement. Each face's layout follows the shape of its content; the faces of a project share a frame: the label row, the title, the scope line, the type roles and the tones. The shared slide components are parts to choose from. A review of existing faces sorts them into three groups: redraw or remove, redesign, keep | [Slide faces](../../../rules/writing/pages.md#slide-faces) |
+| Build output | Changed shared files get a new `?v=` query on every page that loads them: `base.css`, `chapter-reader.css`, `chapter-reader.js`, `filelinks.js` and `nav.js`. A locked bundle also holds `assets/page-lock.js` and `assets/page-lock.css` | [Authoring and configuration](../../../rules/site/authoring.md) |
+| Starter | The starter's `site.toml` explains the listing and excludes `CLAUDE.md`. The guide's text on slide faces describes the layout as one example | [Automatic reference listing](../../../rules/site/authoring.md#automatic-reference-listing), [slide faces](../../../rules/writing/pages.md#slide-faces) |
+| Kit checks | `requirements-lock.txt` pins `cryptography` 50.0.2 for the page-lock checks; the Pages workflow installs it. New checks: `tests/test_reference_listing.py`, `tests/test_page_lock.py`, the WebCrypto cross-check and two browser suites, `tests/test_reference_tree.cjs` and `tests/test_page_lock_browser.cjs` | [README](../../../README.md#develop-the-kit) |
 
 ## 4.0.0 — finished working documents, neutral theme names and group colours
 

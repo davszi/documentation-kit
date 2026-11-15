@@ -2,6 +2,165 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Prepare release 5.0.0
+
+- The unreleased changes since `v4.0.0` make every tracked Markdown file a
+  page by default, add the opt-in page lock, the Presentation view and the
+  Slides switch, drop the prescribed slide-face arrangement and fix source
+  links with and without a remote.
+- Version 5.0.0 is the kit owner's recommendation, not confirmed by deivid.
+  The changed default publishes content that was not published before. The
+  version promise gains the sentence that such a change is major. Checked in
+  `tooling/publication.py`: `publish` now also refuses a `[[source_pages]]`
+  table whose file is private, which 4.0.0 published, so the release is major
+  under the promise as written as well.
+- The release notes gain a 5.0.0 section with the reasons, the provisional
+  points and a table of changes with the owning rule per row. The new
+  [5.0.0 migration guide](topics/releases/migrations/5.0.0.md) starts with the
+  publication warning and the step that settles what the Reference section
+  lists, before the pin moves anywhere that publishes; it ends with the
+  optional page lock and how to land the upgrade.
+- `VERSION` is 5.0.0; `README.md`, `docs/KIT_CONTEXT.md` and
+  `docs/KIT_INDEX.md` name the release and its guide.
+- The 5.0.0 guide is registered as a source page with the slug
+  `migrate-5-0-0` and listed first in the navigation's release group, as the
+  4.0.0 guide was; `tests/own_site_review.cjs` expects its route.
+- Compared with `v4.0.0`: no heading of any file under `rules/` is removed or
+  renamed; `rules/site/authoring.md` and `rules/site/publication.md` gain
+  sections.
+- The open record [release 5.0.0 waits](open/release-5.0.0-waits.md) holds the
+  go to tag and push, the number, the merge of the source-link fix branch and
+  six known open points. The slide-face findings record now lists only what
+  is still owed.
+- Checks on this state: build and strict lint of the kit. The full check
+  script and the browser suites were not run for this entry. The hash is
+  assigned by the landing commit. Not tagged and not pushed.
+
+## 2026-11-15 — Release review: findings fixed in the Reference listing and exports
+
+- An independent review of the release state found these, all fixed in
+  `9e35757`:
+  - The automatic listing listed files that `[publication]` private prefixes
+    or suffixes mark private. It now skips them, so a configuration with `.md`
+    among the private suffixes lists no file. `publish` refuses a source page
+    whose origin is private, however it was listed.
+  - Raw HTML on automatic pages: every remaining tag is written again with
+    quoted attributes and loses event handlers, loading attributes and styles
+    that load a `url()`; `<svg>` and `<math>` show as text. Unquoted
+    `javascript:` links and outside loads through single-quoted or unquoted
+    `src` are now caught.
+  - With a remote, an exported link to an admitted file such as `tools/fit.py`
+    became a broken `.../blob/main/docs/html/...` address. Exported links now
+    carry `data-repo-exported`, and `filelinks.js` leaves them alone. This
+    changes the published bytes of admitted links.
+  - Without a remote, `publish` rewrites every generated page, so the source
+    lines of automatic pages point at admitted copies.
+  - Paths with a dot segment, such as `.github/` and `.claude/`, are no longer
+    listed automatically. An invalid `reference_exclude` class such as `[z-a]`
+    fails with a `site.toml` error instead of a traceback. Tests pin the
+    symlink exclusion.
+  - Rule text: the Reference condition in `rules/site/reader.md`, the
+    no-remote paragraph, the lock's byte-for-byte promise, YAML frontmatter and
+    agent files in the listing, and the slide-face sentences that still assumed
+    a lead, points beside the visual and a facts row. The four page and
+    starter places that described the old face arrangement are corrected.
+    `.gitignore` ignores `.claude/`.
+- Checks recorded in the commit: `DOCS_REQUIRE_BROWSER=1 tests/run_checks.sh`
+  passed with 240 Python tests, starter and kit strict lint, 29 scripts and
+  six browser suites; kit `build --check-reader` passed.
+
+## 2026-11-15 — Reference tree kept from general readers; remembered readers
+
+- An earlier review of the merged branch found that the page lock still
+  showed every Reference title to a reader with the general password: each
+  page carried the sidebar tree, and above 60 files `reference.tree.js` stayed
+  readable and `reference.index.html` opened with the general password.
+  Fixed in `4968088`.
+- With `lock = true` the build always writes the Reference tree once.
+  `publish` cuts the sidebar's Reference section out of every page the general
+  password opens. `reference.tree.js` holds the tree and that section, sealed
+  for the reference password and padded to a power of two of at least 64 KiB;
+  `reference.index.html` needs the reference password. For a
+  reference-password reader `page-lock.js` puts the section back. `nav.js` and
+  the reader are unchanged. The summary counts Reference pages that general
+  pages still link to.
+- Readers who ask to be remembered now keep the password's derived key. The
+  salt is PBKDF2 of both passwords, so it stays the same across publishes and
+  changes, locking out every remembered reader, when either password changes.
+- Two test assumptions changed: exactly two reference-level files, from before
+  every tracked Markdown file was a Reference page; and a fresh salt per
+  publish, which remembering across publishes replaces.
+- Checks recorded in the commit: `DOCS_REQUIRE_BROWSER=1 bash
+  tests/run_checks.sh` passed with `cryptography` 50.0.2: 232 Python tests, 29
+  scripts, the WebCrypto cross-check and six browser suites. Lock-off
+  publishes of the fixture (96 files) and of a 70-file Reference tree (168
+  files) are byte-identical to `0959e8b`'s.
+
+## 2026-11-15 — Opt-in page lock
+
+- Projects with a private repository and a public GitHub Pages site need the
+  page text unreadable without a password; deivid asked for two levels, one
+  for general access and one that also opens the Markdown records, and for an
+  opt-in that a project such as Tempo leaves off.
+- With `lock = true` in `[publication]`, `publish` ends by encrypting the
+  bundle in place. `DOCSITE_GENERAL_PASSWORD` opens the topic pages and every
+  other HTML file; `DOCSITE_REFERENCE_PASSWORD` also opens the Reference pages
+  and every exported Markdown file. Passwords come only from the environment;
+  `publish` fails before building when one is missing, both are equal, one is
+  shorter than 20 characters or one holds untypable characters. Local build
+  output and `export_pages` stay plain.
+- PBKDF2-HMAC-SHA-256 at 600,000 iterations derives a key per password; files
+  are sealed with AES-256-GCM. The build side uses the pinned `cryptography`
+  package from the new optional `requirements-lock.txt`; the browser side is
+  `theme/components/page-lock.js` with WebCrypto.
+  [Page lock](../rules/site/publication.md#page-lock) documents setup and
+  limits.
+- Commit `5ebbef6`, landed on `integration-next` by the merge `0959e8b`.
+  Checks recorded in the commit: `DOCS_REQUIRE_BROWSER=1 bash
+  tests/run_checks.sh` passed with `cryptography` 50.0.2 (211 Python tests, 28
+  scripts, the WebCrypto cross-check and five browser suites). A lock-off
+  publish of the fixture matched the base commit's: 89 files and stdout
+  identical.
+
+## 2026-11-15 — Reference section on by default, large trees written once
+
+- deivid decided that the Reference section is opt-out: "make it optout
+  instead and make them both show it all". Every tracked Markdown file of a
+  project is now a source page, listed under Reference, except files in a
+  submodule or the kit, files that start with `+++` frontmatter, topic entry
+  pages, symlinked files, files under `[publication]` private prefixes and
+  files that `reference_exclude` matches. A `[[source_pages]]` table still
+  wins; pinning stays explicit.
+- Routes derive from the path, such as `readme.md.html`, and cannot meet a
+  slug; a collision adds eight hex digits of the path's SHA-256. Automatic
+  pages never fail the build or add lint warnings; their problems are lint
+  notes. The path adapter is asked once per distinct path per run: without
+  that, a 388-page site with adaptation's adapter took 52.7 s instead of
+  13.2 s.
+- The opt-out switch was first named `reference = false` and is renamed
+  `reference_listing = false` in `77a02e0`, because the first name read as "no
+  Reference section".
+- Above 60 listed files the tree is written once as `reference.tree.js` and
+  `reference.index.html`, named under `reference_tree` in `site-build.json`.
+  On the 415-file scale clone one automatic page dropped from 211,160 to
+  13,441 bytes, total HTML from 98.5 MB to 22.6 MB and the build from 13.2 s
+  to 6.4 s. At 60 files or fewer pages are unchanged.
+- Commits `43ac3d5` and `77a02e0`, landed on `integration-next` by the merge
+  `2277b12`. Checks recorded in `77a02e0`: `DOCS_REQUIRE_BROWSER=1
+  tests/run_checks.sh` passed (202 Python tests, starter and kit strict lint,
+  26 scripts, five browser suites); kit `build --check-reader` passed.
+
+## 2026-11-15 — Source-link fix branch merged into integration-next
+
+- `ee5ae78` merges `origin/fix/local-source-links-20261114` (`108ea6b`, the
+  no-remote source-link fix of the two entries dated 2026-11-14 below) into
+  `integration-next`. The worklog conflict was resolved by keeping both
+  sides, so those two entries sit below the Presentation entry.
+- deivid approved publishing that branch and pinning a consuming project to
+  it. He has been told that it is merged into the release state; he has not
+  said in words to merge it. The
+  [open record](open/release-5.0.0-waits.md) keeps the question.
+
 ## 2026-11-15 — Presentation view and a Slides switch for All chapters
 
 - deivid asked for a view that shows the slides full screen, with the chapter

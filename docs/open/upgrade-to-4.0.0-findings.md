@@ -200,15 +200,18 @@ layout that follows the shape of the content, names what the faces share, sets
 a designer's standard and says how a review sorts existing faces. This answers
 case 1 above.
 
+Done on 2026-11-15 in `9e35757`: the independent review before release 5.0.0
+covered the changed rule, and its slide-face sentences that still assumed a
+lead, points beside the visual and a facts row are corrected. The four places
+that described the old arrangement now describe a layout set by the content:
+`docs/topics/writing-practices/index.md`, `docs/topics/build-a-site/index.md`,
+and in the starter `docs/topics/guide/guide.md` and
+`docs/topics/guide/index.md`.
+
 Owed:
 
-- An independent review of the changed rule before the next release.
 - The kit's own four example faces were built to the old prescribed
-  arrangement and need the same review.
-- Four places still describe the old arrangement and wait for a page agent:
-  `docs/topics/writing-practices/index.md` ("Composed from top to bottom"),
-  `docs/topics/build-a-site/index.md`, and in the starter
-  `docs/topics/guide/guide.md` and `docs/topics/guide/index.md`.
+  arrangement and need the review the changed rule describes.
 - Cases 2 to 8 above, the three omissions of the guide step and the fourteen
   other gaps.
 - A trial of the changed rule on a few of adaptation's faces, to see whether

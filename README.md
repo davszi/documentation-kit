@@ -131,7 +131,7 @@ git add .docs-kit
 The kit is versioned in `VERSION` and tagged `v<version>`. [Releases and
 upgrades](docs/topics/releases/releases.md) lists what each version changes for
 consumers and the migration steps; 1.0.0 is the first stable version.
-The current release is 4.0.0, with a [consumer migration guide](docs/topics/releases/migrations/4.0.0.md); the [3.2.0 guide](docs/topics/releases/migrations/3.2.0.md), the [3.1.0 guide](docs/topics/releases/migrations/3.1.0.md), the [3.0.0 guide](docs/topics/releases/migrations/3.0.0.md), the [2.0.0 guide](docs/topics/releases/migrations/2.0.0.md) and the [1.1.0 guide](docs/topics/releases/migrations/1.1.0.md) cover the earlier steps.
+The current release is 5.0.0, with a [consumer migration guide](docs/topics/releases/migrations/5.0.0.md) that starts with what a private repository with a public site must decide before it moves the pin; the [4.0.0 guide](docs/topics/releases/migrations/4.0.0.md), the [3.2.0 guide](docs/topics/releases/migrations/3.2.0.md), the [3.1.0 guide](docs/topics/releases/migrations/3.1.0.md), the [3.0.0 guide](docs/topics/releases/migrations/3.0.0.md), the [2.0.0 guide](docs/topics/releases/migrations/2.0.0.md) and the [1.1.0 guide](docs/topics/releases/migrations/1.1.0.md) cover the earlier steps.
 
 Then run the [project conformance check](rules/conformance.md) and report its
 findings. Review changed human pages at wide and narrow widths before committing the
