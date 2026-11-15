@@ -426,25 +426,32 @@ lint prints each case as a note, which never fails, not even under `--strict`:
   present, so the page does not depend on one checkout's untracked files;
 - an image that is symlinked or matches the publication's private prefixes or
   suffixes is not packaged and renders the same way;
-- an external image becomes a link to it; a link with a scheme other than
-  `http`, `https`, `mailto` or `vscode` renders as text;
+- an external image becomes a link to it, or its text inside a link; a link
+  with a scheme other than `http`, `https`, `mailto` or `vscode` renders as
+  text;
 - a same-page link to a missing anchor renders as text; a link from or into an
   automatically listed page whose fragment matches no anchor stays a link to
   the page;
-- raw `<script>`, `<style>`, `<link>`, `<iframe>`, `<form>`, `<svg>`,
-  `<math>` and similar tags, and an unclosed HTML comment, show as text;
-  complete HTML comments are dropped. Every other raw tag is written again
-  with quoted attributes and loses its event handlers (`on…`), loading
-  attributes such as `srcset`, `ping` and `background`, a `style` with
-  parentheses, backslashes, quotes or slashes, and any
-  `href`, `src` or `poster` on an element that does not take one. The remaining addresses are then checked like Markdown links, so no
-  script runs and nothing loads from outside the bundle;
+- raw HTML keeps only the tags `a`, `abbr`, `b`, `blockquote`, `br`, `code`,
+  `del`, `details`, `div`, `dl`, `dt`, `dd`, `em`, `h1` to `h6`, `hr`, `i`,
+  `img`, `ins`, `kbd`, `li`, `mark`, `ol`, `p`, `pre`, `s`, `small`, `span`,
+  `strong`, `sub`, `summary`, `sup`, `table`, `caption`, `thead`, `tbody`,
+  `tfoot`, `tr`, `th`, `td`, `u` and `ul`, and only the attributes `id`,
+  `title` and `align`, `href` and `name` on `a`, `src`, `alt`, `width` and
+  `height` on `img`, `open` on `details`, `width` on `table`, `th` and `td`,
+  and `colspan` and `rowspan` on `th` and `td`. Any other tag and an unclosed
+  comment show as text. Any other attribute, a comment, an `id` or `name` that
+  the kit's page uses and an end tag that closes nothing the file opened are
+  dropped. Addresses are read as browsers read them and then checked like
+  Markdown links, so no script runs and nothing loads from outside the bundle;
 - a file without a level-one heading takes its file name, without `.md`, as
   title;
 - bytes that are not UTF-8 show as the replacement character.
 
-Registered pages keep their strictness. The build prints how many problems it
-tolerated; `build --check` and lint list them.
+Registered pages keep their strictness. They and topic pages are not
+filtered: the promise about raw HTML covers automatically listed files only.
+The build prints how many problems it tolerated; `build --check` and lint
+list them.
 
 The page's source line links the file in the configured `gh_repo`. A reader
 without access to a private repository cannot open that link or the edit link,

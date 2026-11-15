@@ -54,8 +54,9 @@ did". Then read the project's [capability map](#the-capability-map).
   each option what it would take and what it leaves out.
 
 In a project without tooling, whose `tooling_roots` is `[]`, no need is
-listed yet, so every need goes to the person; the first one recorded starts
-the map from the kit's starter template.
+listed yet, so every need goes to the person; the first one recorded goes
+into the map that `init` wrote as `docs/CAPABILITY_MAP.md`, or a project
+without that file starts it from the kit's starter template.
 
 Building stays the person's decision; noticing the need is the agent's duty.
 Record the decision beside the need in the map. A need the person decided to

@@ -286,7 +286,7 @@ def link_checked_worklog_text(text: str) -> str:
 
 def _check_chunk_links(f: Path, text: str, base: Path) -> None:
         for target in LINK_RE.findall(strip_code(text)):
-            if target.startswith(("http://", "https://", "mailto:")):
+            if target.lower().startswith(("http://", "https://", "mailto:")):
                 continue
             path_part, _, frag = target.partition("#")
             path_part = path_part.partition("?")[0]  # versioned asset URLs carry ?v=<hash>
@@ -387,8 +387,8 @@ def check_html() -> None:
             if _worklog_entries.within(source_links, m.start()):
                 continue
             href = m.group(1)
-            if href.startswith(("http://", "https://", "//", "mailto:", "vscode:")):
-                continue
+            if href.lower().startswith(("http://", "https://", "//", "mailto:", "vscode:")):
+                continue  # schemes compare without regard to case, as browsers read them
             path_part, _, frag = href.partition("#")
             path_part = path_part.partition("?")[0]
             if not path_part:
@@ -405,9 +405,9 @@ def check_html() -> None:
                           ("src", "video"), ("src", "audio"), ("src", "source")):
             for m in re.finditer(rf"<{tag}[^>]*\s{attr}=\"([^\"]+)\"", text):
                 target = m.group(1)
-                if target.startswith(("http://", "https://", "//")):
+                if target.lower().startswith(("http://", "https://", "//")):
                     error(f"{rel}: external {tag} resource {target}")
-                elif not target.startswith("data:"):
+                elif not target.lower().startswith("data:"):
                     resource = resolve_path(DOCS / "html" / target.partition("#")[0].partition("?")[0])
                     if not resource.is_file():
                         if retained_locally(resource):

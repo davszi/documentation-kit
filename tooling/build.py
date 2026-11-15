@@ -278,7 +278,10 @@ class DocsRenderer(mistune.HTMLRenderer):
         else:
             hid = slugify(text)
         self.heading_ids.append(hid)
-        return f'<h{level} id="{hid}">{text}</h{level}>\n'
+        return f'<h{level}{self.id_attribute(hid)}>{text}</h{level}>\n'
+
+    def id_attribute(self, hid: str) -> str:
+        return f' id="{hid}"'
 
     def block_code(self, code: str, info: str | None = None) -> str:
         lang, source = "", ""
@@ -330,6 +333,34 @@ class DocsRenderer(mistune.HTMLRenderer):
         # Markdown has already identified this as math. Explicit delimiters
         # avoid interpreting arbitrary dollar signs in raw HTML as formulas.
         return f'<span class="math-inline">\\({html.escape(text)}\\)</span>'
+
+
+class ListedFileRenderer(DocsRenderer):
+    """The renderer for an automatically listed file: every HTML fragment of the
+    file passes `ListedHtml`, and a heading id that the kit's page uses is left out."""
+
+    def __init__(self, raw_html) -> None:
+        super().__init__(math_enabled=False)
+        self.raw_html = raw_html
+
+    def block_html(self, html: str) -> str:
+        return self.raw_html.fragment(html) + "\n"
+
+    def inline_html(self, html: str) -> str:
+        return self.raw_html.fragment(html)
+
+    def id_attribute(self, hid: str) -> str:
+        return super().id_attribute(hid) if self.raw_html.admits_identifier(hid) else ""
+
+
+def render_listed_file(text: str, source: str) -> tuple[str, list[str]]:
+    """An automatically listed file as HTML that keeps only admitted raw HTML,
+    and notes on what was not admitted."""
+    from source_pages import ListedHtml
+    raw_html = ListedHtml(source)
+    text = text.replace("\x00", "\ufffd")  # ListedHtml marks tags with U+0000
+    rendered = mistune.create_markdown(renderer=ListedFileRenderer(raw_html), plugins=["table", "math"])(text)
+    return raw_html.finish(rendered)
 
 
 def validate_frontmatter(meta: dict, name: str) -> None:
@@ -752,7 +783,7 @@ def build_source_page(page, routes: dict[str, str], site: dict, shell: str,
     rendered page cannot be packaged.
     """
     from source_pages import (exists_in, first_heading, origin_banner, quiet_text, read_source, rewrite_links,
-                              table_of_contents, tolerate_raw_html, wrap_tables)
+                              table_of_contents, wrap_tables)
     from site_paths import resolve_site_path
     from worklog_entries import configured_entry
 
@@ -773,16 +804,18 @@ def build_source_page(page, routes: dict[str, str], site: dict, shell: str,
         problems = []
         unchecked[page.route] = set()
     else:
-        renderer = DocsRenderer(math_enabled=page.math)
         try:
-            content = mistune.create_markdown(renderer=renderer, plugins=["table", "math"])(text)
+            if page.automatic:
+                content, tolerated = render_listed_file(text, name)
+            else:
+                renderer = DocsRenderer(math_enabled=page.math)
+                content = mistune.create_markdown(renderer=renderer, plugins=["table", "math"])(text)
         except Exception as problem:  # noqa: BLE001 - only an automatic page reaches the fallback
             if not page.automatic:
                 raise
             note(f"{name}: Markdown rendering failed ({type(problem).__name__}); shown as plain text")
             return build_source_page(page, routes, site, shell, unchecked, automatic_checks, plain=True)
         if page.automatic:
-            content, tolerated = tolerate_raw_html(content, name)
             for problem in tolerated:
                 note(problem)
         worklog = configured_entry(site, "worklog")
@@ -815,13 +848,18 @@ def build_source_page(page, routes: dict[str, str], site: dict, shell: str,
         # page's sections, under its own visible entry.
         listed = any(n.get("file") == page.route and not n.get("hidden", False) for n in site.get("nav", []))
         meta["toc"] = table_of_contents(content) if site.get("nested_nav") and listed else []
-    return finish_page(meta, page.slug, name, content, comps, site, shell, {})
+    return finish_page(meta, page.slug, name, content, comps, site, shell, {}, listed=page.automatic)
 
 
 def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, site: dict,
-                shell: str, id_to_panel: dict) -> tuple[str, str]:
-    """Inline figures, select components and fill the shared shell."""
-    content = inline_svg_figures(content, name, namespace_ids="chapter-reader" in comps)
+                shell: str, id_to_panel: dict, listed: bool = False) -> tuple[str, str]:
+    """Inline figures, select components and fill the shared shell.
+
+    The content of an automatically listed file (`listed`) inlines no figure
+    and turns on no component: neither may follow what the file contains.
+    """
+    if not listed:
+        content = inline_svg_figures(content, name, namespace_ids="chapter-reader" in comps)
 
     if meta.get("ongoing"):
         content = (
@@ -831,9 +869,9 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
 
     # Typed folds need this component for both their styling and reader bar.
     # Inspect rendered content so folds from included fragments count too.
-    if '<details class="fold ' in content and "fold-controls" not in comps:
+    if not listed and '<details class="fold ' in content and "fold-controls" not in comps:
         comps.append("fold-controls")
-    if "data-slide-face" in content and "slide-face" not in comps:
+    if not listed and "data-slide-face" in content and "slide-face" not in comps:
         comps.append("slide-face")
     # A Reference tree too large to inline is loaded by nav.js.
     if site.get("_repository_tree_script") and "nav" not in comps:

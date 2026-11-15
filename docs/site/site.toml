@@ -15,9 +15,9 @@ worklog = "docs/KIT_WORKLOG.md"
 worklog_links_checked_from = "2026-11-15"
 open_work = "docs/open/KIT_OPEN.md"
 # Every other tracked Markdown file is listed under Reference automatically.
-# CLAUDE.md only points agents at AGENTS.md, and the starter's sample record
-# belongs to the example project, not to the kit.
-reference_exclude = ["CLAUDE.md", "examples/**"]
+# CLAUDE.md only points agents at AGENTS.md, the starter's sample record
+# belongs to the example project, not to the kit, and test fixtures are inputs.
+reference_exclude = ["CLAUDE.md", "examples/**", "tests/fixtures/"]
 # Every file directly under tooling/ is a row of the capability map, whose
 # Imported by column lint checks against the Python imports.
 tooling_roots = ["tooling/"]

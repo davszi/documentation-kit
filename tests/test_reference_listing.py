@@ -368,44 +368,6 @@ class ReleaseReview(Project):
         self.assertIn('Private source cannot be published as a page: notes/plan.md (plan.html)', result.stderr)
         self.assertFalse(destination.exists())
 
-    def test_raw_html_cannot_run_script_or_load_from_outside(self):
-        (self.root / 'notes/media').mkdir()
-        (self.root / 'notes/media/kept.png').write_bytes(b'\x89PNG\r\n\x1a\nfixture')
-        self.write('notes/raw.md', '\n'.join([
-            '# Raw',
-            '',
-            '<p><img src="media/kept.png" alt="kept" onerror="alert(1)"></p>',
-            '<div onmouseover=alert(2)>hover</div>',
-            '<details ontoggle="alert(3)" open><summary>s</summary>x</details>',
-            '<p><a href=javascript:alert(4)>bare script link</a> <a href="java&#x09;script:alert(5)">tab</a></p>',
-            "<p><img src='https://example.com/single.png' alt='single'></p>",
-            '<p><img src=https://example.com/bare.png alt=bare></p>',
-            '<p><img srcset="https://example.com/set.png 2x" src="media/kept.png" alt="set"></p>',
-            '<svg><image href="https://example.com/svg.png"/></svg>',
-            '<p><image src="https://example.com/image.png"></p>',
-            "<video poster='https://example.com/poster.png'></video>",
-            '<p style="background:url(\'https://example.com/style.png\')">styled</p>',
-            '<div style="background:u\\72l(https://example.com/escaped.png)">escaped</div>',
-            '![protocol-relative](//example.com/relative.png)',
-            '<p><a href="https://example.com/ok" ping="https://example.com/ping">kept link</a></p>',
-        ]) + '\n')
-        result = self.build()
-        self.assertEqual(result.returncode, 0, result.stderr)
-        page = self.page('notes.raw.md.html')
-        body = page[page.index('class="source-origin"'):page.index('</article>') if '</article>' in page else None]
-        for forbidden in ('onerror', 'onmouseover', 'ontoggle', 'javascript:', 'java\tscript', 'srcset', 'ping=',
-                          '<svg', '<image', 'poster=', "src='", 'src="https:', 'src=https', 'url(', 'style=',
-                          'escaped.png'):
-            self.assertNotIn(forbidden, body, forbidden)
-        self.assertIn('<a href="https://example.com/single.png">single</a>', body)
-        self.assertIn('<a href="https://example.com/bare.png">bare</a>', body)
-        self.assertIn(GONE + 'bare script link</span>', body)
-        self.assertIn('src="_media/notes/media/kept.png"', body)
-        self.assertIn('<a href="https://example.com/ok">kept link</a>', body)
-        lint = invoke('lint', '--project', self.root, '--strict')
-        self.assertEqual(lint.returncode, 0, lint.stdout + lint.stderr)
-        self.assertIn('raw HTML attribute(s) that run script or load content removed', lint.stdout)
-
     def test_symlinked_markdown_is_not_listed(self):
         outside = tempfile.TemporaryDirectory(prefix='docs-kit-outside-')
         self.addCleanup(outside.cleanup)

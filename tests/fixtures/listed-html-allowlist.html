@@ -1,0 +1,39 @@
+<h1 id="allowlist">Allowlist</h1>
+<p>Every admitted tag with every admitted attribute:</p>
+<div id="d" title="t" align="center">
+<p id="p" title="t" align="left">p <a id="a" title="t" align="left" href="target.md" name="n">a</a> <abbr id="ab" title="t" align="left">ab</abbr> <b id="b" title="t" align="left">b</b> <br id="br" title="t" align="left"> <code id="c" title="t" align="left">c</code> <del id="del" title="t" align="left">del</del> <em id="em" title="t" align="left">em</em> <i id="i" title="t" align="left">i</i> <ins id="ins" title="t" align="left">ins</ins> <kbd id="k" title="t" align="left">k</kbd> <mark id="m" title="t" align="left">m</mark> <s id="s" title="t" align="left">s</s> <small id="sm" title="t" align="left">sm</small> <span id="sp" title="t" align="left">sp</span> <strong id="st" title="t" align="left">st</strong> <sub id="sub" title="t" align="left">sub</sub> <sup id="sup" title="t" align="left">sup</sup> <u id="u" title="t" align="left">u</u> <img id="img" title="t" align="right" src="media/x.png" alt="x" width="10" height="20"></p>
+<h1 id="h1" title="t" align="center">h1</h1>
+<h2 id="h2" title="t" align="center">h2</h2>
+<h3 id="h3" title="t" align="center">h3</h3>
+<h4 id="h4" title="t" align="center">h4</h4>
+<h5 id="h5" title="t" align="center">h5</h5>
+<h6 id="h6" title="t" align="center">h6</h6>
+<hr id="hr" title="t" align="center">
+<blockquote id="q" title="t" align="left">q</blockquote>
+<pre id="pre" title="t" align="left">pre</pre>
+<details id="det" title="t" align="left" open><summary id="sum" title="t" align="left">summary</summary>body</details>
+<ul id="ul" title="t" align="left"><li id="li" title="t" align="left">li</li></ul>
+<ol id="ol" title="t" align="left"><li>ol</li></ol>
+<dl id="dl" title="t" align="left"><dt id="dt" title="t" align="left">dt</dt><dd id="dd" title="t" align="left">dd</dd></dl>
+<table id="tab" title="t" align="center" width="50%"><caption id="cap" title="t" align="top">cap</caption><thead id="th0" title="t" align="left"><tr id="tr" title="t" align="left"><th id="th" title="t" align="left" colspan="2" rowspan="1" width="9">th</th></tr></thead><tbody id="tb" title="t" align="left"><tr><td id="td" title="t" align="right" colspan="1" rowspan="2" width="8">td</td></tr></tbody><tfoot id="tf" title="t" align="left"><tr><td>tf</td></tr></tfoot></table>
+</div>
+
+<p>Tags outside the allowlist show as text:</p>
+&lt;script src=&quot;x.js&quot;&gt;alert(1)&lt;/script&gt;
+
+&lt;style&gt;p { color: red }&lt;/style&gt;
+
+&lt;iframe src=&quot;x.html&quot;&gt;&lt;/iframe&gt; &lt;object data=&quot;x&quot;&gt;&lt;/object&gt; &lt;embed src=&quot;x&quot;&gt; &lt;link rel=&quot;stylesheet&quot; href=&quot;x.css&quot;&gt;
+&lt;meta http-equiv=&quot;refresh&quot; content=&quot;0&quot;&gt; &lt;base href=&quot;https://example.com/&quot;&gt;
+&lt;svg&gt;&lt;use href=&quot;#x&quot;/&gt;&lt;/svg&gt; &lt;math&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;/math&gt; &lt;image src=&quot;x.png&quot;&gt;
+&lt;video src=&quot;x.mp4&quot; poster=&quot;x.png&quot;&gt;&lt;/video&gt; &lt;audio src=&quot;x.mp3&quot;&gt;&lt;/audio&gt; &lt;source src=&quot;x&quot;&gt; &lt;picture&gt;&lt;/picture&gt;
+&lt;form action=&quot;x&quot;&gt;&lt;input type=&quot;image&quot; src=&quot;x&quot;&gt;&lt;button formaction=&quot;x&quot;&gt;b&lt;/button&gt;&lt;textarea&gt;t&lt;/textarea&gt;&lt;/form&gt;
+&lt;template&gt;t&lt;/template&gt; &lt;noscript&gt;n&lt;/noscript&gt; &lt;center&gt;c&lt;/center&gt; &lt;font color=&quot;red&quot;&gt;f&lt;/font&gt;
+
+<p>Attributes outside the allowlist are removed:</p>
+<p>p</p>
+<img src="media/x.png">
+<a href="target.md">a</a>
+<blockquote>q</blockquote> <td>cell</td> <details open>d</details>
+<img src="media/x.png"> <a>a</a>
+

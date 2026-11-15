@@ -2,6 +2,41 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Admit only known raw HTML in automatically listed files
+
+- Why: the kit promises that raw HTML in an automatically listed file runs no
+  script and loads nothing from outside the bundle. Three reviews broke the
+  filter behind that promise, each with input it did not know: event
+  handlers, unquoted `javascript:` links, `srcset` and SVG `href`; then a CSS
+  escape in `style` (`u\72l(…)`); then, verified in Chromium, Firefox and
+  WebKit, a record that built the sidebar's tree box from `class` and
+  `data-` attributes, so nav.js loaded an outside script on load (B1), and an
+  image or poster address with a leading space, tab or newline that loaded
+  from another host (B2). B1 shows why a filter that removes known-bad input
+  cannot win: the kit's own components are driven by classes and `data-`
+  attributes, so any class a record may keep is a way to drive them.
+- The filter now admits known input. The Markdown renderer hands each HTML
+  fragment of a listed file to `ListedHtml` in `tooling/source_pages.py`,
+  while its own markup, classes and styles stay untouched. Listed tags keep
+  listed attributes; any other tag shows as text; other attributes,
+  comments, ids and names the kit's page uses and end tags that close
+  nothing the file opened are dropped; the file's elements end inside the
+  element around them. Every address is read as browsers read it
+  (`browser_address`). A listed page no longer inlines SVG figures or turns
+  on components from its text, and nav.js takes its tree box only from the
+  shell's sidebar and loads only `reference.tree.js`.
+- Also from the third review: lint compares link schemes without regard to
+  case; the 5.0.0 guide's dead-link command decodes targets and skips `//`;
+  the capability-map rule says that `init` writes the map.
+- Effect: on the kit's own site one listed page changed, by an explicit
+  `</p>` before a table cell ends, and nothing was refused. adaptation lists
+  no file, since `.md` is one of its private suffixes.
+- Checks: `build`, `lint --strict` and `build --check-reader` of the kit
+  pass, and `DOCS_REQUIRE_BROWSER=1 bash tests/run_checks.sh` passes with 344
+  Python tests and seven browser suites. The new browser suite also passes in
+  Firefox and WebKit; on the kit before this change it fails, as `evil.js`
+  and five of the B2 addresses load from the stand-in host.
+
 ## 2026-11-15 — Correct and shorten the 5.0.0 guide and release notes
 
 - Why: a review followed the 5.0.0 guide on a clone of adaptation and found

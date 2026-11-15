@@ -10,7 +10,8 @@ By default every other tracked Markdown file is listed too, under a route
 derived from its path (`automatic_pages`). `reference_listing = false` in
 site.toml turns that off; `reference_exclude` skips files by repository-relative glob.
 An automatically listed page never fails the build: what a registered page
-would reject is rendered tolerantly and returned as a note.
+would reject is rendered tolerantly and returned as a note. Its raw HTML keeps
+only the tags and attributes of `ADMITTED_HTML` (`ListedHtml`).
 
 The file stays the single editable source. Its relative links and media resolve
 from the file's own folder: links to other registered files become their HTML
@@ -20,10 +21,11 @@ registered routes are checked against the rendered target page.
 """
 from __future__ import annotations
 
+from bisect import bisect
+from collections import Counter
 from dataclasses import dataclass
 import hashlib
 import html
-from html.parser import HTMLParser
 import os
 from pathlib import Path
 import posixpath
@@ -201,7 +203,10 @@ def _hashed(base: str, source: str) -> str:
 
 
 def read_source(path: Path) -> tuple[str, bool]:
-    """The file's text, and whether bytes that are not UTF-8 were replaced."""
+    """The file's text, and whether bytes that are not UTF-8 were replaced.
+
+    U+0000 becomes U+FFFD, as CommonMark asks; `ListedHtml` marks tags with it.
+    """
     data = path.read_bytes()
     try:
         text = data.decode("utf-8")
@@ -209,7 +214,7 @@ def read_source(path: Path) -> tuple[str, bool]:
     except UnicodeDecodeError:
         text = data.decode("utf-8", errors="replace")
         replaced = True
-    return text.removeprefix("﻿"), replaced
+    return text.removeprefix("﻿").replace("\x00", "\ufffd"), replaced
 
 
 def automatic_pages(site: dict, root: Path, tracked: frozenset[Path], explicit: list[SourcePage],
@@ -297,9 +302,43 @@ def first_heading(text: str) -> str | None:
 LINK_GONE = '<span class="link-gone" title="The target of this link no longer exists.">'
 _GONE = "\x00link-gone\x00"
 _ALT = re.compile(r'(?<![\w-])alt="([^"]*)"')
-_EXTERNAL = re.compile(r"(?i)(?:https?:)?//")
 # Schemes that lint and the browser accept on a link from an automatic page.
 LINK_SCHEMES = {"http", "https", "mailto", "vscode"}
+_C0_OR_SPACE = "".join(map(chr, range(0x21)))
+_SCHEME = re.compile(r"([A-Za-z][A-Za-z0-9+.-]*):")
+_CONTROL = re.compile(r"[\x00-\x1f\x7f]")
+
+
+def _visible(raw: str) -> str:
+    """An address for a message, with control characters such as a tab written as `\\x09`."""
+    return _CONTROL.sub(lambda match: f"\\x{ord(match[0]):02x}", raw)
+
+
+def browser_address(value: str) -> tuple[str, str | None, bool]:
+    """An attribute's address as a browser resolves it, from its entity-decoded value.
+
+    As the URL standard does, leading and trailing C0 controls and spaces are
+    stripped and every tab, CR and LF is removed. Returns that address, its
+    scheme in lowercase or None, and whether it names another host without a
+    scheme: two leading slashes or backslashes, which a page served over
+    HTTP(S) or opened from disk resolves to another host.
+    """
+    address = re.sub(r"[\t\n\r]", "", value.strip(_C0_OR_SPACE))
+    scheme = _SCHEME.match(address)
+    if scheme:
+        return address, scheme[1].lower(), False
+    return address, None, len(address) > 1 and address[0] in "/\\" and address[1] in "/\\"
+
+
+def web_address(address: str, scheme: str | None) -> str:
+    """An http(s) or protocol-relative address from `browser_address` as `scheme://host/…`.
+
+    Browsers find the host after any run of slashes and backslashes that
+    follows `http:` or `https:`; in this form lint and every browser read the
+    same host. A protocol-relative address takes https, as the site is served.
+    """
+    rest = address[len(scheme) + 1:] if scheme else address
+    return (scheme or "https") + "://" + rest.lstrip("/\\")
 
 
 def rewrite_links(markup: str, page: SourcePage, routes: dict[str, str], root: Path,
@@ -317,11 +356,12 @@ def rewrite_links(markup: str, page: SourcePage, routes: dict[str, str], root: P
     inside `LINK_GONE` instead of failing the build, and a link that appears
     only in such entries keeps its fragment unchecked.
 
-    An automatically listed page (`page.automatic`) never fails: every link or
+    An automatically listed page (`page.automatic`) never fails: every
+    address is read as a browser reads it (`browser_address`), every link or
     image the build cannot serve renders as its text inside `LINK_GONE`, other
-    media lose the attribute, an external image becomes a link to it, and the
-    returned problems are notes. `media_ok(path)` then says whether an
-    existing media file can be packaged (tracked, not private).
+    media lose the attribute, an external image becomes a link to it (its text
+    inside a link), and the returned problems are notes. `media_ok(path)` then
+    says whether an existing media file can be packaged (tracked, not private).
     """
     problems: list[str] = []
     folder = posixpath.dirname(page.source)
@@ -331,25 +371,36 @@ def rewrite_links(markup: str, page: SourcePage, routes: dict[str, str], root: P
     new_hrefs: set[str] = set()
 
     def resolve(raw: str, old: bool, media: bool) -> str | None:
-        url = urlsplit(html.unescape(raw))
-        if tolerant and not media and (url.scheme or url.netloc):
-            if url.scheme.lower() in LINK_SCHEMES:
-                return None
-            if not url.scheme:  # protocol-relative: the site is served over HTTPS
-                return "https:" + html.unescape(raw)
-            problems.append(f"{page.source}: link scheme {url.scheme}: is not served; shown as text: {raw}")
-            return _GONE
-        if tolerant and media and url.scheme and url.scheme.lower() != "data":
-            problems.append(f"{page.source}: media scheme {url.scheme}: is not served: {raw}")
+        value = html.unescape(raw)
+        if tolerant:
+            # Only data: media, links with a served scheme and paths inside the
+            # repository stay; the address is written as the browser reads it.
+            value, scheme, other_host = browser_address(value)
+            if media and scheme == "data":
+                return value
+            if media and (scheme or other_host):
+                problems.append(f"{page.source}: media address {_visible(raw)} is not served")
+                return _GONE
+            if other_host or scheme in {"http", "https"}:
+                return web_address(value, scheme)
+            if scheme in LINK_SCHEMES:
+                return value
+            if scheme:
+                problems.append(f"{page.source}: link scheme {scheme}: is not served; shown as text: {_visible(raw)}")
+                return _GONE
+            value = value.replace("\\", "/")  # as browsers read a path under http(s) and file
+        url = urlsplit(value)
+        if tolerant and media and not url.path:
+            problems.append(f"{page.source}: media address {_visible(raw)} names no file")
             return _GONE
         if url.scheme or url.netloc or not url.path:
-            return None  # external, same-page fragment or empty
+            return value if tolerant else None  # external, same-page fragment or empty
         if url.path.startswith("/"):
-            problems.append(f"{page.source}: absolute link {raw}; use a path relative to the source file")
+            problems.append(f"{page.source}: absolute link {_visible(raw)}; use a path relative to the source file")
             return _GONE if tolerant else None
         target = posixpath.normpath(posixpath.join(folder, unquote(url.path)))
         if target == ".." or target.startswith("../"):
-            problems.append(f"{page.source}: link escapes the repository: {raw}")
+            problems.append(f"{page.source}: link escapes the repository: {_visible(raw)}")
             return _GONE if tolerant else None
         suffix = ("?" + url.query if url.query else "") + ("#" + url.fragment if url.fragment else "")
         if target in routes and not media:
@@ -357,15 +408,20 @@ def rewrite_links(markup: str, page: SourcePage, routes: dict[str, str], root: P
         if not exists(root / target):
             if old:
                 return _GONE
-            problems.append(f"{page.source}: link target not found: {raw}")
+            problems.append(f"{page.source}: link target not found: {_visible(raw)}")
             return _GONE if tolerant else None
         if tolerant and media and not media_ok(root / target):
-            problems.append(f"{page.source}: media file is not packaged (untracked, private or symlinked): {raw}")
+            problems.append(f"{page.source}: media file is not packaged (untracked, private or symlinked): "
+                            f"{_visible(raw)}")
             return _GONE
         logical = posixpath.relpath(target, "docs/html")
         if url.path.endswith("/") and not logical.endswith("/"):
             logical += "/"
         return quote(logical, safe="/-_.~") + suffix
+
+    # An external image inside a link becomes text, so links never nest.
+    link_starts = [found.start() for found in re.finditer(r"<a\b", markup)]
+    link_ends = [found.start() for found in re.finditer(r"</a>", markup)]
 
     def tag(match: re.Match) -> str:
         original = match[0]
@@ -374,11 +430,16 @@ def rewrite_links(markup: str, page: SourcePage, routes: dict[str, str], root: P
         updated = original
         for attribute, raw in _ATTR.findall(original):
             media = name != "a" and attribute in {"src", "poster"}
-            if tolerant and media and _EXTERNAL.match(html.unescape(raw)):
-                problems.append(f"{page.source}: external media is not loaded; shown as a link: {raw}")
+            address, scheme, other_host = browser_address(html.unescape(raw))
+            if tolerant and media and (other_host or scheme in {"http", "https"}):
+                problems.append(f"{page.source}: external media is not loaded; shown as a link: {_visible(raw)}")
                 if name == "img":
+                    target = html.escape(web_address(address, scheme), quote=True)
                     alt = _ALT.search(original)
-                    return f'<a href="{raw}">{alt[1] if alt and alt[1] else raw}</a>'
+                    text = alt[1] if alt and alt[1] else target
+                    if bisect(link_starts, match.start()) > bisect(link_ends, match.start()):
+                        return text
+                    return f'<a href="{target}">{text}</a>'
                 updated = re.sub(r"\s" + attribute + '="' + re.escape(raw) + '"', "", updated, count=1)
                 continue
             replacement = resolve(raw, old, media and tolerant)
@@ -391,7 +452,7 @@ def rewrite_links(markup: str, page: SourcePage, routes: dict[str, str], root: P
                 updated = re.sub(r"\s" + attribute + '="' + re.escape(raw) + '"', "", updated, count=1)
                 continue
             if replacement == _GONE:  # other media keep failing the build
-                problems.append(f"{page.source}: link target not found: {raw}")
+                problems.append(f"{page.source}: link target not found: {_visible(raw)}")
                 replacement = None
             href = raw
             if replacement is not None:
@@ -406,107 +467,245 @@ def rewrite_links(markup: str, page: SourcePage, routes: dict[str, str], root: P
     return markup, problems, old_hrefs - new_hrefs
 
 
-_COMMENT = re.compile(r"<!--[\s\S]*?-->")
-# Raw HTML that would load a resource, run, swallow the rest of the page or
-# change the document: shown as text on an automatically listed page. SVG and
-# MathML are included, because their own elements can load or link content.
-_UNSAFE_TAG = re.compile(r"<(/?)(script|style|link|meta|base|object|embed|applet|param|portal|form|frame|frameset"
-                         r"|iframe|textarea|title|noscript|noembed|noframes|template|plaintext|xmp|listing|svg|math)"
-                         r"(?![\w-])", re.I)
 _CSS_URL = re.compile(r"url\((?=\s*['\"]?(?:https?:)?//)", re.I)
 _QUOTED_ATTRIBUTE = re.compile(r"""\s[^\s"'<>/=]+\s*=\s*(?:"[^"]*"|'[^']*')""")
-# Attributes that load content or name another document's address.
-_LOADING_ATTRIBUTES = {"srcset", "imagesrcset", "background", "lowsrc", "dynsrc", "longdesc", "ping", "action",
-                       "formaction", "data", "codebase", "archive", "classid", "xlink:href", "srcdoc", "manifest",
-                       "profile", "attributionsrc", "itemtype"}
-_ADDRESS_ATTRIBUTES = {"href": {"a"}, "src": {"img", "video", "audio", "source"}, "poster": {"video"}}
-# A style kept on an automatically listed page: plain declarations only, such as the
-# build's `counter-reset: ln 4`. Without parentheses, backslashes, quotes or slashes no
-# CSS escape, comment or function such as url() can be spelt.
-_PLAIN_STYLE = re.compile(r"[\w\s.:;%#-]*")
+
+# The raw HTML an automatically listed file keeps: these tags, each with these
+# attributes. Every other tag shows as text and every other attribute is
+# dropped, so no class, style, data-* or on… attribute passes, and no tag that
+# loads, runs, embeds or encloses content.
+_ANY = frozenset({"id", "title", "align"})
+ADMITTED_HTML: dict[str, frozenset[str]] = {
+    **dict.fromkeys(("abbr", "b", "blockquote", "br", "caption", "code", "dd", "del", "div", "dl", "dt", "em",
+                     "h1", "h2", "h3", "h4", "h5", "h6", "hr", "i", "ins", "kbd", "li", "mark", "ol", "p", "pre",
+                     "s", "small", "span", "strong", "sub", "summary", "sup", "tbody", "tfoot", "thead", "tr", "u",
+                     "ul"), _ANY),
+    "a": _ANY | {"href", "name"},
+    "details": _ANY | {"open"},
+    "img": _ANY | {"src", "alt", "width", "height"},
+    "table": _ANY | {"width"},
+    "td": _ANY | {"colspan", "rowspan", "width"},
+    "th": _ANY | {"colspan", "rowspan", "width"},
+}
+# Ids the kit's shell, sidebar and components own or look up, and the globals
+# its scripts read, which an element's id or name would define. A listed file
+# gives none of them to an element, in any letter case, so its content cannot
+# stand in for a part of the kit. tests/test_listed_html.py keeps the list
+# complete against the shell and the components.
+KIT_IDS = frozenset({
+    "backdrop", "menu", "sidebar", "toc", "top", "repo-tree-label", "chapter-reader", "reader-chapter-list",
+    "plot-toggle-labels", "page-lock", "page-lock-data", "page-lock-form", "page-lock-keys", "page-lock-message",
+    "page-lock-password", "page-lock-remember", "page-lock-status",
+    "docsreferencetree", "docslockedreferencetree", "figtoggles", "module",
+})
+_VOID = frozenset({"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track",
+                   "wbr"})
+# Marks a tag the file wrote, between "<" and its name, until `ListedHtml.finish`.
+# `read_source` turns every U+0000 of a file into U+FFFD, so no text carries it.
+_RAW = "\x00"
+_OUTPUT_TAG = re.compile(r"<(/?)(\x00?)([A-Za-z][A-Za-z0-9]*)([^>]*)>")
+_SPACE = "\t\n\f\r "
+_ASCII_LOWER = str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")
 
 
-class _AttributeFilter(HTMLParser):
-    """Re-serializes raw HTML with every attribute double-quoted and without
-    event handlers, loading attributes, a style beyond plain declarations or
-    addresses on elements that do not take them, so the link checks see every
-    address that remains."""
-
-    def __init__(self) -> None:
-        super().__init__(convert_charrefs=False)
-        self.out: list[str] = []
-        self.removed = 0
-
-    def _tag(self, tag: str, attrs: list, closing: str) -> None:
-        tag = "img" if tag == "image" else tag  # the HTML parser turns <image> into <img>
-        kept = []
-        for name, value in attrs:
-            allowed = _ADDRESS_ATTRIBUTES.get(name)
-            if (name.startswith("on") or name in _LOADING_ATTRIBUTES or (allowed is not None and tag not in allowed)
-                    or (name == "style" and value and not _PLAIN_STYLE.fullmatch(value))):
-                self.removed += 1
-                continue
-            kept.append(name if value is None else f'{name}="{html.escape(value, quote=True)}"')
-        self.out.append("<" + tag + "".join(" " + item for item in kept) + closing)
-
-    def handle_starttag(self, tag, attrs):
-        self._tag(tag, attrs, ">")
-
-    def handle_startendtag(self, tag, attrs):
-        self._tag(tag, attrs, " />")
-
-    def handle_endtag(self, tag):
-        self.out.append(f"</{'img' if tag == 'image' else tag}>")
-
-    def handle_data(self, data):
-        self.out.append(data)
-
-    def handle_entityref(self, name):
-        self.out.append(f"&{name};")
-
-    def handle_charref(self, name):
-        self.out.append(f"&#{name};")
-
-    # Declarations, processing instructions and comments never show.
-    def handle_decl(self, decl):
-        pass
-
-    def unknown_decl(self, data):
-        pass
-
-    def handle_pi(self, data):
-        pass
-
-    def handle_comment(self, data):
-        pass
+def _as_text(text: str) -> str:
+    """Raw text between tags, keeping its character references. Quotes are
+    escaped too, since the renderer writes image text into an `alt` value."""
+    return text.replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;").replace("'", "&#x27;")
 
 
-def tolerate_raw_html(markup: str, source: str) -> tuple[str, list[str]]:
-    """Make raw HTML in an automatically listed file harmless before links are resolved.
+def _read_tag(raw: str, start: int) -> tuple[int, bool, str, list[tuple[str, str | None]]] | None:
+    """The tag that starts at `raw[start]`, as the HTML tokenizer splits it.
 
-    Complete HTML comments are dropped, since they never show; an unclosed
-    comment opener and the tags in `_UNSAFE_TAG` are shown as text. Every
-    remaining tag is written again with double-quoted attributes, without
-    event handlers, loading attributes or addresses on elements that do not
-    take one, so no script runs and every remaining address is resolved by
-    `rewrite_links`. Code blocks are already escaped, so only real raw HTML
-    is touched.
+    Returns its end, whether it is an end tag, its name and its attributes in
+    order, each name in lowercase with its raw value or None; None when no
+    complete tag starts there, such as `<` before a space or a tag the
+    fragment ends inside.
     """
-    notes = []
-    markup = _COMMENT.sub("", markup)
-    if "<!--" in markup:
-        markup = markup.replace("<!--", "&lt;!--")
-        notes.append(f"{source}: unclosed HTML comment shown as text")
-    markup, count = _UNSAFE_TAG.subn(lambda m: "&lt;" + m[1] + m[2], markup)
-    if count:
-        notes.append(f"{source}: {count} raw HTML tag(s) that load, run or enclose content shown as text")
-    parser = _AttributeFilter()
-    parser.feed(markup)
-    parser.close()
-    markup = "".join(parser.out)
-    if parser.removed:
-        notes.append(f"{source}: {parser.removed} raw HTML attribute(s) that run script or load content removed")
-    return markup, notes
+    end = start + 1
+    closing = raw.startswith("/", end)
+    end += closing
+    if end >= len(raw) or not (raw[end].isascii() and raw[end].isalpha()):
+        return None
+    begin = end
+    while end < len(raw) and raw[end] not in _SPACE + "/>":
+        end += 1
+    name, attributes = raw[begin:end].translate(_ASCII_LOWER), []
+    while True:
+        while end < len(raw) and raw[end] in _SPACE + "/":
+            end += 1
+        if end >= len(raw):
+            return None
+        if raw[end] == ">":
+            return end + 1, closing, name, attributes
+        begin = end
+        end += 1  # an attribute name may start with "="
+        while end < len(raw) and raw[end] not in _SPACE + "/>=":
+            end += 1
+        attribute, value = raw[begin:end].translate(_ASCII_LOWER), None
+        after = end
+        while after < len(raw) and raw[after] in _SPACE:
+            after += 1
+        if after < len(raw) and raw[after] == "=":
+            end = after + 1
+            while end < len(raw) and raw[end] in _SPACE:
+                end += 1
+            if end < len(raw) and raw[end] in "\"'":
+                close = raw.find(raw[end], end + 1)
+                if close < 0:
+                    return None
+                value, end = raw[end + 1:close], close + 1
+            else:
+                begin = end
+                while end < len(raw) and raw[end] not in _SPACE + ">":
+                    end += 1
+                value = raw[begin:end]
+        attributes.append((attribute, value))
+
+
+def _counted(counts: Counter) -> str:
+    return ", ".join(name + (f" ({count})" if count > 1 else "") for name, count in sorted(counts.items()))
+
+
+class ListedHtml:
+    """The raw HTML of one automatically listed file, admitted by allowlist.
+
+    The Markdown renderer hands each block and inline HTML fragment of the file
+    to `fragment`; the markup the renderer writes itself never passes through
+    it, so the kit's own classes and styles stay. A complete comment is dropped.
+    A tag in `ADMITTED_HTML` is written again with its admitted attributes
+    only, each entity-decoded and escaped in double quotes, and marked with
+    `_RAW`. Every other tag, an unclosed comment and every other `<` show as
+    text. `finish` then matches the marked tags with the renderer's markup and
+    removes the marks.
+    """
+
+    def __init__(self, source: str) -> None:
+        self.source = source
+        self.tags: Counter = Counter()        # shown as text, by tag name
+        self.attributes: Counter = Counter()  # dropped, by attribute name
+        self.identifiers: Counter = Counter()  # ids and names of the kit, dropped
+        self.unclosed_comments = 0
+        self.unmatched = 0                    # end tags that close nothing the file opened
+        self.nested_links = 0                 # links opened inside a link
+
+    def admits_identifier(self, value: str) -> bool:
+        """Whether an id or name may stay: not one of `KIT_IDS`."""
+        if value.translate(_ASCII_LOWER) in KIT_IDS:
+            self.identifiers[value] += 1
+            return False
+        return True
+
+    def fragment(self, raw: str) -> str:
+        """One block or inline HTML fragment of the file, with only admitted tags left as markup."""
+        raw = raw.replace(_RAW, "\ufffd")
+        out, at = [], 0
+        while (start := raw.find("<", at)) >= 0:
+            out.append(_as_text(raw[at:start]))
+            if raw.startswith("<!--", start):
+                end = raw.find("-->", start + 4)
+                if end >= 0:
+                    at = end + 3
+                    continue
+                self.unclosed_comments += 1
+            tag = _read_tag(raw, start)
+            if tag is None:
+                if raw.startswith(("<!", "<?"), start) and not raw.startswith("<!--", start):
+                    self.tags["<" + raw[start + 1] + "…>"] += 1
+                out.append("&lt;")
+                at = start + 1
+                continue
+            end, closing, name, attributes = tag
+            if name in ADMITTED_HTML:
+                out.append(self._admit(name, closing, attributes))
+            else:
+                self.tags[name] += 1
+                out.append(html.escape(raw[start:end], quote=True))
+            at = end
+        out.append(_as_text(raw[at:]))
+        return "".join(out)
+
+    def _admit(self, name: str, closing: bool, attributes: list[tuple[str, str | None]]) -> str:
+        if closing:
+            if name in _VOID:
+                self.unmatched += 1
+                return ""
+            return "</" + _RAW + name + ">"
+        kept, seen = [], set()
+        for attribute, value in attributes:
+            if attribute in seen:
+                continue  # as in browsers, the first of a repeated attribute counts
+            seen.add(attribute)
+            if attribute not in ADMITTED_HTML[name]:
+                self.attributes["on…" if attribute.startswith("on")
+                                else "data-…" if attribute.startswith("data-") else attribute] += 1
+                continue
+            value = html.unescape(value or "")
+            if attribute in {"id", "name"} and not self.admits_identifier(value):
+                continue
+            kept.append(attribute if attribute == "open" else f'{attribute}="{html.escape(value, quote=True)}"')
+        return "<" + _RAW + name + "".join(" " + item for item in kept) + ">"
+
+    def finish(self, markup: str) -> tuple[str, list[str]]:
+        """The rendered file with the file's elements matched, and notes on what was not admitted.
+
+        An element the file opened ends at the latest where the element the
+        renderer put around it ends, and at the end of the file. An end tag
+        ends only an element the file opened inside the renderer's current
+        element; any other is dropped, so the file can neither close the
+        kit's markup nor leave an element open past its own content. A link
+        opened inside a link is dropped, so links do not spill over.
+        """
+        out, stack, at = [], [], 0  # stack: (tag name, written by the file)
+        for match in _OUTPUT_TAG.finditer(markup):
+            out.append(markup[at:match.start()].replace("<", "&lt;"))
+            at = match.end()
+            closing, raw, name, rest = match[1], bool(match[2]), match[3].lower(), match[4]
+            if not raw:
+                if closing:
+                    while stack and stack[-1][1]:
+                        out.append(f"</{stack.pop()[0]}>")
+                    if stack and stack[-1][0] == name:
+                        stack.pop()
+                elif name not in _VOID:
+                    stack.append((name, False))
+                out.append(match[0])
+            elif closing:
+                depth = next((index for index in range(len(stack) - 1, -1, -1)
+                              if not stack[index][1] or stack[index][0] == name), None)
+                if depth is None or not stack[depth][1]:
+                    self.unmatched += 1
+                    continue
+                while len(stack) > depth:
+                    out.append(f"</{stack.pop()[0]}>")
+            elif name == "a" and any(open_name == "a" for open_name, _ in stack):
+                self.nested_links += 1
+            else:
+                out.append("<" + name + rest + ">")
+                if name not in _VOID:
+                    stack.append((name, True))
+        out.append(markup[at:].replace("<", "&lt;"))
+        out.extend(f"</{name}>" for name, raw in reversed(stack) if raw)
+        return "".join(out), self.notes()
+
+    def notes(self) -> list[str]:
+        source, notes = self.source, []
+        if self.tags:
+            notes.append(f"{source}: {sum(self.tags.values())} raw HTML tag(s) outside the allowlist shown as text: "
+                         f"{_counted(self.tags)}")
+        if self.attributes:
+            notes.append(f"{source}: {sum(self.attributes.values())} raw HTML attribute(s) outside the allowlist "
+                         f"removed: {_counted(self.attributes)}")
+        if self.identifiers:
+            notes.append(f"{source}: {sum(self.identifiers.values())} id or name value(s) of the kit's page removed: "
+                         f"{_counted(self.identifiers)}")
+        if self.unclosed_comments:
+            notes.append(f"{source}: unclosed HTML comment shown as text")
+        if self.unmatched:
+            notes.append(f"{source}: {self.unmatched} raw HTML end tag(s) that close nothing the file opened removed")
+        if self.nested_links:
+            notes.append(f"{source}: {self.nested_links} raw HTML link(s) inside another link removed")
+        return notes
 
 
 def quiet_text(markup: str) -> str:

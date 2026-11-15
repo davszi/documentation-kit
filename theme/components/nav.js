@@ -50,9 +50,15 @@
 // folder" opens, or at once on a page the tree lists, which then unfolds to its
 // file as the inline tree does. Without JavaScript the disclosure keeps the
 // folders leading to the page and a link to the Reference index page.
+// The tree box is taken only from the shell's sidebar, which comes before the
+// page content, and the script only from the build's own reference.tree.js,
+// so nothing the page content holds can choose what loads.
 (function(){
-  var box = document.querySelector('.toc .repo-tree[data-repo-tree-src]');
-  var all = box && box.querySelector('details.repo-tree-all');
+  var sidebar = document.getElementById('sidebar');
+  var box = sidebar && sidebar.matches('nav.sidebar') && !sidebar.closest('main')
+    ? sidebar.querySelector(':scope > .toc > .repo-tree[data-repo-tree-src]') : null;
+  var source = box && box.getAttribute('data-repo-tree-src');
+  var all = source && /^reference\.tree\.js(?:\?v=[0-9a-f]+)?$/.test(source) && box.querySelector(':scope > details.repo-tree-all');
   if (!all) return;
   var current = box.getAttribute('data-repo-tree-current');
   var state = 'idle';
@@ -97,7 +103,7 @@
     if (typeof window.docsReferenceTree === 'string') { place(); return; }
     state = 'loading';
     var script = document.createElement('script');
-    script.src = box.getAttribute('data-repo-tree-src');
+    script.src = source;
     script.onload = place;
     script.onerror = function(){ state = 'failed'; };
     document.head.appendChild(script);
