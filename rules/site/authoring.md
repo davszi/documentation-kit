@@ -219,7 +219,8 @@ lead to that page unfolded. The section follows the navigation in the menu's
 normal flow.
 
 Up to 60 listed files (`INLINE_TREE_LIMIT` in `tooling/source_tree.py`) every
-page carries the whole folder tree. Above that, the tree is written once, as
+page carries the whole folder tree; with the [page lock](publication.md#page-lock)
+on, the tree is always written once. Above that, the tree is written once, as
 `reference.tree.js` next to the pages, and as the page `reference.index.html`;
 `site-build.json` names both under `reference_tree`, which is `null` for an
 inline tree. Each page then carries the pinned files, the **Browse by folder**

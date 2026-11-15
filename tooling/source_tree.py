@@ -6,7 +6,8 @@ Every record then appears at its repository path in a folder tree inside one
 only on a record page that is neither pinned nor listed in the navigation;
 other pages keep it closed, because their entry already marks them. Native `<details>` keep the section usable without JavaScript.
 
-Above `INLINE_TREE_LIMIT` files the folder tree is not repeated in every page.
+Above `INLINE_TREE_LIMIT` files, and always when the page lock is on, the
+folder tree is not repeated in every page.
 It is written once as `TREE_SCRIPT`, a script that hands the markup to
 nav.js, and as the `TREE_INDEX` page. A page then carries the pinned files,
 the disclosure, the folders that lead to its own file and a link to the index;
@@ -141,14 +142,15 @@ def is_large(files: list[TreeFile]) -> bool:
 def tree_html(files: list[TreeFile], current: str, *, listed: bool = False, script: str | None = None) -> str:
     """The section for the page whose public file name is `current`; empty without files.
     `listed` says the page has a visible navigation entry. `script` is the
-    versioned URL of `TREE_SCRIPT`, given when the tree is too large to inline."""
+    versioned URL of `TREE_SCRIPT`, given when the tree is written once: when
+    it is too large to inline, or always for a locked publication."""
     if not files:
         return ""
     pinned = [item for item in files if item.pinned]
     here = next((item for item in files if item.route == current), None)
     opened = not listed and here is not None and not here.pinned
     attributes, body = "", _folder_html(_folder_tree(files), current, listed)
-    if script is not None and is_large(files):
+    if script is not None:
         attributes = f' data-repo-tree-src="{html.escape(script, quote=True)}"'
         body = ""
         if here is not None:

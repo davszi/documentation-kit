@@ -3,14 +3,20 @@
 // content keys and the sealed page inline. This script derives a key from the
 // password (PBKDF2-HMAC-SHA-256), unwraps the content keys and decrypts the
 // page (AES-256-GCM) through WebCrypto, then replaces the document so the
-// kit's components start exactly as on a normal load. Content keys, never the
-// password, stay in sessionStorage, or in localStorage when the reader asks
-// to be remembered on this device. Node's tests load the same functions.
+// kit's components start exactly as on a normal load. For a reader with the
+// reference password it also opens the sealed Reference tree and puts the
+// sidebar's Reference section back into pages that the general password opens.
+// The tab keeps this publish's content keys in sessionStorage. A reader who
+// asks to be remembered keeps the password's derived key in localStorage
+// instead of the password; it opens later publishes until a password changes.
+// Node's tests load the same functions.
 (function () {
   'use strict';
   var FORMAT = 'docsite-lock/1';
   var NONCE = 12;
   var KEY = 32;
+  var TREE = 'reference.tree.js';
+  var LOCKED_TREE = 'docsLockedReferenceTree';
   var encoder = new TextEncoder();
 
   function fromBase64(text) {
@@ -55,10 +61,9 @@
     return new Uint8Array(bits);
   }
 
-  // The level and content keys this password opens, or null for a wrong one.
-  async function unlock(password, header) {
+  // The level and content keys a password's derived key opens, or null.
+  async function openSlots(wrapping, header) {
     if (!header || header.format !== FORMAT) throw new Error('Unsupported lock format');
-    var wrapping = await deriveKey(password, header.kdf);
     for (var i = 0; i < header.slots.length; i++) {
       var plain;
       try {
@@ -76,9 +81,31 @@
     return null;
   }
 
+  // The derived key, level and content keys this password opens, or null for a wrong one.
+  async function unlock(password, header) {
+    if (!header || header.format !== FORMAT) throw new Error('Unsupported lock format');
+    var wrapping = await deriveKey(password, header.kdf);
+    var result = await openSlots(wrapping, header);
+    if (result) result.wrapping = wrapping;
+    return result;
+  }
+
   function fileContext(path) { return FORMAT + ' file ' + path; }
 
   function openFile(raw, path, sealed) { return open(raw, sealed, fileContext(path)); }
+
+  // The sealed Reference tree and section, from the base64 that reference.tree.js sets.
+  async function openTree(raw, sealedBase64) {
+    var plain = await openFile(raw, TREE, fromBase64(sealedBase64));
+    return JSON.parse(new TextDecoder('utf-8').decode(plain));
+  }
+
+  // A page as built: the publish step cut its Reference section out at byte `at`.
+  function joinSection(plain, at, section) {
+    var decoder = new TextDecoder('utf-8');
+    if (at === null || typeof section !== 'string') return decoder.decode(plain);
+    return decoder.decode(plain.subarray(0, at)) + section + decoder.decode(plain.subarray(at));
+  }
 
   // Locked text files: a readable notice, a marker line, the sealed file in base64.
   function parseEnvelope(text) {
@@ -86,8 +113,9 @@
     return match ? {level: Number(match[1]), sealed: fromBase64(match[2])} : null;
   }
 
-  var api = {FORMAT: FORMAT, unlock: unlock, openFile: openFile, parseEnvelope: parseEnvelope,
-    fileContext: fileContext, fromBase64: fromBase64, toBase64: toBase64};
+  var api = {FORMAT: FORMAT, unlock: unlock, openSlots: openSlots, openFile: openFile, openTree: openTree,
+    joinSection: joinSection, parseEnvelope: parseEnvelope, fileContext: fileContext,
+    fromBase64: fromBase64, toBase64: toBase64};
   if (typeof module === 'object' && module && module.exports) { module.exports = api; return; }
   if (typeof document === 'undefined') return;
 
@@ -95,6 +123,7 @@
   if (!shell) return;
   var header = JSON.parse(document.getElementById('page-lock-keys').textContent);
   var pageLevel = Number(shell.getAttribute('data-level'));
+  var sectionAt = shell.hasAttribute('data-section-at') ? Number(shell.getAttribute('data-section-at')) : null;
   var siteRoot = new URL(shell.getAttribute('data-root'), location.href);
   var storageKey = 'docsite-lock:' + siteRoot.pathname;
   var form = document.getElementById('page-lock-form');
@@ -118,46 +147,65 @@
     return /\.[A-Za-z0-9]+$/.test(path) ? [path] : [path, path + '.html'];
   }
 
-  function stores(persistent) {
-    var list = [];
-    try { list.push(sessionStorage); } catch (error) { /* storage blocked */ }
-    if (persistent) { try { list.push(localStorage); } catch (error) { /* storage blocked */ } }
-    return list;
+  function store(persistent) {
+    try { return persistent ? localStorage : sessionStorage; } catch (error) { return null; }
   }
 
-  function forget() {
-    stores(true).forEach(function (store) { try { store.removeItem(storageKey); } catch (error) { /* blocked */ } });
+  function read(persistent) {
+    var where = store(persistent);
+    try { return where && JSON.parse(where.getItem(storageKey) || 'null'); } catch (error) { return null; }
   }
 
-  function readStored() {
-    var found = null;
-    stores(true).forEach(function (store) {
-      var value;
-      try { value = JSON.parse(store.getItem(storageKey) || 'null'); } catch (error) { value = null; }
-      if (!value) return;
+  function write(persistent, value) {
+    var where = store(persistent);
+    try { if (where) { if (value) where.setItem(storageKey, JSON.stringify(value)); else where.removeItem(storageKey); } }
+    catch (error) { /* storage blocked */ }
+  }
+
+  function decodeKey(text) {
+    var key = fromBase64(text);
+    if (key.length !== KEY) throw new Error('malformed');
+    return key;
+  }
+
+  // This publish's content keys, kept for the tab.
+  function readSession() {
+    var value = read(false);
+    if (!value) return null;
+    try {
+      if (value.id !== header.id || (value.level !== 1 && value.level !== 2)) throw new Error('stale');
       var keys = {};
-      try {
-        if (value.id !== header.id || (value.level !== 1 && value.level !== 2)) throw new Error('stale');
-        for (var n = 1; n <= value.level; n++) {
-          keys[n] = fromBase64(value.keys[n]);
-          if (keys[n].length !== KEY) throw new Error('malformed');
-        }
-      } catch (error) {
-        // A key from an earlier publish, or damaged: drop it and ask again.
-        try { store.removeItem(storageKey); } catch (blocked) { /* blocked */ }
-        return;
-      }
-      if (!found || value.level > found.level) found = {level: value.level, keys: keys};
-    });
-    return found;
+      for (var n = 1; n <= value.level; n++) keys[n] = decodeKey(value.keys[n]);
+      return {level: value.level, keys: keys};
+    } catch (error) {
+      write(false, null);  // a key from an earlier publish, or damaged
+      return null;
+    }
+  }
+
+  // A remembered password key; a new salt means a password changed.
+  function readRemembered() {
+    var value = read(true);
+    if (!value) return null;
+    try {
+      if (value.salt !== header.kdf.salt) throw new Error('password changed');
+      return decodeKey(value.wrapping);
+    } catch (error) {
+      write(true, null);
+      return null;
+    }
   }
 
   function keep(result, persistent) {
     var keys = {};
     for (var n = 1; n <= result.level; n++) keys[n] = toBase64(result.keys[n]);
-    var value = JSON.stringify({id: header.id, level: result.level, keys: keys});
-    stores(persistent).forEach(function (store) { try { store.setItem(storageKey, value); } catch (error) { /* blocked */ } });
+    write(false, {id: header.id, level: result.level, keys: keys});
+    if (persistent && result.wrapping) {
+      write(true, {salt: header.kdf.salt, level: result.level, wrapping: toBase64(result.wrapping)});
+    }
   }
+
+  function forget() { write(false, null); write(true, null); }
 
   function showForm(text) {
     explain(text || '');
@@ -221,7 +269,23 @@
     };
   }
 
+  // The sealed Reference tree, loaded through a <script> element, which works
+  // from disk too; a missing or unreadable tree only leaves the section out.
+  function loadTree(raw) {
+    return new Promise(function (resolve) {
+      if (typeof window[LOCKED_TREE] === 'string') { resolve(window[LOCKED_TREE]); return; }
+      var script = document.createElement('script');
+      script.src = new URL(TREE + '?v=' + encodeURIComponent(header.tree || ''), siteRoot).href;
+      script.onload = function () { resolve(window[LOCKED_TREE]); };
+      script.onerror = function () { resolve(null); };
+      document.head.appendChild(script);
+    }).then(function (sealed) {
+      return typeof sealed === 'string' ? openTree(raw, sealed) : null;
+    }).catch(function () { return null; });
+  }
+
   async function reveal(keys) {
+    var reference = keys[2] ? loadTree(keys[2]) : Promise.resolve(null);
     var sealed = fromBase64(document.getElementById('page-lock-data').textContent);
     var candidates = sitePaths(new URL(location.href));
     var plain = null;
@@ -231,7 +295,10 @@
       }
     }
     if (!plain) return false;
-    var markup = new TextDecoder('utf-8').decode(plain);
+    var tree = await reference;
+    // nav.js reads the folder tree from here before it would load reference.tree.js.
+    if (tree && typeof tree.tree === 'string') window.docsReferenceTree = tree.tree;
+    var markup = joinSection(plain, pageLevel === 1 ? sectionAt : null, tree && tree.section);
     // Replace the document: its scripts run and DOMContentLoaded fires again,
     // so every component starts as on a normal load of the page.
     document.open();
@@ -253,16 +320,31 @@
       explain('This browser cannot unlock the page on this connection. Open the site over HTTPS.');
       return;
     }
-    var stored = readStored();
-    if (stored && stored.keys[pageLevel]) {
+    var session = readSession();
+    if (session && session.keys[pageLevel]) {
       say('Unlocking…');
-      if (await reveal(stored.keys)) return;
+      if (await reveal(session.keys)) return;
       forget();
       say('');
       showForm('The saved key no longer opens this page. Enter the password again.');
       return;
     }
-    if (stored) needReference(); else showForm('Enter the password to read this page.');
+    var wrapping = readRemembered();
+    var remembered = wrapping && await openSlots(wrapping, header);
+    if (wrapping && !remembered) write(true, null);
+    if (remembered && (!session || remembered.level > session.level)) {
+      keep(remembered, false);
+      session = remembered;
+      if (remembered.level >= pageLevel) {
+        say('Unlocking…');
+        if (await reveal(remembered.keys)) return;
+        forget();
+        say('');
+        showForm('The saved key no longer opens this page. Enter the password again.');
+        return;
+      }
+    }
+    if (session) needReference(); else showForm('Enter the password to read this page.');
   }
 
   form.addEventListener('submit', function (event) {

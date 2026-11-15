@@ -1183,7 +1183,10 @@ def main() -> int:
         note(problem)
     site["_repository_tree"] = repository_tree(source_pages + automatic)
     from source_tree import TREE_INDEX, TREE_SCRIPT, is_large, shared_tree_html, tree_script
-    if is_large(site["_repository_tree"]):
+    # The page lock keeps the tree out of pages a general-password reader opens,
+    # so a locked publication always writes it once.
+    locked = isinstance(site.get("publication"), dict) and site["publication"].get("lock") is True
+    if is_large(site["_repository_tree"]) or (locked and site["_repository_tree"]):
         # Written once and loaded by nav.js instead of repeated in every page.
         outputs["html/" + TREE_SCRIPT] = tree_script(site["_repository_tree"])
         site["_repository_tree_script"] = (TREE_SCRIPT + "?v="

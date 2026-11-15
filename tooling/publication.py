@@ -303,7 +303,7 @@ def publish_project(root: Path, destination: Path, *, kit: Path) -> None:
             shutil.copyfile(source(name), path)
         export_pages(generated, output, root=root, tracked=tracked, pages=pages, public_files=public,
                      private_suffixes=suffixes, private_prefixes=prefixes)
-        locked = lock.apply(output, built.get('source_pages', {})) if lock else ''
+        locked = lock.apply(output, built) if lock else ''
         output.rename(destination)
     print(f'Published {len(pages)} configured pages and {len(public)} project resources to {destination}')
     if locked:

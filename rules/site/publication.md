@@ -129,42 +129,59 @@ readers through a separate channel.
   embedded data. A lock page with the title "Locked page" and a `noindex`
   robots tag is served at its address instead. The reference password is
   needed for every page the build records as a Reference page: a route in
-  `source_pages` of `site-build.json`, or a page whose body has the class
-  `source-page`. The general password opens every other HTML file, including
-  pages shown in frames.
+  `source_pages` of `site-build.json`, which includes the
+  [automatically listed](authoring.md#automatic-reference-listing) files, the
+  Reference index page, or a page whose body has the class `source-page`. The
+  general password opens every other HTML file, including pages shown in
+  frames.
+- The sidebar's Reference section. With the lock on, the build writes the
+  folder tree once as `reference.tree.js`, whatever its size, and `publish`
+  cuts the section out of every page the general password opens. The tree
+  file holds the tree and that section, encrypted for the reference password
+  and padded to a power of two of at least 64 KiB. A reader with the reference
+  password gets the section back on every page, with the current file marked;
+  a reader with the general password sees no Reference section.
 - Every Markdown file the bundle exports, under the reference password. The
   file keeps its address and holds a short notice and the encrypted text. A
-  link to it from an unlocked page opens the text.
+  link to it from an unlocked page opens the text, unless `filelinks.js`
+  already sent the link to the configured source remote.
 - The kit writes no search index. Navigation and the site map are part of
   the pages and are locked with them.
 
 Images, plots, videos, stylesheets, scripts, fonts and every other file, such
 as JSON data, stay readable for anyone who has their address. `publish` ends
 with a summary: how many files each password opens, and how many files stay
-readable, by type. Check it for data files that should not be public.
+readable, by type. Check it for data files that should not be public. When
+pages that the general password opens link to Reference pages, through a
+`[[nav]]` entry, a site-map card or a link in the text, the summary counts
+those Reference pages: their link text and address stay visible to readers
+with the general password.
 
 ### Reading a locked site
 
-A reader types one password once. The browser keeps the decrypted content keys,
-never the password, in `sessionStorage` for the tab. With "Remember on this
-device" it also keeps them in `localStorage`. A reader with the general password
-who opens a Reference page is told that it needs the reference password. A
-wrong password gives one plain message, whichever password it was meant to be.
-Every publish uses new keys, so readers enter a password again after each
-publish. Unlocking needs JavaScript and a secure connection: HTTPS, `localhost`
-or a local file.
+A reader types one password once. The browser keeps the content keys of the
+current publish, never the password, in `sessionStorage` for the tab; after the
+next publish, a tab asks again. With "Remember on this device" the browser also
+keeps the key derived from the password in `localStorage`. That key opens every
+later publish without asking, until either password changes. A reader with the
+general password who opens a Reference page is told that it needs the reference
+password. A wrong password gives one plain message, whichever password it was
+meant to be. Unlocking needs JavaScript and a secure connection: HTTPS,
+`localhost` or a local file.
 
 ### Keys and parameters
 
 PBKDF2-HMAC-SHA-256 with 600,000 iterations, the recommendation of the OWASP
-Password Storage Cheat Sheet, and a random 16-byte salt for each publish
-derives one key from each password. Each publish also draws a random 256-bit
-content key per password level. The general password's key wraps the general
-content key; the reference password's key wraps both content keys. Each locked
-file is encrypted with AES-256-GCM under its level's content key, with a fresh
-random 96-bit nonce and its path in the bundle as authenticated data.
-`tooling/page_lock.py` encrypts; `theme/components/page-lock.js` decrypts with
-the browser's WebCrypto.
+Password Storage Cheat Sheet, derives one key from each password. Its 16-byte
+salt is itself PBKDF2-HMAC-SHA-256 of both passwords with the same iteration
+count: it stays the same from publish to publish and changes when either
+password changes, which locks out every remembered reader. Each publish draws
+a random 256-bit content key per password level. The general password's key
+wraps the general content key; the reference password's key wraps both
+content keys. Each locked file is encrypted with AES-256-GCM under its level's
+content key, with a fresh random 96-bit nonce and its path in the bundle as
+authenticated data. `tooling/page_lock.py` encrypts;
+`theme/components/page-lock.js` decrypts with the browser's WebCrypto.
 
 ### Limits
 
@@ -176,7 +193,8 @@ the browser's WebCrypto.
   to shut out one reader and no record of who read what.
 - Anyone with a password can save the decrypted pages and pass them on. The
   content keys the browser stores open the current publish without the
-  password.
+  password. A remembered key opens every publish until a password changes:
+  whoever copies it from a browser profile reads every later version as well.
 - The unlock script is not encrypted. Whoever can change the published site
   or the job that publishes it can replace the script and collect passwords
   as readers type them.
@@ -186,12 +204,18 @@ the browser's WebCrypto.
 - Images, plots, scripts and data files are not locked. Their addresses often
   follow repository paths, so they can be guessed.
 - A lock page shows the size of the page it holds and which password it
-  needs. Pages opened with the general password list the titles and paths of
-  the Reference pages in their sidebar.
+  needs. The salt changes exactly when a password changes, so anyone can see
+  that it changed.
+- Reference addresses follow repository paths. Anyone can ask for a guessed
+  address, such as `readme.md.html`, and learn from the lock page that the
+  file exists. Above 64 KiB, the size of the tree file shows the size of the
+  tree within a factor of two.
+- Links from pages the general password opens to Reference pages keep their
+  text and address; `publish` counts them.
 - Pages need JavaScript. A project script that fetches an HTML or Markdown
   file from the bundle receives the locked file.
 - Search engines stop listing the site, because they see only lock pages.
-- Remembered keys stay in the browser until the next publish replaces them or
-  the reader clears the site's data. Any page served from the same origin,
-  such as another GitHub Pages site of the same account, can read the stored
-  keys, remembered or not.
+- Remembered keys stay in the browser until a password changes or the reader
+  clears the site's data. Any page served from the same origin, such as
+  another GitHub Pages site of the same account, can read the stored keys,
+  remembered or not.

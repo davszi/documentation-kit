@@ -5,10 +5,17 @@ with the chapter reader, a page with tabs, plot toggles, a lightbox image and
 an embedded HTML frame, a registered Reference page and an exported Markdown
 file. Each carries a marker string that must never appear in a locked bundle.
 
+Every tracked Markdown file is also listed automatically in the Reference
+section; ``notes/record.md`` carries a title marker that only the Reference
+tree and its own page show.
+
 Run as a script for the Node tests:
 
-    python tests/page_lock_fixture.py publish <project> <out>   # passwords from the environment
-    python tests/page_lock_fixture.py vectors                   # sealed vectors as JSON on stdout
+    python tests/page_lock_fixture.py publish <project> <out> [<remote>]  # passwords from the environment
+    python tests/page_lock_fixture.py vectors                             # sealed vectors as JSON on stdout
+
+``publish`` writes the project only when it does not exist yet, so a second
+call publishes the same project again.
 """
 from __future__ import annotations
 
@@ -28,6 +35,7 @@ MARKERS = {
     'frame': 'FRAME-MARKER-c41a83',
     'reference': 'REFERENCE-MARKER-a93d27',
     'markdown': 'MARKDOWN-MARKER-0b6e44',
+    'title': 'TITLE-MARKER-9f31aa',
 }
 
 GUIDE_CHAPTER = f'''
@@ -35,7 +43,8 @@ GUIDE_CHAPTER = f'''
 
 ## Locked detail
 
-The topic marker {MARKERS['topic']} is in this chapter. Read [the rule](rule.html#rule-detail).
+The topic marker {MARKERS['topic']} is in this chapter. Read [the rule](rule.html#rule-detail)
+or [the record source](../../notes/record.md).
 
 </section>
 '''
@@ -87,7 +96,7 @@ The reference marker {MARKERS['reference']} is on this page.
 Read [the record](../notes/record.md).
 '''
 
-RECORD = f'''# Record
+RECORD = f'''# Record {MARKERS['title']}
 
 The Markdown marker {MARKERS['markdown']} is in this file.
 '''
@@ -104,11 +113,14 @@ def docsite(*args: object, env: dict | None = None) -> subprocess.CompletedProce
                           capture_output=True, text=True, env=environment)
 
 
-def make_project(root: Path, *, lock: bool | None = True) -> Path:
-    """Write and track the fixture; ``lock=None`` leaves the key out of site.toml."""
+def make_project(root: Path, *, lock: bool | None = True, remote: str = '') -> Path:
+    """Write and track the fixture; ``lock=None`` leaves the key out of site.toml.
+
+    ``remote`` is the source repository for source links; empty means none.
+    """
     root.mkdir(parents=True, exist_ok=True)
     subprocess.run(['git', 'init', '-q', str(root)], check=True)
-    created = docsite('init', root, '--title', 'Lock fixture', '--repository', '')
+    created = docsite('init', root, '--title', 'Lock fixture', '--repository', remote)
     if created.returncode:
         raise RuntimeError(created.stderr)
 
@@ -147,9 +159,14 @@ pages = ["index.html", "guide.html", "widgets.html", "rule.html"]
 
 def vectors() -> dict:
     """Sealed files and wrapped keys at the real iteration count, for the WebCrypto cross-check."""
+    import secrets
     import page_lock
     passwords = page_lock.read_passwords(os.environ)
     keyring = page_lock.make_keyring(passwords)
+    # A later publish with the same passwords, and one after the general password changed.
+    again = page_lock.make_keyring(passwords)
+    changed = page_lock.make_keyring({1: secrets.token_urlsafe(24), 2: passwords[2]})
+    tree = page_lock.lock_tree('<ul class="repo-tree-list"></ul>', '\n<div class="repo-tree"></div>', keyring)
     files = []
     for path, level, text in (('guide.html', 1, '<p>Topic ünïcode ✓</p>'), ('rule.html', 2, '<p>Reference</p>'),
                               ('notes/record.md', 2, RECORD)):
@@ -161,13 +178,16 @@ def vectors() -> dict:
             entry['sealed'] = base64.b64encode(page_lock.seal(keyring.content[level], data,
                                                               page_lock.file_context(path))).decode()
         files.append(entry)
-    return {'header': keyring.header, 'files': files}
+    return {'header': keyring.header, 'again': again.header, 'changed': changed.header,
+            'tree': tree.decode(), 'files': files}
 
 
 if __name__ == '__main__':
     command = sys.argv[1] if len(sys.argv) > 1 else ''
-    if command == 'publish' and len(sys.argv) == 4:
-        project = make_project(Path(sys.argv[2]))
+    if command == 'publish' and len(sys.argv) in (4, 5):
+        project = Path(sys.argv[2])
+        if not project.exists():
+            make_project(project, remote=sys.argv[4] if len(sys.argv) == 5 else '')
         result = docsite('publish', '--project', project, '--out', sys.argv[3])
         sys.stdout.write(result.stdout)
         sys.stderr.write(result.stderr)
