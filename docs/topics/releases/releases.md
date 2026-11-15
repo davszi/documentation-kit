@@ -33,9 +33,9 @@ pretty small thing for 6.0". It removes the configuration key
 `reference_exclude`, which 5.0.0 added to the stable interfaces; under
 [what a version number promises](#what-a-version-number-promises) a removal
 makes a release major. The exception rests on one fact: no known project had
-moved to 5.0.0 when 5.1.0 was prepared, so no project that passed before
-fails now. A `site.toml` that names `reference_exclude` fails the build with a
-message that points to the replacement.
+moved to 5.0.0 when 5.1.0 was prepared, so no known project that passed
+before fails now. A 5.0.0 consumer that names `reference_exclude` gets a
+build error that names the replacement.
 
 What changes for a project:
 
@@ -53,13 +53,10 @@ What changes for a project:
 - **`reference_exclude` is removed.** A file of a listed folder that must
   stay off the site is named in `private_prefixes` of the `[publication]`
   table. `reference_listing = false` works as before.
-- **New optional snapshot of the owner's global agent instructions.**
-  `examples/global-agent-context.md` holds them with personal details
-  removed. A person may add it to their own global agent file or replace
-  theirs with it; the starter's `AGENTS.md` has agents offer it once per
-  session until the person says yes or no. The kit loads the file nowhere.
-  [The README](../../../README.md#optional-the-owners-global-agent-instructions)
-  owns the description. deivid decided it on 2026-11-15.
+- **New optional snapshot of the owner's global agent instructions.** A
+  person may add `examples/global-agent-context.md` to their own global agent
+  file or replace theirs with it, and the starter's `AGENTS.md` has agents
+  offer it; see [the README](../../../README.md#optional-the-owners-global-agent-instructions).
 
 No other command, flag, configuration key or marker changes, and no section
 anchor under `rules/` is removed or renamed. The

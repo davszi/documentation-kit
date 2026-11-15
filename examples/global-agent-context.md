@@ -1,7 +1,6 @@
 > Snapshot of the kit owner's global agent instructions, taken on 2026-11-15,
-> with personal details removed. The kit does not load this file. The kit's
-> README, section "Optional: the owner's global agent instructions", says how
-> to add it to your own global file or replace yours with it. It assumes the
+> with personal details removed. The kit does not load this file; see the
+> kit's README, section "Optional: the owner's global agent instructions". It assumes the
 > Caveman plugin and the Graphify skill and names the models the owner uses;
 > delete or change those sections to fit your setup.
 

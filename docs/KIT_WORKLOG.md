@@ -18,23 +18,27 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   theirs with it; two shell lines in the README do that, the second keeping
   the old file. `README.md#optional-the-owners-global-agent-instructions`
   owns the description and the offer rule.
-- The offer: an agent asks once per session until the person says yes or
-  no. It does not ask when the person's global instructions already hold
-  the snapshot, by its first line or most of its headings, so the owner's
-  own file is not asked about. It writes nothing before a yes. On a no it
-  says that it records the answer and adds one line to the global file;
-  that line is the only place a no can last across sessions and agents.
-- The offer reaches agents through a section of the starter's `AGENTS.md`.
-  An existing project copies it in an optional step of the 5.1.0 guide; its
-  owner decides. The kit's own `AGENTS.md` does not carry it.
-- The file is under `examples/`, outside `reference_roots`, and not named
-  `AGENTS.md`, so the kit's site does not list it and no agent loads it
-  from the kit's folder.
+- The offer reaches agents through a section of the starter's `AGENTS.md`,
+  so a new project offers it by default. An existing project copies the
+  section in an optional step of the 5.1.0 guide; its owner decides. The
+  kit's own `AGENTS.md` does not carry it. The owner's own global file holds
+  the snapshot's headings, so he is not asked.
+- A no lasts across sessions only as a line in the person's global file.
+  The agent offers that line and writes it only on a yes to it; without it
+  a later session asks again.
 - `tests/test_global_context_snapshot.py` fails when the snapshot holds an
   e-mail address or a home folder path, or when the README section or the
   routes to the file are gone.
-- Not reviewed by an independent reviewer. Whether agents ask as described
-  is not tested; it rests on the agent following the starter's section.
+- Review of the delta since the first review: no blocker; the snapshot holds
+  nothing that identifies a person. Two major findings are fixed in the
+  README: the no was recorded in the global file without asking, and
+  running replace twice overwrote the kept old file. Also fixed: add now
+  starts on a new line; a global file that only imports or links to another
+  is named; the Windows path pattern of the test; the exception to the
+  version promise says "no known project"; the 5.1.0 guide says what the
+  5.0.0 guide's opening warning means at 5.1.0.
+- Not tested: whether agents ask as described; it rests on the agent
+  following the starter's section.
 - Checks: `build`, `lint --strict` and `build --check-reader` of the kit
   pass, and `DOCS_REQUIRE_BROWSER=1 bash tests/run_checks.sh` passes with 353
   Python tests and seven browser suites.

@@ -69,12 +69,16 @@ it to their own global agent file or replace theirs with it. Codex reads
 project root, with `target` set to that file:
 
 ```bash
-cat .docs-kit/examples/global-agent-context.md >> "$target"   # add
+{ printf '\n'; cat .docs-kit/examples/global-agent-context.md; } >> "$target"   # add
 ```
 
 ```bash
-cp "$target" "$target.before-kit-snapshot" && cp .docs-kit/examples/global-agent-context.md "$target"   # replace, keeping the old file
+[ ! -e "$target.before-kit-snapshot" ] && cp "$target" "$target.before-kit-snapshot" && cp .docs-kit/examples/global-agent-context.md "$target"   # replace, keeping the old file
 ```
+
+Replace needs an existing file and does nothing while a kept old file is
+there. If the global file only imports or links to another file, set `target`
+to that other file.
 
 The global file steers every project on the machine, so the choice is the
 person's, not the project's. An agent in a project whose `AGENTS.md` asks for
@@ -85,11 +89,13 @@ it offers the snapshot:
 - It does not ask when the person's global instructions already hold the
   snapshot, shown by its first line or by most of its section headings, or
   hold the line that declines it.
-- On a yes it shows what will change and then runs the command for the
-  chosen way. It writes nothing to the global file before that yes.
-- On a no it tells the person that it records the answer, and adds the line
-  `Documentation kit global-context snapshot: declined.` to the global file,
-  so that no later session asks again.
+- It shows what would change before it asks for the yes, and then runs the
+  command for the chosen way. It writes nothing to the global file without
+  the person's yes.
+- On a no it offers to record the answer as the line
+  `Documentation kit global-context snapshot: declined.` in the global file,
+  and adds it only on a yes to that. Without the line a later session asks
+  again.
 
 ## Ownership
 

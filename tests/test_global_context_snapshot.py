@@ -12,7 +12,7 @@ class Snapshot(unittest.TestCase):
     def test_it_holds_no_address_or_home_path(self):
         text = SNAPSHOT.read_text()
         self.assertIsNone(re.search(r'[\w.+-]+@[\w-]+\.[\w.-]+', text), 'an e-mail address')
-        self.assertIsNone(re.search(r'/home/|/Users/|[A-Z]:\\\\Users', text), 'a home folder path')
+        self.assertIsNone(re.search(r'/home/|/Users/|[A-Z]:\\Users', text), 'a home folder path')
 
     def test_its_first_line_marks_it_and_names_the_readme_section(self):
         text = SNAPSHOT.read_text()
