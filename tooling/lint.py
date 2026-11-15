@@ -114,13 +114,7 @@ _evidence_spec = importlib.util.spec_from_file_location(
     "docsite_evidence_documents", Path(__file__).with_name("evidence_documents.py"))
 _evidence = importlib.util.module_from_spec(_evidence_spec)
 _evidence_spec.loader.exec_module(_evidence)
-from project_extensions import load_extension
 import worklog_entries as _worklog_entries
-_project_evidence = load_extension(REPO, 'evidence_validator')
-if _project_evidence is not None:
-    if not all(callable(getattr(_project_evidence, name, None)) for name in ('manifest_documents', 'verify')) or not hasattr(_project_evidence, 'MANIFESTS'):
-        raise ValueError('evidence_validator must export MANIFESTS, manifest_documents and verify')
-    _evidence = _project_evidence
 
 
 def evidence_document_locations() -> dict[Path, Path]:
@@ -151,21 +145,8 @@ def recorded_source_roots(source: Path | None = None) -> tuple[str, ...]:
 
 
 def markdown_origin(path: Path) -> Path:
-    resolver = getattr(_evidence, "document_origin", None)
-    if resolver is not None:
-        if not callable(resolver):
-            raise ValueError("evidence_validator document_origin must be callable")
-        origin = resolver(path, root=REPO)
-        if origin is not None:
-            if not isinstance(origin, (str, Path)) or not str(origin):
-                raise ValueError("document_origin must return a repository path or None")
-            origin = Path(origin)
-            origin = Path(os.path.abspath(origin if origin.is_absolute() else REPO / origin))
-            if (not origin.is_relative_to(REPO) or not origin.resolve().is_relative_to(REPO)
-                    or any(parent.is_symlink() for parent in (origin, *origin.parents)
-                           if parent.is_relative_to(REPO))):
-                raise ValueError("document_origin must stay inside the project without symlinks")
-            return origin
+    """Where a document's links resolve from: its original path when a declared
+    evidence collection relocated it, otherwise its own path."""
     return next((old for old, current in evidence_document_locations().items()
                  if current == path), path)
 

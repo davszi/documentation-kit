@@ -2,6 +2,72 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Remove the path and evidence adapter hooks
+
+- Decision: deivid decided to remove the kit's three adapter hooks,
+  `path_resolver`, `evidence_validator` and the evidence adapter's
+  `document_origin`, in 5.0.0. Asked which of three options, he answered
+  "remove all 3". Why, with evidence, is in
+  [the frozen-record record](open/simplify-frozen-record-machinery.md): the
+  hooks let a project keep old documents as unedited copies in its live tree
+  and still pass the link check, which the rule on finished working documents
+  ended. State read from each `docs/site/site.toml` on this day: adaptation
+  names `path_resolver` and `evidence_validator` (`docs/site/layout_paths.py`);
+  ADP and Tempo name no hook; no project sets `evidence_manifests` or
+  `legacy_files`.
+- Removed: in `tooling/site_paths.py` the adapter loading and the per-run
+  answer cache added on this branch (16 lines out); in `tooling/lint.py` the
+  evidence adapter swap and the `document_origin` branch of
+  `markdown_origin` (21 lines out); in `tooling/build.py` the exception
+  handling that treated an adapter error on an automatically listed page as
+  "no mapping". No file is deleted.
+- Kept, with what needs it: `tooling/project_extensions.py`, which also loads
+  `content_transform`; `resolve_legacy_path` in `tooling/site_paths.py`, now
+  the kit's own resolution only (build output alias, `legacy_files`, and the
+  recorded roots of evidence collections); `tooling/evidence_documents.py` and
+  the relocation and worklog handling in `tooling/lint.py`, which the kit's
+  own `evidence_manifests` setting drives, not a hook. The record's plan named
+  that worklog handling as going with the hooks; `worklog_links_checked_from`
+  replaces it only for entries before its date, so it stays while
+  `evidence_manifests` stays. Whether `evidence_manifests` and `legacy_files`
+  also go is left to deivid in the record. Automatically listed pages still
+  ask the kit's own resolution, as every other page does.
+- New: the build fails on `path_resolver` or `evidence_validator` in
+  `site.toml` with `site.toml: <setting> was removed in kit 5.0.0`, naming the
+  migration step "Remove the adapter hooks"; lint prints the build's error.
+  The adapter module is never executed.
+- Tests: `tests/test_portability.py` checks that each removed setting fails
+  build and lint with that message and runs no module, and that the project
+  builds again without it. The test that the kit used a project's adapters is
+  gone, because it encoded the removed behaviour. The two tests that an
+  untracked or symlinked module is refused before it runs now name
+  `content_transform`, the remaining user of the same loader; they assumed
+  `path_resolver` only as a convenient key. In `tests/test_lint.py` the two
+  `document_origin` tests are replaced by one test of the relocation fallback
+  that remains.
+- Rules: `rules/site/resources.md` › Resource closure and evidence describes
+  the kit's own resolution and the removal instead of the adapters;
+  `rules/documentation.md` › Rendered pages are for people names a later
+  `worklog_links_checked_from` instead of the path adapter for dated links;
+  `rules/conformance.md` item 9 no longer names a path adapter as an example.
+  No anchor changed. Not synced, because another agent is redesigning these
+  pages: the writing-practices page still says the path adapter maps old
+  paths for lint, and the build-a-site page's table names adapters and path
+  adapters.
+- Records: the 5.0.0 release notes give the removal as a fourth reason for
+  the major release, replace the adapter cache row with the removal row, and
+  mark the two settings removed in the list of stable interfaces; the 5.0.0
+  migration guide replaces "Check the path adapter" with "Remove the adapter
+  hooks", where each deletion of a document stays the owner's decision; the
+  frozen-record record gains the decision and a new next step, and its route
+  in `docs/open/KIT_OPEN.md` says what remains; `docs/KIT_CONTEXT.md` and the
+  resources page description follow; the capability map row of
+  `project_extensions.py` now names the content transform.
+- Checks before the commit: on the kit `docsite.py build`, `lint --strict`
+  (0 warnings) and `build --check-reader`; the starter builds and lints
+  strictly; 293 Python tests pass. The browser suites run after the last
+  change of the day.
+
 ## 2026-11-15 — Plot toggle chips in the zoomed figure
 
 - Decision: deivid asked for the fix before the 5.0.0 release ("fix now").

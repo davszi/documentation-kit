@@ -2,7 +2,6 @@
 import os
 from pathlib import Path
 import tomllib
-from project_extensions import load_extension
 import topic_structure as _topics
 
 REPO = Path(os.environ.get("DOCSITE_PROJECT_ROOT", Path.cwd())).resolve()
@@ -15,9 +14,6 @@ HTML = OUTPUT_ROOT / "html"
 _config_path = SITE / "site.toml"
 _config = tomllib.loads(_config_path.read_text()) if _config_path.is_file() else {}
 _TOPIC_GROUPS = _topics.topic_group_folders(REPO)
-_project_paths = load_extension(REPO, 'path_resolver')
-if _project_paths is not None and not callable(getattr(_project_paths, 'resolve_legacy_path', None)):
-    raise ValueError('path_resolver must export resolve_legacy_path')
 _ALIASES = ((Path("docs/html"), Path(".build/docs/html")),)
 # Optional historical identities belong to the consuming project.
 LEGACY_FILES = {Path(old): Path(new) for old, new in _config.get("legacy_files", {}).items()}
@@ -63,19 +59,14 @@ def local_artifacts_manifest(root=REPO, *, site=None):
     return source
 
 
-# One build or lint run asks the project's adapter about the same link on every
-# page that carries it, such as each sidebar entry; its answer cannot change
-# during the run, so it is asked once.
-_project_answers: dict = {}
-
-
 def resolve_legacy_path(path, root=REPO, *, recorded_roots=()):
-    if _project_paths is not None:
-        key = (os.fspath(path), os.fspath(root), tuple(os.fspath(item) if isinstance(item, (str, Path)) else repr(item)
-                                                       for item in recorded_roots))
-        if key not in _project_answers:
-            _project_answers[key] = _project_paths.resolve_legacy_path(path, root=root, recorded_roots=recorded_roots)
-        return _project_answers[key]
+    """The current file for a link target: the kit's own resolution only.
+
+    The logical `docs/html/` origin maps to the build output, `legacy_files`
+    maps single files, and `recorded_roots` rebase absolute paths of a
+    declared evidence collection. A project adapter (`path_resolver`) was
+    removed in 5.0.0; the build rejects the setting.
+    """
     root = Path(root).resolve()
     path = Path(path)
     absolute = Path(os.path.abspath(path if path.is_absolute() else root / path))

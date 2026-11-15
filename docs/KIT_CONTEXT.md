@@ -36,7 +36,8 @@ owns the shared panel switcher's authoring, behavior and extraction checks.
 consumer migration steps; `VERSION` holds the current version.
 The current release is 5.0.0. Its [migration guide](topics/releases/migrations/5.0.0.md)
 covers the Reference section that lists every tracked Markdown file by
-default, private source pages that `publish` now refuses, the path adapter,
+default, private source pages that `publish` now refuses, the removed path
+and evidence adapters, the new lint error for HTML links to repository files,
 the slide-face review and the optional page lock. The
 [4.0.0 guide](topics/releases/migrations/4.0.0.md) covers the removed `rules/records.md` anchor and finished working documents,
 the renamed theme variables and classes, `[group_colors]`,

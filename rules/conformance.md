@@ -49,8 +49,8 @@ their owner instead of changing them in the same deliverable.
    numbers that no linked record states **(lint)**; settle each one.
 8. **Open work.** `OPEN.md` holds one-line routes only, each linking its
    owner.
-9. **Compatibility layers.** Each kept compatibility form, such as a path
-   adapter or an old route, records why it exists and when it can be removed.
+9. **Compatibility layers.** Each kept compatibility form, such as an old
+   route or a hidden stub page, records why it exists and when it can be removed.
    Follow [refactoring over compatibility](engineering/code.md#refactoring-over-compatibility).
 10. **Pages that explain changed rules.** For the project's own records,
     `docsite.py lint --since <commit before the upgrade>` lists the pages that

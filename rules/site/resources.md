@@ -17,40 +17,20 @@ A link to a file that the manifest lists under `omitted_files` is a declared
 state. When the file is absent, lint prints a note, which never fails, not even
 under `--strict`. A missing file that the manifest does not list is an error.
 
-The adapters below exist only for projects that already keep unedited old
-documents whose links name old paths. A project without such documents does not register them, and
-the kit removes each hook once no project names it.
-
-Projects with existing historical-path or evidence schemas can register local
-Python adapters using `path_resolver = "tools/docs/site_paths.py"` and
-`evidence_validator = "tools/docs/evidence_documents.py"` in `site.toml`.
-Adapter files must be tracked, contained regular Python files without symlink
-components. They execute as project tooling, so review them with configuration.
-The path adapter exports `resolve_legacy_path(path, root, *, recorded_roots=())`
-and owns the complete mapping, including generated documentation paths. The
-evidence adapter exports `MANIFESTS`, `manifest_documents(root, *, require_all_manifests=False)`
-returning `(documents, revisions)`, and `verify` with the same arguments; invalid
-evidence raises `ValueError`. Projects keep adapter tests and schema policy;
-the kit keeps one build/lint engine and uses the adapters consistently.
-Within one build or lint run the kit asks the path adapter once per distinct
-path, root and recorded roots and reuses the answer, so the mapping must not
-depend on anything that changes during the run.
-
-The path adapter is a kept compatibility layer under
-[refactoring over compatibility](../engineering/code.md#refactoring-over-compatibility).
-It exists because some records are not edited afterwards, such as old worklog
-entries and historical experiment records, yet their links to moved files
-must still resolve and be checked. Live files use current paths, not the
-adapter. A project removes its adapter once no such record names an old path.
-
-The evidence adapter may also export `document_origin(path, *, root)`. Return
-the registered repository origin for an exact source snapshot, or `None` to
-retain the normal manifest/current-file origin. The project validates the
-snapshot's identity and recorded origin before returning it; the kit rejects
-origins outside the project or through symlinks. This supports several saved
-copies of one source without changing their original bytes. Links, anchors and
-snippets remain checked from the recorded source location; this hook does not
-exclude a file from lint or grant historical execution permission.
+The kit resolves every link with its own rules: a page body from the logical
+`docs/html/` origin, a record from its own folder. It loads no project adapter
+for paths or evidence. The settings `path_resolver` and `evidence_validator`,
+and with the latter the evidence adapter's `document_origin`, were removed in
+5.0.0; a `site.toml` that still names one fails the build, and lint prints the
+build's error. They existed so that a project could keep old documents as
+unedited copies in its live tree and still pass the link check. A finished
+working document is now deleted and cited from Git, as
+[finished working documents](../records.md#finished-working-documents) says,
+so a link names a current file or a file at its commit. Links in old worklog
+entries that name a moved or deleted file stop being checked through
+`worklog_links_checked_from`, described below. The
+[5.0.0 migration guide](../../docs/topics/releases/migrations/5.0.0.md#remove-the-adapter-hooks) gives
+the steps for a project that named a hook.
 
 For generated or sealed content formats, `content_transform` may name a tracked
 project module exporting `transform(body, *, metadata, source, root)`. The hook

@@ -175,32 +175,33 @@ private_prefixes = ["configs/"]
         result = invoke('lint', '--project', self.root, '--strict')
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
-    def test_project_path_and_evidence_adapters_are_used(self):
+    def test_removed_adapter_settings_fail_the_build_and_lint(self):
         config = self.root / 'docs/site/site.toml'
-        config.write_text('path_resolver = "adapter.py"\nevidence_validator = "evidence.py"\n' + config.read_text())
-        (self.root / 'adapter.py').write_text('''from pathlib import Path
-import os
-def resolve_legacy_path(path, root, *, recorded_roots=()):
-    path = Path(path)
-    path = Path(os.path.abspath(path if path.is_absolute() else root / path))
-    old = root / "docs/html"
-    return root / ".build/docs/html" / path.relative_to(old) if path.is_relative_to(old) else path
-''')
-        (self.root / 'evidence.py').write_text('''MANIFESTS = ()
-def manifest_documents(root, *, require_all_manifests=False): return [], {}
-def verify(root, *, require_all_manifests=False): raise ValueError("project evidence gate exercised")
-''')
+        original = config.read_text()
+        (self.root / 'adapter.py').write_text('raise RuntimeError("must never execute")\n')
         self.track()
-        subprocess.run(['git', 'add', 'adapter.py', 'evidence.py'], cwd=self.root, check=True)
-        result = invoke('build', '--project', self.root)
-        self.assertEqual(result.returncode, 0, result.stderr)
-        result = invoke('lint', '--project', self.root)
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn('project evidence gate exercised', result.stdout + result.stderr)
+        subprocess.run(['git', 'add', 'adapter.py'], cwd=self.root, check=True)
+        for key in ('path_resolver', 'evidence_validator'):
+            with self.subTest(key=key):
+                config.write_text(f'{key} = "adapter.py"\n' + original)
+                self.track()
+                message = f'site.toml: {key} was removed in kit 5.0.0'
+                result = invoke('build', '--project', self.root)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(message, result.stderr)
+                self.assertIn('Remove the adapter hooks', result.stderr)
+                self.assertNotIn('must never execute', result.stderr)
+                result = invoke('lint', '--project', self.root)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(message, result.stdout + result.stderr)
+                self.assertNotIn('must never execute', result.stdout + result.stderr)
+        config.write_text(original)
+        self.track()
+        self.assertEqual(invoke('build', '--project', self.root).returncode, 0)
 
-    def test_untracked_adapter_is_rejected_before_execution(self):
+    def test_untracked_project_module_is_rejected_before_execution(self):
         config = self.root / 'docs/site/site.toml'
-        config.write_text('path_resolver = "adapter.py"\n' + config.read_text())
+        config.write_text('content_transform = "adapter.py"\n' + config.read_text())
         (self.root / 'adapter.py').write_text('raise RuntimeError("must never execute")\n')
         self.track()
         result = invoke('build', '--project', self.root)
@@ -219,9 +220,9 @@ def verify(root, *, require_all_manifests=False): raise ValueError("project evid
         self.assertIn('id="chapter-reader"', page)
         self.assertIn('assets/chapter-reader.js', page)
 
-    def test_adapter_symlink_is_rejected_before_execution(self):
+    def test_project_module_symlink_is_rejected_before_execution(self):
         config = self.root / 'docs/site/site.toml'
-        config.write_text('path_resolver = "adapter.py"\n' + config.read_text())
+        config.write_text('content_transform = "adapter.py"\n' + config.read_text())
         (self.root / 'real.py').write_text('raise RuntimeError("must never execute")\n')
         (self.root / 'adapter.py').symlink_to('real.py')
         self.track()

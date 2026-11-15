@@ -122,7 +122,7 @@ description = "Authoring contract and behavior of the shared local comparison co
 [[source_pages]]
 source = "rules/site/resources.md"
 slug = "resources"
-description = "Resource closure, local evidence, inventories and project adapters."
+description = "Resource closure, local evidence, inventories and the content transform."
 
 [[source_pages]]
 source = "rules/site/validation.md"

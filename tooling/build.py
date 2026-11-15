@@ -63,6 +63,10 @@ FRONTMATTER_KEYS = {"title", "slug", "brand", "brand_sub", "body_class", "math",
 # A [[nav]] table accepts only these keys. TOML assigns every key written after a table header to that
 # table, so a top-level setting placed below the first [[nav]] silently becomes part of a nav entry.
 NAV_KEYS = {"label", "file", "group", "short", "hidden"}
+# Project adapters removed in 5.0.0. A site.toml that still names one fails, so a
+# project never builds without the mapping or evidence gate it relied on. The
+# evidence adapter's optional `document_origin` went with `evidence_validator`.
+REMOVED_HOOKS = ("path_resolver", "evidence_validator")
 INCLUDE_DEPTH = 8
 KNOWN_COMPONENTS = ("toc", "nav", "tabs", "diagram", "code", "filelinks",
                     "lightbox", "plot-toggles", "carousel", "panel-switcher",
@@ -698,10 +702,8 @@ def automatic_link_checks(site: dict, declared_local: set[str]):
                     for key in ("private_prefixes", "private_suffixes"))
 
     def candidates(path: Path) -> tuple[Path, ...]:
-        try:
-            return (path, resolve_legacy_path(path, root=REPO))
-        except (ValueError, OSError):
-            return (path,)
+        # The kit's own mapping, as for every other page: build output and `legacy_files`.
+        return (path, resolve_legacy_path(path, root=REPO))
 
     def exists(path: Path) -> bool:
         for item in candidates(path):
@@ -1076,6 +1078,11 @@ def main() -> int:
     args = ap.parse_args()
 
     site = tomllib.loads(local_resource(SRC / "site.toml").read_text())
+    for key in REMOVED_HOOKS:
+        if key in site:
+            ap.error(f"site.toml: {key} was removed in kit 5.0.0; the kit no longer loads a project adapter. "
+                     "Follow \"Remove the adapter hooks\" in the kit's docs/topics/releases/migrations/5.0.0.md, "
+                     f"then delete the {key} setting")
     if not isinstance(site.get("nav", []), list):
         ap.error("site.toml: nav must be a list of [[nav]] tables")
     for entry in site.get("nav", []):

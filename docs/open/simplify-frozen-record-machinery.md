@@ -1,8 +1,9 @@
 # Simplify the frozen-record machinery inherited from ADP
 
-Open work. The rule is decided and ADP's change is applied on a branch; the
-kit release, adapt and the removal of the kit hooks remain. Statements are
-labelled as deivid's direction, verified evidence or proposal.
+Open work. The rule is decided, ADP's change is applied on a branch and the
+kit hooks are removed for 5.0.0; adaptation's cleanup and one question on the
+kit's own evidence settings remain. Statements are labelled as deivid's
+direction, verified evidence or proposal.
 
 ## Direction
 
@@ -162,16 +163,42 @@ Two shared modules that no project imported are gone; the
 [worklog](../KIT_WORKLOG.md#2026-11-09--remove-the-unused-number-ledger-and-verbatim-lock-modules)
 records it. `tooling/svg_figures.py` stays because adapt and adaptation import it.
 
+## Decided by deivid on 2026-11-15
+
+Asked which of three options, deivid decided to remove all three kit hooks,
+`path_resolver`, `evidence_validator` and `document_origin`, in 5.0.0: "remove
+all 3". The constraint on order above no longer holds: adaptation, which still
+names `path_resolver` and `evidence_validator`, makes the change at its upgrade
+to 5.0.0. Done on the kit's side on 2026-11-15, as the
+[worklog](../KIT_WORKLOG.md) records: the build rejects either setting with a
+pointer to the
+[migration step](../topics/releases/migrations/5.0.0.md#remove-the-adapter-hooks),
+lint and build resolve links with the kit's own rules only, and
+[resources](../../rules/site/resources.md#resource-closure-and-evidence) says
+what holds now.
+
+Verified on 2026-11-15 by reading each `docs/site/site.toml`: ADP and Tempo
+name no hook; adaptation names `path_resolver` and `evidence_validator`, both
+`docs/site/layout_paths.py`; none sets `evidence_manifests` or
+`legacy_files`.
+
 ## Next step
 
-1. ADP finishes the cleanup deivid wants before a release. Open on its branch:
-   the hash pins, the six pinned `README.md` files, and the deletion of the old
-   store's tools and its last row.
-2. The kit releases the rule wording together with
-   `worklog_links_checked_from`, after an independent review of the rule
-   change.
-3. ADP pins that release, fixes its links to the renamed kit section, and
-   deivid decides in ADP's session when its branch is pushed.
-4. adapt follows the same rule for its own frozen documents.
-5. The kit removes a hook once neither project names it, and with it the
-   worklog-specific historical link handling in `tooling/lint.py`.
+1. adaptation removes its two settings and `docs/site/layout_paths.py` at its
+   upgrade to 5.0.0, deletes the frozen copies its owner approves, and
+   repoints or removes the links that needed the adapter, following the
+   migration step. The size of that cleanup, measured on a clone, is in the
+   worklog entry of 2026-11-15 on the HTML link check.
+2. A question for deivid, not decided: the kit still carries two settings of
+   its own that serve the same practice of kept copies, and no known project
+   uses either. `evidence_manifests` declares exact-byte collections; lint
+   verifies their bytes and resolves a relocated document's links from its
+   original path, and in the worklog it also applies a collection's recorded
+   `source_root` and relocated targets. That worklog handling, which the earlier
+   plan meant to remove with the hooks, depends on
+   `evidence_manifests`, not on a hook, so it stays while the setting stays;
+   `worklog_links_checked_from` replaces it only for entries before the
+   configured date. `legacy_files` maps single old paths to current ones and
+   is not described in any rule. Removing both would delete
+   `tooling/evidence_documents.py` and most of the relocation code in
+   `tooling/lint.py`, and would add another removed setting to 5.0.0.
