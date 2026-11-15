@@ -6,6 +6,9 @@
 .slide-face {--sf-ink:#e6edf3!important;--sf-sub:#a9b4c2!important;--sf-dim:#7d8896!important;--sf-line:#2f3b4a!important;--sf-tile:#121a24!important;--sf-tile2:#162130!important;--sf-accent:var(--accent,#39d2c0)!important;--sf-alt:var(--secondary,#bc8cff)!important;--sf-warm:var(--orange,#ffa657)!important;--sf-held:#5b6b80!important;--sf-alert:var(--red,#f47067)!important;position:relative!important;container-type:inline-size!important;margin:0 0 4px!important;}
 .slide-canvas {display:flex!important;flex-direction:column!important;gap:.65cqi!important;aspect-ratio:16/9!important;min-height:0!important;overflow:hidden!important;padding:2.4cqi 3.4cqi 1.8cqi!important;border:1px solid var(--sf-line)!important;border-radius:14px!important;background:radial-gradient(ellipse at 85% 0%,color-mix(in srgb,var(--sf-accent) 7%,transparent),transparent 55%),linear-gradient(180deg,#0f1620,#0d1117)!important;font-family:"IBM Plex Sans",system-ui,sans-serif!important;color:var(--sf-ink)!important;}
 .chapter-body > .slide-face:first-child,.chapter-body > :first-child > .slide-face:first-child {margin:-16px -22px 0!important;}
+/* The bleed matches the chapter body's padding, which is 14px in a narrow chapter (chapter-reader.css);
+   a wider bleed reaches past the scrolling body, which then scrolls sideways and cuts the face's edges. */
+@container chapter (max-width:520px) {.chapter-body > .slide-face:first-child,.chapter-body > :first-child > .slide-face:first-child {margin:-14px -14px 0!important;}}
 .chapter-body > .slide-face:first-child > .slide-canvas,.chapter-body > :first-child > .slide-face:first-child > .slide-canvas {border-width:0 0 1px!important;border-radius:0 0 14px 14px!important;}
 /* Authoring aid: the deck, and pages opened with ?slide-check, outline faces that do not fit. */
 :is(.slide-deck-page,[data-slide-check]) .slide-face[data-slide-overflow] > .slide-canvas {outline:3px solid var(--red,#f47067);outline-offset:-3px;}

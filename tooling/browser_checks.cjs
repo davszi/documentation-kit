@@ -207,18 +207,147 @@ async function readerChecks(page, {url, expectedChapters, check = async (_label,
   return scope;
 }
 
-// Slide faces: every face at or above the compact width must fit its 16:9 canvas.
-// Returns one row per face; callers assert on `fits` for rendered (non-compact) faces.
-async function slideFaces(page) {
-  return page.evaluate(() => [...document.querySelectorAll('[data-slide-face]')].map(face => {
-    const canvas = face.querySelector(':scope > .slide-canvas') || face;
-    const main = canvas.querySelector('.slide-main');
-    const compact = getComputedStyle(canvas).aspectRatio === 'auto';
-    const overflow = !compact && (canvas.scrollHeight > canvas.clientHeight + 1 || (!!main && main.scrollHeight > main.clientHeight + 1));
-    const chapter = face.closest('[data-reader-chapter]')?.id || face.closest('section')?.id || '';
-    return {chapter, width: canvas.clientWidth, height: canvas.clientHeight, compact, fits: !overflow,
-            bridge: !!face.parentElement.querySelector(':scope > .slide-bridge, .slide-bridge')};
-  }));
+// Slide faces, measured where they are shown: in a page at reader widths or in an extracted deck.
+// One row per face in the page, or inside `within` (a selector such as '#chapter-id'). A face the
+// page does not show (an inactive reader chapter, All chapters without the Slides switch) has
+// `shown: false` and no measurements. For a shown face:
+// - `compact`: the canvas is stacked (the face is narrower than 720 px);
+// - `fits`: a 16:9 face holds its content (always true when compact);
+// - `sideways`: px by which the canvas content is wider than the canvas, or the canvas wider than
+//   the space its container or the window gives it;
+// - `clipped`: text cut off by a box that hides its overflow, the canvas included;
+// - `outside`: parts that stick out of the canvas, with the px they stick out;
+// - `emptyBand`: height in px of the largest horizontal band of the canvas that holds nothing:
+//   no text, image, figure, background or border. It is information only and never a problem.
+// `problems` lists, in words, a 16:9 face that does not fit, sideways overflow, clipped text and
+// parts outside the face; a face is in order when it is empty. Page styles can add space that the
+// deck lacks, so check faces in their page as well as in the deck.
+async function slideFaces(page, {within = null} = {}) {
+  return page.evaluate(within => {
+    const scope = within ? [...document.querySelectorAll(within)] : [document];
+    const faces = [...new Set(scope.flatMap(root => [...(root.matches?.('[data-slide-face]') ? [root] : []),
+      ...root.querySelectorAll('[data-slide-face]')]))];
+    const name = node => node.tagName.toLowerCase() + (node.id ? '#' + node.id : '')
+      + (typeof node.className === 'string' && node.className.trim() ? '.' + node.className.trim().split(/\s+/).slice(0, 2).join('.') : '');
+    const visible = node => {
+      for (let current = node; current; current = current.parentElement) {
+        const style = getComputedStyle(current);
+        if (style.display === 'none' || style.visibility === 'hidden' || style.visibility === 'collapse'
+            || Number(style.opacity) === 0) return false;
+        if (current.matches('[data-slide-face]')) break;
+      }
+      return true;
+    };
+    const textRects = root => {
+      const found = [];
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      for (let text = walker.nextNode(); text; text = walker.nextNode()) {
+        if (!text.data.trim() || !visible(text.parentElement)) continue;
+        const range = document.createRange();
+        range.selectNodeContents(text);
+        for (const rect of range.getClientRects()) if (rect.width > 0 && rect.height > 0) found.push({text, node: text.parentElement, rect});
+      }
+      return found;
+    };
+    return faces.map(face => {
+      const canvas = face.querySelector(':scope > .slide-canvas') || face;
+      const chapter = face.closest('[data-reader-chapter]')?.id || face.closest('section')?.id || '';
+      const box = canvas.getBoundingClientRect();
+      if (!face.getClientRects().length || box.width < 1 || box.height < 1 || !visible(canvas)) return {chapter, shown: false, problems: []};
+      const main = canvas.querySelector('.slide-main');
+      const compact = getComputedStyle(canvas).aspectRatio === 'auto';
+      const fits = compact || !(canvas.scrollHeight > canvas.clientHeight + 1 || (!!main && main.scrollHeight > main.clientHeight + 1));
+      // Sideways: content wider than the canvas, or the canvas reaching past the window or past the
+      // nearest ancestor that cuts or scrolls its overflow. A face may bleed into its card's padding.
+      let holder = null;
+      for (let parent = face.parentElement; parent && parent !== document.documentElement; parent = parent.parentElement) {
+        if (getComputedStyle(parent).overflowX !== 'visible') {
+          const r = parent.getBoundingClientRect();
+          holder = {left: r.left + parent.clientLeft, right: r.left + parent.clientLeft + parent.clientWidth};
+          break;
+        }
+      }
+      let sideways = Math.max(0, canvas.scrollWidth - canvas.clientWidth, box.right - innerWidth, -box.left,
+        holder ? box.right - holder.right : 0, holder ? holder.left - box.left : 0);
+      // Parts outside the canvas, and text cut off by a box that hides its overflow.
+      const outside = [];
+      const elements = [...canvas.querySelectorAll('*')].filter(node => visible(node));
+      for (const node of elements) {
+        const rect = node.getBoundingClientRect();
+        if (rect.width < 1 || rect.height < 1) continue;
+        let clippedBy = null;
+        for (let parent = node.parentElement; parent && parent !== canvas.parentElement; parent = parent.parentElement) {
+          const style = getComputedStyle(parent);
+          if (/(hidden|clip|auto|scroll)/.test(style.overflowX + style.overflowY)) { clippedBy = parent; break; }
+        }
+        if (clippedBy) continue;  // its own clipping box decides what shows
+        const out = Math.max(box.left - rect.left, rect.right - box.right, box.top - rect.top, rect.bottom - box.bottom);
+        if (out > 1 && outside.length < 20) outside.push({part: name(node), by: Math.round(out)});
+      }
+      const cuts = new Map();  // one entry per text, with its deepest cut over all its lines
+      for (const {text, node, rect} of textRects(canvas)) {
+        for (let parent = node; parent && parent !== canvas.parentElement; parent = parent.parentElement) {
+          const style = getComputedStyle(parent);
+          const r = parent.getBoundingClientRect();
+          // A scroll region keeps its text reachable; only a box that hides its overflow cuts text.
+          // A glyph box reaches past the ink above capitals and below the baseline, so a vertical
+          // cut counts only beyond a quarter of the line; a sideways cut beyond 2 px cuts letters.
+          const across = /(hidden|clip)/.test(style.overflowX) ? Math.max(r.left - rect.left, rect.right - r.right) : 0;
+          const down = /(hidden|clip)/.test(style.overflowY) ? Math.max(r.top - rect.top, rect.bottom - r.bottom) : 0;
+          const cut = Math.max(across > 2 ? across : 0, down > Math.max(2, rect.height / 4) ? down : 0);
+          if (cut > 0) {
+            const known = cuts.get(text);
+            if (!known || known.by < cut) cuts.set(text, {text: text.data.trim().replace(/\s+/g, ' ').slice(0, 60), in: name(parent), by: cut});
+            break;
+          }
+        }
+      }
+      const clipped = [...cuts.values()].slice(0, 20).map(item => ({...item, by: Math.round(item.by)}));
+      // Largest empty band: vertical extent of the canvas content box that nothing covers.
+      const style = getComputedStyle(canvas);
+      const top = box.top + parseFloat(style.borderTopWidth) + parseFloat(style.paddingTop);
+      const bottom = box.bottom - parseFloat(style.borderBottomWidth) - parseFloat(style.paddingBottom);
+      const covered = textRects(canvas).map(({rect}) => [rect.top, rect.bottom]);
+      for (const node of elements) {
+        const s = getComputedStyle(node), rect = node.getBoundingClientRect();
+        if (rect.width < 1 || rect.height < 1) continue;
+        const painted = /^(img|svg|video|canvas|picture|iframe|object|embed)$/i.test(node.tagName)
+          || (s.backgroundColor !== 'rgba(0, 0, 0, 0)' && s.backgroundColor !== 'transparent') || s.backgroundImage !== 'none'
+          || ['Top', 'Right', 'Bottom', 'Left'].some(side => parseFloat(s['border' + side + 'Width']) > 0 && s['border' + side + 'Style'] !== 'none');
+        if (painted) covered.push([rect.top, rect.bottom]);
+      }
+      covered.sort((a, b) => a[0] - b[0]);
+      let emptyBand = 0, reach = top;
+      for (const [start, end] of covered) {
+        if (end <= reach) continue;
+        if (start > reach) emptyBand = Math.max(emptyBand, Math.min(start, bottom) - reach);
+        reach = Math.max(reach, end);
+        if (reach >= bottom) break;
+      }
+      emptyBand = Math.max(emptyBand, bottom - reach);
+      sideways = Math.round(sideways);
+      const problems = [];
+      if (!fits) problems.push('the content does not fit the 16:9 canvas');
+      if (sideways > 1) problems.push(`overflows sideways by ${sideways} px`);
+      for (const item of clipped) problems.push(`clips text "${item.text}" in ${item.in} by ${item.by} px`);
+      for (const item of outside) problems.push(`${item.part} sticks out of the face by ${item.by} px`);
+      return {chapter, shown: true, width: canvas.clientWidth, height: canvas.clientHeight, compact, fits,
+              sideways, clipped, outside, emptyBand: Math.max(0, Math.round(emptyBand)), problems,
+              bridge: !!face.parentElement.querySelector(':scope > .slide-bridge, .slide-bridge')};
+    });
+  }, within);
+}
+
+// Fails with every problem of every shown face; returns the rows. `expectShown` guards against
+// checking nothing, for example when the reader hides the chapter that holds the face.
+async function assertSlideFaces(page, {within = null, expectShown = 1} = {}) {
+  const faces = await slideFaces(page, {within});
+  const shown = faces.filter(face => face.shown);
+  assert.ok(shown.length >= expectShown, `Expected at least ${expectShown} shown slide face(s), found ${shown.length}`);
+  const faults = shown.filter(face => face.problems.length)
+    .map(face => `${face.chapter || '(no chapter)'} at ${face.width} px: ${face.problems.join('; ')}`);
+  assert.deepEqual(faults, [], 'Slide face problems');
+  return faces;
 }
 
 // Capture one element (a figure, a slide face, a chapter) for review. With `unclip`, the element and its
@@ -245,5 +374,5 @@ async function captureElement(page, selector, file, {unclip = false, hide = []} 
   return {width: Math.round(box?.width || 0), height: Math.round(box?.height || 0)};
 }
 
-module.exports = {slideFaces, settle, visibleMedia, measureOverflow, assertHorizontalContainment,
+module.exports = {slideFaces, assertSlideFaces, settle, visibleMedia, measureOverflow, assertHorizontalContainment,
   checkLayout, setView, activeChapter, waitActive, goHash, readerChecks, captureElement};

@@ -244,7 +244,7 @@ A single scroll is still available as **All chapters**, and it is what print and
 <li>the chapter's own figure with its parts numbered, laid out for its content; in this example numbered points beside it each give a bold claim and a sentence or two, and a closing row lists the facts a reader asks for next (<code>slide-points</code>, <code>slide-facts</code>). Another face may use one figure across the canvas, a row of steps or a matrix.</li>
 <li>boxes of text alone are not a visual: a chapter with nothing to show gets no face</li>
 <li>write a face between <code>&lt;!-- slide --&gt;</code> and <code>&lt;!-- /slide --&gt;</code> at the start of a chapter; the first chapter of this page opens with one</li>
-<li>every fact on a slide is also in its chapter</li>
+<li>every fact on a slide is also in its chapter; lint checks the numbers and fails on a chapter with two faces</li>
 </ul></div>
 </div>
 </div>
@@ -336,7 +336,7 @@ The build fails instead of publishing a broken page: untracked or missing media,
 <div class="bs-checks r32">
 <div class="bs-check"><span class="bs-badge bs-ok">links</span><h3>Links and anchors</h3><p>Markdown links and anchors in <code>docs/</code>, <code>AGENTS.md</code>, <code>CLAUDE.md</code> and <code>README.md</code> resolve, and so do links in the built HTML.</p></div>
 <div class="bs-check"><span class="bs-badge bs-ok">excerpts</span><h3>Code excerpts</h3><p>A fenced block tagged <code>source=path#La-Lb</code> must still appear in its file, at the stated lines.</p></div>
-<div class="bs-check"><span class="bs-badge bs-ok">figures</span><h3>Figure manifest</h3><p>Figure files and manifest entries match both ways, and their generators exist.</p></div>
+<div class="bs-check"><span class="bs-badge bs-ok">figures</span><h3>Figures and slide faces</h3><p>Figure files and manifest entries match both ways, and their generators exist. A chapter opens with at most one slide face, and a number on a face also appears in its chapter.</p></div>
 <div class="bs-check"><span class="bs-badge bs-ok">records</span><h3>Worklog and open work</h3><p>Worklog dates run newest first; every open-work bullet links its owner, with no struck or ticked lines.</p></div>
 <div class="bs-check"><span class="bs-badge bs-ok">site</span><h3>Fresh, self-contained output</h3><p>The built site is fresh and loads no external resources.</p></div>
 </div>
@@ -360,7 +360,7 @@ Without `--strict`, warnings print but the run passes; with it, any warning fail
 python3.12 -m http.server 8321 --bind 127.0.0.1 --directory .build/docs
 ```
 
-Open `http://127.0.0.1:8321/html/index.html`. The server exposes only the generated output, not the repository. A successful build, lint and browser suite still need a look by eye: capture each changed element whole, at wide and narrow widths and in each reader view it appears in, and look at the captures before committing or publishing. The captures are [scratch files](handoffs.html#scratch-files), except one a page uses as a figure: the record states what the review found and cites no capture by path or hash, and the captures stay until whoever must look at them has done so. [Validation](validation.html#validation-and-review) lists what a complete review covers, including the reusable browser checks.
+Open `http://127.0.0.1:8321/html/index.html`. The server exposes only the generated output, not the repository. A successful build, lint and browser suite still need a look by eye: capture each changed element whole, at wide and narrow widths and in each reader view it appears in, and look at the captures before committing or publishing. For each slide face, the review says what draws the eye first and whether a band of the canvas is empty. The captures are [scratch files](handoffs.html#scratch-files), except one a page uses as a figure: the record states what the review found and cites no capture by path or hash, and the captures stay until whoever must look at them has done so. [Validation](validation.html#validation-and-review) lists what a complete review covers, including the reusable browser checks.
 
 Before reusing a server that is already running, confirm who owns it and which checkout it serves, and stop only servers you started; [local review and browser access](validation.html#local-review-and-browser-access) covers the rest. When a page was written by a delegated page agent, the agent that delegated it looks at these captures itself before reporting the page done.
 

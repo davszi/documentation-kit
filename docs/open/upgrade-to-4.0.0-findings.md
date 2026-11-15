@@ -195,10 +195,19 @@ here beyond the two items already listed above.
 1. **No check that every fact on a face is in its chapter.** The rule states
    it; lint has no slide check. Adaptation wrote its own test, which compares
    the numbers on a face with its chapter.
+   **Built on 2026-11-15 for 5.0.0:** lint warns about a number that a face
+   shows and its chapter does not, with no list from the project; claims and
+   other words are not checked. See
+   [slide faces and decks](../../rules/site/authoring.md#slide-faces-and-decks).
 2. **No check for one face per chapter.** Two faces in a chapter build clean.
+   **Built on 2026-11-15 for 5.0.0:** lint fails on a chapter with more than
+   one face and on a face that does not open its chapter.
 3. **No check of faces below 720 px.** The shared browser check measures
    overflow only on the 16:9 canvas, so stacking faults on phones are found
    by eye; the session found six.
+   **Built on 2026-11-15 for 5.0.0:** `slideFaces` reports sideways overflow,
+   cut-off text and parts outside a stacked face, and `assertSlideFaces` fails
+   on them; see [reusable browser checks](../../rules/site/validation.md#reusable-browser-checks).
 4. **No supported way to put a chapter figure on a face.** Already above:
    only the helper `slide_svg` exists.
 5. **Project slide classes need `!important` on every declaration.** Already
@@ -209,6 +218,8 @@ here beyond the two items already listed above.
 7. **A face that fits in the deck can fail on the page.** Page styles add
    space around images, so the validation guide should ask for the check in
    the page at reader widths, not only in the deck.
+   **Built on 2026-11-15 for 5.0.0:** the validation guide asks for it, and
+   the browser check measures a face in its page.
 
 Settled from this list on 2026-11-15, in deivid's words to adaptation's
 session: "i think we can always try to improve our visualizations and you may

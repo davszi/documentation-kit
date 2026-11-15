@@ -30,7 +30,7 @@ The guide demonstrates slide faces on two chapters, following `.docs-kit/rules/w
 - The shape of the content sets the layout. The guide's face is one example: beside the figure, numbered points (`slide-points`) each give a short claim in bold and a sentence or two that explain it, separated by thin rules. Only the points the title names are emphasised (`is-key`); a warning point carries a cross (`is-alert`). A closing row (`slide-facts`) gives facts the chapter states, each as a small label over a value, and the scope line ends the face. Another face may be one figure across the canvas with labels on its parts, a row of steps or a matrix.
 - Boxes of text are not a visual. A face whose main area only repeats the title and lead in boxes is removed, and a chapter with nothing to show gets no face.
 - When a chapter needs a figure and has none, make the figure for the chapter first, from what exists; never draw invented data.
-- No fact exists only on a slide: every statement on a face is also in its chapter.
+- No fact exists only on a slide: every statement on a face is also in its chapter. `docsite.py lint` checks the numbers and fails on a chapter with more than one face; the shared browser check `assertSlideFaces` measures each face in its chapter, a phone width of 390 px included.
 - Text in a slide figure stays at least 11 px at a 390 px wide viewport; the drawings use 25 user units in a 600-unit-wide view box for their smallest labels.
 
 ## Acceptance checklist

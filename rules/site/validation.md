@@ -16,7 +16,9 @@ When the project uses the chapter reader, `build --check-reader` renders every t
 
 Tests that compare DOM/structure, content or numerical identities are useful evidence. They do not establish browser pixel inspection. Report results under the [handoff rules](../engineering/handoffs.md#reporting-completion). Never call a layout checked from source inspection alone.
 
-Review every visual change by eye before reporting it done. Capture each element the change touched, whole, at every width the site supports and in each reader view it appears in, such as one or two chapters; `captureElement` with `unclip` captures a reader chapter whole. Look at each capture for alignment, spacing, list markers, typography, colour and overflow, and compare it with the page around it. Passing browser suites do not replace this look. Report which captures were reviewed and what they showed. The captures are [scratch files](../engineering/handoffs.md#scratch-files), except one that a page uses as a figure: a record states what the review found and cites no capture by path or hash, and the captures are kept until whoever must look at them has done so.
+Check slide faces in their page as well as in an extracted deck. Page styles add space, for example around images, that the deck does not have, so a face that fits in the deck can fail in its page. Check each face in its reader chapter at the widths the site supports, a phone width below 720 px included, with the [browser check below](#reusable-browser-checks).
+
+Review every visual change by eye before reporting it done. Capture each element the change touched, whole, at every width the site supports and in each reader view it appears in, such as one or two chapters; `captureElement` with `unclip` captures a reader chapter whole. Look at each capture for alignment, spacing, list markers, typography, colour and overflow, and compare it with the page around it. Passing browser suites do not replace this look. Report which captures were reviewed and what they showed. When slide faces are reviewed by eye, the reviewer says for each face what draws the eye first and whether a band of the canvas is empty, so that another person can disagree with something concrete. "No band left over" and the designer's standard stay judgment, with no number: the empty band that the browser check reports is information for the reviewer, never a limit. The captures are [scratch files](../engineering/handoffs.md#scratch-files), except one that a page uses as a figure: a record states what the review found and cites no capture by path or hash, and the captures are kept until whoever must look at them has done so.
 
 For local review, follow [local review and browser access](#local-review-and-browser-access), using `.build/docs/` and `/html/<slug>.html`. Follow the [publishing gate](publication.md#publishing-gate) before deployment.
 
@@ -34,8 +36,28 @@ Browser approval remains scoped to the supported origin. If access is rejected o
 a browser, server or experiment. Projects own those lifetimes, page routes,
 expected counts, screenshots and domain assertions. The shared module provides:
 
-- `slideFaces` lists every slide face with its chapter, size, compact state and
-  whether it fits its 16:9 canvas.
+- `slideFaces(page, {within?})` measures every slide face the page shows, or
+  those inside the `within` selector, in a page or in an extracted deck. Per
+  face it gives the chapter, the size, whether the face is stacked (`compact`,
+  below 720 px), whether a 16:9 face holds its content (`fits`), the pixels it
+  overflows sideways (`sideways`), the text that a box cuts off (`clipped`), the
+  parts that stick out of the face (`outside`) and `problems`, these faults in
+  words. `emptyBand` is the height in pixels of the largest horizontal band of
+  the canvas that holds nothing; it is information for the reviewer, fails
+  nothing and has no threshold. A face the page does not show, such as one in
+  an inactive reader chapter, has `shown: false` and no measurements.
+  `assertSlideFaces(page, {within?, expectShown = 1})` fails with every problem
+  of every shown face, and when fewer faces than `expectShown` are shown.
+  A project checks each face in its chapter at each reader width, for example:
+
+  ```js
+  // Run from the project root; the kit is the project's .docs-kit submodule.
+  const {goHash, assertSlideFaces} = require(require('node:path').resolve('.docs-kit/tooling/browser_checks.cjs'));
+  for (const id of chapterIdsWithFaces) {   // at 390 px and at the wide widths
+    await goHash(page, url, id);
+    await assertSlideFaces(page, {within: '#' + id});
+  }
+  ```
 - `settle`, `visibleMedia`, `measureOverflow`, `assertHorizontalContainment` and
   `checkLayout` for fonts, actually visible images and viewport containment.
   Image visibility includes ancestor clipping; hidden/inert and offscreen lazy

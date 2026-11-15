@@ -65,17 +65,34 @@ def isolate_ids(markup: str, prefix: str) -> tuple[str, dict[str, str]]:
     return _ID_REFS.sub(lambda m: m[1] + m[2] + " ".join(ids.get(v, v) for v in m[3].split()) + m[2], markup), ids
 
 
-def chapters(page: str) -> list[dict]:
-    """Chapter sections in reading order, each with its id, title and face markup.
-
-    Reader pages mark chapters with data-reader-chapter (or reader-adapted);
+def _chapter_nodes(nodes: list) -> list:
+    """Reader pages mark chapters with data-reader-chapter (or reader-adapted);
     pages without the reader use their outermost section.card elements."""
-    nodes = list(_walk(Structure(page).roots))
     marked = [n for n in nodes if n.tag == "section"
               and ("data-reader-chapter" in n.attrs or "reader-adapted" in n.attrs.get("class", "").split())]
     if not marked:
         cards = [n for n in nodes if n.tag == "section" and "card" in n.attrs.get("class", "").split()]
         marked = [n for n in cards if not any(o is not n and o.start < n.start < o.end for o in cards)]
+    return marked
+
+
+def chapters_with_faces(page: str) -> tuple[list[tuple], list]:
+    """([(chapter, [faces in reading order])] for chapters with a face, [faces outside every chapter])."""
+    nodes = list(_walk(Structure(page).roots))
+    faces = [n for n in nodes if "data-slide-face" in n.attrs]
+    found, inside = [], set()
+    for chapter in _chapter_nodes(nodes):
+        held = [face for face in faces if chapter.start < face.start < chapter.end]
+        if held:
+            found.append((chapter, held))
+            inside.update(id(face) for face in held)
+    return found, [face for face in faces if id(face) not in inside]
+
+
+def chapters(page: str) -> list[dict]:
+    """Chapter sections in reading order, each with its id, title and face markup."""
+    nodes = list(_walk(Structure(page).roots))
+    marked = _chapter_nodes(nodes)
     found = []
     for node in marked:
         face = next((n for n in node.descendants() if "data-slide-face" in n.attrs), None)

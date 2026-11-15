@@ -4,7 +4,7 @@ const fs = require('node:fs/promises');
 const http = require('node:http');
 const path = require('node:path');
 const assert = require('node:assert/strict');
-const {settle, checkLayout, setView, goHash, readerChecks} = require('../tooling/browser_checks.cjs');
+const {settle, checkLayout, setView, goHash, readerChecks, assertSlideFaces} = require('../tooling/browser_checks.cjs');
 const kit = path.resolve(__dirname, '..');
 const root = path.join(kit, '.build/starter/.build/docs');
 const output = path.join(kit, '.build/visual-review');
@@ -42,11 +42,18 @@ const server = http.createServer(async (req,res) => {
         }});
       const {chapterIds} = readerScope;
       const count=chapterIds.length;
+      let faces=0;
       for(let index=0;index<count;index++) {
         await goHash(page, origin+'/html/guide.html', chapterIds[index]);
         await page.screenshot({path:path.join(output,`${viewport.width}-chapter-${index+1}.png`)});
         await checkLayout(page);
+        // A slide face in its chapter: it fits 16:9 when wide and stacks cleanly when narrow.
+        if(await page.locator(`#${chapterIds[index]} [data-slide-face]`).count()) {
+          await assertSlideFaces(page,{within:'#'+chapterIds[index]});
+          faces++;
+        }
       }
+      assert.equal(faces,2,'the starter guide shows two slide faces');
       if(viewport.width>900) {
         await setView(page, 'pair');
         await checkLayout(page);
@@ -67,7 +74,7 @@ const server = http.createServer(async (req,res) => {
       await page.goto(origin+'/html/index.html',{waitUntil:'networkidle'});
       await page.screenshot({path:path.join(output,`${viewport.width}-home.png`),fullPage:true});
       await checkLayout(page);
-      results.push({viewport,chapters:count,readerScope,consoleErrors:failures,horizontalOverflow:false});
+      results.push({viewport,chapters:count,slideFaces:faces,readerScope,consoleErrors:failures,horizontalOverflow:false});
       await context.close();
     }
     const fallback=await browser.newContext({viewport:{width:390,height:844},javaScriptEnabled:false});

@@ -29,6 +29,11 @@ Checks (the shared guides under rules/ are the spec):
      is linked from its table; its generated Imported by column matches the Python
      imports (errors); a tooling module that imports from a folder under
      `experiment_roots` is a warning. The map's links are checked as in 1.
+ 14. slide faces in the built pages (`slide_face_checks.py`): a chapter with more
+     than one face, a face that does not open its chapter and a face outside
+     every chapter are errors; a number shown on a face and nowhere else in its
+     chapter is a warning; a `data-face-only` mark that is unusable or no
+     longer needed is a warning, and a usable one is a note
 
 Notes (never fail, not even under --strict): a changed record section
 (working tree vs HEAD, or vs --since <rev>) lists the topic pages that link
@@ -39,6 +44,8 @@ A link to a file that the local-artifact manifest lists under `omitted_files`
 gets a note when the file is absent: the project declared that state.
 Each problem the build tolerated in an automatically listed reference page
 (see `reference_listing` in site.toml) is a note too.
+A number that a project accepts on one slide face with `data-face-only` is a
+note that names the number and the reason.
 
 Exit 0 clean (warnings print unless --strict fails them), 1 on errors.
 """
@@ -611,6 +618,15 @@ def check_capability_map() -> None:
     warnings.extend(found_warnings)
 
 
+def check_slide_faces() -> None:
+    from slide_face_checks import check
+    found_errors, found_warnings, found_notes, _ = check(REPO)
+    errors.extend(found_errors)
+    warnings.extend(found_warnings)
+    for note in found_notes:
+        notice(note)
+
+
 def record_change_notes(since: str | None) -> list[str]:
     """Reminders, never failures: pages that explain a changed record section."""
     from record_changes import record_change_notes as notes
@@ -663,6 +679,7 @@ def main() -> int:
     check_topic_structure()
     check_capability_map()
     check_build()
+    check_slide_faces()
     check_kit_pin()
     notes = record_change_notes(args.since) + page_number_notes()
 

@@ -6,7 +6,7 @@ const fs = require('node:fs/promises');
 const http = require('node:http');
 const path = require('node:path');
 const assert = require('node:assert/strict');
-const {settle, checkLayout, setView} = require('../tooling/browser_checks.cjs');
+const {settle, checkLayout, setView, goHash, assertSlideFaces} = require('../tooling/browser_checks.cjs');
 const kit = path.resolve(__dirname, '..');
 const root = path.join(kit, '.build/docs');
 const output = path.join(kit, '.build/visual-review/own-site');
@@ -291,12 +291,23 @@ async function reviewPresentation(page, origin, viewport, failures) {
       page.on('console', message => { if (message.type() === 'error') failures.push(message.text()); });
       page.on('response', response => { if (response.status() >= 400) failures.push(response.url() + ': ' + response.status()); });
       let images = 0;
+      const faces = [];
       for (const slug of pages) {
         await page.goto(`${origin}/html/${slug}.html`, {waitUntil:'networkidle'});
         const layout = await checkLayout(page);
         images += layout.images.length || 0;
         if (SHOTS.includes(slug)) await page.screenshot({path: path.join(output, `${viewport.width}-${slug}.png`), fullPage: slug === 'index'});
+        // Every slide face, in its page and its reader chapter: at 390 px a stacked face must not
+        // overflow sideways, clip text or let a part stick out; at 1600 px it must fit 16:9.
+        const faceChapters = await page.$$eval('[data-reader-chapter]', nodes => nodes
+          .filter(node => node.querySelector('[data-slide-face]')).map(node => node.id));
+        for (const id of faceChapters) {
+          await goHash(page, `${origin}/html/${slug}.html`, id);
+          for (const face of await assertSlideFaces(page, {within: '#' + id}))
+            faces.push({page: slug, chapter: id, compact: face.compact, emptyBand: face.emptyBand});
+        }
       }
+      assert.ok(faces.length >= 2, 'the kit site shows its slide faces: ' + JSON.stringify(faces));
       assert.deepEqual(failures, [], 'browser errors at ' + viewport.width);
 
       // Deep links into rendered Markdown anchors land on their heading.
@@ -444,7 +455,7 @@ async function reviewPresentation(page, origin, viewport, failures) {
       await page.goto(`${origin}/html/git.html`, {waitUntil:'networkidle'});
       assert.equal(await page.locator('.source-origin-edit').isVisible(), false, 'edit link hidden in print');
       await page.emulateMedia({media:'screen'});
-      Object.assign(results.viewports[viewport.width], {pages: pages.length, visibleImages: images, keyboard: reached.href});
+      Object.assign(results.viewports[viewport.width], {pages: pages.length, visibleImages: images, keyboard: reached.href, slideFaces: faces});
       await context.close();
     }
 
@@ -467,5 +478,5 @@ async function reviewPresentation(page, origin, viewport, failures) {
     server.close();
   }
   await fs.writeFile(path.join(output, 'results.json'), JSON.stringify(results, null, 2) + '\n');
-  console.log(`Own site: ${results.pages} pages contained with visible media at 1600 and 390; deep links, panel hash, keyboard paths, reader chapters, sidebar repository tree, views, docking, pinning and carousel, Presentation and the Slides switch, narrow menu/tree/table scrolling, print and no-JavaScript reading pass.`);
+  console.log(`Own site: ${results.pages} pages contained with visible media at 1600 and 390; slide faces fit at 1600 and stack cleanly at 390; deep links, panel hash, keyboard paths, reader chapters, sidebar repository tree, views, docking, pinning and carousel, Presentation and the Slides switch, narrow menu/tree/table scrolling, print and no-JavaScript reading pass.`);
 })().catch(error => { console.error(error); process.exitCode = 1; server.close(); });

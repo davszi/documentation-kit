@@ -29,7 +29,7 @@ shows the new warnings.
 ## 5.0.0 — Reference section by default, page lock and Presentation view
 
 5.0.0 is a major release under
-[what a version number promises](#what-a-version-number-promises) for two
+[what a version number promises](#what-a-version-number-promises) for three
 reasons:
 
 - **A default now publishes more.** Every tracked Markdown file of a project
@@ -45,6 +45,10 @@ reasons:
   `[publication]` `private_prefixes` or `private_suffixes` cover. Up to 4.0.0
   such a page was published. A project in that case passed before and fails
   now.
+- **A new lint error for slide faces.** `docsite.py lint` now fails on a
+  chapter with more than one slide face, on a face that does not open its
+  chapter and on a face outside every chapter. Up to 4.0.0 such a page built
+  and linted clean. A project in that case passed before and fails now.
 
 No command, flag, configuration key, marker or adapter signature is removed.
 No section anchor under `rules/` is removed or renamed: every heading of every
@@ -54,9 +58,12 @@ file under `rules/` at `v4.0.0` is still present.
 with five subsections. `rules/engineering/code.md` gains "Name the need first"
 and "The capability map" with its subsection "The check";
 `rules/experiments/workflow.md` gains "Show the total" and "Step back across
-experiments". A project that does not set `tooling_roots` gets no new lint
-warning or error; a problem in an automatically listed file is a lint note,
-which never fails. The capability map check adds lint errors and one warning
+experiments". Apart from the slide-face checks, a project that does not set
+`tooling_roots` gets no new lint warning or error; a problem in an
+automatically listed file is a lint note, which never fails. The slide-face
+checks apply to every project with slide faces: the error above, and a
+warning, which fails `lint --strict`, for a number that a face shows and its
+chapter does not. The capability map check adds lint errors and one warning
 only for a project that opts in.
 
 The new top-level `site.toml` settings `reference_listing` and
@@ -71,8 +78,8 @@ What is provisional:
 - **The version number.** The kit owner recommends 5.0.0 because of the
   changed default. deivid has not confirmed the number; the
   [open record](../../open/release-5.0.0-waits.md) keeps the question. Without
-  the publication default, the publish refusal above still makes the release
-  major under the promise as written.
+  the publication default, the publish refusal and the slide-face lint error
+  above still make the release major under the promise as written.
 - **The page lock's rule text.** Details of the
   [page lock](../../../rules/site/publication.md#page-lock) are still being
   finished. This record names its settings; the rule section owns how it
@@ -82,6 +89,10 @@ What is provisional:
   `docsite.py capability-map`, the table's columns and the wording of the
   generated column were tried on the kit's own tooling only. They may change
   in a minor release.
+- **What the slide-face number check reads.** Which numbers count as one and
+  which are not counted were tried on the faces of the kit's own site, the
+  starter and one consuming project. They may change in a minor release; the
+  check's level, a warning, and the `data-face-only` mark do not.
 - **New generated files and component internals.** `reference.tree.js`,
   `reference.index.html`, the `reference_tree` key of `site-build.json`, the
   components `page-lock.js` and `page-lock.css`, and the reader's new controls
@@ -112,11 +123,17 @@ Known open points are in the [open record](../../open/release-5.0.0-waits.md).
 | Rules | A report or message names a file by its full path from the repository root, as a link where the reader's tool opens links; a file outside the repository gets an absolute path | [Reporting completion](../../../rules/engineering/handoffs.md#reporting-completion) |
 | Rules | Before building supporting code, such as a harness, a judge or a run recorder, an agent writes the need in one sentence that names no experiment and reads the project's capability map. It uses code the map lists as `exists`; otherwise it adds the need to the map's list of needs seen but not built, stops and brings the person three options: build it once as a tool, build the minimum inside the experiment, or do not build. Each project keeps the map at `docs/CAPABILITY_MAP.md`: one table with the columns Need, Code, State and Imported by, and the list of needs seen but not built with the person's decisions | [Name the need first](../../../rules/engineering/code.md#name-the-need-first), [the capability map](../../../rules/engineering/code.md#the-capability-map) |
 | Rules | At each attempt an experiment's record gets one line with the running total: attempts, usable results, lines of supporting code and of its tests, and the person's minutes. The total counts the machinery, not the runs, seeds, controls or repetitions; it is information for the person, has no threshold and stops nothing, and an experiment is never weakened to shrink it. After every third finished experiment, or another interval the project names, and whenever the person asks, a fresh agent that only reads looks for needs solved more than once, work the person keeps doing by hand and what the totals show | [Show the total](../../../rules/experiments/workflow.md#show-the-total), [step back across experiments](../../../rules/experiments/workflow.md#step-back-across-experiments) |
+| Lint | New error: a chapter with more than one slide face, a face that does not open its chapter and a face outside every chapter, each with the page and the chapter. Lint reads the built pages; a face opens its chapter when nothing readable comes before it there | [Slide faces and decks](../../../rules/site/authoring.md#slide-faces-and-decks) |
+| Lint | New warning, which fails `--strict`: a number that a slide face shows and its chapter does not show outside the face, with the page, the chapter and the numbers. It needs no list from the project. Thousands separators, the Unicode minus, trailing zeros and a space before a percent sign do not make two numbers; numbering such as `01`, figure and table numbers, versions and digits after a letter are not counted. `data-face-only="<reason>"` on an element that holds exactly one number on a face accepts that number; lint prints the acceptance as a note, and a mark without one number, without a reason or no longer needed as a warning | [Slide faces and decks](../../../rules/site/authoring.md#slide-faces-and-decks), [module description](../../../tooling/slide_face_checks.py) |
+| Browser checks | `slideFaces(page, {within?})` measures faces where the page shows them, in a page at reader widths or in a deck: a stacked face's sideways overflow, text cut off by a box and parts that stick out of the face, as `problems`, besides the 16:9 fit. Per face it also reports `emptyBand`, the height of the largest empty band of the canvas, as information with no threshold. A face the page does not show has `shown: false`. New `assertSlideFaces(page, {within?, expectShown?})` fails with every problem. The kit's own browser review and the starter review call it at 1600 and 390 px | [Reusable browser checks](../../../rules/site/validation.md#reusable-browser-checks) |
+| Theme | Fix: in a chapter narrower than 520 px the slide face that opens it bled 22 px into a chapter body padded 14 px, so the chapter scrolled sideways by 8 px and cut the face's edges at phone width. The bleed now matches the padding | [Slide faces and decks](../../../rules/site/authoring.md#slide-faces-and-decks) |
+| Rules | A claim and its limit are one finding: the visual carries the claim and the face shows the limit second, smaller. Two findings that do not depend on each other do not share a title; the face takes the main one and the chapter keeps the other. A stacked face does not overflow sideways, cut text or let a part stick out | [Slide faces](../../../rules/writing/pages.md#slide-faces) |
+| Rules | Faces are checked in their page as well as in the deck, because page styles add space the deck lacks. A review by eye says for each face what draws the eye first and whether a band of the canvas is empty; "no band left over" and the designer's standard stay judgment with no number. The kit's lint checks the slide-face part of the numbers rule; the ledger of sources stays the project's | [Validation and review](../../../rules/site/validation.md#validation-and-review), [numbers and staleness](../../../rules/records.md#numbers-and-staleness) |
 | Configuration | New optional top-level settings `tooling_roots`, `capability_map` and `experiment_roots` turn on the capability map check. A wrong value, or `capability_map` or `experiment_roots` without `tooling_roots`, fails the build with a `site.toml:` error. With the check on, lint fails when the map is missing or untracked, when a tracked file or folder directly under a tooling root has no row, when a link in the map is dead wherever it lies, and when the generated Imported by column is out of date; a Python file under a tooling root that imports from an experiment folder is a warning. The new command `docsite.py capability-map` rewrites the Imported by column from Python imports. Without `tooling_roots` nothing is checked | [Capability map settings](../../../rules/site/authoring.md#capability-map-settings), [the check](../../../rules/engineering/code.md#the-check) |
 | Rules | An experiment's folder holds only that experiment's own code, inputs and records. Code that other experiments or tools reuse lives in the project's tooling or source tree, and is moved there before a second user imports it | [Where code lives](../../../rules/engineering/code.md#where-code-lives) |
-| Build output | Changed shared files get a new `?v=` query on every page that loads them: `base.css`, `chapter-reader.css`, `chapter-reader.js`, `filelinks.js` and `nav.js`. A locked bundle also holds `assets/page-lock.js` and `assets/page-lock.css` | [Authoring and configuration](../../../rules/site/authoring.md) |
+| Build output | Changed shared files get a new `?v=` query on every page that loads them: `base.css`, `chapter-reader.css`, `chapter-reader.js`, `filelinks.js`, `nav.js` and `slide-face.css`. A locked bundle also holds `assets/page-lock.js` and `assets/page-lock.css` | [Authoring and configuration](../../../rules/site/authoring.md) |
 | Starter | The starter's `site.toml` explains the listing and excludes `CLAUDE.md`, and carries the capability map settings commented out. The starter adds an empty `docs/CAPABILITY_MAP.md` with a short explanation, linked from `docs/index.md`, and its `AGENTS.md` gains the route "Building tooling, a harness or other supporting code". The guide's text on slide faces describes the layout as one example | [Automatic reference listing](../../../rules/site/authoring.md#automatic-reference-listing), [slide faces](../../../rules/writing/pages.md#slide-faces), [the capability map](../../../rules/engineering/code.md#the-capability-map) |
-| Kit checks | `requirements-lock.txt` pins `cryptography` 50.0.2 for the page-lock checks; the Pages workflow installs it. New checks: `tests/test_reference_listing.py`, `tests/test_capability_map.py`, `tests/test_page_lock.py`, the WebCrypto cross-check and two browser suites, `tests/test_reference_tree.cjs` and `tests/test_page_lock_browser.cjs` | [README](../../../README.md#develop-the-kit) |
+| Kit checks | `requirements-lock.txt` pins `cryptography` 50.0.2 for the page-lock checks; the Pages workflow installs it. New checks: `tests/test_reference_listing.py`, `tests/test_capability_map.py`, `tests/test_page_lock.py`, `tests/test_slide_face_checks.py`, the WebCrypto cross-check and two browser suites, `tests/test_reference_tree.cjs` and `tests/test_page_lock_browser.cjs`. `tests/test_browser_checks.cjs` now checks stacked slide faces at 390 px | [README](../../../README.md#develop-the-kit) |
 
 ## 4.0.0 — finished working documents, neutral theme names and group colours
 

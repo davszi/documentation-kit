@@ -2,6 +2,110 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Lint and browser checks for slide faces
+
+- Decision: deivid decided to build the slide-face checks in the kit before
+  the 5.0.0 release. Asked "Before or after?", he answered "before". The
+  capability map had listed them under "Seen but not built" with "Decision:
+  not taken".
+- Why: adaptation wrote its own test that every number on a face appears in
+  its chapter, two faces in one chapter built without a word, and six
+  stacking faults below 720 px were found only by eye, as that project's
+  session reported in
+  [the slide-face findings](open/upgrade-to-4.0.0-findings.md#tooling-a-project-had-to-build-itself-for-slide-faces).
+  `tooling/number_ledger.py` was removed on 2026-11-09 (`0550cbf`) because it
+  needed a hand-kept list and no project imported it, so the new check needs
+  no list from the project.
+- `tooling/slide_face_checks.py`, lint check 14, reads the built pages. A
+  chapter with more than one face, a face that does not open its chapter and
+  a face outside every chapter are errors. A number that a face shows and its
+  chapter does not show outside the face is a warning, which fails
+  `--strict`. `data-face-only="<reason>"` on an element holding exactly one
+  number accepts it as a note; a mark without exactly one number, without a
+  reason or no longer needed is a warning. The module's description lists
+  every normalisation and exemption. `slides.py` gains
+  `chapters_with_faces`, shared with the deck's chapter selection.
+- Trial before the rules were settled, with adaptation cloned and built with
+  this kit in a scratch folder, never in its checkout: the kit's site has 2
+  faces, the starter 2, adaptation at `e28472e` 33. The first version found
+  20 numbers in 4 warnings on adaptation, all false: text was joined across
+  inline elements, so "Mean error" followed by 3,975,163,966 read as a name
+  and then 975163966, and chapters' `noscript` fallbacks were skipped,
+  which hid a results table. Changed: text splits at every element, a
+  `noscript` fallback is read, and digits after a separator that does not
+  start a group of three are not read. Compared with adaptation's own test,
+  which passes, the check read 341 face numbers and that test 338; the only
+  numbers the test read and the check skipped were "step 50 of 200" and
+  similar, which an exemption for "Step" followed by a number had removed. The
+  exemption was dropped. Final result: 0 findings on all 37 faces. Inserting a
+  number the chapter lacks into each of adaptation's 33 faces gave 33
+  warnings. Older adaptation revisions built with this kit: `09ec123`, the
+  old/new comparison, gave 30 errors for its 30 chapters with two faces and no
+  number finding; `1b0b3f1` (36 faces) and `b6e9431` (30 faces) gave nothing.
+  No real number fault was found.
+- `slideFaces` in `tooling/browser_checks.cjs` now measures faces where the
+  page shows them, in a page or a deck, optionally inside one chapter, and
+  reports a stacked face's sideways overflow, text cut off by a box and parts
+  outside the face as `problems`, besides the 16:9 fit. `emptyBand`, the
+  height of the largest empty band of the canvas, is information with no
+  threshold. New `assertSlideFaces` fails on any problem. Tried at 390, 1024
+  and 1600 px on the same faces: every face at 390 px overflowed sideways by
+  8 px, a real fault of the kit. The face that opens a chapter bled 22 px into
+  a chapter body that is padded 14 px in a chapter 520 px wide or narrower,
+  so the chapter scrolled sideways and cut the face's edges.
+  `theme/components/slide-face.css` now bleeds 14 px there. Two false
+  findings were fixed in the helper: the deliberate bleed was compared with
+  the face's parent instead of the nearest box that cuts or scrolls, and an
+  SVG label in capitals whose glyph box passes the SVG's top by 1 to 2 px
+  counted as cut; a vertical cut now counts beyond a quarter of the line.
+  After the fixes: no problem on the kit, the starter or adaptation at
+  `e28472e` (99 measurements). On `09ec123` one real fault, the labels
+  "+13 · seed 0" and "+13 · seed 1" cut at the right edge of a face's SVG at
+  390 px; on `b6e9431` the face of the chapter adaptation-value does not fit
+  16:9 in the page at 1600 px, the fault that adaptation fixed in `a011651`.
+  Not tried: the six faults adaptation's session found by eye, because no
+  revision with them was identified.
+- `tests/own_site_review.cjs` and `tests/visual_review.cjs` assert every face
+  in its chapter at 1600 and 390 px. Reviewed by eye: both kit faces in their
+  chapters at 390 and 1600 px after the theme fix. Both edges of each stacked
+  face now show; the diagram draws the eye first on both faces, and no band of
+  either canvas is empty.
+- Rules: `rules/writing/pages.md` › Slide faces gains the sentences on a claim
+  and its limit and on a stacked face; `rules/site/validation.md` asks for
+  faces to be checked in their page, says what a review by eye states for each
+  face, and documents the helper; `rules/records.md` says lint checks the
+  slide-face part of the numbers rule and the ledger stays the project's;
+  `rules/site/authoring.md` › Slide faces and decks describes the lint checks
+  and the mark. No section anchor changed. Pages synced: build-a-site and
+  writing-practices; the starter record.
+- Records: the 5.0.0 release notes name the new lint error as a third reason
+  for the major release and list the checks; the 5.0.0 migration guide gains
+  "Settle the slide-face checks"; the capability map gains a row and the
+  owner's decision on both entries; the open findings mark items 1, 2, 3 and 7
+  as built.
+- Checks, after the last edit: `docsite.py build`, `lint --strict` (0
+  warnings) and `build --check-reader` (5 reader pages) on the kit;
+  `DOCS_REQUIRE_BROWSER=1 bash tests/run_checks.sh` exits 0 with 288 Python
+  tests, 27 of them new, and six browser suites.
+
+## 2026-11-15 — Four confirmations by deivid
+
+- The case "when a running job depends on files the work would change" in
+  [parallel work](../rules/engineering/delivery.md#parallel-work), released in
+  4.0.0 and added by the kit owner without asking, stays. deivid: "Keep it".
+- Wide chapter figures on slide faces are settled: the rule that a chapter's
+  figures are material for a face already resolves it, and no sentence is
+  added. deivid: "Yes, settled".
+- A claim and its limit count as one finding. Asked which of three options,
+  deivid answered "first": the visual carries the claim and shows the limit
+  second, smaller but on the face; two independent findings do not share a
+  title. Written into [slide faces](../rules/writing/pages.md#slide-faces).
+- The standards without a measure stay judgment: "no band left over" and the
+  designer's standard get no number. Asked "Keep both as judgment, with no
+  number?", deivid answered "yes". Written into
+  [validation and review](../rules/site/validation.md#validation-and-review);
+  the browser check's empty band is information with no threshold.
+
 ## 2026-11-15 — Capability map, need first, running totals and a step-back review
 
 - Evidence, read by deivid in ADP on 2026-11-15: ADP built 10,125 lines of
