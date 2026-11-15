@@ -48,9 +48,11 @@ These are known on 2026-11-15 and are not fixed in 5.0.0:
 - **Raw HTML on registered pages.** Only automatically listed pages are
   filtered for raw HTML. A `[[source_pages]]` file can still carry a script or
   load outside content.
-- **One browser.** The browser suites run in Chromium only. Firefox, Safari,
-  real phones and screen readers are not tested, for the Presentation view,
-  the Reference tree or the page lock.
+- **Browsers.** The kit's checks run in Chromium only. The page lock's
+  browser suite was also run by hand in Firefox 153 and WebKit 26.5 on Linux
+  and passes there. Safari on macOS or iOS, real phones and screen readers are
+  not tested, and the Presentation view and the Reference tree outside the
+  lock suite were run in Chromium only.
 - **The kit's own example faces.** The four slide faces of the kit, one on
   "Get started", one on "Build a site" and two on the starter guide, still
   follow the old prescribed arrangement. The

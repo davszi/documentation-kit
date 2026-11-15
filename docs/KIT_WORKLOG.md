@@ -2,6 +2,19 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Page lock run in Firefox and WebKit
+
+- deivid asked why the lock was tested in Chromium only. The kit installs
+  only Chromium for Playwright, and nobody had installed the other engines.
+- The lock's browser suite takes `DOCS_BROWSER` now, default `chromium`. In
+  Firefox 153 it passes after one fix: a fragment landed too low because
+  Firefox scrolled before the rewritten page's image and frame had loaded.
+- WebKit needed two system libraries, which deivid installed
+  (`libgstreamer-plugins-bad1.0-0`, `libavif16`). The kit owner then ran the
+  suite with `DOCS_BROWSER=webkit`: it passes in WebKit 26.5, exit 0.
+- The Limits text of the lock rule and the open record say what is tested in
+  which engine. Safari on macOS or iOS stays untested.
+
 ## 2026-11-15 — Full paths in reports
 
 - deivid asked in ADP's session for a kit rule, after a report had named

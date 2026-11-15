@@ -258,8 +258,9 @@ authenticated data. `tooling/page_lock.py` encrypts;
   same browser suite passes in the Firefox 153 that Playwright 1.62.1 installs
   on Linux: unlocking, the Reference tree after the page is rewritten,
   Markdown opened as text, fragments, the Presentation view, back and forward,
-  remembered keys across publishes, and pages opened from disk. WebKit, the
-  engine behind Safari, could not start on the test machine for lack of system
-  libraries, so the lock is untested in WebKit. Safari on macOS or iOS is not
-  WebKit on Linux and is untested as well. Safari may delete remembered keys of
-  a site that a reader has not visited for some days; that is untested too.
+  remembered keys across publishes, and pages opened from disk. With
+  `DOCS_BROWSER=webkit` it also passes in the WebKit 26.5 of that Playwright
+  version on Linux. WebKit is the engine behind Safari, but Safari on macOS or
+  iOS is not WebKit on Linux and is untested. Safari may delete remembered
+  keys of a site that a reader has not visited for some days; that is untested
+  too.
