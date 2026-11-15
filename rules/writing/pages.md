@@ -16,6 +16,8 @@ Navigation follows prerequisite order. Important comparisons have direct entries
 
 Use available width. Text, figures and tables share a left edge. Avoid narrow centered text columns and half-empty rows. Expressive details may include short transitions, rich syntax colors, gradient hairlines and hover emphasis; they must respect reduced motion and accessibility.
 
+Be visually ambitious, in chapters and on slide faces alike. Give each claim the most telling picture its content allows, and choose the form for that claim: a drawing of the mechanism, several small plots side by side, an annotated figure, a diagram beside a decisive number, a matrix, a timeline. Vary the forms across a page; a page whose chapters all show the same kind of figure has not looked for the better one. The limits are honesty, readable labels and accessibility: a picture shows only what the chapter states and its evidence supports. Caution is not a limit. A figure that works may still be improved, and improving it in the chapter is part of the work.
+
 ### Project-owned homepages
 
 Each project chooses its homepage composition, information hierarchy, sections,
@@ -60,11 +62,11 @@ One `bs-board` holds current status: Done, Decided, Passed, Open or Parked. Use 
 
 ## Slide faces
 
-A chapter may open with one slide face: a 16:9 summary that states the chapter's takeaway with one visual. The full chapter follows it and remains the complete, end-to-end readable source. A reader skimming slides sees the argument; a reader continuing sees every definition, qualification and piece of evidence.
+A chapter may open with one slide face: a 16:9 summary that states the chapter's takeaway and shows it. The full chapter follows it and remains the complete, end-to-end readable source. A reader skimming slides sees the argument; a reader continuing sees every definition, qualification and piece of evidence.
 
 Slide faces are added when a person wants them. Build the page's chapters first. Then ask the person whether the page should get slide faces, and add none without a yes. A delegated page author hands the question to the delegating agent with its completion report.
 
-A face earns its place by its visual. Make each one a slide worth presenting on its own: one finding, a visual that fills the canvas and shows that finding, and labels a person can read from the back of a room.
+A face earns its place by its visual. Make each one a slide worth presenting on its own: one finding, shown by visuals that fill the canvas, with labels a person can read from the back of a room. The limit is on the message, not on the picture: a face makes one point, and any number of visual parts may carry it.
 
 Design each face for its own content. Decide what the finding is and what shape its evidence has: a comparison, a sequence, a trend, parts of a whole, one decisive number, a place on a drawing. That shape sets the layout. No arrangement is prescribed, and two faces of a page share one only when their content has the same shape. A face may be one figure across the whole canvas with labels on its parts, a figure with a few points beside it, a row of steps above two conclusions, a matrix, or pictures in columns with a caption each.
 
@@ -83,14 +85,14 @@ The shared slide components, such as ruled points, a facts row, tiles, chips and
 A review of existing faces sorts each one into three groups and gives the reason: a face without a real visual, or on a chapter with nothing to show, is redrawn or removed; a face with a real visual whose layout is below this standard, or repeats its neighbours' without the same shape of content, is redesigned; the others stay.
 
 - The title states the finding as a sentence, not a topic. The eyebrow names the subject without a chapter number; the reader card and extracted deck supply numbers.
-- Use one visual that shows the finding: the chapter's figure, plot or diagram, a figure beside headline measurements, or a project-local drawing. Show the chapter's own figure when it shows the finding. When it does not show the finding well enough for a slide, improve the figure in the chapter and show that one. Where the chapter states the numbers only in a table or in text, the face may draw them, and the drawing uses those numbers and no others. When the chapter has neither a figure nor numbers to draw, [make a figure](figures.md#figures-and-comparisons) for the chapter first.
+- Show the finding in the most striking honest way the content allows: one large figure, several small ones side by side, a figure beside a decisive number, a drawing of the mechanism. The chapter's figures and numbers are the material. A face may crop, split, combine, annotate or redraw the chapter's figures, and may draw numbers the chapter states only in a table or in text; it uses the chapter's numbers and no others. Repeating a chapter figure unchanged is the fallback, not the default. When a chapter figure is not good enough for a slide, improve it in the chapter as well. When the chapter has neither a figure nor numbers to draw, [make a figure](figures.md#figures-and-comparisons) for the chapter first.
 - Text and text boxes sit where the face's layout puts them, beside, below or on the visual: tiles, chips, numbered steps and short notes explain it, name its parts and carry its numbers. Compose them with the visual as on a professional slide, in one clear layout. Boxes do not replace the visual: a face whose main area only repeats the title and lead in boxes is removed. The arrangement of boxes is itself the visual in two cases: the terms of a formula the chapter explains, and a grid that compares options factor by factor.
 - A chapter with nothing to show gets no face. A page may have faces on some chapters and none on others.
 - The visual and its text fill the canvas between the title and the scope line. A face that is half empty has a visual that is too small or does not need to exist. Draw the eye to the finding: the accent marks the result, everything else stays neutral, and labels sit on the parts they name.
 - End with a scope line saying what the numbers cover and what remains unmeasured. Caveats that change a claim's meaning belong on the slide, not only in the chapter.
 - No fact exists only on a slide. Every number and claim on it is stated, with its evidence, in the chapter below; update both in the same edit. This is the one sanctioned repetition of a fact: the slide is a view of the chapter, never its owner.
 - Keep the canvas uncrowded. A face that does not fit 16:9 has too much content for one slide; move detail into the chapter instead of shrinking type. Below 720 px the face stacks into a readable column.
-- Slide figures are views of numbered chapter figures; they carry a short caption without a new number.
+- A figure on a face gets a short caption without a new number; a figure taken from the chapter may name the chapter figure it comes from.
 - Give each tone one meaning across all of a project's slides: the accent and warm tones identify the compared methods, `is-alert` marks failures and warnings, `is-held` marks held-out, hidden or pending items, and everything else stays neutral.
 
 ## Completion and review

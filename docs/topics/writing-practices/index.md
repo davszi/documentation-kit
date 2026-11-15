@@ -600,7 +600,7 @@ In a flow, keep arrow labels to about 12 characters and box titles to about 30. 
 
 <!-- fold: code Slide face details -->
 
-- **One face per chapter.** A chapter may open with a single 16:9 slide face that states its takeaway with one visual. The chapter that follows stays the complete source and reads end to end without the slide.
+- **One face per chapter.** A chapter may open with a single 16:9 slide face that states its takeaway and shows it; the face makes one point, and any number of visual parts may carry it. The chapter that follows stays the complete source and reads end to end without the slide.
 - **Added on request, after the chapters.** The page's chapters are built first. Then the author asks the person whether the page should get slide faces and adds none without a yes. An author working for another agent passes that question back with its completion report.
 - **A real visual.** A face earns its place by its visual and should be worth presenting on its own: one finding, a visual that shows it and fills the canvas below the lead, and labels readable from the back of a room. The visual is the chapter's own figure, plot or diagram, a figure beside headline measurements, or a project-local drawing. When the chapter has no figure yet, the author makes one for the chapter first.
 - **Text beside the visual, not instead of it.** Tiles, chips, numbered steps and short notes explain the visual, name its parts and carry its numbers, composed with it in one clear layout as on a professional slide. A face whose main area only repeats the title and lead in boxes is removed. The boxes count as the visual only for the terms of a formula the chapter explains or a grid that compares options factor by factor.

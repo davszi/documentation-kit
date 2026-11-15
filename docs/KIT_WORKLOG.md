@@ -2,6 +2,32 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Visual ambition for chapters and slide faces
+
+- deivid asked whether the slide wording forces agents to make single
+  figures: "i want them to be as visually creative as possible not limit
+  them", and then "visually creastive as possiblei m eant in general for
+  slides and chapter content".
+- Four phrases did limit them: a face "with one visual", "Use one visual",
+  the chapter's own figure first, and "Slide figures are views of numbered
+  chapter figures". Ten of adaptation's redesigned faces share one skeleton,
+  a wide chapter figure above one row of text.
+- `rules/writing/pages.md`, page design: a new paragraph asks for the most
+  telling picture each claim allows, in chapters and on faces, varied across
+  a page, limited by honesty, readable labels and accessibility and not by
+  caution. Slide faces: the limit is one finding, not one visual; the
+  chapter's figures and numbers are material that a face may crop, split,
+  combine, annotate or redraw; repeating a chapter figure unchanged is the
+  fallback. The requirement that a slide figure is a view of a numbered
+  chapter figure is dropped. `rules/writing/figures.md` points to the
+  paragraph.
+- This replaces the sentence of the entry "Slide faces: the chapter's figure
+  first, drawings from its numbers allowed", which had put the chapter's own
+  figure first.
+- One sentence of the kit's writing-practices page is synced. The 5.0.0
+  release notes list the change. Not reviewed independently.
+- Checks: build and strict lint.
+
 ## 2026-11-15 — Slide faces: the chapter's figure first, drawings from its numbers allowed
 
 - Adaptation's session sent its proposals on deivid's word, with his

@@ -2,7 +2,7 @@
 
 ## Figures and comparisons
 
-A visual must answer an actual understanding or evidence need. Prefer a worked construction, comparison or counterexample; do not add a decorative plot because a formula exists.
+A visual must answer an actual understanding or evidence need. Prefer a worked construction, comparison or counterexample; do not add a decorative plot because a formula exists. Within that, aim high: a visual that only repeats the text has not earned its place either, and the page-design guide asks for the [most telling picture](pages.md#page-design) each claim allows.
 
 Use diagrams for structure, ownership, flow or sequence. Label the relevant
 objects and transitions in place. Use tables for exact lookup and comparison of
