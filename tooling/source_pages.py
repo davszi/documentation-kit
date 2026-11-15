@@ -119,10 +119,10 @@ REFERENCE_ERROR = "site.toml: reference_listing must be true or false"
 DEFAULT_ROOTS = ("docs",)
 ROOTS_ERROR = ('site.toml: reference_roots must list distinct folders or Markdown files of the project, '
                'such as ["docs", "experiments", "README.md"]')
-EXCLUDE_REMOVED = ('site.toml: reference_exclude was removed in kit 6.0.0; the Reference section now lists only '
+EXCLUDE_REMOVED = ('site.toml: reference_exclude was removed in kit 5.1.0; the Reference section now lists only '
                    'what reference_roots names, by default ["docs"]. Delete the setting. To keep a file of a '
                    'listed folder off the site, name it in [publication] private_prefixes. See "Name the '
-                   'folders the Reference section lists" in the kit\'s docs/topics/releases/migrations/6.0.0.md')
+                   'folders the Reference section lists" in the kit\'s docs/topics/releases/migrations/5.1.0.md')
 
 
 def reference_settings(site: dict) -> tuple[bool, tuple[str, ...]]:

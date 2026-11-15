@@ -17,11 +17,11 @@ does, and this record with its route when the last one goes.
 - **ADP with the automatic listing.** ADP's tracked files hold about 6.6 GB
   (6,591,531,630 bytes in the local checkout on 2026-11-15), and its site
   has not been built with the automatic listing on. Only its 331 tracked
-  Markdown files were used, in a scale test of the 5.0.0 default. From 6.0.0
+  Markdown files were used, in a scale test of the 5.0.0 default. From 5.1.0
   the default lists `docs/` only; ADP's 230 experiment records are listed
   when it names `experiments`. Closes at ADP's upgrade, which starts with
   the first step of the
-  [6.0.0 migration guide](../topics/releases/migrations/6.0.0.md).
+  [5.1.0 migration guide](../topics/releases/migrations/5.1.0.md).
 
 ## Known limits, not fixed
 

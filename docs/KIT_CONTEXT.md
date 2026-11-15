@@ -34,7 +34,7 @@ owns the shared panel switcher's authoring, behavior and extraction checks.
 
 [Releases and upgrades](topics/releases/releases.md) owns version notes and
 consumer migration steps; `VERSION` holds the current version.
-The current release is 6.0.0. Its [migration guide](topics/releases/migrations/6.0.0.md)
+The current release is 5.1.0. Its [migration guide](topics/releases/migrations/5.1.0.md)
 covers the Reference section, which now lists only `docs/`, or the folders a
 project names in `reference_roots` instead. The [5.0.0 guide](topics/releases/migrations/5.0.0.md)
 covers the automatic Reference listing, private source pages that `publish` now refuses, the removed path

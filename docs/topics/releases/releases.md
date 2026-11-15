@@ -26,27 +26,26 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
-## 6.0.0 — the Reference section lists named folders only
+## 5.1.0 — the Reference section lists named folders only
 
-6.0.0 is a major release under
-[what a version number promises](#what-a-version-number-promises) for one
-reason: it removes the configuration key `reference_exclude`, which 5.0.0
-added to the stable interfaces. A `site.toml` that names it fails the build
-with a message that points to the replacement.
+5.1.0 is a minor release by deivid's decision of 2026-11-15: "this is a
+pretty small thing for 6.0". It removes the configuration key
+`reference_exclude`, which 5.0.0 added to the stable interfaces; under
+[what a version number promises](#what-a-version-number-promises) a removal
+makes a release major. The exception rests on one fact: no known project had
+moved to 5.0.0 when 5.1.0 was prepared, so no project that passed before
+fails now. A `site.toml` that names `reference_exclude` fails the build with a
+message that points to the replacement.
 
 What changes for a project:
 
 - **The Reference section lists `docs/` only by default.** 5.0.0 listed every
   tracked Markdown file of a project, so a new folder with Markdown was
-  published unless the project remembered to exclude it. From 6.0.0 the
+  published unless the project remembered to exclude it. From 5.1.0 the
   [automatic reference listing](../../../rules/site/authoring.md#automatic-reference-listing)
   takes the tracked Markdown files under `docs/`, or under the folders and
-  files a project names instead.
-  Root files such as `README.md` and `AGENTS.md` are no longer listed unless
-  named. deivid decided it on 2026-11-15: he had meant the listing for
-  `docs/`, and chose "docs plus named" over `docs/` alone because most records
-  of two projects lie outside it: 230 of ADP's 329 tracked Markdown files are
-  under `experiments/`, and 61 of adaptation's 84 under `studies/`.
+  files a project names instead. Root files such as `README.md` and
+  `AGENTS.md` are no longer listed unless named.
 - **New setting `reference_roots`.** It names the folders and single Markdown
   files that are listed, as plain paths from the project root; its default is
   `["docs"]`. It joins the stable interfaces as a configuration key. An entry
@@ -56,16 +55,13 @@ What changes for a project:
   table. `reference_listing = false` works as before.
 
 No other command, flag, configuration key or marker changes, and no section
-anchor under `rules/` is removed or renamed. No known project had moved to
-5.0.0 when 6.0.0 was prepared.
-
-The [6.0.0 migration guide](migrations/6.0.0.md) has one content step. A
-project on 4.0.0 follows the 5.0.0 guide without its two Reference sections
-and then the 6.0.0 guide, and pins `v6.0.0` directly.
+anchor under `rules/` is removed or renamed. The
+[5.1.0 migration guide](migrations/5.1.0.md) has one content step and says
+how a project on 4.0.0 combines it with the 5.0.0 guide.
 
 ## 5.0.0 — Reference section by default, page lock and Presentation view
 
-[6.0.0](#600--the-reference-section-lists-named-folders-only) narrows the
+[5.1.0](#510--the-reference-section-lists-named-folders-only) narrows the
 listing default described here to `docs/` and removes `reference_exclude`.
 
 5.0.0 is a major release under

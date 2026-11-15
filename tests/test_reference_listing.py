@@ -44,8 +44,8 @@ class Settings(unittest.TestCase):
     def test_the_removed_exclude_setting_fails_and_names_its_replacement(self):
         with self.assertRaises(ValueError) as raised:
             reference_settings({'reference_exclude': []})
-        for part in ('reference_exclude was removed in kit 6.0.0', 'reference_roots', 'private_prefixes',
-                     'migrations/6.0.0.md'):
+        for part in ('reference_exclude was removed in kit 5.1.0', 'reference_roots', 'private_prefixes',
+                     'migrations/5.1.0.md'):
             self.assertIn(part, str(raised.exception))
 
     def test_route_base_is_path_shaped(self):
@@ -204,11 +204,11 @@ class ReferenceListing(Project):
         self.settings('reference_exclude = ["CLAUDE.md"]')
         result = self.build()
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn('site.toml: reference_exclude was removed in kit 6.0.0', result.stderr)
+        self.assertIn('site.toml: reference_exclude was removed in kit 5.1.0', result.stderr)
         self.assertNotIn('Traceback', result.stderr)
         lint = invoke('lint', '--project', self.root)
         self.assertNotEqual(lint.returncode, 0)
-        self.assertIn('reference_exclude was removed in kit 6.0.0', lint.stdout + lint.stderr)
+        self.assertIn('reference_exclude was removed in kit 5.1.0', lint.stdout + lint.stderr)
 
     def test_reference_listing_false_equals_the_explicit_registry_alone(self):
         self.settings('reference_listing = false')
