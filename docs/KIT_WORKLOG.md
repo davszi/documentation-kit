@@ -2,6 +2,24 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Release 5.1.0
+
+- deivid gave the go: "oke lets move and release and clean up". The ask
+  named what the go covers: moving `main` to the release state, the tag
+  `v5.1.0` and the push of `main` and the tag, which publishes the kit's own
+  site. It gave the size: 6 commits on `main`, 27 files changed, 806 lines
+  added and 174 removed, a migration guide of 695 words and the snapshot
+  `examples/global-agent-context.md` of 1,817 words, which becomes public.
+- 5.1.0 holds the two changes of the entries below: the Reference section
+  lists named folders only, and the optional snapshot of the owner's global
+  agent instructions. Both were reviewed independently; neither review found
+  a blocker, and their findings are fixed. The fixes from the second review
+  were not reviewed again.
+- This commit adds only this entry. Checks on it: `build`, `lint --strict`
+  and `build --check-reader` of the kit pass, and
+  `DOCS_REQUIRE_BROWSER=1 bash tests/run_checks.sh` passes with 353 Python
+  tests and seven browser suites.
+
 ## 2026-11-15 — An optional snapshot of the owner's global agent instructions
 
 - Why: deivid asked for it in the 5.1.0 release: "we could add an optional
