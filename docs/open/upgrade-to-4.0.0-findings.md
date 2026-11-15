@@ -206,6 +206,20 @@ here beyond the two items already listed above.
 6. **Home card picture.** A card falls back to the first image of the page
    body. Removing a face changed a card silently; nothing warns when the
    fallback picture changes or disappears.
+7. **A face that fits in the deck can fail on the page.** Page styles add
+   space around images, so the validation guide should ask for the check in
+   the page at reader widths, not only in the deck.
+
+Settled from this list on 2026-11-15, in deivid's words to adaptation's
+session: "i think we can always try to improve our visualizations and you may
+ofc draw them from tables but we should try to use drawings already in the
+chapter and if u feel like I didnt do a good enouggh job maybe we should
+update iti nt he first place?". The slide-face rule now says: the chapter's
+own figure comes first; a figure that is not good enough for a slide is
+improved in the chapter; numbers the chapter gives only in a table or in text
+may be drawn on the face. Still open in the rule: a wide figure against "share
+a layout only for the same shape of content", a title that holds two findings,
+and the standards without a measure.
 
 ## Decided and still owed
 

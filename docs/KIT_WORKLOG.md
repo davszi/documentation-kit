@@ -2,6 +2,24 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Slide faces: the chapter's figure first, drawings from its numbers allowed
+
+- Adaptation's session sent its proposals on deivid's word, with his
+  direction on face drawings: use the drawings a chapter already has, improve
+  the chapter's figure when it is not good enough, and drawing from a table is
+  allowed.
+- `rules/writing/pages.md`, slide faces: the sentence that forbade "a second
+  version of the same data" is replaced. A face shows the chapter's own
+  figure when it shows the finding; a figure that falls short is improved in
+  the chapter; numbers stated only in a table or in text may be drawn on the
+  face, using those numbers and no others.
+- The proposals' tooling items stay in
+  `docs/open/upgrade-to-4.0.0-findings.md`, with one added: a face that fits
+  in the deck can fail on the page.
+- The rule sentence follows adaptation's reading of deivid's words; deivid
+  has not confirmed the wording. Not reviewed independently.
+- Checks: build and strict lint.
+
 ## 2026-11-15 — Slide-face tooling gaps reported by adaptation
 
 - Adaptation's session listed what the project had to build or catch itself
