@@ -2,6 +2,43 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — An optional snapshot of the owner's global agent instructions
+
+- Why: deivid asked for it in the 5.1.0 release: "we could add an optional
+  choice for the person to add/override their global context with a
+  snapshot of mine", then "add the snapshot just remove the personal thingas"
+  and "the agent should also keep prompting the user if they want it if its
+  not already overlaping until the users says no".
+- `examples/global-agent-context.md` is his global agent file of 2026-11-15,
+  1,754 words, with three passages changed: his user name, twice, and his
+  full name with e-mail address now read "the user". Nothing else is
+  removed; a first line marks the file as a snapshot and names what it
+  assumes: the Caveman plugin, the Graphify skill and the owner's models.
+- No command was built. The need is to let a person add the file or replace
+  theirs with it; two shell lines in the README do that, the second keeping
+  the old file. `README.md#optional-the-owners-global-agent-instructions`
+  owns the description and the offer rule.
+- The offer: an agent asks once per session until the person says yes or
+  no. It does not ask when the person's global instructions already hold
+  the snapshot, by its first line or most of its headings, so the owner's
+  own file is not asked about. It writes nothing before a yes. On a no it
+  says that it records the answer and adds one line to the global file;
+  that line is the only place a no can last across sessions and agents.
+- The offer reaches agents through a section of the starter's `AGENTS.md`.
+  An existing project copies it in an optional step of the 5.1.0 guide; its
+  owner decides. The kit's own `AGENTS.md` does not carry it.
+- The file is under `examples/`, outside `reference_roots`, and not named
+  `AGENTS.md`, so the kit's site does not list it and no agent loads it
+  from the kit's folder.
+- `tests/test_global_context_snapshot.py` fails when the snapshot holds an
+  e-mail address or a home folder path, or when the README section or the
+  routes to the file are gone.
+- Not reviewed by an independent reviewer. Whether agents ask as described
+  is not tested; it rests on the agent following the starter's section.
+- Checks: `build`, `lint --strict` and `build --check-reader` of the kit
+  pass, and `DOCS_REQUIRE_BROWSER=1 bash tests/run_checks.sh` passes with 353
+  Python tests and seven browser suites.
+
 ## 2026-11-15 — The Reference section lists named folders only; prepare 5.1.0
 
 - Why: after the release of 5.0.0 deivid asked whether the Reference section

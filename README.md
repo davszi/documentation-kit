@@ -58,6 +58,39 @@ files and private-source policy. See
 The optional [page lock](rules/site/publication.md#page-lock) stores the
 bundle's page text encrypted behind two passwords.
 
+## Optional: the owner's global agent instructions
+
+[`examples/global-agent-context.md`](examples/global-agent-context.md) is a
+snapshot of the kit owner's global agent instructions with personal details
+removed: how agents report, delegate, commit, ask and check facts in every
+project. The kit does not load it and no rule depends on it. A person may add
+it to their own global agent file or replace theirs with it. Codex reads
+`~/.codex/AGENTS.md`; Claude Code reads `~/.claude/CLAUDE.md`. From the
+project root, with `target` set to that file:
+
+```bash
+cat .docs-kit/examples/global-agent-context.md >> "$target"   # add
+```
+
+```bash
+cp "$target" "$target.before-kit-snapshot" && cp .docs-kit/examples/global-agent-context.md "$target"   # replace, keeping the old file
+```
+
+The global file steers every project on the machine, so the choice is the
+person's, not the project's. An agent in a project whose `AGENTS.md` asks for
+it offers the snapshot:
+
+- It asks once per session whether the person wants to add it, replace their
+  file with it, or neither, until the person says yes or no.
+- It does not ask when the person's global instructions already hold the
+  snapshot, shown by its first line or by most of its section headings, or
+  hold the line that declines it.
+- On a yes it shows what will change and then runs the command for the
+  chosen way. It writes nothing to the global file before that yes.
+- On a no it tells the person that it records the answer, and adds the line
+  `Documentation kit global-context snapshot: declined.` to the global file,
+  so that no later session asks again.
+
 ## Ownership
 
 | Shared kit | Each project |
