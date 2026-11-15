@@ -47,42 +47,18 @@ and `capability_map.py`. Node scripts under `tests/` load
 
 ## Seen but not built
 
-Each entry is a need that was noticed and not built, with the person's
-decision. An entry without a decision says where the question waits.
+Each entry is a need that was noticed and not built, with the decision. An
+entry without a decision says where the question waits. Seen 2026-11-15 in
+adaptation's report on its slide faces; decided 2026-11-15 by the kit's
+maintaining session, not by deivid, which deivid allowed with "you can
+settle them but with evaling if its worth even adding cuz we're bloating the
+docs":
 
-- Check that every fact on a slide face appears in its chapter. Seen
-  2026-11-15: a consuming project wrote its own test that compares the numbers
-  on a face with its chapter, in
-  [the slide-face findings](open/upgrade-to-4.0.0-findings.md#tooling-a-project-had-to-build-itself-for-slide-faces).
-  Decision 2026-11-15 by deivid: build it in the kit before the 5.0.0
-  release; asked "Before or after?", he answered "before". Built for numbers,
-  as a lint warning in `slide_face_checks.py`; claims and other words are not
-  checked.
-- Check that a page has at most one slide face per chapter, and check faces
-  below 720 px. Seen 2026-11-15 in the same report. Decision 2026-11-15 by
-  deivid: build both in the kit before the 5.0.0 release, as above. Built as a
-  lint error in `slide_face_checks.py` and as the stacked-face measurements of
-  `slideFaces` in `browser_checks.cjs`.
 - Warn when the picture of a home-page card changes because a page's first
-  image changed. Seen 2026-11-15 in the same report. Decision: not taken; the
-  question waits in [the findings record](open/upgrade-to-4.0.0-findings.md#questions-for-deivid).
+  image changed. Decision: not built; the review by eye covers it.
 - Put a chapter's figure on its slide face without a second copy of the
-  figure. Seen 2026-11-15 in the same report: a project wrote a second
-  fragment through `slide_svg`. Decision: not taken; the question waits in the
-  same record.
+  figure: a project wrote a second fragment through `slide_svg`. Decision:
+  not built; a face may redraw the chapter's figure.
 - Let a project's own slide classes win over the shared canvas rules without
-  `!important` on every declaration. Seen 2026-11-15 in the same report.
-  Decision: not taken; the question waits in the same record.
-- Check that a link written as HTML to a repository file resolves. Seen
-  2026-11-09 and 2026-11-10. Decision 2026-11-15 by deivid: add it to 5.0.0;
-  his word: "add it". Built as a lint error in `lint.py`, which reads the
-  source links the build marks in the built pages; the row "Check links, HTML
-  links to repository files included, …" covers it.
-- Check that every formula on a project's built pages compiles. Seen
-  2026-11-15: a consuming project, ADP, keeps its own test that compiles every
-  formula of its built pages with the kit's KaTeX and fails on one that does
-  not compile or that Markdown split. Decision 2026-11-15 by deivid: "lets
-  move it to kit". Built as a lint error in `formula_checks.py`, which finds
-  the formulas in Python and compiles them in Node with
-  `formula_compile.cjs`; without Node it is a note, or an error when the
-  project sets `formula_check_required = true`.
+  `!important` on every declaration. Decision: not built; the rule keeps
+  `!important`.

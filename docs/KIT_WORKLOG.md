@@ -2,6 +2,24 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Settle the nine questions of the upgrades to 4.0.0
+
+- Why: `docs/open/upgrade-to-4.0.0-findings.md` held nine questions for
+  deivid. On the first he said: "i think its is low importance asking or not
+  is fine", so no rule changed. On the rest: "you can settle them but with
+  evaling if its worth even adding cuz we're bloating the docs". The kit's
+  maintaining session settled them; these are its choices, not deivid's,
+  except the user name in a path.
+- Nothing added: which finished experiments the run-output rule covers; "no
+  two faces share a layout" holds per page, as written; a face title states
+  the finding, as written; a face may redraw the chapter's figure;
+  `!important` on project slide classes and the home card picture stay under
+  "Seen but not built" in the [capability map](KIT_CAPABILITY_MAP.md).
+- Changed: the tone rule, see the next entry; the user name in a path, on
+  deivid's word "username we dont do".
+- The record keeps only the owed trial of the slide-face rule on adaptation's
+  faces. The capability map drops four needs that are built and have rows.
+
 ## 2026-11-15 — Apply deivid's rule decisions and correct rule wording
 
 - User names: deivid said "username we dont do". [Page design](../rules/writing/pages.md#page-design)
