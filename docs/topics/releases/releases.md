@@ -40,7 +40,8 @@ What changes for a project:
   tracked Markdown file of a project, so a new folder with Markdown was
   published unless the project remembered to exclude it. From 6.0.0 the
   [automatic reference listing](../../../rules/site/authoring.md#automatic-reference-listing)
-  takes the tracked Markdown files under `docs/` and what the project names.
+  takes the tracked Markdown files under `docs/`, or under the folders and
+  files a project names instead.
   Root files such as `README.md` and `AGENTS.md` are no longer listed unless
   named. deivid decided it on 2026-11-15: he had meant the listing for
   `docs/`, and chose "docs plus named" over `docs/` alone because most records

@@ -176,9 +176,18 @@ class ReferenceListing(Project):
         lint = invoke('lint', '--project', self.root, '--strict')
         self.assertEqual(lint.returncode, 0, lint.stdout + lint.stderr)
         for entry in ('experiments', '.github'):
-            self.assertIn(f"NOTE: reference page listing: reference_roots entry '{entry}' holds no tracked "
+            self.assertIn(f"NOTE: reference page site.toml: reference_roots entry '{entry}' holds no tracked "
                           'Markdown file that can be listed', lint.stdout)
         self.assertNotIn("entry 'docs'", lint.stdout)
+
+    def test_a_root_whose_only_file_is_registered_gets_no_note(self):
+        self.settings('reference_roots = ["docs", "drafts"]')
+        self.config.write_text(self.config.read_text() + '\n[[source_pages]]\nsource = "drafts/idea.md"\nslug = "idea"\n')
+        self.assertEqual(self.build().returncode, 0)
+        self.assertEqual(self.routes()['idea.html'], 'drafts/idea.md')
+        lint = invoke('lint', '--project', self.root, '--strict')
+        self.assertEqual(lint.returncode, 0, lint.stdout + lint.stderr)
+        self.assertNotIn('reference_roots entry', lint.stdout)
 
     def test_invalid_settings_fail_with_a_clear_message(self):
         self.settings('reference_listing = "yes"')

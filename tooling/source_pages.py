@@ -6,9 +6,9 @@ A project registers an existing, tracked Markdown file under a public route:
     source = "rules/engineering/git.md"
     slug = "git"
 
-By default every other tracked Markdown file is listed too, under a route
-derived from its path (`automatic_pages`). `reference_listing = false` in
-site.toml turns that off; `reference_roots` names the folders and files that are listed, by default `docs`.
+Every other tracked Markdown file under `reference_roots`, by default `docs`,
+is listed too, under a route derived from its path (`automatic_pages`).
+`reference_listing = false` in site.toml turns that off.
 An automatically listed page never fails the build: what a registered page
 would reject is rendered tolerantly and returned as a note. Its raw HTML keeps
 only the tags and attributes of `ADMITTED_HTML` (`ListedHtml`).
@@ -219,14 +219,17 @@ def automatic_pages(site: dict, root: Path, tracked: frozenset[Path], explicit: 
         if path.suffix != ".md" or not path.is_relative_to(root):
             continue
         source = path.relative_to(root).as_posix()
-        if source in registered or any(parent in tracked for parent in path.parents):
+        homes = [entry for entry in roots if source == entry or source.startswith(entry + "/")]
+        if source in registered:
+            used.update(homes)  # the entry has a page, through its table
+            continue
+        if any(parent in tracked for parent in path.parents):
             continue  # a tracked parent is a gitlink: the file belongs to a submodule
         if kit is not None and kit != root and path.is_relative_to(kit):
             continue
         if any(part.startswith(".") for part in source.split("/")):
             continue  # .github/, .claude/ and other dot folders hold tool files, not records
-        home = next((entry for entry in roots if source == entry or source.startswith(entry + "/")), None)
-        if home is None or source.startswith(prefixes) or source.endswith(suffixes):
+        if not homes or source.startswith(prefixes) or source.endswith(suffixes):
             continue
         if (any(parent.is_symlink() for parent in (path, *path.parents) if parent.is_relative_to(root) and parent != root)
                 or not path.is_file() or is_topic_page(path, root, groups)):
@@ -241,9 +244,9 @@ def automatic_pages(site: dict, root: Path, tracked: frozenset[Path], explicit: 
             title = path.name[:-len(".md")] or path.name
             notes.append(f"{source}: no level-one heading; the title is the file name")
         candidates.append((source, *automatic_route_base(source), title))
-        used.update(entry for entry in roots if source == entry or source.startswith(entry + "/"))
+        used.update(homes)
     if "reference_roots" in site:
-        notes.extend(f"listing: reference_roots entry {entry!r} holds no tracked Markdown file that can be listed"
+        notes.extend(f"site.toml: reference_roots entry {entry!r} holds no tracked Markdown file that can be listed"
                      for entry in roots if entry not in used)
     claims: dict[str, list[str]] = {}
     for source, base, _, _ in candidates:
