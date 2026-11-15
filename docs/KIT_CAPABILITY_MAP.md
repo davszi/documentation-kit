@@ -64,8 +64,15 @@ decision. An entry without a decision says where the question waits.
   lint error in `slide_face_checks.py` and as the stacked-face measurements of
   `slideFaces` in `browser_checks.cjs`.
 - Warn when the picture of a home-page card changes because a page's first
-  image changed. Seen 2026-11-15 in the same report. Decision: not taken; same
-  record.
+  image changed. Seen 2026-11-15 in the same report. Decision: not taken; the
+  question waits in [the findings record](open/upgrade-to-4.0.0-findings.md#questions-for-deivid).
+- Put a chapter's figure on its slide face without a second copy of the
+  figure. Seen 2026-11-15 in the same report: a project wrote a second
+  fragment through `slide_svg`. Decision: not taken; the question waits in the
+  same record.
+- Let a project's own slide classes win over the shared canvas rules without
+  `!important` on every declaration. Seen 2026-11-15 in the same report.
+  Decision: not taken; the question waits in the same record.
 - Check that a link written as HTML to a repository file resolves. Seen
   2026-11-09 and 2026-11-10. Decision 2026-11-15 by deivid: add it to 5.0.0;
   his word: "add it". Built as a lint error in `lint.py`, which reads the

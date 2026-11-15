@@ -2,6 +2,78 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Close the gaps the upgrades reported in the guides and rules
+
+- Why: the upgrades of adaptation and ADP to 3.2.0 and 4.0.0 reported gaps
+  in the migration guides and rules, recorded in
+  `docs/open/upgrade-to-4.0.0-findings.md` and
+  `docs/open/adaptation-upgrade-findings.md`. deivid decided: "Fix them now".
+  Each case was sorted into a wrong or missing step (corrected in every guide
+  where it occurs), an unclear rule (one sentence made to say one thing), or a
+  question of policy (left to deivid).
+- The hard-coded `.build/docs-env/bin/python`, which a fresh worktree and ADP
+  lack: the 4.0.0 guide's "Move the pin" and `--check-reader` command, the
+  5.0.0 guide's "Move the pin", the 1.0.0 migration steps in the release notes
+  and the README's "Pin and upgrade" now say "the project's documentation
+  interpreter", and the 4.0.0 guide shows how to check one
+  (`<python> -c "import mistune, pygments"`) and how to create it.
+- Where the slide-face rule gave two readings: settled before today by the
+  changed rule were which requirements fail a face (the three-group review),
+  counts in boxes (a face without a real visual), drawn boxes (a drawing of
+  the mechanism or a row of steps is a visual, a list in boxes is not), the
+  missing measures (judgment by the validation rule; drawing labels now
+  measured against 11 px) and the person's yes (asked for new faces only).
+  Made to say one thing in [slide faces](../rules/writing/pages.md#slide-faces):
+  tiles that hold only numbers are boxes; the factor grid has one column per
+  option and one row per factor, and a list of levels is not such a grid; in a
+  teaching chapter the finding is how the thing works. A question as a title
+  goes to deivid.
+- What the 4.0.0 guide step on faces left out: removing a face changes checks
+  that count faces or hash pages, and faces are looked at in their reader
+  chapter at the site's widths and in the deck; both are now in the step and
+  were already in the 5.0.0 guide. Legend text cut off inside a figure is
+  reported by `slideFaces` as clipped text since 5.0.0.
+- The other gaps of the 4.0.0 guide, in the guide: a plan that a run hashed
+  stands for itself by commit, path and hash, while an archived publication
+  and copied tool sources are not finished working documents; the import of
+  `tooling/svg_figures.py` by a figure generator is the provisional
+  interface and stays, and scripts kept as evidence stay as written; scratch
+  folders of other sessions are listed with path, date and size for the owner;
+  a project that uses the chapter reader adds `--check-reader` to its checks;
+  names on pages get a search through the names Git knows. Questions for
+  deivid: a checkout out of step with its remote, a user name in a data path,
+  and the bound of "each experiment reported as complete".
+- ADP's gaps: a group colour set by project CSS stays with or without
+  `[group_colors]`; a generator whose environment is gone is recreated from the
+  setup guide or the figure waits for the owner; the import search leaves
+  historical scripts; a notice the project writes itself for vendored data is
+  named after its subject, in the guide and in
+  [README is the bounded exception](../rules/documentation.md#readme-is-the-bounded-exception);
+  a runner that refuses uncommitted paths commits the pin first, in the 4.0.0
+  and 5.0.0 "Land the upgrade".
+- Adaptation's six cases from its upgrade to 3.2.0: the 2.0.0 guide gains the
+  steps for publication keys of the unreleased `101cea4`, the advice for a pin
+  that cannot be fetched and the instruction to pin the newest release once;
+  the 3.0.0 guide says a check compares asset URL paths without the query and
+  that a page locked by hash needs an approved revision before a link is
+  added. `home.css` needs no release note: every tag from `v1.0.0` to `v4.0.0`
+  packages it only through a page's `page_css`, so no release changed it; what
+  adaptation saw came from its unpushed pin `101cea4`, which this repository
+  does not have. Importing the tooling as a library is settled by the 4.0.0
+  guide, which says it is not stable and documents `DOCSITE_PROJECT_ROOT`.
+- Records: `docs/open/adaptation-upgrade-findings.md` (63 lines) is deleted
+  with its route, since none of its six cases is open; Git keeps it at its
+  path in the commit before this one. `docs/open/upgrade-to-4.0.0-findings.md`
+  keeps nine questions for deivid, each with options and a recommendation,
+  and the owed trial on adaptation's faces. The capability map lists two more
+  needs seen but not built, a chapter figure on a face and project slide
+  classes without `!important`. The open record of the release no longer
+  lists the kit's example faces as unseen; deivid accepted them today. The
+  5.0.0 release notes list the clarified rules, and the 5.0.0 guide's reread
+  list names them; "Documentation and writing" follows in three sentences.
+- Every heading under `rules/` at `v4.0.0` and at `976e5cd` is still present.
+- Checks: build, `lint --strict` (0 warnings) and `build --check-reader`.
+
 ## 2026-11-15 — Measure drawing labels on slide faces
 
 - Why: `slideFaces` passed a face whose SVG labels render at a few pixels at

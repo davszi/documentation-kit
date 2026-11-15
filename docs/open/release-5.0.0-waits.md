@@ -57,12 +57,6 @@ These are known on 2026-11-15 and are not fixed in 5.0.0:
   and passes there. Safari on macOS or iOS, real phones and screen readers are
   not tested, and the Presentation view and the Reference tree outside the
   lock suite were run in Chromium only.
-- **The kit's own example faces.** Done on 2026-11-15: the four slide faces
-  of the kit, one on "Get started", one on "Build a site" and two on the
-  starter guide, are redesigned under the changed rule, each with a layout
-  of its own. The
-  [findings record](upgrade-to-4.0.0-findings.md#decided-and-still-owed)
-  says what each face now shows. deivid has not yet looked at them.
 - **adaptation's drawing labels.** The browser check now fails a face whose
   drawing labels render below 11 px. On a clone of adaptation at `e28472e`,
   built with this kit, 14 of its 33 faces carry inline SVG labels: 7 fail at

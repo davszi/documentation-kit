@@ -123,10 +123,16 @@ To adopt a reviewed kit update:
 ```bash
 git -C .docs-kit fetch --tags
 git -C .docs-kit checkout <reviewed-kit-commit-or-tag>
-.build/docs-env/bin/python .docs-kit/docsite.py build --project .
-.build/docs-env/bin/python .docs-kit/docsite.py lint --project . --strict
+python .docs-kit/docsite.py build --project .
+python .docs-kit/docsite.py lint --project . --strict
 git add .docs-kit
 ```
+
+Run `python` as the project's documentation interpreter: the environment that
+has `.docs-kit/requirements.txt` installed, `.build/docs-env/bin/python` in a
+checkout set up as above. A fresh clone or worktree has none until it is
+created; the [4.0.0 guide](docs/topics/releases/migrations/4.0.0.md#move-the-pin)
+says how to check and create it.
 
 The kit is versioned in `VERSION` and tagged `v<version>`. [Releases and
 upgrades](docs/topics/releases/releases.md) lists what each version changes for

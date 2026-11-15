@@ -164,6 +164,7 @@ Known open points are in the [open record](../../open/release-5.0.0-waits.md).
 | Browser checks | `slideFaces(page, {within?})` measures faces where the page shows them, in a page at reader widths or in a deck: a stacked face's sideways overflow, text cut off by a box and parts that stick out of the face, as `problems`, besides the 16:9 fit. Per face it also reports `emptyBand`, the height of the largest empty band of the canvas, as information with no threshold, and `drawingText`, the smallest rendered size of a label in the face's inline SVG drawings; a label below the 11 px of the figure rule is a problem, at every width. A face the page does not show has `shown: false`. New `assertSlideFaces(page, {within?, expectShown?})` fails with every problem. The kit's own browser review and the starter review call it at 1600 and 390 px | [Reusable browser checks](../../../rules/site/validation.md#reusable-browser-checks) |
 | Theme | Fix: in a chapter narrower than 520 px the slide face that opens it bled 22 px into a chapter body padded 14 px, so the chapter scrolled sideways by 8 px and cut the face's edges at phone width. The bleed now matches the padding | [Slide faces and decks](../../../rules/site/authoring.md#slide-faces-and-decks) |
 | Rules | A claim and its limit are one finding: the visual carries the claim and the face shows the limit second, smaller. Two findings that do not depend on each other do not share a title; the face takes the main one and the chapter keeps the other. A stacked face does not overflow sideways, cut text or let a part stick out | [Slide faces](../../../rules/writing/pages.md#slide-faces) |
+| Rules | Clarified where the slide-face rule gave two readings: tiles that hold only numbers or counts are boxes, not a visual; the grid of options that may stand as the visual has one column per option and one row per factor, and a list of each factor's levels is not such a grid; in a chapter that teaches, the finding a title states is how the thing works. A notice that a project writes itself for vendored code or data is named after its subject; only files that arrive with third-party code keep their names | [Slide faces](../../../rules/writing/pages.md#slide-faces), [README is the bounded exception](../../../rules/documentation.md#readme-is-the-bounded-exception) |
 | Rules | Faces are checked in their page as well as in the deck, because page styles add space the deck lacks. A review by eye says for each face what draws the eye first and whether a band of the canvas is empty; "no band left over" and the designer's standard stay judgment with no number. The kit's lint checks the slide-face part of the numbers rule; the ledger of sources stays the project's | [Validation and review](../../../rules/site/validation.md#validation-and-review), [numbers and staleness](../../../rules/records.md#numbers-and-staleness) |
 | Configuration | Removed: the settings `evidence_manifests` and `legacy_files`. Lint no longer verifies the bytes of a declared collection of copies, resolves a copy's links from its original path, applies a collection's recorded `source_root` to worklog links, or maps single old paths to current files. A `site.toml` that names either setting fails the build with `site.toml: <setting> was removed in kit 5.0.0`, which points to the migration step. `worklog_links_checked_from` stays the way to stop checking links in old worklog entries; the declared local evidence of `local_artifacts_manifest` and `local_media` is unchanged | [Resources](../../../rules/site/resources.md#resource-closure-and-evidence) |
 | Configuration | New optional top-level settings `tooling_roots`, `capability_map` and `experiment_roots` turn on the capability map check. A wrong value, or `capability_map` or `experiment_roots` without `tooling_roots`, fails the build with a `site.toml:` error. With the check on, lint fails when the map is missing or untracked, when a tracked file or folder directly under a tooling root has no row, when a link in the map is dead wherever it lies, and when the generated Imported by column is out of date; a Python file under a tooling root that imports from an experiment folder is a warning. The new command `docsite.py capability-map` rewrites the Imported by column from Python imports. Without `tooling_roots` nothing is checked | [Capability map settings](../../../rules/site/authoring.md#capability-map-settings), [the check](../../../rules/engineering/code.md#the-check) |
@@ -518,12 +519,16 @@ migration steps.
 ### Migrating to 1.0.0
 
 Do this as one reviewed deliverable in the consuming project, on its own branch.
+Run the commands with the project's documentation interpreter, written `python`
+below: the Python environment that has `.docs-kit/requirements.txt` installed.
+The [4.0.0 guide](migrations/4.0.0.md#move-the-pin) says how to find or create
+it.
 
 1. **Record where you start.** Note the current pin (`git -C .docs-kit rev-parse HEAD`)
    and keep a build of the current site for comparison:
 
    ```bash
-   .build/docs-env/bin/python .docs-kit/docsite.py build --project .
+   python .docs-kit/docsite.py build --project .
    (cd .build/docs && find . -name '*.html' -type f | sort | xargs sha256sum) > /tmp/docs-before.txt
    ```
 
@@ -532,7 +537,7 @@ Do this as one reviewed deliverable in the consuming project, on its own branch.
    ```bash
    git -C .docs-kit fetch --tags
    git -C .docs-kit checkout v1.0.0
-   .build/docs-env/bin/python -m pip install -r .docs-kit/requirements.txt
+   python -m pip install -r .docs-kit/requirements.txt
    ```
 
 3. **Fix configuration the build now rejects.**
@@ -555,9 +560,9 @@ Do this as one reviewed deliverable in the consuming project, on its own branch.
 4. **Build, lint and compare.**
 
    ```bash
-   .build/docs-env/bin/python .docs-kit/docsite.py build --project .
-   .build/docs-env/bin/python .docs-kit/docsite.py build --project . --check
-   .build/docs-env/bin/python .docs-kit/docsite.py lint --project . --strict
+   python .docs-kit/docsite.py build --project .
+   python .docs-kit/docsite.py build --project . --check
+   python .docs-kit/docsite.py lint --project . --strict
    (cd .build/docs && find . -name '*.html' -type f | sort | xargs sha256sum) > /tmp/docs-after.txt
    diff /tmp/docs-before.txt /tmp/docs-after.txt
    ```
