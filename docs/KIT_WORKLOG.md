@@ -2,6 +2,23 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — deivid accepts the four example slide faces
+
+- Shown the old and the new faces side by side at 1600 px and the new ones at
+  390 px, deivid answered "Yes, accept".
+- One label on the starter's slide-face face still said "a view of the
+  chapter's figure", the wording that the rule dropped when a chapter's
+  figures became material for a face. The face, its narrow drawing, both
+  aria labels and the Figure 4 caption now say that the visual shows the
+  finding and is drawn from the chapter's figures and numbers.
+- Decisions of the same day: all three adapter hooks are removed in 5.0.0
+  ("remove all 3"); the guide gaps from the upgrades are fixed before the
+  release ("Fix them now"); the check that every formula on a built page
+  compiles moves from ADP into the kit ("lets move it to kit"); the HTML link
+  check is added ("add it"); the kit's name stays ("we leave it").
+- Checks: build, strict lint and `build --check-reader`. The browser suites
+  were not rerun after the label change.
+
 ## 2026-11-15 — The kit's four example slide faces redesigned
 
 - Why: deivid decided that the kit's own example faces are redone before the

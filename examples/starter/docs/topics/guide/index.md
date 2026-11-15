@@ -215,7 +215,7 @@ chapter_reader = true
 <p class="slide-title">A face shows the finding; its chapter keeps every fact</p>
 <div class="slide-main fx-zoom">
 <figure>
-<svg class="inline-fig fx-wide" viewBox="0 0 1200 536" role="img" aria-label="A slide face drawn large beside the chapter it opens. The face has a label row that names the subject, the finding as a sentence, a visual that is a view of the chapter's figure, laid out for this finding, and a scope line. In the reader the face sits at the top of the chapter card; the full chapter follows with its heading, its figure and every fact with its evidence. A chapter with nothing to show gets no face.">
+<svg class="inline-fig fx-wide" viewBox="0 0 1200 536" role="img" aria-label="A slide face drawn large beside the chapter it opens. The face has a label row that names the subject, the finding as a sentence, a visual that shows the finding, drawn from the chapter's figures and numbers, and a scope line. In the reader the face sits at the top of the chapter card; the full chapter follows with its heading, its figure and every fact with its evidence. A chapter with nothing to show gets no face.">
 <g font-family="'IBM Plex Sans',system-ui,sans-serif">
 <text x="8" y="26" font-size="16" fill="#7d8896" font-weight="600" letter-spacing="2" font-family="'IBM Plex Mono',ui-monospace,monospace">THE FACE, AT 16:9</text>
 <path d="M890 60L832 44M890 218L832 508" stroke="#39d2c0" stroke-width="1.5" stroke-opacity=".45" stroke-dasharray="4 5"/>
@@ -226,8 +226,8 @@ chapter_reader = true
 <text x="44" y="112" font-size="38" fill="#e6edf3" font-weight="600">The finding, as a sentence</text>
 <rect x="44" y="138" width="752" height="270" rx="14" fill="#39d2c0" fill-opacity=".07" stroke="#39d2c0" stroke-width="2.5"/>
 <g stroke="#39d2c0" stroke-opacity=".22" stroke-width="2" fill="none"><path d="M84 360C180 300 250 330 330 270S470 200 540 230 680 170 756 180"/><path d="M84 330h672M84 270h672M84 210h672" stroke-dasharray="3 7"/></g>
-<text x="420" y="262" font-size="30" fill="#39d2c0" font-weight="600" text-anchor="middle">a view of the chapter's figure</text>
-<text x="420" y="298" font-size="21" fill="#a9b4c2" text-anchor="middle">laid out for this finding, filling the canvas</text>
+<text x="420" y="262" font-size="30" fill="#39d2c0" font-weight="600" text-anchor="middle">the finding, shown</text>
+<text x="420" y="298" font-size="21" fill="#a9b4c2" text-anchor="middle">drawn from the chapter's figures and numbers</text>
 <text x="44" y="446" font-size="17" fill="#7d8896" letter-spacing="1" font-family="'IBM Plex Mono',ui-monospace,monospace">scope line</text>
 <path d="M162 440H796" stroke="#2f3b4a" stroke-width="2"/>
 </g>
@@ -259,15 +259,15 @@ chapter_reader = true
 </g>
 </g>
 </svg>
-<svg class="inline-fig fx-tall" viewBox="0 0 340 624" role="img" aria-label="A slide face: a label row that names the subject, the finding as a sentence, a visual that is a view of the chapter's figure, laid out for this finding, and a scope line. In the reader the face sits at the top of the chapter card and the full chapter follows with its figure and every fact with its evidence. A chapter with nothing to show gets no face.">
+<svg class="inline-fig fx-tall" viewBox="0 0 340 624" role="img" aria-label="A slide face: a label row that names the subject, the finding as a sentence, a visual that shows the finding, drawn from the chapter's figures and numbers, and a scope line. In the reader the face sits at the top of the chapter card and the full chapter follows with its figure and every fact with its evidence. A chapter with nothing to show gets no face.">
 <g font-family="'IBM Plex Sans',system-ui,sans-serif">
 <rect x="2" y="2" width="336" height="250" rx="12" fill="#0f1620" stroke="#39d2c0" stroke-width="2.5"/>
 <rect x="18" y="20" width="56" height="6" rx="3" fill="#39d2c0"/>
 <text x="84" y="27" font-size="14" fill="#a9b4c2">label row: the subject</text>
 <text x="18" y="58" font-size="21" fill="#e6edf3" font-weight="600">The finding, as a sentence</text>
 <rect x="18" y="72" width="304" height="136" rx="8" fill="#39d2c0" fill-opacity=".07" stroke="#39d2c0" stroke-width="2"/>
-<text x="170" y="134" font-size="17" fill="#39d2c0" font-weight="600" text-anchor="middle">a view of the chapter's figure</text>
-<text x="170" y="160" font-size="15" fill="#a9b4c2" text-anchor="middle">laid out for this finding</text>
+<text x="170" y="134" font-size="17" fill="#39d2c0" font-weight="600" text-anchor="middle">the finding, shown</text>
+<text x="170" y="160" font-size="15" fill="#a9b4c2" text-anchor="middle">from the chapter's figures and numbers</text>
 <text x="18" y="234" font-size="14" fill="#7d8896" font-family="'IBM Plex Mono',ui-monospace,monospace">scope line</text>
 <path d="M104 230H322" stroke="#2f3b4a" stroke-width="1.5"/>
 <path d="M170 262v22m-8-8 8 8 8-8" fill="none" stroke="#a9b4c2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -278,8 +278,8 @@ chapter_reader = true
 <rect x="18" y="370" width="260" height="6" rx="3" fill="#a9b4c2" fill-opacity=".5"/>
 <rect x="18" y="390" width="140" height="64" rx="6" fill="#0f1d22" stroke="#39d2c0" stroke-width="2"/>
 <text x="88" y="428" font-size="16" fill="#39d2c0" font-weight="600" text-anchor="middle" font-family="'IBM Plex Mono',ui-monospace,monospace">Figure</text>
-<text x="176" y="418" font-size="15" fill="#39d2c0" font-weight="600">the face is</text>
-<text x="176" y="438" font-size="15" fill="#39d2c0" font-weight="600">a view of it</text>
+<text x="176" y="418" font-size="15" fill="#39d2c0" font-weight="600">material</text>
+<text x="176" y="438" font-size="15" fill="#39d2c0" font-weight="600">for the face</text>
 <text x="18" y="490" font-size="15" fill="#a9b4c2">every fact, with its evidence</text>
 <rect x="18" y="502" width="220" height="6" rx="3" fill="#a9b4c2" fill-opacity=".5"/>
 <rect x="2" y="552" width="120" height="68" rx="8" fill="none" stroke="#7d8896" stroke-width="1.5" stroke-dasharray="6 4"/>
@@ -303,7 +303,7 @@ chapter_reader = true
 <div class="bs-grid g2">
 <figure id="fig-slide-anatomy">
 <!-- include: fragments/slide-anatomy.html -->
-<figcaption><b>Figure 4.</b> A face is a 16:9 view of its chapter: the finding as the title, a view of the chapter's figure laid out for that finding, and a scope line. A chapter with nothing to show gets no face. This hand-authored SVG wireframe contains no measured results.</figcaption>
+<figcaption><b>Figure 4.</b> A face is a 16:9 view of its chapter: the finding as the title, a visual that shows the finding, drawn from the chapter's figures and numbers, and a scope line. A chapter with nothing to show gets no face. This hand-authored SVG wireframe contains no measured results.</figcaption>
 </figure>
 <div class="bs-part bs-orange"><span class="bs-label">Read the figure</span><h3>What a face holds</h3><ol>
 <li><b>The title states the finding.</b> A sentence, not a topic. The label row above it names the subject.</li>
