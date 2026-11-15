@@ -2,6 +2,20 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Full paths in reports
+
+- deivid asked in ADP's session for a kit rule, after a report had named
+  `attended_parts/registry.py` in place of
+  `experiments/platform_qualification/sdk_integration/attended_parts/registry.py`.
+  His words as that session relayed them: "can we put a rule into the kit that
+  ays when u give me a path to a file u give it from root not only partial".
+- `rules/engineering/handoffs.md`, Reporting completion: a file is named by
+  its full path from the repository root, as a link where the reader's tool
+  opens links, and a file outside the repository by an absolute path.
+- The 5.0.0 release notes list the rule. It was added after the independent
+  release review and was not reviewed.
+- Checks: build and strict lint.
+
 ## 2026-11-15 — Prepare release 5.0.0
 
 - The unreleased changes since `v4.0.0` make every tracked Markdown file a

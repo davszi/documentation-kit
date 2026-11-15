@@ -15,6 +15,11 @@ assess and continue the work:
 Distinguish work completed from behavior verified. State whether a claim
 comes from an executed check, source inspection or an inference.
 
+Name a file by its full path from the repository root, written as a link
+where the reader's tool opens links. Give an absolute path for a file outside
+the repository. A partial path, such as a file name with only its last
+folder, makes the reader search for the file.
+
 ## Scratch files
 
 Before reporting completion, delete the scratch files the work created.
