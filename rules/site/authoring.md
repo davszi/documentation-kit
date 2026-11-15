@@ -32,7 +32,11 @@ registered pages omit remote edit links. HTTP previews do not rewrite those
 links to GitHub. Building still packages only declared resources; it does not
 expose the source checkout. To make source files available in an HTTP bundle,
 admit them through the [publication exporter](publication.md#configured-publication).
-Exported relative source links remain unchanged without a source remote.
+Without a source remote, `publish` rewrites the source links of every generated
+page, not only the pages named in `[publication] pages`: a link to an admitted
+file points at its published copy, and a link to an untracked file shows as
+unavailable local evidence. A link to a tracked file that is not admitted keeps
+its local path, which leads outside the bundle.
 
 ## Authoring paths
 
@@ -267,19 +271,31 @@ By default every tracked Markdown file of the project is a source page and
 appears in the Reference section, without a `[[source_pages]]` table. **With
 the default, every tracked Markdown file of a project becomes a page of its
 site.** A private repository with a public site thereby publishes those files,
-unless it excludes them or turns the listing off.
+unless it excludes them or turns the listing off. Agent files such as
+`AGENTS.md` and `CLAUDE.md` are listed too unless `reference_exclude` names
+them.
 
 A tracked `.md` file is not listed automatically when it:
 
 - lies inside a Git submodule, the kit's `.docs-kit/` included, or inside the
   kit's own folder;
+- has a folder or file name that starts with a dot, such as
+  `.github/pull_request_template.md` or anything under `.claude/`; a
+  `[[source_pages]]` table can still register it;
 - starts with `+++` frontmatter, as topic entry pages do, or is a topic entry
   page;
 - is a symbolic link or lies below one;
 - matches a `reference_exclude` pattern;
-- lies under a `private_prefixes` entry of the [`[publication]`
-  table](publication.md#configured-publication), whose files the project
-  already declared private.
+- starts with a `private_prefixes` entry or ends with a `private_suffixes`
+  entry of the [`[publication]` table](publication.md#configured-publication),
+  which declare the file private. With `.md` among the private suffixes the
+  listing lists no file, and `publish` refuses a `[[source_pages]]` table
+  whose file is private.
+
+A file that starts with `---` YAML frontmatter is listed and rendered as
+ordinary Markdown: the frontmatter shows as text, and its closing `---` turns
+the lines above it into a heading. Exclude such a file when its frontmatter
+should not show.
 
 Two settings in `docs/site/site.toml`, above the first `[[nav]]` table, opt
 out:
@@ -334,9 +350,14 @@ lint prints each case as a note, which never fails, not even under `--strict`:
 - a same-page link to a missing anchor renders as text; a link from or into an
   automatically listed page whose fragment matches no anchor stays a link to
   the page;
-- raw `<script>`, `<style>`, `<link>`, `<iframe>`, `<form>` and similar tags,
-  and an unclosed HTML comment, show as text; complete HTML comments are
-  dropped;
+- raw `<script>`, `<style>`, `<link>`, `<iframe>`, `<form>`, `<svg>`,
+  `<math>` and similar tags, and an unclosed HTML comment, show as text;
+  complete HTML comments are dropped. Every other raw tag is written again
+  with quoted attributes and loses its event handlers (`on…`), loading
+  attributes such as `srcset`, `ping` and `background`, styles that load a
+  `url(…)`, and any `href`, `src` or `poster` on an element that does not take
+  one. The remaining addresses are then checked like Markdown links, so no
+  script runs and nothing loads from outside the bundle;
 - a file without a level-one heading takes its file name, without `.md`, as
   title;
 - bytes that are not UTF-8 show as the replacement character.

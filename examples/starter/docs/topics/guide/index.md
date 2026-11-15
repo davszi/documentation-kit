@@ -181,7 +181,7 @@ chapter_reader = true
 <div class="bs-part bs-orange"><span class="bs-label">Read the figure</span><h3>What a face holds</h3><ol>
 <li><b>The title states the finding.</b> A sentence, not a topic. The label row above it names the subject.</li>
 <li><b>The chapter's figure fills the canvas.</b> Drawn large, with its parts numbered. When the chapter has no figure yet, make one for the chapter first from what exists; never draw invented data.</li>
-<li><b>Text explains beside it.</b> Each point is a short claim in bold and a sentence or two that explain it, separated by thin rules. Only the points the title names are emphasised, and a closing row gives the facts a reader would ask for next. Boxes that only repeat the title and lead are not a visual.</li>
+<li><b>The content sets the layout.</b> Here points beside the figure each give a short claim in bold and a sentence or two that explain it, and a closing row gives the facts a reader would ask for next; another face may label the figure's parts or use a row of steps instead. Only what the title names is emphasised. Boxes that only repeat the title are not a visual.</li>
 <li><b>The chapter follows in full.</b> Every fact on the face is also stated, with its evidence, in the chapter below.</li>
 </ol></div>
 </div>

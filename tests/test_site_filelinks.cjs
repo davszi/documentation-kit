@@ -61,3 +61,22 @@ for(const protocol of ['http:','file:']){
   assert.ok(links.every(link=>link.title===undefined));
 }
 console.log('No-remote source links pass: HTTP/file exports preserve Markdown, Python, directory, JSON, HTML and source metadata paths.');
+
+// With a remote, links the publication exporter pointed at their published copy
+// keep that address: they carry data-repo-exported instead of data-repo-path.
+const remoteScript=fs.readFileSync(path.join(root,'theme/components/filelinks.js'),'utf8')
+  .replace('{{GH_REPO}}','https://github.com/example/project').replace('{{GH_REF}}','main');
+for(const protocol of ['https:','file:']){
+  const links=[
+    new Link({href:'tools/fit.py','data-repo-exported':''}),
+    new Link({href:'notes/record.md#kept','data-repo-exported':''}),
+    new Link({href:'../../tools/other.py'})
+  ];
+  vm.runInNewContext(remoteScript,{location:{protocol,pathname:'/site/guide.html'},
+    document:{querySelectorAll(selector){return selector==='a[href]'?links:[];}}});
+  assert.equal(links[0].attrs.href,'tools/fit.py');
+  assert.equal(links[1].attrs.href,'notes/record.md#kept');
+  assert.equal(links[0].title,undefined);
+  if(protocol==='https:') assert.equal(links[2].attrs.href,'https://github.com/example/project/blob/main/tools/other.py');
+}
+console.log('Exported source links pass: with a remote, exported Markdown and Python links keep their published address.');

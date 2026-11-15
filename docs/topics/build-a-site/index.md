@@ -241,7 +241,7 @@ A single scroll is still available as **All chapters**, and it is what print and
 </ul></div>
 <div class="bs-part bs-orange"><span class="bs-label">Slides</span><h3>A slide shows the chapter's figure</h3><ul>
 <li>added last: build the chapters, then ask the person, and add faces only after a yes</li>
-<li>the chapter's own figure with its parts numbered; beside it, numbered points each give a bold claim and a sentence or two, and a closing row lists the facts a reader asks for next (<code>slide-points</code>, <code>slide-facts</code>)</li>
+<li>the chapter's own figure with its parts numbered, laid out for its content; in this example numbered points beside it each give a bold claim and a sentence or two, and a closing row lists the facts a reader asks for next (<code>slide-points</code>, <code>slide-facts</code>). Another face may use one figure across the canvas, a row of steps or a matrix.</li>
 <li>boxes of text alone are not a visual: a chapter with nothing to show gets no face</li>
 <li>write a face between <code>&lt;!-- slide --&gt;</code> and <code>&lt;!-- /slide --&gt;</code> at the start of a chapter; the first chapter of this page opens with one</li>
 <li>every fact on a slide is also in its chapter</li>

@@ -9,6 +9,8 @@
   // No remote means HTTP source links keep the builder/exporter's local paths.
   if (HOSTED && !GH_REPO) return;
   document.querySelectorAll('a[href]').forEach(function(a){
+    // The publication exporter already pointed this link at its published copy.
+    if (a.getAttribute('data-repo-exported') !== null) return;
     var href = a.getAttribute('href');
     var relative = a.getAttribute('data-repo-path');
     var fragment = a.getAttribute('data-repo-fragment') || '';
