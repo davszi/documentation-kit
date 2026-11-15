@@ -2,6 +2,29 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — A run does not copy its environment
+
+- deivid asked in ADP's session whether the kit now prohibits what a cleanup
+  of ADP's build folder had just removed: "will the kit now prohibit it or do
+  we need to add rules?", and answered "yes" to sending the rule to the kit.
+- Reported by ADP's session, not checked here: the cleanup freed
+  111,002,214,400 bytes in one deletion run, and about 136 GB in total when
+  earlier deletions of the same day are added, summed from `df` and `du`.
+  About 100 GB were four copies of environments: two sealed copies of 25.2 GB
+  each, kept to prove exact bytes and used by several runs, a restored
+  reference environment and a superseded one, 25 GB each.
+- The rules on scratch files and on source copies did not name an
+  environment. `rules/engineering/code.md`, Dependencies, now says that a run
+  names its environment by package versions and file hashes and does not copy
+  it, that a project keeps one environment per toolchain, and that an
+  environment a new one replaces is proposed for deletion in the same change.
+- The 5.0.0 release notes list the rule. Three sentences, written short on
+  deivid's word that the rule text is growing too much. Not reviewed.
+- Also noted: deivid looked at pages listed both in the navigation and in the
+  Reference section and decided to keep the section as it is: "neh keep as is
+  i was wrong".
+- Checks: build and strict lint.
+
 ## 2026-11-15 — Admit only known raw HTML in automatically listed files
 
 - Why: the kit promises that raw HTML in an automatically listed file runs no

@@ -27,6 +27,11 @@ The project's setup guide, followed from a fresh clone, produces the
 environment the project runs. When the two differ, correct the dependency file
 or the guide.
 
+A run names the environment it used by its package versions and file hashes;
+it does not copy the environment. Keep one environment per toolchain. When a
+new environment replaces an old one, propose deleting the old one in the same
+change.
+
 ## Where code lives
 
 An experiment's folder holds only that experiment's own code, inputs and
