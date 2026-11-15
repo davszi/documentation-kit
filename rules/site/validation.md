@@ -65,7 +65,8 @@ expected counts, screenshots and domain assertions. The shared module provides:
   }
   ```
 - `settle`, `visibleMedia`, `measureOverflow`, `assertHorizontalContainment` and
-  `checkLayout` for fonts, actually visible images and viewport containment.
+  `checkLayout` for fonts, running transitions, actually visible images and
+  viewport containment.
   Image visibility includes ancestor clipping; hidden/inert and offscreen lazy
   images do not become broken-image failures merely because they are mounted.
 - `setView`, `activeChapter`, `waitActive` and `goHash` for shared reader control.

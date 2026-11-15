@@ -3,10 +3,20 @@
 'use strict';
 const assert = require('node:assert/strict');
 
+// Waits for fonts, two frames and every running transition or finite animation, such as the
+// reader's chapter slide, so that a measurement sees the page at rest. Infinite ones are skipped.
 async function settle(page) {
   await page.evaluate(async () => {
+    const frames = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     await document.fonts.ready;
-    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    await frames();
+    const moving = document.getAnimations().filter(motion => motion.playState === 'running'
+      && Number.isFinite(motion.effect?.getComputedTiming().endTime));
+    if (moving.length) {
+      await Promise.race([Promise.all(moving.map(motion => motion.finished.catch(() => {}))),
+        new Promise(resolve => setTimeout(resolve, 5000))]);
+      await frames();
+    }
   });
 }
 
@@ -231,6 +241,7 @@ async function readerChecks(page, {url, expectedChapters, check = async (_label,
 const LABEL_MIN_PX = 11;
 
 async function slideFaces(page, {within = null} = {}) {
+  await settle(page);
   return page.evaluate(([within, labelMin]) => {
     const scope = within ? [...document.querySelectorAll(within)] : [document];
     const faces = [...new Set(scope.flatMap(root => [...(root.matches?.('[data-slide-face]') ? [root] : []),

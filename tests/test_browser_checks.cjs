@@ -8,7 +8,7 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const {chromium} = require('../node_modules/playwright');
 const {visibleMedia, measureOverflow, assertHorizontalContainment, checkLayout, readerChecks, captureElement,
-  settle, slideFaces, assertSlideFaces} = require('../tooling/browser_checks.cjs');
+  settle, slideFaces, assertSlideFaces, goHash} = require('../tooling/browser_checks.cjs');
 
 const image = 'data:image/svg+xml,' + encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="blue"/></svg>');
@@ -58,6 +58,34 @@ async function reviewSmallReaders(browser) {
       }
       assert.deepEqual(errors, []);
     } finally {await context.close();}
+  }
+}
+
+// The documented loop, goHash then assertSlideFaces per chapter, with the reader's chapter slide
+// running: the helpers wait for it to end, so no face is measured while the strip still moves.
+async function reviewFacesAfterChapterChange(browser) {
+  const components = path.join(__dirname, '../theme/components');
+  const [controls, css, script, faceCss] = await Promise.all(['chapter-reader.html', 'chapter-reader.css',
+    'chapter-reader.js', 'slide-face.css'].map(file => fs.readFile(path.join(components, file), 'utf8')));
+  const ids = ['one', 'two', 'three'];
+  const url = 'http://reader-fixture.test/faces.html';
+  for (const width of [390, 1600]) {
+    const page = await browser.newPage({viewport:{width, height:width === 390 ? 844 : 1000}});
+    try {
+      await page.route(url, route => route.fulfill({contentType:'text/html', body:`<!doctype html>
+        <style>:root{--bg:#101720;--bg2:#19222d;--border:#334051;--text:#dce5ef;--muted:#bac5d5;--bright:#fff;--mono:monospace}
+        *{box-sizing:border-box}body{margin:0}.layout{display:grid}.content{min-width:0}.card{padding:20px}${css}${faceCss}</style>
+        <div class="layout"><aside id="sidebar" class="sidebar"><nav id="toc" class="toc">${ids.map(id => `<a href="#${id}">${id}</a>`).join('')}</nav></aside>
+        <main class="content"><span data-reader-title="Faces" data-reader-adapted hidden></span>${controls}
+        ${ids.map(id => `<section class="card" id="${id}" data-reader-chapter><h2>${id}</h2><div class="slide-face" data-slide-face>
+          <div class="slide-canvas"><p class="slide-title">A finding</p><div class="slide-main"><p>Short text.</p></div></div></div>
+          <p>Chapter text.</p></section>`).join('')}</main></div><script>${script}</script>`}));
+      await page.goto(url, {waitUntil:'load'});
+      for (const id of ids) {
+        await goHash(page, url, id);
+        await assertSlideFaces(page, {within:'#' + id});
+      }
+    } finally {await page.close();}
   }
 }
 
@@ -206,6 +234,7 @@ async function reviewPlotToggleChips(browser) {
   const browser = await chromium.launch({headless:true});
   try {
     await reviewSlideFaces(browser);
+    await reviewFacesAfterChapterChange(browser);
     await reviewPlotToggleChips(browser);
     const page = await browser.newPage({viewport:{width:480,height:320}});
     await page.setContent(`<!doctype html><style>
@@ -256,6 +285,6 @@ async function reviewPlotToggleChips(browser) {
     await fs.rm(shot, {force:true});
     await page.close();
     await reviewSmallReaders(browser);
-    console.log('Verified shared browser helpers: stacked slide faces at 390 px (sideways overflow, clipped text, parts outside, page styles) and the empty band at 1600 px, plot toggle chips in the zoomed figure at 1600 and 390 px (series colours, one-line labels, wrapping bar), one/two/three-chapter scope, clipped/inactive lazy media, visible broken media, contained scrolling, root overflow, element capture.');
+    console.log('Verified shared browser helpers: stacked slide faces at 390 px (sideways overflow, clipped text, parts outside, page styles) and the empty band at 1600 px, faces measured after the reader chapter slide, plot toggle chips in the zoomed figure at 1600 and 390 px (series colours, one-line labels, wrapping bar), one/two/three-chapter scope, clipped/inactive lazy media, visible broken media, contained scrolling, root overflow, element capture.');
   } finally {await browser.close();}
 })().catch(error => {console.error(error);process.exitCode = 1;});

@@ -2,6 +2,19 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-15 — Wait for the reader's chapter slide before measuring faces
+
+- Why: the documented loop, `goHash` then `assertSlideFaces` per chapter,
+  measured faces while the reader's strip still moved. On the review's clone
+  of adaptation it reported sideways overflow on 31 of 33 faces at 390 and at
+  1600 px; after a fixed wait, none.
+- `settle` now waits for every running transition and finite animation, and
+  `slideFaces` settles first. The same loop on the same clone now reports no
+  sideways overflow; 14 faces at 390 px and 7 at 1600 px keep drawing labels
+  below 11 px. A new browser test fails with the old helper.
+- Rows for faces the page does not show carry `chapter`, `shown: false` and
+  `problems` only; the release notes and the guide say so.
+
 ## 2026-11-15 — Require the tooling folders in every project
 
 - Why: the guide and release notes called the capability map optional while
