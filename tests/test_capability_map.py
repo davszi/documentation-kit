@@ -117,10 +117,25 @@ class Check(unittest.TestCase):
             # The table's own rows stay fresh; only the three entries fail.
             self.assertEqual(len(errors), 3, errors)
 
-    def test_untracked_tooling_is_not_required(self):
+    def test_untracked_tooling_warns_before_the_commit_that_fails(self):
         with project(base_files()) as folder:
-            (Path(folder) / "tools/scratch.py").write_text("")
-            self.assertEqual(capability_map.check(Path(folder), SITE)[0], [])
+            root = Path(folder)
+            (root / "tools/scratch.py").write_text("")
+            (root / "tools/run_record/extra.py").write_text("")  # inside a folder a row already links
+            (root / "tools/.gitignore").write_text("*.tmp\n")
+            (root / "tools/ignored.tmp").write_text("")
+            subprocess.run(["git", "add", "tools/.gitignore"], cwd=root, check=True)
+            errors, warnings = capability_map.check(root, SITE)
+            self.assertEqual(errors, [])
+            self.assertEqual(warnings, ["docs/CAPABILITY_MAP.md: tools/scratch.py is under the tooling root tools/ "
+                                        "and not tracked yet; no row links it, so lint fails once it is committed"])
+            # The commit turns the same file into the error the warning announced.
+            subprocess.run(["git", "add", "-A"], cwd=root, check=True)
+            errors, warnings = capability_map.check(root, SITE)
+            self.assertEqual(warnings, [])
+            self.assertEqual([e for e in errors if "no row links it" in e],
+                             ["docs/CAPABILITY_MAP.md: tools/scratch.py is under the tooling root tools/ "
+                              "but no row links it"])
 
     def test_stale_column_fails_and_the_command_rewrites_it(self):
         with project(base_files(record="`tools/judge.py`")) as folder:

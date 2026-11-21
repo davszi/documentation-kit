@@ -98,6 +98,12 @@ def tracked_files(root: Path) -> list[str]:
     return sorted(set(filter(None, result.stdout.decode().split("\0"))))
 
 
+def untracked_files(root: Path) -> list[str]:
+    """Files Git does not track and does not ignore: what the next `git add` would take."""
+    result = subprocess.run(["git", "ls-files", "-z", "--others", "--exclude-standard"], cwd=root, capture_output=True)
+    return sorted(set(filter(None, result.stdout.decode().split("\0")))) if result.returncode == 0 else []
+
+
 def _inside(path: str, folder: str) -> bool:
     return path == folder or path.startswith(folder + "/")
 
@@ -365,6 +371,14 @@ def check(root: Path, site: dict | None = None) -> tuple[list[str], list[str]]:
         for entry in root_entries(tracked, folder):
             if not any(p == entry or (p.startswith(entry + "/")) for p in linked):
                 errors.append(f"{map_path}: {entry} is under the tooling root {folder}/ but no row links it")
+    # A new file passes until it is committed and fails right after; say so before the commit.
+    untracked = untracked_files(root)
+    for folder in s["tooling_roots"]:
+        known = set(root_entries(tracked, folder))
+        for entry in root_entries(untracked, folder):
+            if entry not in known and not any(p == entry or p.startswith(entry + "/") for p in linked):
+                warnings.append(f"{map_path}: {entry} is under the tooling root {folder}/ and not tracked yet; "
+                                "no row links it, so lint fails once it is committed")
     return errors, warnings
 
 

@@ -2,6 +2,29 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-21 — Lint warns about untracked files under a tooling root
+
+- Why: reported from adaptation, pinned at `v5.0.0`. A new file
+  `docs/site/checks/test_public_paths.py` under a tooling root had no row in
+  the capability map. `lint --strict` passed while the file was untracked
+  and failed once it was committed; the commit was pushed on the clean lint
+  and the project's publish workflow failed.
+- The capability-map check read only `git ls-files`. It now also reads the
+  files Git neither tracks nor ignores, and warns for an entry directly
+  under a tooling root that no row links: "not tracked yet; no row links
+  it, so lint fails once it is committed". A warning fails `--strict`.
+- It is a warning, not an error. The test this replaces,
+  `test_untracked_tooling_is_not_required`, held the assumption that an
+  untracked file is scratch and none of the map's business; that assumption
+  let the two lint runs disagree. An error would stop a project that passed
+  before, which the version promise allows only in a major release.
+- Not covered: an untracked file that imports a tool changes the Imported by
+  column only after its commit, so that column can still go stale at the
+  commit.
+- Tried on a throwaway project: warning while untracked, the announced
+  error after `git add`. `tests/test_capability_map.py` passes with 19
+  tests. Full checks are not run yet; not released.
+
 ## 2026-11-15 — Release 5.1.0
 
 - deivid gave the go: "oke lets move and release and clean up". The ask
