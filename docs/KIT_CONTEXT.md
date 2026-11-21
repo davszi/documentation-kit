@@ -34,8 +34,10 @@ owns the shared panel switcher's authoring, behavior and extraction checks.
 
 [Releases and upgrades](topics/releases/releases.md) owns version notes and
 consumer migration steps; `VERSION` holds the current version.
-The current release is 5.1.0. Its [migration guide](topics/releases/migrations/5.1.0.md)
-covers the Reference section, which now lists only `docs/`, or the folders a
+The current release is 5.2.0. Its [migration guide](topics/releases/migrations/5.2.0.md)
+covers generated figures in a dark and a light theme and the lint warning for
+untracked tooling. The [5.1.0 guide](topics/releases/migrations/5.1.0.md)
+covers the Reference section, which lists only `docs/`, or the folders a
 project names in `reference_roots` instead. The [5.0.0 guide](topics/releases/migrations/5.0.0.md)
 covers the automatic Reference listing, private source pages that `publish` now refuses, the removed path
 and evidence adapters and kept-copy settings, the new lint error for HTML links to repository files,

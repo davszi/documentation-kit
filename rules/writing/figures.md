@@ -30,7 +30,7 @@ Draw the finding directly rather than making the eye compute it. Show the actual
 
 Charts fit their actual column with labels at least 11 px. Keep bar labels short or move them into a legend. Crop empty margins; avoid baked title bars, badges and debugging chronology. Use one camera/view across a series. Do not shrink an important comparison to fit a screen at the cost of legibility. Bound overview height and retain full-size inspection.
 
-Use the project's shared dark-compatible figure style, never ad hoc per-figure styles. Follow the shared [generated-file practices](../engineering/code.md#generated-files) when changing generated assets. Keep an explicit figure-to-generator manifest and check for missing/orphaned resources. Source-authored HTML flows count as local diagrams: their page source is the generator, and layout must pass the same collision/overflow review.
+Generated figures take their colours from the kit's [figure palettes](../site/authoring.md#generated-figures), never from ad hoc per-figure styles, and each generated figure file is written in both themes: the dark file, which pages show, and a light file beside it for slides and print. Follow the shared [generated-file practices](../engineering/code.md#generated-files) when changing generated assets. Keep an explicit figure-to-generator manifest and check for missing/orphaned resources. Source-authored HTML flows count as local diagrams: their page source is the generator, and layout must pass the same collision/overflow review.
 
 ## Interaction and access
 

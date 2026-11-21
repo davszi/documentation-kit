@@ -26,6 +26,47 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## 5.2.0 — figures in a dark and a light theme, and a lint warning before a failing commit
+
+5.2.0 is a minor release under
+[what a version number promises](#what-a-version-number-promises): it adds a
+lint warning, a tooling module and a rule that no check enforces, and it
+removes nothing. Both changes were asked for from adaptation.
+
+- **New lint warning, which fails `--strict`.** A file or folder directly
+  under a tooling root that is not tracked yet and that no row of the
+  capability map links. Up to 5.1.0 lint passed in that state and failed once
+  the file was committed.
+- **Generated figure files are written in both themes.** `<name>.<ext>` is
+  the dark file, which pages show; `<name>.light.<ext>` lies beside it, for
+  slides and print. The rule is in
+  [generated figures](../../../rules/site/authoring.md#generated-figures). No
+  lint check enforces it. Pages, the reader and the build's output do not
+  change; a light file is not packaged, because no page shows it. Lint's
+  figure manifest check no longer warns about the light file of a shown
+  figure in `docs/figures/` when the manifest gives both the same script.
+- **New module `tooling/figure_themes.py`.** A dark and a light palette,
+  `matplotlib_rc(theme)` with the settings that colour a matplotlib figure,
+  `variant_path` for the naming and `write_both(path, draw)`, which writes
+  both files from SVG text or a matplotlib figure. The kit does not depend on
+  matplotlib. The module is provisional: its names and the light colours may
+  change in a minor release.
+- **The dark colours are unchanged**, so existing figures look the same;
+  `svg_figures.py` now takes its constants from the dark palette. New is a
+  fixed order for series colours: accent, violet, warm, blue. Violet next to
+  blue falls below the separation floor for a green colour deficiency.
+
+Measured for both palettes by `tests/test_figure_themes.py`: text against its
+surfaces is at least 4.87:1, marks against their surfaces at least 6.95:1 in
+the dark and 3.28:1 in the light palette, and neighbours in the series order
+are at least 25.6 apart in OKLab distance times 100, and 13.6 as seen with a
+green colour deficiency. The dark series colours are brighter than the range
+a common palette check asks of a dark chart (OKLCH lightness 0.73 to 0.80
+against 0.48 to 0.67); they stay, because they match the reader and every
+existing figure.
+
+The [5.2.0 migration guide](migrations/5.2.0.md) has the steps.
+
 ## 5.1.0 — the Reference section lists named folders only
 
 5.1.0 is a minor release by deivid's decision of 2026-11-15: "this is a

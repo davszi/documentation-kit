@@ -724,7 +724,7 @@ Every included figure carries the four items above.
 <!-- unreferenced figure: reason -->
 ```
 
-**Generated figures.** Each names its generator and its input data in a manifest or in metadata; this holds for SVG, PNG and interactive data alike. Git holds the revision, the date and the exact bytes of the figure and of its generator, so the manifest does not record them again. Figures use the project's shared dark-compatible style, never a style invented for one figure. An explicit manifest maps figures to generators and is checked for missing and orphaned resources.
+**Generated figures.** Each names its generator and its input data in a manifest or in metadata; this holds for SVG, PNG and interactive data alike. Git holds the revision, the date and the exact bytes of the figure and of its generator, so the manifest does not record them again. Figures take their colours from the kit's figure palettes, never from a style invented for one figure, and each generated figure file is written in a dark and a light theme. An explicit manifest maps figures to generators and is checked for missing and orphaned resources.
 
 **Flows written in the page source.** HTML flows, like the figures on this page, count as local diagrams. The page source is their generator, and their layout passes the same collision and overflow review.
 

@@ -475,6 +475,32 @@ shown as an image) and drawing helpers with a literal colour palette. Generated
 SVG uses literal colours: surrounding cards may redefine page variables, and an
 SVG loaded as an image cannot read them.
 
+`tooling/figure_themes.py` holds the colours as a dark and a light palette.
+The dark one matches the reader; the light one is for slides and print. A
+generator writes each figure file in both themes, under fixed names:
+
+| File | Theme | Use |
+|---|---|---|
+| `<name>.<ext>` | dark | The file a page shows |
+| `<name>.light.<ext>` | light | Beside it, for slides and print; no page shows it |
+
+`write_both(path, draw)` calls `draw(colors)` once per theme and writes both
+files; `draw` returns SVG text or a matplotlib figure. For matplotlib it runs
+inside `matplotlib_rc(theme)`, the settings that colour surfaces, text, axes,
+grid, legend and the series cycle, so a generator copies no hex value. Series
+take `colors.series` in its order and do not cycle past it; `colors.alert`
+marks a problem and is not a series colour. The kit does not depend on
+matplotlib.
+
+Both files are generated files: the manifest lists both, `--check` covers
+both, and the light file is no orphan. A fragment with inline SVG that a page
+includes stays dark and has no light file; neither has a hand-drawn figure.
+The build packages only the files a page shows, so light files do not grow
+the site. Lint's figure manifest check counts the light file of a shown
+figure as kept, like its raster export, when both name the same script.
+Nothing in lint demands the light file; a generator that uses `write_both`
+cannot leave it out.
+
 ### Slide faces and decks
 
 Write a chapter's slide face between standalone `<!-- slide -->` and `<!-- /slide -->` lines at the start of the chapter: inside its `section.card`, or directly before its `##` heading on a flat Markdown page. The build converts it into `<div class="slide-face" data-slide-face><div class="slide-canvas">…</div></div>` and loads the shared `slide-face` component automatically. Markdown pages match markers after rendering, so examples inside code blocks stay literal. Unbalanced or nested markers fail the build. Use `p.slide-eyebrow` and `p.slide-title`, not headings: the reader names a chapter by its first heading, which opens the full chapter below the slide.

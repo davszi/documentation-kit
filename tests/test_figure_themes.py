@@ -1,6 +1,8 @@
 """The figure palettes: readable text, visible marks, series that stay apart, and the two-file naming."""
 import importlib.util
+import json
 from pathlib import Path
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -103,6 +105,41 @@ class Files(unittest.TestCase):
     def test_anything_else_is_refused(self):
         with tempfile.TemporaryDirectory() as folder, self.assertRaisesRegex(TypeError, 'SVG text or a matplotlib figure'):
             write_both(Path(folder) / 'box.svg', lambda c: 3)
+
+
+class LintManifest(unittest.TestCase):
+    """Lint's figure manifest check: the light file of a shown figure is kept, not unreferenced."""
+
+    def lint(self, names):
+        folder = tempfile.TemporaryDirectory(prefix='docs-kit-figure-themes-')
+        self.addCleanup(folder.cleanup)
+        root = Path(folder.name)
+        run = lambda *args: subprocess.run(args, cwd=root, capture_output=True, text=True)  # noqa: E731
+        run('git', 'init', '-q')
+        docsite = [sys.executable, str(KIT / 'docsite.py')]
+        self.assertEqual(run(*docsite, 'init', str(root)).returncode, 0)
+        (root / 'scripts').mkdir()
+        (root / 'scripts/draw.py').write_text('print("draw")\n')
+        (root / 'docs/figures').mkdir()
+        for name in names:
+            (root / 'docs/figures' / name).write_text('<svg xmlns="http://www.w3.org/2000/svg"/>\n')
+        (root / 'docs/figures/manifest.json').write_text(json.dumps(
+            {name: {'script': 'scripts/draw.py'} for name in names}))
+        context = root / 'docs/PROJECT_CONTEXT.md'
+        context.write_text(context.read_text() + '\n![Speed](figures/speed.svg)\n')
+        run('git', 'add', '-A')
+        self.assertEqual(run(*docsite, 'build', '--project', str(root)).returncode, 0)
+        return run(*docsite, 'lint', '--project', str(root), '--strict')
+
+    def test_the_light_file_of_a_shown_figure_passes_strict_lint(self):
+        result = self.lint(['speed.svg', 'speed.light.svg'])
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_a_light_file_without_a_shown_figure_is_still_unreferenced(self):
+        result = self.lint(['speed.svg', 'speed.light.svg', 'lone.light.svg'])
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('figure in manifest referenced by no doc: lone.light.svg', result.stdout)
+        self.assertNotIn('speed.light.svg', result.stdout)
 
 
 @unittest.skipUnless(HAS_MATPLOTLIB, 'matplotlib is not installed')

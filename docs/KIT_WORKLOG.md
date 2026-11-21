@@ -2,6 +2,44 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-21 — Figures in a dark and a light theme; prepare 5.2.0
+
+- Why: asked for from adaptation. The kit had only the dark colours of
+  `tooling/svg_figures.py` and nothing for matplotlib, so one generator wrote
+  matplotlib's white default onto the dark reader, and no light figure
+  existed for slides. The kit owner first proposed to build only a helper
+  and no second copy of each figure, because the reader has no light theme.
+  deivid: "i specifically asked tto have light already so i can use for
+  presentations if light is needed". He builds those in his own slides, not
+  in the kit's deck, so the deck and the reader stay dark.
+- `tooling/figure_themes.py`: a dark palette equal to the SVG helper's
+  constants, a light one, `matplotlib_rc(theme)`, `variant_path` and
+  `write_both(path, draw)`. Naming: `<name>.<ext>` dark, `<name>.light.<ext>`
+  light. The kit does not depend on matplotlib.
+- The colour check was run with the palette validator of the `dataviz` skill
+  and is kept as `tests/test_figure_themes.py`, whose numbers agree with it.
+  Light palette: all checks pass. Dark palette: with violet next to blue the
+  pair measured 6.0 for a green colour deficiency and 14.8 for full colour
+  vision, below both floors; the fixed series order accent, violet, warm,
+  blue keeps them apart. The dark series colours are brighter than the
+  validator's range for a dark chart; they stay, because they match the
+  reader and every existing figure.
+- Seen in a render of one sample plot with four lines and five bars, in both
+  themes, with matplotlib 3.10.6: text, grid, legend and marks read in both.
+- Rule: `rules/writing/figures.md` asks for both themes;
+  `rules/site/authoring.md#generated-figures` has the naming, the helper and
+  what stays dark. No lint check demands the light file: the build knows no
+  generator, and a generator that uses `write_both` cannot leave it out.
+- Lint's figure manifest check warned about every file in `docs/figures/`
+  that no page shows, so each light file would have failed strict lint. It
+  now counts the light file of a shown figure as kept, like the raster
+  export, when the manifest gives both the same script. Shown by a test
+  that fails without the change.
+- Not built: a light reader, a light deck, a variant switch on pages.
+- The kit's test environment has no matplotlib, so the two matplotlib tests
+  are skipped in `tests/run_checks.sh`. They pass in adaptation's
+  documentation environment.
+
 ## 2026-11-21 — Lint warns about untracked files under a tooling root
 
 - Why: reported from adaptation, pinned at `v5.0.0`. A new file

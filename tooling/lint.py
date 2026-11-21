@@ -14,7 +14,8 @@ Checks (the shared guides under rules/ are the spec):
   3. snippet drift: fenced blocks tagged `source=<path>#L<a>-L<b>` must appear
      in their source file (error), at the stated lines (warning otherwise)
   4. figure manifest: files ↔ entries both ways, generator scripts exist,
-     doc-referenced figures are in the manifest; unreferenced figure = warning
+     doc-referenced figures are in the manifest; unreferenced figure = warning,
+     except the raster export and the light file of a referenced figure
   5. INVARIANT / DON'T-REDO marker form (bold, colon); never in worklog/OPEN;
      fenced code blocks and code spans are skipped, as the build skips them
      (--registry dumps the marker registry and exits)
@@ -123,6 +124,7 @@ def resolve_path(path: Path) -> Path:
 
 
 import worklog_entries as _worklog_entries
+from figure_themes import variant_path
 
 
 def md_files() -> list[Path]:
@@ -486,12 +488,13 @@ def check_figures() -> None:
                     referenced.add(figure.name)
                     # A vector figure's raster export shares its generator
                     # and is retained for previews/downloads, not a second plot.
-                    if figure.suffix == ".svg":
-                        raster = figure.with_suffix(".png").name
-                        if (raster in manifest and figure.name in manifest
-                                and manifest[figure.name].get("script")
-                                and manifest[raster].get("script") == manifest[figure.name].get("script")):
-                            referenced.add(raster)
+                    # So does the light file of a figure: no page shows it, and
+                    # it is kept for slides and print.
+                    kept = [figure.with_suffix(".png")] if figure.suffix == ".svg" else []
+                    kept += [variant_path(path, "light") for path in (figure, *kept)]
+                    script = manifest.get(figure.name, {}).get("script")
+                    referenced.update(path.name for path in kept
+                                      if script and manifest.get(path.name, {}).get("script") == script)
                     continue
                 # Experiments retain figures beside their own generated manifest.
                 # A basename alone does not make them shared docs/figures assets.
