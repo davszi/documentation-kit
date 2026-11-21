@@ -191,8 +191,14 @@ python .docs-kit/docsite.py build --project . --check
 python .docs-kit/docsite.py build --project . --check-reader
 python .docs-kit/docsite.py lint --project . --registry
 python .docs-kit/docsite.py capability-map --project .
+python .docs-kit/docsite.py check --project .
 python .docs-kit/docsite.py slides --project . --select guide --select other#intro,result --out review --title "Review"
 ```
+
+`check` runs the build, strict lint, a trial publish and the checks a project
+declares, and stops at the first failure; an opt-in
+[pre-push gate](rules/site/validation.md#one-command-and-a-pre-push-gate)
+calls it before every push.
 
 Python 3.12 is the validated runtime; the entrypoint requires at least 3.12.
 Dependencies are pinned in `requirements.txt`. Node.js 22 and the Playwright

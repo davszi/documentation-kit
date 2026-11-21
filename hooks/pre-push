@@ -1,0 +1,26 @@
+#!/bin/sh
+# Pre-push gate of the documentation kit: stop a push when the project's
+# documentation checks fail. Opt-in, per clone:
+#
+#     git config core.hooksPath .docs-kit/hooks
+#
+# A project with hooks of its own copies this file into its hooks folder.
+# The checks read the working tree, not the pushed commits. Skip once with
+# `git push --no-verify`.
+root=$(git rev-parse --show-toplevel) || exit 1
+python=${DOCS_PYTHON:-}
+if [ -z "$python" ]; then
+  # A linked worktree may have no environment of its own; use the main checkout's.
+  main=$(cd "$root" && cd "$(git rev-parse --git-common-dir)/.." && pwd)
+  for candidate in "$root/.build/docs-env/bin/python" "$main/.build/docs-env/bin/python"; do
+    if [ -x "$candidate" ]; then python=$candidate; break; fi
+  done
+fi
+if [ -z "$python" ]; then
+  echo "pre-push: no documentation interpreter; create .build/docs-env as in .docs-kit/README.md, or set DOCS_PYTHON" >&2
+  exit 1
+fi
+if [ -n "$(git -C "$root" status --porcelain 2>/dev/null)" ]; then
+  echo "pre-push: the working tree has uncommitted changes; the checks read the working tree, not the pushed commits" >&2
+fi
+exec "$python" "$root/.docs-kit/docsite.py" check --project "$root"

@@ -2,6 +2,34 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-21 — A check command and an opt-in pre-push gate
+
+- Why: asked for from adaptation, by deivid's message of 2026-11-21. A
+  project that wants a push stopped when lint fails had to write its own Git
+  hook; adaptation pushed a commit whose publish workflow then failed on
+  lint.
+- `docsite.py check --project .` runs `build`, `lint --strict`, a trial
+  `publish` into a temporary folder when `[publication]` is configured, and
+  the commands a project declares in `[[checks]]` tables, and stops at the
+  first failure. `tooling/project_check.py` holds it. A command is an
+  argument list run without a shell; `{python}` stands for the interpreter
+  that runs the check.
+- `hooks/pre-push` calls the command. One line switches it on in a clone:
+  `git config core.hooksPath .docs-kit/hooks`. The hook lies in the kit, not
+  in the starter, so no project gets it without choosing it and `init` need
+  not copy an executable file.
+- Limits, stated in the rule: the checks read the working tree, not the
+  pushed commits, and the hook prints a line when the tree has uncommitted
+  changes; with the page lock on and no passwords in the environment the
+  trial publish is skipped with a note; browser checks are not part of it;
+  `--no-verify` skips the hook.
+- Rule: `rules/site/validation.md#one-command-and-a-pre-push-gate`; one
+  bullet in `rules/engineering/git.md`.
+- `tests/test_project_check.py`, 13 tests: the order, the stop at the first
+  failure, a lint failure before declared checks, a missing program, wrong
+  configuration, the trial publish and its skip, and the hook with a stub in
+  place of the kit. The hook was not run by a real `git push`.
+
 ## 2026-11-21 — Figures in a dark and a light theme; prepare 5.2.0
 
 - Why: asked for from adaptation. The kit had only the dark colours of
@@ -56,9 +84,10 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   untracked file is scratch and none of the map's business; that assumption
   let the two lint runs disagree. An error would stop a project that passed
   before, which the version promise allows only in a major release.
-- Not covered: an untracked file that imports a tool changes the Imported by
-  column only after its commit, so that column can still go stale at the
-  commit.
+- An untracked file that imports a tool changes the Imported by column only
+  after its commit. The check now warns for that too: it reads the imports
+  once more with the untracked files and compares the column. The kit owner
+  met this case twice while building 5.2.0.
 - Tried on a throwaway project: warning while untracked, the announced
   error after `git add`. `tests/test_capability_map.py` passes with 19
   tests. Full checks are not run yet; not released.

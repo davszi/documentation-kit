@@ -347,6 +347,7 @@ def check(root: Path, site: dict | None = None) -> tuple[list[str], list[str]]:
         errors.append(f"{map_path}: no table with the columns Need | Code | State | Imported by")
         return errors, warnings
     linked: set[str] = set()
+    rows: list[tuple[str, str, list[str]]] = []
     for line, cells in table[1]:
         where = f"{map_path}:{line + 1}"
         if len(cells) != 4:
@@ -363,6 +364,7 @@ def check(root: Path, site: dict | None = None) -> tuple[list[str], list[str]]:
             errors.append(f"{where}: a missing need links no code; use partly when some code exists")
         elif state.lower() != "missing" and not paths:
             errors.append(f"{where}: state {state} needs a link to the code in the Code column")
+        rows.append((where, need, paths))
         expected = users_cell(paths, index, s)
         if used != expected:
             errors.append(f"{where}: Imported by is out of date for {need!r}; run `{COMMAND}` "
@@ -379,6 +381,12 @@ def check(root: Path, site: dict | None = None) -> tuple[list[str], list[str]]:
             if entry not in known and not any(p == entry or p.startswith(entry + "/") for p in linked):
                 warnings.append(f"{map_path}: {entry} is under the tooling root {folder}/ and not tracked yet; "
                                 "no row links it, so lint fails once it is committed")
+    if untracked:
+        after = ImportIndex(root, sorted(set(tracked) | set(untracked)), s["tooling_roots"])
+        for where, need, paths in rows:
+            if users_cell(paths, after, s) != users_cell(paths, index, s):
+                warnings.append(f"{where}: Imported by for {need!r} changes once the untracked files are committed; "
+                                f"track them, then run `{COMMAND}`")
     return errors, warnings
 
 

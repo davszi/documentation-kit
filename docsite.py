@@ -39,6 +39,9 @@ def main():
     capability = commands.add_parser('capability-map',
                                      help="rewrite the generated Imported by column of the project's capability map")
     capability.add_argument('--project', type=Path, default=Path.cwd())
+    check = commands.add_parser('check', help='build, lint --strict, a trial publish and the checks site.toml '
+                                               'declares, stopping at the first failure')
+    check.add_argument('--project', type=Path, default=Path.cwd())
     publish = commands.add_parser('publish', help='build, then export a fresh public bundle configured in site.toml')
     publish.add_argument('--project', type=Path, default=Path.cwd())
     publish.add_argument('--out', type=Path, default=Path('_site'))
@@ -81,6 +84,10 @@ def main():
     if not (project / 'docs/site/site.toml').is_file():
         parser.error(f'No docs/site/site.toml under {project}; use init for a new project.')
     env = dict(os.environ, DOCSITE_PROJECT_ROOT=str(project))
+    if args.command == 'check':
+        sys.path.insert(0, str(KIT / 'tooling'))
+        from project_check import run
+        return run(project, KIT)
     if args.command == 'publish':
         sys.path.insert(0, str(KIT / 'tooling'))
         from publication import publish_project

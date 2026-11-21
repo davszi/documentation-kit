@@ -22,6 +22,49 @@ Review every visual change by eye before reporting it done. Capture each element
 
 For local review, follow [local review and browser access](#local-review-and-browser-access), using `.build/docs/` and `/html/<slug>.html`. Follow the [publishing gate](publication.md#publishing-gate) before deployment.
 
+## One command and a pre-push gate
+
+`python .docs-kit/docsite.py check --project .` runs the checks a push should
+not break, in this order, and stops at the first that fails:
+
+1. `build`, because lint compares the built site with its sources.
+2. `lint --strict`.
+3. A trial `publish` into a temporary folder, when `docs/site/site.toml` has a
+   `[publication]` table. With the [page lock](publication.md#page-lock) on
+   and its passwords not in the environment, this step is skipped with a note.
+4. Each check the project declares in `docs/site/site.toml`, above the first
+   `[[nav]]` table, in the order written:
+
+   ```toml
+   [[checks]]
+   name = "public paths"
+   command = ["{python}", "-m", "unittest", "docs/site/checks/test_public_paths.py"]
+   ```
+
+   `command` is an argument list, run from the project root without a shell.
+   An element that is exactly `{python}` becomes the interpreter that runs
+   the check; any other program is named as the project calls it. `name` is
+   optional.
+
+It does not run browser checks or a review by eye, and it reads the working
+tree, not a commit.
+
+The gate is opt-in, per clone. `hooks/pre-push` in the kit calls the command
+before every push and stops the push when it fails:
+
+```bash
+git config core.hooksPath .docs-kit/hooks
+```
+
+`core.hooksPath` replaces the clone's hooks folder, so a project with hooks of
+its own copies `.docs-kit/hooks/pre-push` into its tracked hooks folder and
+points the setting there. The hook uses `$DOCS_PYTHON`, else
+`.build/docs-env/bin/python` of the checkout or, in a linked worktree, of the
+main checkout. It prints a line when the working tree has uncommitted
+changes, since the checks then read more than the push sends.
+`git push --no-verify` skips it once. The project's workflow stays the check
+that counts; the gate only finds the failure before the push.
+
 ## Local review and browser access
 
 Use the pinned kit from the consuming project root and the concrete commands in the project's context. Complete the [validation above](#validation-and-review) before review. Share the rendered page with its figures first, then source or evidence links where useful.

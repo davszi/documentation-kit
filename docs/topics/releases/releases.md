@@ -26,17 +26,27 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
-## 5.2.0 — figures in a dark and a light theme, and a lint warning before a failing commit
+## 5.2.0 — figures in a dark and a light theme, and checks before a push
 
 5.2.0 is a minor release under
 [what a version number promises](#what-a-version-number-promises): it adds a
-lint warning, a tooling module and a rule that no check enforces, and it
-removes nothing. Both changes were asked for from adaptation.
+lint warning, a command, a tooling module and a rule that no check enforces,
+and it removes nothing. All three changes were asked for from adaptation.
 
-- **New lint warning, which fails `--strict`.** A file or folder directly
+- **New lint warnings, which fail `--strict`.** A file or folder directly
   under a tooling root that is not tracked yet and that no row of the
-  capability map links. Up to 5.1.0 lint passed in that state and failed once
+  capability map links, and an untracked file whose imports change the
+  Imported by column. Up to 5.1.0 lint passed in both states and failed once
   the file was committed.
+- **New command `check` and an opt-in pre-push gate.**
+  `docsite.py check --project .` runs `build`, `lint --strict`, a trial
+  `publish` when `[publication]` is configured, and the checks a project
+  declares in new `[[checks]]` tables of `site.toml`, and stops at the first
+  failure. `hooks/pre-push` calls it; a clone switches the gate on with
+  `git config core.hooksPath .docs-kit/hooks`. The command, the `[[checks]]`
+  table with `name` and `command`, and the hook's path join the stable
+  interfaces. See
+  [one command and a pre-push gate](../../../rules/site/validation.md#one-command-and-a-pre-push-gate).
 - **Generated figure files are written in both themes.** `<name>.<ext>` is
   the dark file, which pages show; `<name>.light.<ext>` lies beside it, for
   slides and print. The rule is in

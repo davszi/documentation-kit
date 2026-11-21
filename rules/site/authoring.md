@@ -251,8 +251,9 @@ by column differs from what the command writes, and when a state is unknown
 or does not match its Code column. It warns, which fails `--strict`, when a
 Python file under a tooling root imports from a folder under an experiment
 root, naming the file, the line and the imported path, when a Python file
-under either root does not parse, and when an entry under a tooling root is
-not tracked yet and has no row: lint would fail once it is committed.
+under either root does not parse, and when a file that is not tracked yet
+would make lint fail once it is committed: an entry under a tooling root
+without a row, or an import that changes the Imported by column.
 
 The column and the warning read Python `import` and `from … import`
 statements, those inside functions included. A name resolves against the

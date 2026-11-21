@@ -129,6 +129,14 @@ class Check(unittest.TestCase):
             self.assertEqual(errors, [])
             self.assertEqual(warnings, ["docs/CAPABILITY_MAP.md: tools/scratch.py is under the tooling root tools/ "
                                         "and not tracked yet; no row links it, so lint fails once it is committed"])
+            # An untracked file that imports a tool announces the stale column too.
+            (root / "experiments/attended/later.py").write_text("import tools.judge\n")
+            errors, warnings = capability_map.check(root, SITE)
+            self.assertEqual(errors, [])
+            self.assertEqual(len(warnings), 2, warnings)
+            self.assertIn("Imported by for 'Judge a finished run against its criteria' changes once the untracked "
+                          "files are committed", warnings[1])
+            (root / "experiments/attended/later.py").unlink()
             # The commit turns the same file into the error the warning announced.
             subprocess.run(["git", "add", "-A"], cwd=root, check=True)
             errors, warnings = capability_map.check(root, SITE)
