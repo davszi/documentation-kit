@@ -2,6 +2,21 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-21 — The full check script runs once per release
+
+- Why: deivid asked why the checks take so long. One run of
+  `tests/run_checks.sh` takes about five minutes: the Python tests 47 s,
+  measured, and the seven browser suites the rest, not timed one by one. The
+  kit owner ran it after each change set, four times on 2026-11-21 before
+  the review, and before each tag even for a commit that only added a
+  worklog entry.
+- deivid decided: "Yes, once per release". Between changes the build, strict
+  lint and the tests of the touched files run, judged by exit code; the full
+  script runs once on the final state before the tag. `docs/KIT_CONTEXT.md`
+  holds the practice.
+- The risk taken: a browser problem shows at the end of a release's work,
+  not after the change that caused it.
+
 ## 2026-11-21 — A check command and an opt-in pre-push gate
 
 - Why: asked for from adaptation, by deivid's message of 2026-11-21. A

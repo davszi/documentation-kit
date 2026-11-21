@@ -69,4 +69,11 @@ that every shared script parses and runs the browser suites when Playwright
 loads from `node_modules/`, as documented in README. `DOCS_NODE` selects the
 Node binary. The Pages workflow runs the same script with the browser suites
 required before it deploys.
+
+One full run takes about five minutes, about four of them in the browser
+suites. While a release is being built, run the build, strict lint and the
+tests of the files a change touched, and judge by their exit codes. Run the
+full script once, on the final state before the tag; a commit after it that
+changes only records needs the build and strict lint again, not the full
+script.
 No application runtime or simulator is needed.
