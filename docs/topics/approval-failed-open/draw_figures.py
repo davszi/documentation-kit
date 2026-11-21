@@ -14,8 +14,11 @@ runs first.
 Writes, for the page, one HTML fragment per figure under
 docs/site/fragments/approval-failed-open/ (each holds a wide and an upright
 SVG; the page stylesheet shows one by the figure's width), and, for the
-record, standalone SVG files with their manifest under figures/. With
---check it writes nothing and exits 1 when a file differs.
+record, standalone SVG files with their manifest under figures/: each in the
+dark theme the page shows (`pileup-wide.svg`) and in the light theme for
+slides and print beside it (`pileup-wide.light.svg`, tooling/figure_themes.py).
+The page fragments are dark only. With --check it writes nothing and exits 1
+when a file differs.
 
 The colours are literal (tooling/svg_figures.py explains why). Each SVG draws
 its own surface, so it reads the same on the kit's dark pages and in any
@@ -24,6 +27,7 @@ viewer with a light background. Stdlib only.
 from __future__ import annotations
 
 import csv
+from dataclasses import dataclass
 import datetime as dt
 import html
 import json
@@ -36,6 +40,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 sys.path.insert(0, os.path.join(REPO, "tooling"))
+from figure_themes import LIGHT, variant_path  # noqa: E402
 from svg_figures import SANS, generated_header, standalone  # noqa: E402
 
 TOPIC = os.path.relpath(HERE, REPO)
@@ -57,6 +62,35 @@ GROUPS = [  # stack order, bottom to top
     ("Resource slot and pool", "code_pool", POOL),
     ("Documentation and evidence tooling", ("code_doctools", "code_evidencetools"), DOCTOOLS),
 ]
+
+
+@dataclass(frozen=True)
+class PileupColors:
+    """The colours of the pile-up figure, the one figure drawn in both themes."""
+    surface: str
+    ink: str
+    sub: str
+    dim: str
+    grid: str
+    groups: tuple  # one per GROUPS entry, in its order
+    words: str
+    on_band: str        # labels inside the harness and qualification bands
+    shade: str          # the cleanup band, at shade_opacity
+    shade_opacity: str
+    hairline_opacity: str  # the turning-point lines, in ink
+
+
+PILEUP_DARK = PileupColors(SURFACE, INK, SUB, DIM, GRID, tuple(c for _n, _col, c in GROUPS), WORDS, "#ffffff", "#ffffff", "0.05",
+                           "0.35")
+# Light: neutrals from figure_themes.LIGHT. Groups keep the hue of the reference
+# palette's light steps, darkened only as far as needed: the two labelled bands
+# carry white text (4.50:1), the rest are marks that clear 3:1 on the cleanup
+# shade too (3.30:1 on white). Adjacent in the stack: normal-vision dE >= 16.4,
+# protan/deutan dE >= 10.0 (OKLab x100). Ink hairlines need more opacity on white.
+PILEUP_LIGHT = PileupColors(LIGHT.bg, LIGHT.ink, LIGHT.sub, LIGHT.dim, LIGHT.line,
+                            ("#3077cf", "#cd4d10", "#4e9c79", "#bf8102", "#d56b94"), "#6250d6", "#ffffff", LIGHT.ink, "0.05",
+                            "0.5")
+PILEUP_THEMES = {"dark": PILEUP_DARK, "light": PILEUP_LIGHT}
 
 
 # --- inputs -------------------------------------------------------------------
@@ -128,13 +162,13 @@ def line(x1, y1, x2, y2, stroke, width=1, extra=""):
     return f'<path d="M{x1:.1f} {y1:.1f}L{x2:.1f} {y2:.1f}" stroke="{stroke}" stroke-width="{width}" fill="none"{extra}/>'
 
 
-def svg(fid, variant, width, height, title, desc, body):
+def svg(fid, variant, width, height, title, desc, body, surface=SURFACE):
     """An SVG with its own surface; ids are unique per figure and variant."""
     sid = f"{fid}-{variant}"
     return (f'<svg class="inline-fig afo-{variant}" viewBox="0 0 {width} {height}" role="img" '
             f'aria-labelledby="{sid}-title {sid}-desc">\n'
             f'<title id="{sid}-title">{html.escape(title)}</title>\n<desc id="{sid}-desc">{html.escape(desc)}</desc>\n'
-            f'<rect x="0" y="0" width="{width}" height="{height}" rx="14" fill="{SURFACE}"/>\n'
+            f'<rect x="0" y="0" width="{width}" height="{height}" rx="14" fill="{surface}"/>\n'
             + "\n".join(body) + "\n</svg>")
 
 
@@ -198,26 +232,27 @@ EVENTS = [  # number, day, wide label, upright label
 ]
 
 
-def pileup(variant):
+def pileup(variant, c=PILEUP_DARK):
     wide = variant == "wide"
     W, fs, small = sizes(wide)
     x0, x1 = (78, 980) if wide else (42, 290)
     body = []
     # Legend: every series named, identity never by colour alone.
-    entries = [(name, c, "box") for name, _col, c in GROUPS] + [("Product code (contrast)", INK, "line"),
-                                                                ("Words written per day", WORDS, "box")]
+    groups = [(name, col, color) for (name, col, _dark), color in zip(GROUPS, c.groups)]
+    entries = [(name, color, "box") for name, _col, color in groups] + [("Product code (contrast)", c.ink, "line"),
+                                                                        ("Words written per day", c.words, "box")]
     y = 30 if wide else 26
     if wide:
-        for i, (name, c, kind) in enumerate(entries):
+        for i, (name, color, kind) in enumerate(entries):
             cx, cy = 20 + (i % 3) * 330, y + (i // 3) * 26
-            body.append(rect(cx, cy - 12, 16, 14, c, ' rx="3"') if kind == "box" else line(cx, cy - 5, cx + 18, cy - 5, c, 3))
-            body.append(t(cx + 26, cy, name, small, SUB))
+            body.append(rect(cx, cy - 12, 16, 14, color, ' rx="3"') if kind == "box" else line(cx, cy - 5, cx + 18, cy - 5, color, 3))
+            body.append(t(cx + 26, cy, name, small, c.sub))
         y += 3 * 26 + 18
     else:
-        for i, (name, c, kind) in enumerate(entries):
+        for i, (name, color, kind) in enumerate(entries):
             cy = y + i * 19
-            body.append(rect(12, cy - 11, 13, 12, c, ' rx="3"') if kind == "box" else line(12, cy - 5, 26, cy - 5, c, 3))
-            body.append(t(33, cy, name.replace("Documentation and evidence", "Docs and evidence"), small, SUB))
+            body.append(rect(12, cy - 11, 13, 12, color, ' rx="3"') if kind == "box" else line(12, cy - 5, 26, cy - 5, color, 3))
+            body.append(t(33, cy, name.replace("Documentation and evidence", "Docs and evidence"), small, c.sub))
         y += len(entries) * 19 + 14
     r = 12 if wide else 9
     xe_all = [min(day_x(day, x0, x1, START, END), x1 - 1) for _k, day, _w, _u in EVENTS]
@@ -230,16 +265,16 @@ def pileup(variant):
     def sy(v):
         return bottom - v / ymax * h
 
-    body.append(t(x0 if wide else 12, top - (22 if wide else 28) - (2 * r + 3) * max(lv), "Lines of Python", fs, INK, weight=600))
+    body.append(t(x0 if wide else 12, top - (22 if wide else 28) - (2 * r + 3) * max(lv), "Lines of Python", fs, c.ink, weight=600))
     for v in range(0, ymax + 1, 50000 if wide else 100000):
-        body.append(line(x0, sy(v), x1, sy(v), GRID, 1))
-        body.append(t(x0 - 6, sy(v) + 5, f"{v // 1000}k" if v else "0", small, DIM, "end"))
+        body.append(line(x0, sy(v), x1, sy(v), c.grid, 1))
+        body.append(t(x0 - 6, sy(v) + 5, f"{v // 1000}k" if v else "0", small, c.dim, "end"))
     xs = [day_x(d, x0, x1, START, END) for d in DAYS] + [x1]
     cx0, cx1 = day_x("2026-11-10", x0, x1, START, END), x1
-    body.append(rect(cx0, top - 6, cx1 - cx0, bottom - top + 6, "#ffffff", ' fill-opacity="0.05"'))
+    body.append(rect(cx0, top - 6, cx1 - cx0, bottom - top + 6, c.shade, f' fill-opacity="{c.shade_opacity}"'))
     # Stacked bands as post steps; a surface-coloured edge keeps a gap between fills.
     base = [0] * len(DAYS)
-    for name, col, color in GROUPS:
+    for name, col, color in groups:
         upper = [b + v for b, v in zip(base, series(col))]
         pts = []
         for i, u in enumerate(upper):
@@ -248,33 +283,33 @@ def pileup(variant):
         for i in range(len(base) - 1, -1, -1):
             low += [(xs[i + 1], sy(base[i])), (xs[i], sy(base[i]))]
         d = "M" + "L".join(f"{px:.1f} {py:.1f}" for px, py in pts + low) + "Z"
-        body.append(f'<path d="{d}" fill="{color}" stroke="{SURFACE}" stroke-width="1.2"><title>{html.escape(name)}</title></path>')
+        body.append(f'<path d="{d}" fill="{color}" stroke="{c.surface}" stroke-width="1.2"><title>{html.escape(name)}</title></path>')
         base = upper
     assert max(base) == n("sup_peak"), "stack top differs from sup_peak"
     prod = series("code_product")
     pts = []
     for i, v in enumerate(prod):
         pts += [(xs[i], sy(v)), (xs[i + 1], sy(v))]
-    body.append('<path d="M' + "L".join(f"{px:.1f} {py:.1f}" for px, py in pts) + f'" fill="none" stroke="{INK}" stroke-width="2.6">'
+    body.append('<path d="M' + "L".join(f"{px:.1f} {py:.1f}" for px, py in pts) + f'" fill="none" stroke="{c.ink}" stroke-width="2.6">'
                 '<title>Product code</title></path>')
     assert prod[-1] == n("prod_now", at("code_product", "2026-11-15"))
-    body.append(t(xs[1] + 4, sy(prod[0]) - 10, "product code", small, INK, weight=600))
+    body.append(t(xs[1] + 4, sy(prod[0]) - 10, "product code", small, c.ink, weight=600))
     cross = UNIT["cross_day"].split(" on ")[1].split(",")[0]
     assert at(("code_attended", "code_doctools", "code_evidencetools", "code_pool", "code_harness", "code_pq_other"), cross) == n("cross_day")
     xc = day_x(cross, x0, x1, START, END)
-    body.append(f'<circle cx="{xc:.1f}" cy="{sy(n("cross_day")):.1f}" r="{6 if wide else 5}" fill="{SURFACE}" stroke="{INK}" stroke-width="2"/>')
+    body.append(f'<circle cx="{xc:.1f}" cy="{sy(n("cross_day")):.1f}" r="{6 if wide else 5}" fill="{c.surface}" stroke="{c.ink}" stroke-width="2"/>')
     body.append(t(xc - 10, sy(n("cross_day")) - 13, f"passes the product on {cross[5:]}" if wide else f"passes it {cross[5:]}",
-                  small, INK, "end"))
+                  small, c.ink, "end"))
     xp = day_x("2026-11-10", x0, x1, START, END)
     if wide:
-        body.append(t(xp - 14, sy(n("sup_peak")) - 12, f"{fmt(n('sup_peak'))} lines, three times the product", fs, INK, "end", 600))
+        body.append(t(xp - 14, sy(n("sup_peak")) - 12, f"{fmt(n('sup_peak'))} lines, three times the product", fs, c.ink, "end", 600))
         li = len(DAYS) - 3
         hb, pq = series("code_harness")[li], series("code_pq_other")[li]
-        body.append(t(xs[li] - 10, sy(hb * 0.45), "per-question run harnesses", small, "#ffffff", "end", 600))
-        body.append(t(xs[li] - 10, sy(hb + pq * 0.5) + 5, "other qualification code", small, "#ffffff", "end", 600))
-        body.append(t(cx0 + (cx1 - cx0) / 2, top + 16, "cleanup", small, SUB, "middle"))
+        body.append(t(xs[li] - 10, sy(hb * 0.45), "per-question run harnesses", small, c.on_band, "end", 600))
+        body.append(t(xs[li] - 10, sy(hb + pq * 0.5) + 5, "other qualification code", small, c.on_band, "end", 600))
+        body.append(t(cx0 + (cx1 - cx0) / 2, top + 16, "cleanup", small, c.sub, "middle"))
     else:
-        body.append(t(xp - 6, sy(n("sup_peak")) - 9, f"peak {fmt(n('sup_peak'))}", small, INK, "end", 600))
+        body.append(t(xp - 6, sy(n("sup_peak")) - 9, f"peak {fmt(n('sup_peak'))}", small, c.ink, "end", 600))
     # Words panel.
     wtop = bottom + (44 if wide else 42)
     wh = 110 if wide else 80
@@ -284,53 +319,53 @@ def pileup(variant):
     def wy(v):
         return wbottom - v / wmax * wh
 
-    body.append(t(x0 if wide else 12, wtop - 12, "Words written per day for the developer" if wide else "Words per day", fs, INK, weight=600))
+    body.append(t(x0 if wide else 12, wtop - 12, "Words written per day for the developer" if wide else "Words per day", fs, c.ink, weight=600))
     for v in (0, 25000, 50000):
-        body.append(line(x0, wy(v), x1, wy(v), GRID, 1))
-        body.append(t(x0 - 6, wy(v) + 5, f"{v // 1000}k" if v else "0", small, DIM, "end"))
-    body.append(rect(cx0, wtop - 2, cx1 - cx0, wbottom - wtop + 2, "#ffffff", ' fill-opacity="0.05"'))
+        body.append(line(x0, wy(v), x1, wy(v), c.grid, 1))
+        body.append(t(x0 - 6, wy(v) + 5, f"{v // 1000}k" if v else "0", small, c.dim, "end"))
+    body.append(rect(cx0, wtop - 2, cx1 - cx0, wbottom - wtop + 2, c.shade, f' fill-opacity="{c.shade_opacity}"'))
     wseries = [words(r_) for r_ in ROWS if r_["date"] >= START.isoformat()]
     bw = (x1 - x0) / ((END - START).days)
     for i, v in enumerate(wseries):
         if v:
-            body.append(rect(xs[i] + bw * 0.12, wy(v), bw * 0.76, wbottom - wy(v), WORDS, ' rx="1"'))
+            body.append(rect(xs[i] + bw * 0.12, wy(v), bw * 0.76, wbottom - wy(v), c.words, ' rx="1"'))
     imax = max(range(len(wseries)), key=lambda i: wseries[i])
     assert wseries[imax] == n("w_max_day") and DAYS[imax].isoformat() == UNIT["w_max_day"].split(" on ")[1]
-    body.append(t(xs[imax] + bw + 5, wy(wseries[imax]) + 13, f"{fmt(n('w_max_day'))} on {DAYS[imax].isoformat()[5:]}", small, INK))
+    body.append(t(xs[imax] + bw + 5, wy(wseries[imax]) + 13, f"{fmt(n('w_max_day'))} on {DAYS[imax].isoformat()[5:]}", small, c.ink))
     for m in (dt.date(2026, 10, 1), dt.date(2026, 11, 1)):
         xm = day_x(m, x0, x1, START, END)
-        body.append(line(xm, wbottom, xm, wbottom + 6, DIM, 1))
-        body.append(t(xm, wbottom + 22, m.strftime("1 %b"), small, DIM, "middle"))
-    body.append(t(x0, wbottom + 22, "15 Sep", small, DIM, "middle" if not wide else "start"))
+        body.append(line(xm, wbottom, xm, wbottom + 6, c.dim, 1))
+        body.append(t(xm, wbottom + 22, m.strftime("1 %b"), small, c.dim, "middle"))
+    body.append(t(x0, wbottom + 22, "15 Sep", small, c.dim, "middle" if not wide else "start"))
     # Turning points: a hairline through both panels and a numbered disc above.
     for (k, _day, _w, _u), xe, level in zip(EVENTS, xe_all, lv):
         cy = top - 6 - r - level * (2 * r + 3)
-        body.append(line(xe, cy + r, xe, wbottom, INK, 1, ' stroke-opacity="0.35"'))
-        body.append(f'<circle cx="{xe:.1f}" cy="{cy:.1f}" r="{r}" fill="{INK}"/>')
-        body.append(t(xe, cy + (5.5 if wide else 4.5), str(k), 16 if wide else 13, SURFACE, "middle", 700))
+        body.append(line(xe, cy + r, xe, wbottom, c.ink, 1, f' stroke-opacity="{c.hairline_opacity}"'))
+        body.append(f'<circle cx="{xe:.1f}" cy="{cy:.1f}" r="{r}" fill="{c.ink}"/>')
+        body.append(t(xe, cy + (5.5 if wide else 4.5), str(k), 16 if wide else 13, c.surface, "middle", 700))
     ky = wbottom + (58 if wide else 54)
     if wide:
-        body.append(t(20, ky, "Turning points", fs, INK, weight=600))
+        body.append(t(20, ky, "Turning points", fs, c.ink, weight=600))
         for i, (k, day, label, _u) in enumerate(EVENTS):
             kx, kyy = 20 + (i // 4) * 490, ky + 28 + (i % 4) * 26
-            body.append(t(kx, kyy, f"{k}", small, INK, weight=700))
-            body.append(t(kx + 22, kyy, day[5:], small, DIM))
-            body.append(t(kx + 80, kyy, label, small, SUB))
+            body.append(t(kx, kyy, f"{k}", small, c.ink, weight=700))
+            body.append(t(kx + 22, kyy, day[5:], small, c.dim))
+            body.append(t(kx + 80, kyy, label, small, c.sub))
         H = ky + 28 + 4 * 26
     else:
-        body.append(t(12, ky, "Turning points (shaded: cleanup)", fs, INK, weight=600))
+        body.append(t(12, ky, "Turning points (shaded: cleanup)", fs, c.ink, weight=600))
         for i, (k, day, _w, label) in enumerate(EVENTS):
             kyy = ky + 24 + i * 20
-            body.append(t(12, kyy, f"{k}", small, INK, weight=700))
-            body.append(t(28, kyy, day[5:], small, DIM))
-            body.append(t(70, kyy, label, small, SUB))
+            body.append(t(12, kyy, f"{k}", small, c.ink, weight=700))
+            body.append(t(28, kyy, day[5:], small, c.dim))
+            body.append(t(70, kyy, label, small, c.sub))
         H = ky + 24 + 8 * 20
     title = "Supporting code piled up past the product, after weeks of plans"
     desc = (f"Stacked lines of supporting Python by group from 15 September to 15 November 2026, with product code as a line. "
             f"Supporting code passes the product on {cross}, peaks at {fmt(n('sup_peak'))} lines on 2026-11-10, three times the "
             f"product, and is {fmt(n('sup_now'))} lines on 2026-11-15. Below, words written per day; the largest day is "
             f"{fmt(n('w_max_day'))} words on 2026-10-08. Eight numbered turning points are listed under the chart.")
-    return svg("fig-pileup", variant, W, int(H + 16), title, desc, body), title
+    return svg("fig-pileup", variant, W, int(H + 16), title, desc, body, c.surface), title
 
 
 # --- Figure 1: the size against the product -------------------------------------------
@@ -781,12 +816,16 @@ def outputs():
         number, caption = CAPTIONS[fid]
         header = generated_header(SCRIPT, [i if i == "numbers.md" else f"measurement/{i}" for i in FIG_INPUTS[fid]])
         files[os.path.join(FRAGMENTS, f"{fid}.html")] = header + figure(fid, number, title, w, tl, caption)
-        if fid == "fig-pileup":  # the record's figure, as files an image link can show
-            files[os.path.join(FIGDIR, "pileup-wide.svg")] = standalone(re.sub(r' class="[^"]*"', "", w, count=1))
-            files[os.path.join(FIGDIR, "pileup-upright.svg")] = standalone(re.sub(r' class="[^"]*"', "", tl, count=1))
-    manifest = {name: {"script": SCRIPT, "inputs": [f"{TOPIC}/measurement/timeline.csv", f"{TOPIC}/numbers.md"],
-                       "shows": "Figure 1 of the record; Figure 2 of the page"}
-                for name in ("pileup-wide.svg", "pileup-upright.svg")}
+    # The record's figure, as files an image link can show: dark, and light beside it.
+    manifest = {}
+    for name, variant in (("pileup-wide.svg", "wide"), ("pileup-upright.svg", "tall")):
+        for theme, colors in PILEUP_THEMES.items():
+            drawn, _title = pileup(variant, colors)
+            target = variant_path(os.path.join(FIGDIR, name), theme)
+            files[str(target)] = standalone(re.sub(r' class="[^"]*"', "", drawn, count=1))
+            manifest[target.name] = {"script": SCRIPT, "inputs": [f"{TOPIC}/measurement/timeline.csv", f"{TOPIC}/numbers.md"],
+                                     "shows": "Figure 1 of the record; Figure 2 of the page" if theme == "dark"
+                                     else f"{name} in the light theme, for slides and print"}
     files[os.path.join(FIGDIR, "manifest.json")] = json.dumps(manifest, indent=2) + "\n"
     return files
 

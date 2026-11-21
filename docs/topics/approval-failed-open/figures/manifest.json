@@ -7,6 +7,14 @@
     ],
     "shows": "Figure 1 of the record; Figure 2 of the page"
   },
+  "pileup-wide.light.svg": {
+    "script": "docs/topics/approval-failed-open/draw_figures.py",
+    "inputs": [
+      "docs/topics/approval-failed-open/measurement/timeline.csv",
+      "docs/topics/approval-failed-open/numbers.md"
+    ],
+    "shows": "pileup-wide.svg in the light theme, for slides and print"
+  },
   "pileup-upright.svg": {
     "script": "docs/topics/approval-failed-open/draw_figures.py",
     "inputs": [
@@ -14,5 +22,13 @@
       "docs/topics/approval-failed-open/numbers.md"
     ],
     "shows": "Figure 1 of the record; Figure 2 of the page"
+  },
+  "pileup-upright.light.svg": {
+    "script": "docs/topics/approval-failed-open/draw_figures.py",
+    "inputs": [
+      "docs/topics/approval-failed-open/measurement/timeline.csv",
+      "docs/topics/approval-failed-open/numbers.md"
+    ],
+    "shows": "pileup-upright.svg in the light theme, for slides and print"
   }
 }
