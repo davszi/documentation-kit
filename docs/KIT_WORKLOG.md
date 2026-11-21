@@ -2,6 +2,55 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-21 — Review of 5.2.0: not fit to tag, then fixed
+
+- An independent reviewer tried the three changes on throwaway projects,
+  with real pushes to a local bare remote, and recomputed the colour values
+  by another path. Verdict: not fit to tag, two major findings, both in the
+  pre-push gate.
+- Major, fixed: in a new linked worktree the gate was silently off. The
+  relative `core.hooksPath` resolved inside the worktree, where the kit
+  submodule was not set up yet, so Git ran no hook. The setting is now an
+  absolute path to the main checkout's kit, and the hook refuses a push from
+  a checkout without `.docs-kit` and names the submodule command.
+- Major, fixed: `rules/engineering/git.md` said the gate checks the
+  committed state; it reads the working tree. A commit without its map row
+  was pushed while the row sat uncommitted in the tree. The hook now refuses
+  a push while tracked files have uncommitted changes;
+  `DOCS_GATE_ALLOW_CHANGES=1` checks the tree as it is. Untracked files do
+  not stop it; lint warns about those that matter.
+- Also fixed in the gate: a push that only deletes runs no check; a pushed
+  commit that is not the checked-out one gets a line; a locked site's trial
+  publish runs with two throwaway passwords, where it was skipped and so hid
+  real publish failures.
+- Fixed in lint: `__pycache__` under a tooling root no longer warns; the
+  import warnings for experiment folders and unreadable files also read
+  untracked files; an untracked file whose name is not UTF-8 no longer
+  crashes lint; the second import scan runs only when an untracked Python
+  file exists.
+- Fixed in the palette: light violet and blue were 13.1 apart for full
+  colour vision and about 2 for a red or green deficiency. The test had
+  compared only neighbours in the series order, and a line chart shows all
+  four. Light violet is now `#8a55fb` and light blue `#0a5fbb`: every pair
+  of light series colours is at least 17.6 apart, 10.4 for a red and 11.6
+  for a green deficiency, and the test checks every pair. The dark colours
+  stay; their close pairs, violet with blue (14.8, 6.0 for a green
+  deficiency) and accent with blue (12.7), are asserted as known, and the
+  rule asks for labelled lines. PDF files from `write_both` carry no
+  creation date now.
+- Corrected in the records: `publish` does not export a light file, but the
+  local build output copies all of `docs/figures/`; the release notes no
+  longer repeat the measured values; `[[checks]]` need not stand above the
+  first `[[nav]]` table.
+- Tried after the fixes with real pushes under dash, with a stub in place of
+  the kit: a failing check stops the push and the remote stays unchanged, a
+  passing one pushes, an uncommitted change to a tracked file stops it, a
+  new worktree without the kit stops it, a deletion runs no check.
+- Not reviewed again: these fixes. Checks: the tests of the three areas
+  pass, 53 tests with 2 skipped; build and strict lint of the kit pass. The
+  full script was not run again: no fix touches the theme, the build or a
+  browser suite.
+
 ## 2026-11-21 — The full check script runs once per release
 
 - Why: deivid asked why the checks take so long. One run of
@@ -85,7 +134,7 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   fragments are the same bytes as before. Its five group colours got light
   counterparts, measured: marks at least 3.0:1 on white and on the shaded
   band, white labels 4.5:1 on their bands, neighbours in the stack at least
-  16.4 apart and 10.0 for a red or green colour deficiency. Seen in a
+  16.4 apart and 9.9 for a red or green colour deficiency. Seen in a
   browser render of both light files.
 - Not built: a light reader, a light deck, a variant switch on pages.
 - The kit's test environment has no matplotlib, so the two matplotlib tests

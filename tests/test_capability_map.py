@@ -145,6 +145,21 @@ class Check(unittest.TestCase):
                              ["docs/CAPABILITY_MAP.md: tools/scratch.py is under the tooling root tools/ "
                               "but no row links it"])
 
+    def test_untracked_files_get_the_warnings_their_commit_would_bring(self):
+        with project(base_files()) as folder:
+            root = Path(folder)
+            (root / "tools/__pycache__").mkdir()
+            (root / "tools/__pycache__/judge.cpython-312.pyc").write_bytes(b"cache")
+            (root / "tools/run_record/reuse.py").write_text("from experiments.attended.run import x\n")
+            (root / "tools/run_record/broken.py").write_text("def (:\n")
+            (root / b"tools/run_record/caf\xe9.txt".decode("utf-8", "surrogateescape")).write_text("")
+            errors, warnings = capability_map.check(root, SITE)
+            self.assertEqual(errors, [])
+            self.assertEqual(len(warnings), 2, warnings)
+            self.assertIn("cannot read the imports of tools/run_record/broken.py", warnings[0])
+            self.assertIn("tools/run_record/reuse.py:1 imports experiments/attended/run.py from the experiment folder",
+                          warnings[1])
+
     def test_stale_column_fails_and_the_command_rewrites_it(self):
         with project(base_files(record="`tools/judge.py`")) as folder:
             root = Path(folder)

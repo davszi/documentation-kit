@@ -101,7 +101,15 @@ def tracked_files(root: Path) -> list[str]:
 def untracked_files(root: Path) -> list[str]:
     """Files Git does not track and does not ignore: what the next `git add` would take."""
     result = subprocess.run(["git", "ls-files", "-z", "--others", "--exclude-standard"], cwd=root, capture_output=True)
-    return sorted(set(filter(None, result.stdout.decode().split("\0")))) if result.returncode == 0 else []
+    if result.returncode != 0:
+        return []
+    names = set()
+    for raw in filter(None, result.stdout.split(b"\0")):
+        try:
+            names.add(raw.decode())
+        except UnicodeDecodeError:
+            continue  # a stray file whose name is not UTF-8 is no tooling entry and no importable module
+    return sorted(names)
 
 
 def _inside(path: str, folder: str) -> bool:
@@ -325,10 +333,15 @@ def check(root: Path, site: dict | None = None) -> tuple[list[str], list[str]]:
             key = "tooling_roots" if folder in s["tooling_roots"] else "experiment_roots"
             errors.append(f"site.toml: {key} names {folder}/, which holds no tracked file")
     index = ImportIndex(root, tracked, s["tooling_roots"])
-    for path, problem in index.unreadable:
+    # Files Git neither tracks nor ignores count for the warnings, so that lint
+    # before a commit says what lint after it says. A bytecode cache is no entry.
+    untracked = [path for path in untracked_files(root) if "__pycache__" not in path.split("/")]
+    after = (ImportIndex(root, sorted(set(tracked) | set(untracked)), s["tooling_roots"])
+             if any(path.endswith(".py") for path in untracked) else index)
+    for path, problem in after.unreadable:
         if any(_inside(path, r) for r in s["tooling_roots"] + s["experiment_roots"]):
             warnings.append(f"capability map: cannot read the imports of {path}: {problem}")
-    for path, imports in sorted(index.imports.items()):
+    for path, imports in sorted(after.imports.items()):
         if not any(_inside(path, r) for r in s["tooling_roots"]):
             continue
         for line, target in imports:
@@ -374,15 +387,13 @@ def check(root: Path, site: dict | None = None) -> tuple[list[str], list[str]]:
             if not any(p == entry or (p.startswith(entry + "/")) for p in linked):
                 errors.append(f"{map_path}: {entry} is under the tooling root {folder}/ but no row links it")
     # A new file passes until it is committed and fails right after; say so before the commit.
-    untracked = untracked_files(root)
     for folder in s["tooling_roots"]:
         known = set(root_entries(tracked, folder))
         for entry in root_entries(untracked, folder):
             if entry not in known and not any(p == entry or p.startswith(entry + "/") for p in linked):
                 warnings.append(f"{map_path}: {entry} is under the tooling root {folder}/ and not tracked yet; "
                                 "no row links it, so lint fails once it is committed")
-    if untracked:
-        after = ImportIndex(root, sorted(set(tracked) | set(untracked)), s["tooling_roots"])
+    if after is not index:
         for where, need, paths in rows:
             if users_cell(paths, after, s) != users_cell(paths, index, s):
                 warnings.append(f"{where}: Imported by for {need!r} changes once the untracked files are committed; "

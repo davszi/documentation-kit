@@ -1,4 +1,5 @@
 """`docsite.py check` and the pre-push hook: the steps, their order, and where each stops."""
+import importlib.util
 import os
 from pathlib import Path
 import subprocess
@@ -12,6 +13,7 @@ sys.path.insert(0, str(KIT / 'tooling'))
 from project_check import declared  # noqa: E402
 
 HOOK = KIT / 'hooks/pre-push'
+HAS_CRYPTOGRAPHY = importlib.util.find_spec('cryptography') is not None
 
 
 def clean_env(**extra):
@@ -116,31 +118,47 @@ class Check(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('check failed at step 3: publish', result.stderr)
 
-    def test_the_trial_publish_is_skipped_when_the_lock_has_no_passwords(self):
+    @unittest.skipUnless(HAS_CRYPTOGRAPHY, 'cryptography is not installed')
+    def test_a_locked_site_is_tried_with_throwaway_passwords(self):
         self.declare('\n[publication]\npages = ["guide.html"]\nlock = true\n')
         result = self.check()
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn('skipped: the page lock is on and DOCSITE_GENERAL_PASSWORD and DOCSITE_REFERENCE_PASSWORD '
-                      'are not set', result.stdout)
-        self.assertIn('check passed: 3 step(s), the trial publish skipped', result.stdout)
+        self.assertIn('check 3/3: publish, into a temporary folder, with throwaway passwords', result.stdout)
+        self.assertIn('check passed: 3 step(s)', result.stdout)
+        self.assertNotIn('skipped', result.stdout)
+
+    @unittest.skipUnless(HAS_CRYPTOGRAPHY, 'cryptography is not installed')
+    def test_a_locked_site_that_cannot_publish_stops_the_check(self):
+        self.declare('\n[publication]\npages = ["guide.html"]\nlock = true\nassets_manifest = "docs/missing.json"\n')
+        result = self.check()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('check failed at step 3: publish', result.stderr)
 
 
 class Hook(unittest.TestCase):
     """The hook finds an interpreter and hands over to `docsite.py check`; a stub stands in for the kit."""
 
+    ZERO = '0' * 40
+
     def setUp(self):
-        folder = tempfile.TemporaryDirectory(prefix='docs-kit-hook-')
+        folder = tempfile.TemporaryDirectory(prefix='docs-kit hook-')  # a space in the path
         self.addCleanup(folder.cleanup)
         self.root = Path(folder.name).resolve()
-        subprocess.run(['git', 'init', '-q'], cwd=self.root, check=True)
+        self.git('init', '-q')
         (self.root / '.docs-kit').mkdir()
         (self.root / '.docs-kit/docsite.py').write_text('import sys\nprint("ARGS", *sys.argv[1:])\nsys.exit(5)\n')
-        subprocess.run(['git', 'add', '-A'], cwd=self.root, check=True)
-        subprocess.run(['git', '-c', 'user.name=Test', '-c', 'user.email=test@example.com', 'commit', '-q', '-m', 'Start'],
-                       cwd=self.root, check=True)
+        (self.root / '.gitignore').write_text('.build/\n')
+        self.git('add', '-A')
+        self.git('-c', 'user.name=Test', '-c', 'user.email=test@example.com', 'commit', '-q', '-m', 'Start')
+        self.head = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=self.root, capture_output=True, text=True).stdout.strip()
 
-    def push(self, **env):
-        return subprocess.run(['sh', str(HOOK)], cwd=self.root, capture_output=True, text=True, env=clean_env(**env))
+    def git(self, *args):
+        subprocess.run(['git', *args], cwd=self.root, check=True, capture_output=True)
+
+    def push(self, lines=None, **env):
+        lines = [f'refs/heads/main {self.head} refs/heads/main {self.ZERO}'] if lines is None else lines
+        return subprocess.run(['sh', str(HOOK)], cwd=self.root, capture_output=True, text=True,
+                              input=''.join(line + '\n' for line in lines), env=clean_env(**env))
 
     def test_it_is_executable_and_runs_the_check_with_the_named_interpreter(self):
         self.assertTrue(os.access(HOOK, os.X_OK))
@@ -149,20 +167,54 @@ class Hook(unittest.TestCase):
         self.assertEqual(result.stdout.strip(), f'ARGS check --project {self.root}')
         self.assertEqual(result.stderr, '')
 
-    def test_it_uses_the_projects_environment_and_says_when_the_tree_is_dirty(self):
+    def test_it_uses_the_projects_environment(self):
         env_bin = self.root / '.build/docs-env/bin'
         env_bin.mkdir(parents=True)
         (env_bin / 'python').symlink_to(sys.executable)
         result = self.push()
         self.assertEqual(result.returncode, 5, result.stderr)
         self.assertIn('ARGS check --project', result.stdout)
-        self.assertIn('the working tree has uncommitted changes', result.stderr)  # .build is not ignored here
 
     def test_it_stops_without_an_interpreter(self):
         result = self.push()
         self.assertEqual(result.returncode, 1)
         self.assertIn('no documentation interpreter', result.stderr)
         self.assertEqual(result.stdout, '')
+
+    def test_it_stops_when_the_checkout_has_no_kit(self):
+        (self.root / '.docs-kit/docsite.py').unlink()
+        result = self.push(DOCS_PYTHON=sys.executable, DOCS_GATE_ALLOW_CHANGES='1')
+        self.assertEqual(result.returncode, 1)
+        self.assertIn('this checkout has no .docs-kit', result.stderr)
+        self.assertIn('git submodule update --init .docs-kit', result.stderr)
+
+    def test_it_stops_while_tracked_files_have_uncommitted_changes(self):
+        (self.root / '.docs-kit/docsite.py').write_text('import sys\nprint("ARGS", *sys.argv[1:])\n')
+        result = self.push(DOCS_PYTHON=sys.executable)
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(result.stdout, '')
+        self.assertIn('tracked files have uncommitted changes', result.stderr)
+        self.assertIn('.docs-kit/docsite.py', result.stderr)
+        allowed = self.push(DOCS_PYTHON=sys.executable, DOCS_GATE_ALLOW_CHANGES='1')
+        self.assertEqual(allowed.returncode, 0, allowed.stderr)
+        self.assertIn('ARGS check --project', allowed.stdout)
+
+    def test_an_untracked_file_does_not_stop_it(self):
+        (self.root / 'scratch.txt').write_text('notes\n')
+        result = self.push(DOCS_PYTHON=sys.executable)
+        self.assertEqual(result.returncode, 5, result.stderr)
+
+    def test_a_push_that_only_deletes_runs_no_check(self):
+        result = self.push([f'(delete) {self.ZERO} refs/heads/old 1234567890123456789012345678901234567890'],
+                           DOCS_PYTHON='/nonexistent/python')
+        self.assertEqual((result.returncode, result.stdout, result.stderr), (0, '', ''))
+        self.assertEqual(self.push([], DOCS_PYTHON='/nonexistent/python').returncode, 0)
+
+    def test_it_says_when_a_pushed_commit_is_not_the_checked_out_one(self):
+        other = 'a' * 40
+        result = self.push([f'refs/heads/other {other} refs/heads/other {self.ZERO}'], DOCS_PYTHON=sys.executable)
+        self.assertEqual(result.returncode, 5)
+        self.assertIn('a pushed commit is not the checked-out one', result.stderr)
 
 
 if __name__ == '__main__':

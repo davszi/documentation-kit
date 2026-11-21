@@ -1,5 +1,6 @@
 """The figure palettes: readable text, visible marks, series that stay apart, and the two-file naming."""
 import importlib.util
+import itertools
 import json
 from pathlib import Path
 import subprocess
@@ -74,11 +75,23 @@ class Palettes(unittest.TestCase):
                     self.assertGreaterEqual(distance(first, second, seen), APART_DEFICIENT,
                                             f'{p.name}: {first} and {second} for {name}')
 
-    def test_the_order_matters_for_the_dark_palette(self):
-        # Violet next to blue is the pair the fixed order keeps apart.
-        self.assertLess(distance(DARK.violet, DARK.blue, DEUTAN), APART_DEFICIENT)
+    def test_every_pair_of_light_series_colours_stays_apart(self):
+        # A line chart shows all four at once, so neighbours alone are not enough.
+        for first, second in itertools.combinations(LIGHT.series, 2):
+            self.assertGreaterEqual(distance(first, second), APART, f'{first} and {second}')
+            for name, seen in (('protan', PROTAN), ('deutan', DEUTAN)):
+                self.assertGreaterEqual(distance(first, second, seen), APART_DEFICIENT, f'{first} and {second} for {name}')
+
+    def test_the_dark_palette_has_one_known_close_pair(self):
+        # The dark colours are the reader's and stay. Violet and blue, never neighbours in the
+        # series order, are the one pair below the floors; the module says to label such lines.
+        close = [(first, second) for first, second in itertools.combinations(DARK.series, 2)
+                 if distance(first, second) < APART or distance(first, second, PROTAN) < APART_DEFICIENT
+                 or distance(first, second, DEUTAN) < APART_DEFICIENT]
+        self.assertEqual(close, [(DARK.accent, DARK.blue), (DARK.violet, DARK.blue)])
+        self.assertGreaterEqual(distance(DARK.accent, DARK.blue), 12.5)   # 12.7 for full colour vision
+        self.assertGreaterEqual(distance(DARK.violet, DARK.blue), 14.5)   # 14.8
         self.assertNotIn((DARK.violet, DARK.blue), list(zip(DARK.series, DARK.series[1:])))
-        self.assertNotIn((DARK.blue, DARK.violet), list(zip(DARK.series, DARK.series[1:])))
 
     def test_the_svg_helpers_use_the_dark_palette(self):
         for name in ('ink', 'sub', 'dim', 'line', 'panel', 'bg', 'accent', 'warm', 'violet', 'blue', 'alert'):

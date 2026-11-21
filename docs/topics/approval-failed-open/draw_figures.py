@@ -86,7 +86,7 @@ PILEUP_DARK = PileupColors(SURFACE, INK, SUB, DIM, GRID, tuple(c for _n, _col, c
 # palette's light steps, darkened only as far as needed: the two labelled bands
 # carry white text (4.50:1), the rest are marks that clear 3:1 on the cleanup
 # shade too (3.30:1 on white). Adjacent in the stack: normal-vision dE >= 16.4,
-# protan/deutan dE >= 10.0 (OKLab x100). Ink hairlines need more opacity on white.
+# protan/deutan dE >= 9.9 (OKLab x100). Ink hairlines need more opacity on white.
 PILEUP_LIGHT = PileupColors(LIGHT.bg, LIGHT.ink, LIGHT.sub, LIGHT.dim, LIGHT.line,
                             ("#3077cf", "#cd4d10", "#4e9c79", "#bf8102", "#d56b94"), "#6250d6", "#ffffff", LIGHT.ink, "0.05",
                             "0.5")

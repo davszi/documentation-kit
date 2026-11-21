@@ -20,10 +20,12 @@ for a matplotlib figure or for SVG text:
     write_both("docs/figures/speed.svg", draw)
 
 Series take `colors.series` in its order and never cycle past it; `alert` marks
-a problem and is not a series colour. `tests/test_figure_themes.py` checks both
-palettes: text against its surfaces, marks against the surface, and neighbours
-in the series order against each other, also as seen with a red or green colour
-deficiency.
+a problem, is not a series colour and carries a label. `tests/test_figure_themes.py`
+checks both palettes: text against its surfaces, marks against the surface, and
+series colours against each other, also as seen with a red or green colour
+deficiency. One pair stays close in the dark palette, whose colours are the
+reader's: violet and blue, the second and fourth series. Label the lines of a
+dark chart that shows both.
 
 The kit does not depend on matplotlib: `write_both` uses it only where it is
 installed, and `matplotlib_rc` returns a plain dict.
@@ -58,7 +60,7 @@ class Palette:
 DARK = Palette("dark", ink="#e6edf3", sub="#a9b4c2", dim="#7d8896", line="#2f3b4a", panel="#121a24", bg="#0d1117",
                accent="#39d2c0", warm="#ffa657", violet="#bc8cff", blue="#79c0ff", alert="#ff7b72")
 LIGHT = Palette("light", ink="#1f2328", sub="#59636e", dim="#656d76", line="#d0d7de", panel="#f6f8fa", bg="#ffffff",
-                accent="#0f9a8c", warm="#bc5c00", violet="#8250df", blue="#0969da", alert="#cf222e")
+                accent="#0f9a8c", warm="#bc5c00", violet="#8a55fb", blue="#0a5fbb", alert="#cf222e")
 THEMES = {"dark": DARK, "light": LIGHT}
 
 
@@ -133,8 +135,9 @@ def _save(result, target: Path, savefig: dict) -> None:
         raise TypeError(f"draw must return SVG text or a matplotlib figure, not {type(result).__name__}")
     import matplotlib.pyplot as plt
     options = dict(savefig)
-    if target.suffix == ".svg":
-        # No creation date in the file, so an unchanged figure is the same bytes.
-        options["metadata"] = {"Date": None, **options.get("metadata", {})}
+    # No creation date in the file, so an unchanged figure is the same bytes.
+    dated = {".svg": "Date", ".pdf": "CreationDate"}.get(target.suffix)
+    if dated:
+        options["metadata"] = {dated: None, **options.get("metadata", {})}
     result.savefig(target, **options)
     plt.close(result)

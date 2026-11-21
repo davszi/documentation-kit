@@ -6,8 +6,9 @@ push is stopped by the same checks that would fail in the project's workflow:
 1. `build`, because lint compares the built site with its sources;
 2. `lint --strict`;
 3. a trial `publish` into a temporary folder, when `docs/site/site.toml` has a
-   `[publication]` table; skipped with a note when the page lock is on and its
-   passwords are not in the environment;
+   `[publication]` table; with the page lock on and its passwords not in the
+   environment it runs with two throwaway passwords, and is skipped with a
+   note only when the lock's package `cryptography` is not installed;
 4. each command the project declares, in the order written:
 
        [[checks]]
@@ -16,7 +17,8 @@ push is stopped by the same checks that would fail in the project's workflow:
 
 `command` is an argument list, run from the project root without a shell; an
 element that is exactly `{python}` becomes the interpreter that runs the check.
-The checks read the working tree, not a commit.
+The checks read the working tree, not a commit; the hook refuses a push while
+tracked files have uncommitted changes.
 """
 from __future__ import annotations
 
@@ -55,16 +57,24 @@ def declared(site: dict) -> list[tuple[str, list[str]]]:
     return found
 
 
-def _publish_note(site: dict, environ) -> str | None:
-    """Why the trial publish cannot run, or None when it can."""
+def _trial_lock(site: dict, environ) -> tuple[dict, str | None]:
+    """Passwords to add for the trial publish, and why it cannot run at all (None when it can).
+
+    A locked site keeps its passwords in the workflow's secrets. The trial
+    bundle is thrown away, so two random passwords stand in for them and the
+    rest of `publish` is still checked.
+    """
+    import importlib.util
+    import secrets
     from page_lock import PASSWORD_VARIABLES
     options = site.get("publication")
     if not isinstance(options, dict) or options.get("lock") is not True:
-        return None
-    missing = [name for name in PASSWORD_VARIABLES.values() if not environ.get(name)]
-    if missing:
-        return f"the page lock is on and {' and '.join(missing)} {'is' if len(missing) == 1 else 'are'} not set"
-    return None
+        return {}, None
+    if all(environ.get(name) for name in PASSWORD_VARIABLES.values()):
+        return {}, None
+    if importlib.util.find_spec("cryptography") is None:
+        return {}, "the page lock is on and its package cryptography is not installed"
+    return {name: secrets.token_urlsafe(24) for name in PASSWORD_VARIABLES.values()}, None
 
 
 def run(project: Path, kit: Path, environ=None) -> int:
@@ -82,10 +92,10 @@ def run(project: Path, kit: Path, environ=None) -> int:
         ("build", [*docsite, "build", "--project", str(project)]),
         ("lint --strict", [*docsite, "lint", "--project", str(project), "--strict"]),
     ]
-    skipped = None
+    skipped, trial = None, {}
     if "publication" in site:
-        skipped = _publish_note(site, environ)
-        steps.append(("publish, into a temporary folder", None))
+        trial, skipped = _trial_lock(site, environ)
+        steps.append(("publish, into a temporary folder" + (", with throwaway passwords" if trial else ""), None))
     steps += [(name, [python if part == PLACEHOLDER else part for part in command]) for name, command in own]
     for number, (name, command) in enumerate(steps, 1):
         print(f"check {number}/{len(steps)}: {name}", flush=True)
@@ -97,9 +107,9 @@ def run(project: Path, kit: Path, environ=None) -> int:
                 with tempfile.TemporaryDirectory(prefix="docsite-check-") as folder:
                     status = subprocess.run([*docsite, "publish", "--project", str(project),
                                              "--out", str(Path(folder) / "site")],
-                                            cwd=project, stdout=subprocess.DEVNULL).returncode
+                                            cwd=project, stdout=subprocess.DEVNULL, env={**environ, **trial}).returncode
             else:
-                status = subprocess.run(command, cwd=project).returncode
+                status = subprocess.run(command, cwd=project, env=dict(environ)).returncode
         except OSError as problem:
             print(f"check failed at step {number}, {name}: cannot run {command[0]}: {problem.strerror}", file=sys.stderr)
             return 127

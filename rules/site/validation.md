@@ -31,9 +31,11 @@ not break, in this order, and stops at the first that fails:
 2. `lint --strict`.
 3. A trial `publish` into a temporary folder, when `docs/site/site.toml` has a
    `[publication]` table. With the [page lock](publication.md#page-lock) on
-   and its passwords not in the environment, this step is skipped with a note.
-4. Each check the project declares in `docs/site/site.toml`, above the first
-   `[[nav]]` table, in the order written:
+   and its passwords not in the environment, it runs with two throwaway
+   passwords; it is skipped with a note only when the lock's package
+   `cryptography` is not installed.
+4. Each check the project declares in `docs/site/site.toml`, in the order
+   written:
 
    ```toml
    [[checks]]
@@ -46,24 +48,34 @@ not break, in this order, and stops at the first that fails:
    the check; any other program is named as the project calls it. `name` is
    optional.
 
-It does not run browser checks or a review by eye, and it reads the working
-tree, not a commit.
+It runs no browser check and replaces no review by eye. It reads the
+checked-out tree, not a commit.
 
 The gate is opt-in, per clone. `hooks/pre-push` in the kit calls the command
-before every push and stops the push when it fails:
+before a push and stops the push when it fails. Switch it on once, in the
+main checkout:
 
 ```bash
-git config core.hooksPath .docs-kit/hooks
+git config core.hooksPath "$(git rev-parse --show-toplevel)/.docs-kit/hooks"
 ```
 
-`core.hooksPath` replaces the clone's hooks folder, so a project with hooks of
-its own copies `.docs-kit/hooks/pre-push` into its tracked hooks folder and
-points the setting there. The hook uses `$DOCS_PYTHON`, else
-`.build/docs-env/bin/python` of the checkout or, in a linked worktree, of the
-main checkout. It prints a line when the working tree has uncommitted
-changes, since the checks then read more than the push sends.
+The path is absolute, so linked worktrees use the same hook; set it again
+when the clone moves. `core.hooksPath` replaces the clone's hooks folder: a
+project with hooks of its own copies `.docs-kit/hooks/pre-push` into its
+tracked hooks folder and points the setting there. The hook:
+
+- refuses the push while tracked files have uncommitted changes, because the
+  checks would then not read what is pushed; `DOCS_GATE_ALLOW_CHANGES=1`
+  checks the tree as it is;
+- refuses it in a checkout without `.docs-kit`, such as a new worktree before
+  `git submodule update --init .docs-kit`;
+- uses `$DOCS_PYTHON`, else `.build/docs-env/bin/python` of the checkout or of
+  the main checkout;
+- runs nothing for a push that only deletes, and says so when a pushed commit
+  is not the checked-out one.
+
 `git push --no-verify` skips it once. The project's workflow stays the check
-that counts; the gate only finds the failure before the push.
+that counts; the gate finds the failure before the push.
 
 ## Local review and browser access
 

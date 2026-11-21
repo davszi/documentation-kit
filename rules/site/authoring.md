@@ -493,14 +493,15 @@ take `colors.series` in its order and do not cycle past it; `colors.alert`
 marks a problem and is not a series colour. The kit does not depend on
 matplotlib.
 
-Both files are generated files: the manifest lists both, `--check` covers
-both, and the light file is no orphan. A fragment with inline SVG that a page
-includes stays dark and has no light file; neither has a hand-drawn figure.
-The build packages only the files a page shows, so light files do not grow
-the site. Lint's figure manifest check counts the light file of a shown
-figure as kept, like its raster export, when both name the same script.
-Nothing in lint demands the light file; a generator that uses `write_both`
-cannot leave it out.
+Both files are generated files: the manifest lists both with the same
+script, and `--check` covers both. Lint then counts the light file of a shown
+figure as kept, like its raster export; it does not demand one. A fragment
+with inline SVG that a page includes stays dark and has no light file;
+neither has a hand-drawn figure. `publish` exports only what a page shows;
+the local build output copies all of `docs/figures/`, light files included.
+In the dark palette violet and blue, the second and fourth series, are close
+for a reader with a colour deficiency: label the lines of a chart that shows
+both.
 
 ### Slide faces and decks
 

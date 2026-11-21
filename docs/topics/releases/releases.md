@@ -29,21 +29,24 @@ shows the new warnings.
 ## 5.2.0 — figures in a dark and a light theme, and checks before a push
 
 5.2.0 is a minor release under
-[what a version number promises](#what-a-version-number-promises): it adds a
-lint warning, a command, a tooling module and a rule that no check enforces,
+[what a version number promises](#what-a-version-number-promises): it adds
+lint warnings, a command, a tooling module and a rule that no check enforces,
 and it removes nothing. All three changes were asked for from adaptation.
 
 - **New lint warnings, which fail `--strict`.** A file or folder directly
   under a tooling root that is not tracked yet and that no row of the
   capability map links, and an untracked file whose imports change the
-  Imported by column. Up to 5.1.0 lint passed in both states and failed once
-  the file was committed.
+  Imported by column or would bring an import warning. Up to 5.1.0 lint
+  passed while such a file was untracked and failed once it was committed.
+  A project that runs tooling before lint has Git ignore `__pycache__`;
+  lint skips that folder, but not other generated files.
 - **New command `check` and an opt-in pre-push gate.**
   `docsite.py check --project .` runs `build`, `lint --strict`, a trial
   `publish` when `[publication]` is configured, and the checks a project
   declares in new `[[checks]]` tables of `site.toml`, and stops at the first
-  failure. `hooks/pre-push` calls it; a clone switches the gate on with
-  `git config core.hooksPath .docs-kit/hooks`. The command, the `[[checks]]`
+  failure. `hooks/pre-push` calls it before a push and refuses the push
+  while tracked files have uncommitted changes; a clone switches the gate on
+  with one `git config core.hooksPath` line. The command, the `[[checks]]`
   table with `name` and `command`, and the hook's path join the stable
   interfaces. See
   [one command and a pre-push gate](../../../rules/site/validation.md#one-command-and-a-pre-push-gate).
@@ -51,8 +54,8 @@ and it removes nothing. All three changes were asked for from adaptation.
   the dark file, which pages show; `<name>.light.<ext>` lies beside it, for
   slides and print. The rule is in
   [generated figures](../../../rules/site/authoring.md#generated-figures). No
-  lint check enforces it. Pages, the reader and the build's output do not
-  change; a light file is not packaged, because no page shows it. Lint's
+  lint check enforces it. Pages and the reader do not change, and `publish`
+  does not export a light file, because no page shows it. Lint's
   figure manifest check no longer warns about the light file of a shown
   figure in `docs/figures/` when the manifest gives both the same script.
 - **New module `tooling/figure_themes.py`.** A dark and a light palette,
@@ -63,17 +66,12 @@ and it removes nothing. All three changes were asked for from adaptation.
   change in a minor release.
 - **The dark colours are unchanged**, so existing figures look the same;
   `svg_figures.py` now takes its constants from the dark palette. New is a
-  fixed order for series colours: accent, violet, warm, blue. Violet next to
-  blue falls below the separation floor for a green colour deficiency.
-
-Measured for both palettes by `tests/test_figure_themes.py`: text against its
-surfaces is at least 4.87:1, marks against their surfaces at least 6.95:1 in
-the dark and 3.28:1 in the light palette, and neighbours in the series order
-are at least 25.6 apart in OKLab distance times 100, and 13.6 as seen with a
-green colour deficiency. The dark series colours are brighter than the range
-a common palette check asks of a dark chart (OKLCH lightness 0.73 to 0.80
-against 0.48 to 0.67); they stay, because they match the reader and every
-existing figure.
+  fixed order for series colours: accent, violet, warm, blue. In the dark
+  palette violet and blue stay close for a reader with a colour deficiency;
+  a dark chart that shows both labels its lines. Every pair of light series
+  colours stays apart. `tests/test_figure_themes.py` measures both palettes.
+  A project that loads `svg_figures.py` by file path, or keeps a copy of it,
+  now also needs `figure_themes.py` beside it.
 
 The [5.2.0 migration guide](migrations/5.2.0.md) has the steps.
 

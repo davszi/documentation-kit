@@ -1,13 +1,29 @@
 #!/bin/sh
 # Pre-push gate of the documentation kit: stop a push when the project's
-# documentation checks fail. Opt-in, per clone:
+# documentation checks fail. Opt-in, per clone; run once in the main checkout:
 #
-#     git config core.hooksPath .docs-kit/hooks
+#     git config core.hooksPath "$(git rev-parse --show-toplevel)/.docs-kit/hooks"
 #
-# A project with hooks of its own copies this file into its hooks folder.
-# The checks read the working tree, not the pushed commits. Skip once with
-# `git push --no-verify`.
+# The path is absolute so that linked worktrees use the same hook. A project
+# with hooks of its own copies this file into its hooks folder instead.
+# The checks read the checked-out tree. Skip once with `git push --no-verify`.
 root=$(git rev-parse --show-toplevel) || exit 1
+
+# Git lists what is pushed: <local ref> <local sha> <remote ref> <remote sha>.
+head=$(git rev-parse HEAD 2>/dev/null)
+pushed=0
+other=0
+while read -r local_ref local_sha remote_ref remote_sha; do
+  case $local_sha in
+    *[!0]*) pushed=1; [ "$local_sha" = "$head" ] || other=1 ;;
+  esac
+done
+[ "$pushed" = 1 ] || exit 0  # only deletions, or nothing to push
+
+if [ ! -f "$root/.docs-kit/docsite.py" ]; then
+  echo "pre-push: this checkout has no .docs-kit, so its checks cannot run; run: git submodule update --init .docs-kit" >&2
+  exit 1
+fi
 python=${DOCS_PYTHON:-}
 if [ -z "$python" ]; then
   # A linked worktree may have no environment of its own; use the main checkout's.
@@ -20,7 +36,14 @@ if [ -z "$python" ]; then
   echo "pre-push: no documentation interpreter; create .build/docs-env as in .docs-kit/README.md, or set DOCS_PYTHON" >&2
   exit 1
 fi
-if [ -n "$(git -C "$root" status --porcelain 2>/dev/null)" ]; then
-  echo "pre-push: the working tree has uncommitted changes; the checks read the working tree, not the pushed commits" >&2
+changed=$(git -C "$root" status --porcelain --untracked-files=no 2>/dev/null)
+if [ -n "$changed" ] && [ -z "${DOCS_GATE_ALLOW_CHANGES:-}" ]; then
+  echo "pre-push: tracked files have uncommitted changes, so the checks would not read what is pushed:" >&2
+  printf '%s\n' "$changed" | head -n 5 >&2
+  echo "pre-push: commit or stash them, or set DOCS_GATE_ALLOW_CHANGES=1 to check the tree as it is" >&2
+  exit 1
 fi
-exec "$python" "$root/.docs-kit/docsite.py" check --project "$root"
+if [ "$other" = 1 ]; then
+  echo "pre-push: a pushed commit is not the checked-out one; the checks read the checked-out tree" >&2
+fi
+exec "$python" "$root/.docs-kit/docsite.py" check --project "$root" </dev/null

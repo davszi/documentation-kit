@@ -17,10 +17,11 @@ repository's validation requirements and publication permissions.
 - Creating a commit does not establish that its tests passed or that its
   acceptance requirements were met.
 - Run the project's checks on the committed state before pushing: a check
-  that passed with a file still untracked can fail once the file is
-  committed. A project can switch on the kit's
+  that passed with a file still untracked or a change not yet committed can
+  fail on the commit. A project can switch on the kit's
   [pre-push gate](../site/validation.md#one-command-and-a-pre-push-gate),
-  which does this before every push.
+  which runs them before a push and refuses the push while tracked files
+  have uncommitted changes.
 
 ## Commit messages
 
