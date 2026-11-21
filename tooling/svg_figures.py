@@ -19,8 +19,12 @@ import html
 import math
 import re
 
-INK, SUB, DIM, LINE, PANEL, BG = "#e6edf3", "#a9b4c2", "#7d8896", "#2f3b4a", "#121a24", "#0d1117"
-ACCENT, WARM, VIOLET, BLUE, ALERT = "#39d2c0", "#ffa657", "#bc8cff", "#79c0ff", "#ff7b72"
+from figure_themes import DARK
+
+# The dark palette, which pages show. For the light file a generator passes the colours of
+# `figure_themes.palette("light")` to `text`, `panel` and `arrow`; `figure_themes.write_both` writes both files.
+INK, SUB, DIM, LINE, PANEL, BG = DARK.ink, DARK.sub, DARK.dim, DARK.line, DARK.panel, DARK.bg
+ACCENT, WARM, VIOLET, BLUE, ALERT = DARK.accent, DARK.warm, DARK.violet, DARK.blue, DARK.alert
 SANS, MONO = "'IBM Plex Sans',system-ui,sans-serif", "'IBM Plex Mono',ui-monospace,monospace"
 
 
