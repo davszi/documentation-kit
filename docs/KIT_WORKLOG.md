@@ -63,10 +63,26 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   now counts the light file of a shown figure as kept, like the raster
   export, when the manifest gives both the same script. Shown by a test
   that fails without the change.
+- The kit's own generator follows the rule:
+  `docs/topics/approval-failed-open/draw_figures.py` writes
+  `pileup-wide.light.svg` and `pileup-upright.light.svg`, lists them in its
+  manifest, and `--check` covers them. The dark files and the page's
+  fragments are the same bytes as before. Its five group colours got light
+  counterparts, measured: marks at least 3.0:1 on white and on the shaded
+  band, white labels 4.5:1 on their bands, neighbours in the stack at least
+  16.4 apart and 10.0 for a red or green colour deficiency. Seen in a
+  browser render of both light files.
 - Not built: a light reader, a light deck, a variant switch on pages.
 - The kit's test environment has no matplotlib, so the two matplotlib tests
   are skipped in `tests/run_checks.sh`. They pass in adaptation's
   documentation environment.
+- Checks on the 5.2.0 state with all three changes: `build`, `lint --strict`
+  and `build --check-reader` pass; `DOCS_REQUIRE_BROWSER=1 bash
+  tests/run_checks.sh` passes with 379 Python tests, 2 of them skipped, and
+  seven browser suites. A first full run failed once: the page-lock browser
+  suite timed out after 30 s waiting for `guide.html#locked-detail` to show
+  its chapter. The suite then passed twice alone and in the second full run;
+  the cause was not found, and no change of this release touches the lock.
 
 ## 2026-11-21 — Lint warns about untracked files under a tooling root
 
