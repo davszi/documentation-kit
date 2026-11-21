@@ -2,6 +2,23 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-21 — Release 5.2.0
+
+- deivid gave the go: "Yes, release 5.2.0". The ask named what the go
+  covers: moving `main` to the release state, the tag `v5.2.0` and the push,
+  which publishes the kit's own site. It gave the size: 8 commits on `main`,
+  29 files changed, 1,715 lines added and 82 removed, and a new migration
+  guide.
+- 5.2.0 holds the changes of the entries below: lint warnings for untracked
+  files, figures in a dark and a light theme, and the check command with its
+  opt-in pre-push gate. One independent review; its findings are fixed and
+  the fixes were not reviewed again.
+- This commit adds only this entry. Checks on it: `build` and `lint
+  --strict` of the kit pass. The full script last passed on `5a68f6f`; by
+  the practice of 2026-11-21 it was not run again, because nothing after
+  that commit touches the theme, the build or a browser suite. The Pages
+  workflow runs it on the push.
+
 ## 2026-11-21 — Review of 5.2.0: not fit to tag, then fixed
 
 - An independent reviewer tried the three changes on throwaway projects,
