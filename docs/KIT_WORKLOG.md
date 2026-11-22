@@ -2,6 +2,22 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-22 — Release 5.3.0
+
+- deivid gave the go: "Yes, release 5.3.0". The ask named what the go
+  covers: moving `main` to the release state, the tag `v5.3.0` and the push,
+  which publishes the kit's own site. It gave the size against 5.2.1: 15
+  files changed, 612 lines added and 40 removed, and no migration step.
+- The message with the ask named the exception to the versioning promise,
+  that `check` no longer hands the lock's passwords to the project's
+  checks, and offered to take it out. The go came after it, so the
+  exception stands.
+- 5.3.0 holds the changes of the two entries below. One independent
+  review; its findings are fixed and the fixes were not reviewed again.
+- This commit adds only this entry. Checks on it: `build` and `lint
+  --strict` of the kit pass. The full script passed on `64ef496`, the
+  commit before; the Pages workflow runs it on the push.
+
 ## 2026-11-22 — Review of 5.3.0: not fit to tag, then fixed
 
 - One independent review of `9b50d6f`, read-only, by a reviewer agent. Its
