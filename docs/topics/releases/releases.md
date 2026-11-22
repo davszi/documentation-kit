@@ -38,7 +38,7 @@ migration step. A project on 5.2.0 moves its pin to `v5.2.1`.
   characters, started or ended with whitespace, or held a control or
   invisible character. The owner of the kit decided that the choice of a
   password belongs to the site's owner. `publish` still fails when a password
-  is missing or when the two are equal. For a password that starts or ends
+  is missing, when the two are equal, or when one is not valid UTF-8 text. For a password that starts or ends
   with whitespace or holds a control or invisible character it prints a note
   and goes on: a secret pasted with a line break would lock every reader out
   without any message. The strength of a password is now the owner's

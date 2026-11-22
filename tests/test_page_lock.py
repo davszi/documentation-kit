@@ -173,6 +173,14 @@ class Passwords(unittest.TestCase):
         same = throwaway()
         self.assertRejected(environment(same, same), 'are equal')
 
+    def test_a_password_that_is_not_utf8_fails_without_showing_it(self):
+        # os.environ turns bytes that are not UTF-8 into lone surrogates.
+        self.assertRejected(environment(general='ab\udcff'), 'DOCSITE_GENERAL_PASSWORD is not valid UTF-8')
+        with self.assertRaises(ValueError) as caught:
+            read_passwords(environment(reference='ab\udcff'))
+        self.assertNotIn('udcff', str(caught.exception))
+        self.assertIsNone(caught.exception.__cause__)
+
     def test_no_rule_on_length_or_characters(self):
         for general in ('a', 'pw 1', 'ä€', throwaway()[:19]):
             env = environment(general=general)

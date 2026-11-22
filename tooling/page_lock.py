@@ -1,7 +1,7 @@
 """Opt-in page lock: store the text of a published bundle encrypted.
 
 ``publish`` calls ``prepare_lock`` before it builds, so a missing dependency or
-an unusable password fails fast, and ``PageLock.apply`` on the finished bundle
+a missing, duplicate or unencodable password fails fast, and ``PageLock.apply`` on the finished bundle
 before the bundle moves into place. A project turns the lock on with
 ``lock = true`` in the ``[publication]`` table of ``docs/site/site.toml``; the
 two passwords come only from the environment variables in
@@ -60,7 +60,6 @@ SALT_BYTES = 16
 SALT_CONTEXT = f'{FORMAT} salt'.encode('ascii')
 KEY_BYTES = 32
 NONCE_BYTES = 12
-# Length is the only property a check can see; it cannot measure randomness.
 PASSWORD_VARIABLES = {1: 'DOCSITE_GENERAL_PASSWORD', 2: 'DOCSITE_REFERENCE_PASSWORD'}
 HTML_SUFFIXES = ('.html', '.htm')
 # The unlock writes the page with document.write, which an XML document does
@@ -126,6 +125,12 @@ def read_passwords(environ: Mapping[str, str]) -> dict[int, str]:
             raise ValueError(f'The page lock is on ([publication] lock = true), but {name} is not set. '
                              'Set it from a secret in the environment that runs publish.')
         value = unicodedata.normalize('NFC', value)
+        try:
+            value.encode('utf-8')
+        except UnicodeEncodeError:
+            # Bytes that are not UTF-8 arrive as lone surrogates; no key can be derived from them.
+            raise ValueError(f'{name} is not valid UTF-8 text, so no key can be derived from it. '
+                             'Store the secret again as UTF-8.') from None
         # No rule on length or characters: the owner chooses the password. A stray
         # newline from a secret would lock every reader out, so that case gets a note.
         if value != value.strip() or not value.isprintable():

@@ -2,6 +2,33 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-22 — Review of 5.2.1: fit to tag after one fix, fixed
+
+- One independent review of `828feac`, read-only, by a reviewer agent. Its
+  verdict: fit to tag after one fix. It ran `tests/test_page_lock.py` and no
+  browser suite.
+- Fixed, medium: a password holding bytes that are not UTF-8 reaches Python
+  as a lone surrogate. The removed check used to refuse it. Without it the
+  value passed, and `publish` failed after the build with an encoding error
+  that named one byte of the password and a position. `read_passwords` now
+  refuses such a value before the build and names only the variable. This
+  is not a rule on characters: no key can be derived from the value.
+  Reproduced before the fix; a test covers it.
+- Fixed, low: a comment about the deleted length check, and the module's
+  docstring.
+- Not changed: the note also appears for a no-break space and for
+  private-use characters, which the texts call "invisible"; the reviewer
+  judged the wording accurate enough. Two passwords with line breaks can
+  share a salt; no reader can type either.
+- The reviewer found no other place that states or enforces the old rules,
+  and no path by which the note shows a value. Not verified by it or by me:
+  unlocking in a browser with a password of spaces or a tab.
+- Checks after the fixes: `build`, `lint --strict` and
+  `tests/test_page_lock.py` pass. The full script last passed on `828feac`;
+  the fixes touch no theme file, not the build and no browser suite, so by
+  the practice of 2026-11-21 it was not run again. The fixes were not
+  reviewed again.
+
 ## 2026-11-22 — No rule on the lock's passwords; prepare 5.2.1
 
 - deivid asked why the kit decides how long a password is, and decided:

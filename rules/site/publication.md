@@ -130,8 +130,9 @@ Deploy the `--out` directory. The build output under `.build/docs/` stays
 plain, so deploying it publishes every page unlocked.
 
 The passwords never go into the repository, `site.toml`, the bundle or the
-command output. `publish` fails before it builds when a password is missing
-or when the two are equal. It sets no rule on length or characters: the owner
+command output. `publish` fails before it builds when a password is missing,
+when the two are equal, or when one is not valid UTF-8 text, from which no
+key can be derived. It sets no rule on length or characters: the owner
 chooses the passwords, and their strength is the owner's decision; see
 [Limits](#limits). It prints a note, and goes on, when a password starts or
 ends with whitespace or holds a control or invisible character, because a
