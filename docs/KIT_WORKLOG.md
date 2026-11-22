@@ -2,6 +2,21 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-22 — Release 5.2.1
+
+- deivid gave the go: "Yes, release 5.2.1". The ask named what the go
+  covers: moving `main` to the release state, the tag `v5.2.1` and the push,
+  which publishes the kit's own site. It gave the size against 5.2.0: 9
+  files changed, 124 lines added and 26 removed, and no migration step.
+- 5.2.1 holds the changes of the two entries below: no rule on the length
+  or the characters of a page-lock password, and the refusal of a password
+  that is not UTF-8. One independent review; its finding is fixed and the
+  fix was not reviewed again.
+- This commit adds only this entry. Checks on it: `build` and `lint
+  --strict` of the kit pass. The full script last passed on `828feac`; by
+  the practice of 2026-11-21 it was not run again. The Pages workflow runs
+  it on the push.
+
 ## 2026-11-22 — Review of 5.2.1: fit to tag after one fix, fixed
 
 - One independent review of `828feac`, read-only, by a reviewer agent. Its
