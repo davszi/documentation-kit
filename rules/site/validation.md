@@ -46,7 +46,11 @@ not break, in this order, and stops at the first that fails:
    `command` is an argument list, run from the project root without a shell.
    An element that is exactly `{python}` becomes the interpreter that runs
    the check; any other program is named as the project calls it. `name` is
-   optional.
+   optional. After a trial `publish`, each check finds that bundle, as it is
+   before the page lock, in the folder the environment variable
+   `DOCSITE_PLAIN_BUNDLE` names; the folder is removed when the checks end.
+   [Checks that read published pages](publication.md#checks-that-read-published-pages)
+   has the use.
 
 It runs no browser check and replaces no review by eye. It reads the
 checked-out tree, not a commit.

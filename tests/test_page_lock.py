@@ -497,6 +497,56 @@ class LockBundle(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'listed.html is not UTF-8'):
             self.apply()
 
+    def test_locked_files_open_again_with_the_tooling_openers(self):
+        self.apply()
+        header = page_lock.page_header('index.html', (self.bundle / 'index.html').read_bytes())
+        _, keys = open_keyring(header, self.passwords[2])
+        self.assertEqual(page_lock.open_locked('notes/record.md', (self.bundle / 'notes/record.md').read_bytes(), keys),
+                         (2, self.original['notes/record.md']))
+        self.assertEqual(page_lock.open_locked('rule.html', (self.bundle / 'rule.html').read_bytes(), keys),
+                         (2, self.original['rule.html']))
+        tree = json.loads(page_lock.open_tree((self.bundle / 'reference.tree.js').read_bytes(), keys))
+        self.assertEqual(tree['tree'], tree_markup(self.original['reference.tree.js']))
+        for name in ('data.json', 'assets/base.css'):
+            with self.assertRaisesRegex(ValueError, 'is not a lock page'):
+                page_lock.open_locked(name, (self.bundle / name).read_bytes(), keys)
+
+    def test_a_file_that_does_not_open_to_what_was_locked_stops_the_lock(self):
+        # Each case breaks one writer; the check reads the written file back and must notice.
+        real_page, real_text, real_tree = page_lock.lock_page, page_lock.lock_text, page_lock.lock_tree
+
+        def other_path(name, *rest, **more):
+            return real_page('elsewhere.html' if name == 'listed.html' else name, *rest, **more)
+
+        def other_text(name, level, data, keyring):
+            return real_text(name, level, data + b'changed', keyring)
+
+        def other_level(name, level, data, keyring, *rest, **more):
+            return real_page(name, 2 if name == 'index.html' else level, data, keyring, *rest, **more)
+
+        def other_tree(tree, section, keyring, size=None):
+            return real_tree(tree and tree + ' ', section, keyring, size)
+
+        cases = {'listed.html': ('lock_page', other_path), 'notes/record.md': ('lock_text', other_text),
+                 'index.html': ('lock_page', other_level), 'reference.tree.js': ('lock_tree', other_tree)}
+        for name, (writer, broken) in cases.items():
+            with self.subTest(name=name), patch.object(page_lock, writer, broken):
+                self.setUp()
+                with self.assertRaisesRegex(ValueError, f'could not open {re.escape(name)} again') as caught:
+                    self.apply()
+                for password in self.passwords.values():
+                    self.assertNotIn(password, str(caught.exception))
+
+    def test_keys_that_a_password_does_not_open_stop_the_lock(self):
+        real = page_lock.make_keyring
+
+        def other_passwords(passwords, **more):
+            return real({1: passwords[1], 2: throwaway()}, **more)
+
+        with patch.object(page_lock, 'make_keyring', other_passwords):
+            with self.assertRaisesRegex(ValueError, 'could not open the keys with DOCSITE_REFERENCE_PASSWORD again'):
+                self.apply()
+
     def test_text_envelope_starts_with_a_readable_notice(self):
         keyring = make_keyring(self.passwords, iterations=FAST)
         envelope = lock_text('notes/record.md', 2, b'# Record', keyring).decode()
@@ -596,6 +646,70 @@ class PublishWithLock(unittest.TestCase):
         index = sealed_page(locked['reference.index.html'])
         self.assertEqual(len(index), len(base64.b64decode(
             re.search(r'"([A-Za-z0-9+/=]+)"', locked['reference.tree.js'].decode())[1])))
+
+    def test_plain_copy_is_the_bundle_before_the_lock_and_the_locked_one_opens_to_it(self):
+        env = environment()
+        project = page_lock_fixture.make_project(self.folder / 'project', lock=True)
+        out, copy = self.folder / 'site', self.folder / 'checks/plain'
+        result = page_lock_fixture.docsite('publish', '--project', project, '--out', out, '--plain-copy', copy,
+                                           env=dict(os.environ, **env))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(f'Plain copy for checks, never to deploy: {copy}', result.stdout)
+        locked, plain = files(out), files(copy)
+        self.assertEqual(plain, files(self.plain_bundle(project)))
+        self.assertEqual(set(locked) - set(plain), {'assets/page-lock.js', 'assets/page-lock.css'})
+        self.assertIn(page_lock_fixture.MARKERS['title'].encode(), plain['reference.tree.js'])
+        self.assertEqual([path.name for path in copy.parent.iterdir()], ['plain'])
+        _, keys = open_keyring(page_lock.page_header('guide.html', locked['guide.html']), env[PASSWORD_VARIABLES[2]])
+        for name, data in plain.items():
+            if name == 'reference.tree.js':
+                continue
+            if not name.endswith(('.html', '.md')):
+                self.assertEqual(locked[name], data, name)
+                continue
+            level, page = page_lock.open_locked(name, locked[name], keys)
+            if level == 2 or name.endswith('.md'):
+                self.assertEqual(page, data, name)
+            else:
+                self.assertEqual(page, split_reference(data.decode(), name)[0].encode(), name)
+
+    def test_plain_copy_without_the_lock_equals_the_bundle(self):
+        project = page_lock_fixture.make_project(self.folder / 'project', lock=False)
+        out, copy = self.folder / 'site', self.folder / 'plain'
+        result = page_lock_fixture.docsite('publish', '--project', project, '--out', out, '--plain-copy', copy,
+                                           env=dict(os.environ))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(files(copy), files(out))
+
+    def test_plain_copy_must_be_fresh_and_outside_the_bundle(self):
+        project = page_lock_fixture.make_project(self.folder / 'project', lock=True)
+        out = self.folder / 'deploy/site'
+        (self.folder / 'old').mkdir()
+        cases = {'must lie outside the publication output': [out / 'plain', out, out.parent],
+                 'Plain copy must be fresh': [self.folder / 'old'],
+                 'must not overlap': [project / '.build/docs/html/plain']}
+        for message, copies in cases.items():
+            for copy in copies:
+                with self.subTest(copy=copy):
+                    result = page_lock_fixture.docsite('publish', '--project', project, '--out', out,
+                                                       '--plain-copy', copy, env=dict(os.environ, **environment()))
+                    self.assertEqual(result.returncode, 1)
+                    self.assertIn(message, result.stderr)
+                    self.assertFalse(out.exists())
+                    self.assertFalse((project / '.build/docs').exists())
+
+    def test_a_lock_that_fails_leaves_neither_bundle_nor_plain_copy(self):
+        project = page_lock_fixture.make_project(self.folder / 'project', lock=True)
+        out, copy = self.folder / 'site', self.folder / 'checks/plain'
+        from publication import publish_project
+        run = subprocess.run
+        with patch('page_lock.PageLock.apply', side_effect=ValueError('could not open guide.html again')), \
+             patch('publication.subprocess.run', lambda *a, **k: run(*a, **{'stdout': subprocess.DEVNULL, **k})), \
+             patch.dict(os.environ, environment()), contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaisesRegex(ValueError, 'could not open guide.html again'):
+                publish_project(project, out, kit=page_lock_fixture.KIT, plain_copy=copy)
+        self.assertFalse(out.exists())
+        self.assertEqual(list(copy.parent.iterdir()), [])
 
     def test_lock_off_output_is_byte_identical(self):
         absent, absent_out = self.publish(lock=None, name='absent')

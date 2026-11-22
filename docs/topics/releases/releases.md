@@ -26,6 +26,39 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## 5.3.0 — a plain copy of the bundle for checks, and a lock that proves it opens
+
+5.3.0 is a minor release under
+[what a version number promises](#what-a-version-number-promises): it adds an
+option and an environment variable and removes nothing. It needs no migration
+step; a project on 5.2.0 or 5.2.1 moves its pin to `v5.3.0`. adaptation asked
+for it: with the page lock on, its checks could not read its published pages.
+
+- **`publish --plain-copy DIR`.** Writes the same bundle, as it is before
+  the page lock step, into a second fresh directory outside `--out`. Checks
+  that read published pages read it; only `--out` is deployed. Without the
+  lock it equals the bundle. The option joins the stable interfaces.
+- **`check` names its trial bundle to the project's checks.** Each
+  `[[checks]]` command finds the plain copy of the trial bundle in the folder
+  that the environment variable `DOCSITE_PLAIN_BUNDLE` names. Up to 5.2.1
+  the trial bundle was removed before those checks ran, and a check that
+  published for itself failed for a locked site, because it got no
+  passwords. The variable joins the stable interfaces.
+- **The lock opens what it wrote.** After locking, `publish` reads every
+  locked file back, opens it with both passwords through the key derivation
+  a browser runs, and compares it with what it locked. It fails and
+  publishes nothing on a difference. A locked publish derives five keys for
+  this in place of three.
+- **New rule section**
+  [Checks that read published pages](../../../rules/site/publication.md#checks-that-read-published-pages),
+  with the workflow steps. No check enforces it: keep the plain copy out of
+  every uploaded artifact.
+
+A project whose checks read `_site` or publish for themselves changes them to
+read `DOCSITE_PLAIN_BUNDLE`, sets that variable in its workflow, and drops a
+`[[checks]]` entry that only published. A project without such checks, or
+without the lock, changes nothing.
+
 ## 5.2.1 — no rule on the lock's passwords
 
 5.2.1 is a patch release under

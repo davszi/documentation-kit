@@ -56,6 +56,11 @@ The output directory must not exist yet. The bundle is written to a temporary
 directory next to it and moved into place only after every check passes.
 Failed publications leave no output directory.
 
+`--plain-copy DIR` also writes the same bundle, as it is before the
+[page lock](#page-lock) step, into a second fresh directory outside `--out`.
+It is for [checks that read published pages](#checks-that-read-published-pages)
+and is never the directory to deploy. Without the lock it equals the bundle.
+
 ## Exporting into an existing publication
 
 `tooling/publication.py` exports an already-generated kit bundle into a
@@ -129,6 +134,11 @@ the publish step only:
 Deploy the `--out` directory. The build output under `.build/docs/` stays
 plain, so deploying it publishes every page unlocked.
 
+After locking, `publish` reads every locked file back, opens it with both
+passwords through the key derivation a browser runs, and compares it with what
+it locked. It fails, and publishes nothing, when one file does not open to
+exactly that.
+
 The passwords never go into the repository, `site.toml`, the bundle or the
 command output. `publish` fails before it builds when a password is missing,
 when the two are equal, or when one is not valid UTF-8 text, from which no
@@ -187,6 +197,40 @@ names. It counts every Reference page route, repository path or exported
 Markdown path that appears anywhere in such a page, in a link, a source link
 to a source host, any attribute or the text, so a `[[nav]]` entry, a site-map
 card and a source link all count.
+
+### Checks that read published pages
+
+A check that reads a published page gets the lock page from a locked bundle.
+The build output is no substitute: `publish` rewrites source links and media
+paths. Such a check reads the plain copy:
+
+```yaml
+- name: Publish the locked bundle
+  env:
+    DOCSITE_GENERAL_PASSWORD: ${{ secrets.DOCSITE_GENERAL_PASSWORD }}
+    DOCSITE_REFERENCE_PASSWORD: ${{ secrets.DOCSITE_REFERENCE_PASSWORD }}
+  run: python .docs-kit/docsite.py publish --project . --out _site --plain-copy _plain
+- name: Check the published pages
+  env:
+    DOCSITE_PLAIN_BUNDLE: _plain
+  run: node docs/site/checks/test_reader.cjs
+```
+
+- The plain copy is the bundle the lock step then encrypts, from the same
+  build. Because `publish` opens every locked file again, the deployed
+  bundle is known to hold the text the checks read. In a page that the
+  general password opens, the deployed file holds that text without the
+  sidebar's Reference section, which the tree file carries.
+- Deploy and upload only `--out`. The plain copy holds every page unlocked;
+  keep it out of the Pages artifact and out of any other uploaded artifact.
+- The passwords stay in the publish step. A check needs none.
+- [`docsite.py check`](validation.md#one-command-and-a-pre-push-gate) names
+  the plain copy of its trial bundle to the project's checks in the
+  environment variable `DOCSITE_PLAIN_BUNDLE`. A check that reads its bundle
+  from that variable runs the same way in the workflow, which sets it as
+  above.
+- The plain copy has no `assets/page-lock.js` and `assets/page-lock.css`, and
+  its `reference.tree.js` is readable.
 
 ### Reading a locked site
 

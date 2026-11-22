@@ -17,7 +17,8 @@ HAS_CRYPTOGRAPHY = importlib.util.find_spec('cryptography') is not None
 
 
 def clean_env(**extra):
-    drop = {'GITHUB_SHA', 'DOCSITE_PROJECT_ROOT', 'DOCS_PYTHON', 'DOCSITE_GENERAL_PASSWORD', 'DOCSITE_REFERENCE_PASSWORD'}
+    drop = {'GITHUB_SHA', 'DOCSITE_PROJECT_ROOT', 'DOCS_PYTHON', 'DOCSITE_GENERAL_PASSWORD', 'DOCSITE_REFERENCE_PASSWORD',
+            'DOCSITE_PLAIN_BUNDLE'}
     return {**{name: value for name, value in os.environ.items() if name not in drop}, **extra}
 
 
@@ -126,6 +127,37 @@ class Check(unittest.TestCase):
         self.assertIn('check 3/3: publish, into a temporary folder, with throwaway passwords', result.stdout)
         self.assertIn('check passed: 3 step(s)', result.stdout)
         self.assertNotIn('skipped', result.stdout)
+
+    READ_BUNDLE = ('\n[[checks]]\nname = "read the bundle"\ncommand = ["{python}", "-c", '
+                   '"import os, pathlib; b = pathlib.Path(os.environ[\'DOCSITE_PLAIN_BUNDLE\']); '
+                   'pathlib.Path(\'seen.txt\').write_text(str(b) + chr(10) + (b / \'guide.html\').read_text())"]\n')
+
+    def seen(self):
+        folder, _, page = (self.root / 'seen.txt').read_text().partition('\n')
+        return Path(folder), page
+
+    def test_declared_checks_read_the_published_bundle(self):
+        self.declare('\n[publication]\npages = ["guide.html"]\n' + self.READ_BUNDLE)
+        result = self.check()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        folder, page = self.seen()
+        self.assertIn('<title>', page)
+        self.assertFalse(folder.exists())  # removed when the checks end
+
+    @unittest.skipUnless(HAS_CRYPTOGRAPHY, 'cryptography is not installed')
+    def test_declared_checks_read_plain_pages_of_a_locked_site(self):
+        self.declare('\n[publication]\npages = ["guide.html"]\nlock = true\n' + self.READ_BUNDLE)
+        result = self.check()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        page = self.seen()[1]
+        self.assertNotIn('Locked page', page)
+        self.assertNotIn('page-lock-data', page)
+        self.assertIn('class="sidebar', page)
+
+    def test_without_a_publication_no_bundle_is_named(self):
+        self.declare('\n[[checks]]\ncommand = ["{python}", "-c", '
+                     '"import os, sys; sys.exit(\'DOCSITE_PLAIN_BUNDLE\' in os.environ)"]\n')
+        self.assertEqual(self.check().returncode, 0)
 
     @unittest.skipUnless(HAS_CRYPTOGRAPHY, 'cryptography is not installed')
     def test_a_locked_site_that_cannot_publish_stops_the_check(self):

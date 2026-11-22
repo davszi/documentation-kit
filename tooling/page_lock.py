@@ -334,6 +334,48 @@ def lock_text(name: str, level: int, data: bytes, keyring: Keyring) -> bytes:
     return f'{TEXT_NOTICE}\n{FORMAT} level {level}\n{_b64(sealed)}\n'.encode('ascii')
 
 
+_PAGE_LEVEL = re.compile(r'id="page-lock" data-level="([12])"')
+_PAGE_KEYS = re.compile(r'id="page-lock-keys">([^<]+)<')
+_PAGE_DATA = re.compile(r'id="page-lock-data">([A-Za-z0-9+/=]+)<')
+_TEXT_DATA = re.compile(rf'^{re.escape(FORMAT)} level ([12])\n([A-Za-z0-9+/=]+)$', re.M)
+_TREE_DATA = re.compile(rf'window\.{LOCKED_TREE_GLOBAL} = "([A-Za-z0-9+/=]+)";')
+
+
+def open_locked(name: str, data: bytes, keys: Mapping[int, bytes]) -> tuple[int, bytes]:
+    """Reverse ``lock_page`` or ``lock_text``: the level and the bytes a reader's browser gets.
+
+    ``keys`` are the content keys by level. ValueError when ``data`` is not a
+    locked file of this format; ``InvalidTag`` when the key or path is wrong.
+    """
+    text = _utf8(name, data)
+    if name.lower().endswith(MARKDOWN_SUFFIXES):
+        found = _TEXT_DATA.search(text)
+        if not found:
+            raise ValueError(f'{name} is not a locked text file')
+        level = int(found[1])
+        return level, unseal(keys[level], base64.b64decode(found[2]), file_context(name))
+    level, sealed = _PAGE_LEVEL.search(text), _PAGE_DATA.search(text)
+    if not level or not sealed:
+        raise ValueError(f'{name} is not a lock page')
+    return int(level[1]), unpad(unseal(keys[int(level[1])], base64.b64decode(sealed[1]), file_context(name)))
+
+
+def page_header(name: str, data: bytes) -> dict:
+    """The public key header a lock page carries."""
+    found = _PAGE_KEYS.search(_utf8(name, data))
+    if not found:
+        raise ValueError(f'{name} is not a lock page')
+    return json.loads(found[1])
+
+
+def open_tree(data: bytes, keys: Mapping[int, bytes]) -> bytes:
+    """Reverse ``lock_tree``: the tree payload without its padding."""
+    found = _TREE_DATA.search(data.decode('ascii', 'replace'))
+    if not found:
+        raise ValueError(f'{TREE_SCRIPT} is not a locked tree file')
+    return unseal(keys[2], base64.b64decode(found[1]), file_context(TREE_SCRIPT)).rstrip(b' ')
+
+
 def lock_page(name: str, level: int, data: bytes, keyring: Keyring, versions: Mapping[str, str],
               section_at: int | None = None, *, size: int | None = None) -> bytes:
     """The lock page served at ``name`` instead of the page itself.
@@ -529,20 +571,24 @@ class PageLock:
 
         locked = {1: Counter(), 2: Counter()}
         readable = Counter()
+        sealed: dict[str, tuple[int, bytes]] = {}   # what each locked file must open to
         for name, path in files.items():
             suffix = PurePath(name).suffix.lower() or '(no suffix)'
             if name in pages:
                 level, data, at = pages[name]
                 path.write_bytes(lock_page(name, level, data, keyring, versions, at,
                                            size=size if name == index else None))
+                sealed[name] = (level, data)
                 locked[level][suffix] += 1
             elif name.lower().endswith(MARKDOWN_SUFFIXES):
-                path.write_bytes(lock_text(name, 2, path.read_bytes(), keyring))
+                sealed[name] = (2, path.read_bytes())
+                path.write_bytes(lock_text(name, 2, sealed[name][1], keyring))
                 locked[2][suffix] += 1
             elif name != TREE_SCRIPT:
                 readable[suffix] += 1
         (bundle / TREE_SCRIPT).write_bytes(envelope)
         locked[2]['.js'] += 1
+        self._open_again(bundle, keyring, sealed, tree_payload(tree, section))
         for target, data in assets.items():
             (bundle / target).parent.mkdir(parents=True, exist_ok=True)
             (bundle / target).write_bytes(data)
@@ -556,6 +602,40 @@ class PageLock:
                          f'file{"" if len(named) == 1 else "s"} (links, source links or text); '
                          'general-password readers see those names.')
         return '\n'.join(lines)
+
+    def _open_again(self, bundle: Path, keyring: Keyring, sealed: Mapping[str, tuple[int, bytes]], tree: bytes) -> None:
+        """Fail unless the files just written open, with the passwords, to exactly what was locked.
+
+        The bundle to deploy is then known to hold the text a project's checks
+        read in the plain copy. Both passwords go through the key derivation a
+        browser runs; each file is read back from disk.
+        """
+        from cryptography.exceptions import InvalidTag
+        failure = 'The page lock could not open {} again after locking it; nothing is published'
+        keys: dict[int, bytes] = {}
+        for level, password in sorted(self.passwords.items()):
+            opened = open_keyring(keyring.header, password)
+            if opened is None or opened[0] != level:
+                raise ValueError(failure.format(f'the keys with {PASSWORD_VARIABLES[level]}'))
+            keys.update(opened[1])
+        if keys != keyring.content:
+            raise ValueError(failure.format('the keys'))
+        for name, (level, plain) in sealed.items():
+            data = (bundle / name).read_bytes()
+            try:
+                same = open_locked(name, data, keys) == (level, plain)
+                if same and not name.lower().endswith(MARKDOWN_SUFFIXES):
+                    same = page_header(name, data) == keyring.header
+            except (InvalidTag, ValueError):
+                same = False
+            if not same:
+                raise ValueError(failure.format(name))
+        try:
+            same = open_tree((bundle / TREE_SCRIPT).read_bytes(), keys) == tree
+        except (InvalidTag, ValueError):
+            same = False
+        if not same:
+            raise ValueError(failure.format(TREE_SCRIPT))
 
 
 def prepare_lock(options: Mapping, environ: Mapping[str, str] | None = None) -> PageLock | None:

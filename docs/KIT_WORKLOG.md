@@ -2,6 +2,53 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-22 — A plain copy of the bundle for checks; prepare 5.3.0
+
+- The adaptation session reported, while switching the page lock on: a
+  project's checks cannot read its published pages once they are locked.
+  `docsite.py check` removed its trial bundle before the project's checks
+  ran and gave them no passwords; three of adaptation's checks read
+  published pages; the build output differs from the published pages,
+  because `publish` rewrites links and media paths. Its note and a
+  prototype that decrypts a bundle lie outside this repository. I confirmed
+  the first point in `tooling/project_check.py`; the others are its
+  findings.
+- I proposed that `publish` writes the same bundle twice, plain for checks
+  and locked to deploy, and that it opens its own locked files again.
+  deivid asked whether this is the best approach; I named the weakness,
+  that checks would test the bundle before encryption, and the fix. His go:
+  "okay do it".
+- Not built, with the reason: a `lock` command of its own after a plain
+  `publish`, because a forgotten step would then publish a locked site in
+  the clear; a command that decrypts the deployed bundle, because the checks
+  would need the passwords or a second publish.
+- `tooling/publication.py`: `publish_project(..., plain_copy=)` and
+  `docsite.py publish --plain-copy DIR`. The copy is taken before the lock
+  step, staged beside its place and moved with the bundle; it must be
+  fresh, outside `--out` and outside the build output. A lock that fails
+  leaves neither.
+- `tooling/page_lock.py`: `open_locked`, `page_header` and `open_tree`
+  reverse the three writers. `PageLock.apply` ends with `_open_again`: it
+  opens the key header with each password, reads every locked file back
+  from disk and compares level, bytes and header with what it locked.
+  Measured on this machine: the two extra key derivations take 0.16 s next
+  to 0.24 s for the three before.
+- `tooling/project_check.py`: the trial publish writes a plain copy, and
+  each `[[checks]]` command gets its folder in `DOCSITE_PLAIN_BUNDLE`.
+- Tests: each of the three writers broken in turn, and a key header that a
+  password does not open, stop the lock; the plain copy equals the bundle
+  of an unlocked publish of the same build; the locked bundle opens to it;
+  wrong places for the copy are refused; a declared check reads a plain
+  page of a locked site.
+- Rules: `rules/site/publication.md` gets the option, the sentence on
+  opening again and the section "Checks that read published pages";
+  `rules/site/validation.md` names the variable.
+- Prepared as minor 5.3.0: an option and an environment variable join the
+  stable interfaces. No migration guide: no project must change anything,
+  and the release notes say what a project with such checks changes.
+- Not covered: the browser's own unlock code runs only in the kit's browser
+  suite, on the kit's fixture.
+
 ## 2026-11-22 — Release 5.2.1
 
 - deivid gave the go: "Yes, release 5.2.1". The ask named what the go

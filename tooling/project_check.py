@@ -17,6 +17,9 @@ push is stopped by the same checks that would fail in the project's workflow:
 
 `command` is an argument list, run from the project root without a shell; an
 element that is exactly `{python}` becomes the interpreter that runs the check.
+After a trial publish, each command finds the published bundle, as it is
+before the page lock, in the folder that the environment variable
+`DOCSITE_PLAIN_BUNDLE` names; the folder is removed when the checks end.
 The checks read the working tree, not a commit; the hook refuses a push while
 tracked files have uncommitted changes.
 """
@@ -30,6 +33,7 @@ import tempfile
 import tomllib
 
 CHECK_KEYS = {"name", "command"}
+BUNDLE_VARIABLE = "DOCSITE_PLAIN_BUNDLE"
 PLACEHOLDER = "{python}"
 EXAMPLE = '[[checks]] with name = "tests" and command = ["{python}", "-m", "unittest"]'
 
@@ -97,24 +101,28 @@ def run(project: Path, kit: Path, environ=None) -> int:
         trial, skipped = _trial_lock(site, environ)
         steps.append(("publish, into a temporary folder" + (", with throwaway passwords" if trial else ""), None))
     steps += [(name, [python if part == PLACEHOLDER else part for part in command]) for name, command in own]
-    for number, (name, command) in enumerate(steps, 1):
-        print(f"check {number}/{len(steps)}: {name}", flush=True)
-        if command is None and skipped:
-            print(f"  skipped: {skipped}", flush=True)
-            continue
-        try:
-            if command is None:
-                with tempfile.TemporaryDirectory(prefix="docsite-check-") as folder:
+    with tempfile.TemporaryDirectory(prefix="docsite-check-") as folder:
+        plain = Path(folder) / "plain"
+        for number, (name, command) in enumerate(steps, 1):
+            print(f"check {number}/{len(steps)}: {name}", flush=True)
+            if command is None and skipped:
+                print(f"  skipped: {skipped}", flush=True)
+                continue
+            try:
+                if command is None:
                     status = subprocess.run([*docsite, "publish", "--project", str(project),
-                                             "--out", str(Path(folder) / "site")],
+                                             "--out", str(Path(folder) / "site"), "--plain-copy", str(plain)],
                                             cwd=project, stdout=subprocess.DEVNULL, env={**environ, **trial}).returncode
-            else:
-                status = subprocess.run(command, cwd=project, env=dict(environ)).returncode
-        except OSError as problem:
-            print(f"check failed at step {number}, {name}: cannot run {command[0]}: {problem.strerror}", file=sys.stderr)
-            return 127
-        if status:
-            print(f"check failed at step {number}: {name}", file=sys.stderr)
-            return status
+                else:
+                    # A project's check reads published pages in the plain copy of the trial bundle.
+                    bundle = {BUNDLE_VARIABLE: str(plain)} if plain.is_dir() else {}
+                    status = subprocess.run(command, cwd=project, env={**environ, **bundle}).returncode
+            except OSError as problem:
+                print(f"check failed at step {number}, {name}: cannot run {command[0]}: {problem.strerror}",
+                      file=sys.stderr)
+                return 127
+            if status:
+                print(f"check failed at step {number}: {name}", file=sys.stderr)
+                return status
     print(f"check passed: {len(steps)} step(s)" + (", the trial publish skipped" if skipped else ""))
     return 0

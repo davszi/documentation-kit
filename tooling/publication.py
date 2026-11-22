@@ -236,26 +236,40 @@ def _publication_options(config: dict) -> dict:
     return options
 
 
-def publish_project(root: Path, destination: Path, *, kit: Path) -> None:
+def _fresh_output(path: Path, what: str, generated: Path) -> Path:
+    path = Path(path)
+    path = Path.cwd() / path if not path.is_absolute() else path
+    # Check physical components before resolving; never hide a symlink output.
+    if any(p.is_symlink() for p in (path, *path.parents)):
+        raise ValueError(f'{what} cannot follow a symlink')
+    path = path.resolve()
+    if path.exists():
+        raise ValueError(f'{what} must be fresh: {path}')
+    if path.is_relative_to(generated) or generated.is_relative_to(path):
+        raise ValueError(f'Generated directory and {what[0].lower() + what[1:]} must not overlap')
+    return path
+
+
+def publish_project(root: Path, destination: Path, *, kit: Path, plain_copy: Path | None = None) -> None:
     """Build the project and atomically export a fresh public bundle.
 
     Generated pages and assets come from the same build as ``docsite.py build``.
     Files listed in the optional assets manifest are published at their
     repository path. Sources, public files, generated assets and their
     repository origins must not match the private suffixes or prefixes.
+
+    ``plain_copy`` names a second fresh directory that gets the same bundle as
+    it is before the page lock step, for checks that read published pages.
+    It is never the directory to deploy.
     """
     root, kit = Path(root).resolve(), Path(kit).resolve()
-    destination = Path(destination)
-    destination = Path.cwd() / destination if not destination.is_absolute() else destination
-    # Check physical components before resolving; never hide a symlink output.
-    if any(p.is_symlink() for p in (destination, *destination.parents)):
-        raise ValueError('Publication output cannot follow a symlink')
-    destination = destination.resolve()
-    if destination.exists():
-        raise ValueError(f'Publication output must be fresh: {destination}')
     generated = root / '.build/docs/html'
-    if destination.is_relative_to(generated) or generated.is_relative_to(destination):
-        raise ValueError('Generated and publication directories must not overlap')
+    destination = _fresh_output(destination, 'Publication output', generated)
+    if plain_copy is not None:
+        plain_copy = _fresh_output(plain_copy, 'Plain copy', generated)
+        if plain_copy.is_relative_to(destination) or destination.is_relative_to(plain_copy):
+            raise ValueError('The plain copy must lie outside the publication output: '
+                             'what is deployed must not hold it')
     config = tomllib.loads((root / 'docs/site/site.toml').read_text())
     options = _publication_options(config)
     # The optional page lock checks its dependency and passwords before building.
@@ -324,11 +338,29 @@ def publish_project(root: Path, destination: Path, *, kit: Path) -> None:
             pages = sorted({*pages, *(path.name for path in generated.glob('*.html'))})
         export_pages(generated, output, root=root, tracked=tracked, pages=pages, public_files=public,
                      private_suffixes=suffixes, private_prefixes=prefixes)
-        locked = lock.apply(output, built) if lock else ''
-        output.rename(destination)
+        if plain_copy is not None:
+            # The bundle as it is before the lock step; staged beside its place, moved with the bundle.
+            plain_copy.parent.mkdir(parents=True, exist_ok=True)
+            staged = Path(tempfile.mkdtemp(prefix='.docsite-plain-', dir=plain_copy.parent))
+            try:
+                shutil.copytree(output, staged / 'site', symlinks=True)
+                locked = lock.apply(output, built) if lock else ''
+                (staged / 'site').rename(plain_copy)
+                try:
+                    output.rename(destination)
+                except OSError:
+                    shutil.rmtree(plain_copy, ignore_errors=True)
+                    raise
+            finally:
+                shutil.rmtree(staged, ignore_errors=True)
+        else:
+            locked = lock.apply(output, built) if lock else ''
+            output.rename(destination)
     # Automatically listed Reference pages are published too; their routes end in .md.html.
     listed = sum(route.endswith('.md.html') for route in built.get('source_pages', {}))
     print(f'Published {len(pages)} configured pages, {listed} automatically listed Reference pages '
           f'and {len(public)} project resources to {destination}')
     if locked:
         print(locked)
+    if plain_copy is not None:
+        print(f'Plain copy for checks, never to deploy: {plain_copy}')

@@ -45,6 +45,8 @@ def main():
     publish = commands.add_parser('publish', help='build, then export a fresh public bundle configured in site.toml')
     publish.add_argument('--project', type=Path, default=Path.cwd())
     publish.add_argument('--out', type=Path, default=Path('_site'))
+    publish.add_argument('--plain-copy', type=Path, default=None, metavar='DIR',
+                         help='also write the bundle as it is before the page lock, for checks; never deploy it')
     args = parser.parse_args()
     if sys.version_info < (3, 12):
         parser.error('Python 3.12 or newer is required; validation uses Python 3.12.')
@@ -92,7 +94,7 @@ def main():
         sys.path.insert(0, str(KIT / 'tooling'))
         from publication import publish_project
         try:
-            publish_project(project, args.out, kit=KIT)
+            publish_project(project, args.out, kit=KIT, plain_copy=args.plain_copy)
         except (ValueError, OSError, subprocess.CalledProcessError) as error:
             parser.exit(1, f'Publication failed: {error}\n')
         return 0
