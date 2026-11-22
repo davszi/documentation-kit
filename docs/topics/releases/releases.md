@@ -26,6 +26,25 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## 5.2.1 — no rule on the lock's passwords
+
+5.2.1 is a patch release under
+[what a version number promises](#what-a-version-number-promises): it relaxes
+a check, changes nothing for a project that passed before, and needs no
+migration step. A project on 5.2.0 moves its pin to `v5.2.1`.
+
+- **`publish` sets no rule on the length or the characters of a page-lock
+  password.** Up to 5.2.0 it failed when a password was shorter than 20
+  characters, started or ended with whitespace, or held a control or
+  invisible character. The owner of the kit decided that the choice of a
+  password belongs to the site's owner. `publish` still fails when a password
+  is missing or when the two are equal. For a password that starts or ends
+  with whitespace or holds a control or invisible character it prints a note
+  and goes on: a secret pasted with a line break would lock every reader out
+  without any message. The strength of a password is now the owner's
+  decision alone; [Limits](../../../rules/site/publication.md#limits) says
+  what a short one costs.
+
 ## 5.2.0 — figures in a dark and a light theme, and checks before a push
 
 5.2.0 is a minor release under

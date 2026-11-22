@@ -169,13 +169,23 @@ class Passwords(unittest.TestCase):
         self.assertRejected({PASSWORD_VARIABLES[1]: throwaway()}, 'DOCSITE_REFERENCE_PASSWORD is not set')
         self.assertRejected(environment(reference=''), 'DOCSITE_REFERENCE_PASSWORD is not set')
 
-    def test_short_equal_or_untypable_passwords_fail(self):
-        self.assertRejected(environment(general=throwaway()[:19]), 'DOCSITE_GENERAL_PASSWORD is shorter than 20')
+    def test_equal_passwords_fail(self):
         same = throwaway()
         self.assertRejected(environment(same, same), 'are equal')
-        self.assertRejected(environment(reference=throwaway() + '\n'), 'DOCSITE_REFERENCE_PASSWORD starts or ends')
-        self.assertRejected(environment(general=' ' + throwaway()), 'DOCSITE_GENERAL_PASSWORD starts or ends')
-        self.assertRejected(environment(general=throwaway() + '​' + throwaway()), 'invisible')
+
+    def test_no_rule_on_length_or_characters(self):
+        for general in ('a', 'pw 1', 'ä€', throwaway()[:19]):
+            env = environment(general=general)
+            self.assertEqual(read_passwords(env)[1], general)
+
+    def test_a_password_a_reader_may_not_type_gets_a_note_and_is_kept(self):
+        for value, noted in ((throwaway() + '\n', True), (' ' + throwaway(), True),
+                             (throwaway() + '\u200b' + throwaway(), True), ('short', False)):
+            env, stderr = environment(reference=value), io.StringIO()
+            with contextlib.redirect_stderr(stderr):
+                self.assertEqual(read_passwords(env)[2], value)
+            self.assertEqual('DOCSITE_REFERENCE_PASSWORD starts or ends with whitespace' in stderr.getvalue(), noted)
+            self.assertNotIn(value.strip(), stderr.getvalue())
 
     def test_accepted_passwords_are_returned_by_level(self):
         env = environment()
@@ -595,8 +605,7 @@ class PublishWithLock(unittest.TestCase):
     def test_unusable_passwords_fail_before_building_and_leave_no_output(self):
         same = throwaway()
         cases = {'not set': {PASSWORD_VARIABLES[1]: throwaway(), PASSWORD_VARIABLES[2]: ''},
-                 'are equal': environment(same, same),
-                 'shorter than 20': environment(reference=throwaway()[:12])}
+                 'are equal': environment(same, same)}
         for index, (message, env) in enumerate(cases.items()):
             with self.subTest(message=message):
                 result, out = self.publish(lock=True, env=env, name=f'failing-{index}')

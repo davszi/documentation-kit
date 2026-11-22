@@ -50,7 +50,8 @@ shared independent-comparison component.
 [Releases and upgrades](topics/releases/releases.md) owns version changes,
 stable interfaces and what a version number promises. The
 [5.2.0 migration guide](topics/releases/migrations/5.2.0.md)
-moves 5.1.0 consumers to the current release 5.2.0. The
+moves 5.1.0 consumers to 5.2.0; the current release 5.2.1 is a patch and
+needs no step. The
 [5.1.0 guide](topics/releases/migrations/5.1.0.md) moves 5.0.0 consumers to
 5.1.0. The
 [5.0.0 guide](topics/releases/migrations/5.0.0.md) moves 4.0.0 consumers to

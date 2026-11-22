@@ -2,6 +2,32 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-22 — No rule on the lock's passwords; prepare 5.2.1
+
+- deivid asked why the kit decides how long a password is, and decided:
+  "no rules on characters or pw size". Before that I had named the reason
+  for the minimum, guessing offline without a lockout, and advised keeping
+  it.
+- `read_passwords` in `tooling/page_lock.py` no longer fails for a password
+  shorter than 20 characters, nor for one that starts or ends with
+  whitespace or holds a control or invisible character. `MIN_PASSWORD_LENGTH`
+  is deleted. A missing password and two equal passwords still fail.
+- My choice, not asked for: the second case prints a note on standard error
+  and `publish` goes on. A secret pasted with a line break gives a password
+  no reader can type, and without the note nothing says so. The note names
+  the variable and never the value.
+- `rules/site/publication.md`, section "Turn it on", says the new
+  behaviour. Tests in `tests/test_page_lock.py` changed with the approved
+  behaviour: the short and untypable cases now assert that the password is
+  kept, and that the note appears only for the second case.
+- Prepared as patch 5.2.1: the promise names "relaxes a check" as a patch.
+  `VERSION`, the release notes and the three lines that name the current
+  release are updated. No migration guide.
+- Checks on this state: `build` and `lint --strict` pass. The full check
+  script with the browser suites passes: exit 0, 389 Python tests, 2 skipped
+  for missing matplotlib. No review by a second agent yet. Not tagged and
+  not pushed.
+
 ## 2026-11-21 — Release 5.2.0
 
 - deivid gave the go: "Yes, release 5.2.0". The ask named what the go

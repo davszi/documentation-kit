@@ -46,6 +46,7 @@ from pathlib import Path, PurePath
 import posixpath
 import re
 import secrets
+import sys
 import unicodedata
 from urllib.parse import unquote, urlsplit
 
@@ -60,7 +61,6 @@ SALT_CONTEXT = f'{FORMAT} salt'.encode('ascii')
 KEY_BYTES = 32
 NONCE_BYTES = 12
 # Length is the only property a check can see; it cannot measure randomness.
-MIN_PASSWORD_LENGTH = 20
 PASSWORD_VARIABLES = {1: 'DOCSITE_GENERAL_PASSWORD', 2: 'DOCSITE_REFERENCE_PASSWORD'}
 HTML_SUFFIXES = ('.html', '.htm')
 # The unlock writes the page with document.write, which an XML document does
@@ -126,12 +126,11 @@ def read_passwords(environ: Mapping[str, str]) -> dict[int, str]:
             raise ValueError(f'The page lock is on ([publication] lock = true), but {name} is not set. '
                              'Set it from a secret in the environment that runs publish.')
         value = unicodedata.normalize('NFC', value)
+        # No rule on length or characters: the owner chooses the password. A stray
+        # newline from a secret would lock every reader out, so that case gets a note.
         if value != value.strip() or not value.isprintable():
-            raise ValueError(f'{name} starts or ends with whitespace or holds a control or invisible '
-                             'character; readers could not type it reliably.')
-        if len(value) < MIN_PASSWORD_LENGTH:
-            raise ValueError(f'{name} is shorter than {MIN_PASSWORD_LENGTH} characters. '
-                             'Use a long random passphrase: anyone can test guesses offline.')
+            print(f'note: {name} starts or ends with whitespace or holds a control or invisible character; '
+                  'a reader may be unable to type it.', file=sys.stderr)
         passwords[level] = value
     if passwords[1] == passwords[2]:
         raise ValueError(f'{PASSWORD_VARIABLES[1]} and {PASSWORD_VARIABLES[2]} are equal; '
