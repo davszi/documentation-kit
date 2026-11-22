@@ -335,6 +335,7 @@ def lock_text(name: str, level: int, data: bytes, keyring: Keyring) -> bytes:
 
 
 _PAGE_LEVEL = re.compile(r'id="page-lock" data-level="([12])"')
+_PAGE_SECTION = re.compile(r'id="page-lock" data-level="[12]" data-root="[^"]*" data-section-at="(\d+)"')
 _PAGE_KEYS = re.compile(r'id="page-lock-keys">([^<]+)<')
 _PAGE_DATA = re.compile(r'id="page-lock-data">([A-Za-z0-9+/=]+)<')
 _TEXT_DATA = re.compile(rf'^{re.escape(FORMAT)} level ([12])\n([A-Za-z0-9+/=]+)$', re.M)
@@ -547,6 +548,7 @@ class PageLock:
         markdown = {name for name in files if name.lower().endswith(MARKDOWN_SUFFIXES)}
         names = reference_names(built, markdown)
         pages: dict[str, tuple[int, bytes, int | None]] = {}
+        whole: dict[str, bytes] = {}   # a page as it was before its Reference section was cut out
         sections, named = set(), set()
         for name, text in texts.items():
             if levels[name] == 2:
@@ -558,6 +560,7 @@ class PageLock:
                 raise ValueError(f'The page lock found Reference markup in {name}, which the general password opens')
             if section is not None:
                 sections.add(section)
+                whole[name] = text.encode('utf-8')
             named |= named_references(stripped, name, names)
             pages[name] = (1, stripped.encode('utf-8'), None if at is None else len(stripped[:at].encode('utf-8')))
         if len(sections) > 1:
@@ -571,24 +574,24 @@ class PageLock:
 
         locked = {1: Counter(), 2: Counter()}
         readable = Counter()
-        sealed: dict[str, tuple[int, bytes]] = {}   # what each locked file must open to
+        sealed: dict[str, tuple[int, bytes, int | None]] = {}   # what each locked file must open to
         for name, path in files.items():
             suffix = PurePath(name).suffix.lower() or '(no suffix)'
             if name in pages:
                 level, data, at = pages[name]
                 path.write_bytes(lock_page(name, level, data, keyring, versions, at,
                                            size=size if name == index else None))
-                sealed[name] = (level, data)
+                sealed[name] = (level, data, at)
                 locked[level][suffix] += 1
             elif name.lower().endswith(MARKDOWN_SUFFIXES):
-                sealed[name] = (2, path.read_bytes())
+                sealed[name] = (2, path.read_bytes(), None)
                 path.write_bytes(lock_text(name, 2, sealed[name][1], keyring))
                 locked[2][suffix] += 1
             elif name != TREE_SCRIPT:
                 readable[suffix] += 1
         (bundle / TREE_SCRIPT).write_bytes(envelope)
         locked[2]['.js'] += 1
-        self._open_again(bundle, keyring, sealed, tree_payload(tree, section))
+        self._open_again(bundle, keyring, sealed, tree_payload(tree, section), whole, section)
         for target, data in assets.items():
             (bundle / target).parent.mkdir(parents=True, exist_ok=True)
             (bundle / target).write_bytes(data)
@@ -603,12 +606,17 @@ class PageLock:
                          'general-password readers see those names.')
         return '\n'.join(lines)
 
-    def _open_again(self, bundle: Path, keyring: Keyring, sealed: Mapping[str, tuple[int, bytes]], tree: bytes) -> None:
+    def _open_again(self, bundle: Path, keyring: Keyring, sealed: Mapping[str, tuple[int, bytes, int | None]],
+                    tree: bytes, whole: Mapping[str, bytes], section: str | None) -> None:
         """Fail unless the files just written open, with the passwords, to exactly what was locked.
 
-        The bundle to deploy is then known to hold the text a project's checks
-        read in the plain copy. Both passwords go through the key derivation a
-        browser runs; each file is read back from disk.
+        Each password goes through the key derivation a browser runs and must
+        open its own level. Each locked file is read back from disk and must
+        carry its level and the key header and open to the bytes that were
+        locked. A page whose Reference section was cut out must also go back
+        together, at the offset written into its lock page, to the page it was.
+        This runs in Python: it does not test the reader script, nor the rest
+        of the lock page around the sealed text.
         """
         from cryptography.exceptions import InvalidTag
         failure = 'The page lock could not open {} again after locking it; nothing is published'
@@ -620,12 +628,16 @@ class PageLock:
             keys.update(opened[1])
         if keys != keyring.content:
             raise ValueError(failure.format('the keys'))
-        for name, (level, plain) in sealed.items():
+        for name, (level, plain, at) in sealed.items():
             data = (bundle / name).read_bytes()
             try:
                 same = open_locked(name, data, keys) == (level, plain)
                 if same and not name.lower().endswith(MARKDOWN_SUFFIXES):
-                    same = page_header(name, data) == keyring.header
+                    written = _PAGE_SECTION.search(_utf8(name, data))
+                    same = (page_header(name, data) == keyring.header
+                            and (int(written[1]) if written else None) == at)
+                if same and name in whole:
+                    same = plain[:at] + section.encode('utf-8') + plain[at:] == whole[name]
             except (InvalidTag, ValueError):
                 same = False
             if not same:

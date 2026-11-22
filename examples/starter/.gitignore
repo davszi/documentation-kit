@@ -1,3 +1,6 @@
 .build/
 .venv/
 __pycache__/
+# left by a publish that was killed; they hold unlocked pages
+.docsite-publish-*/
+.docsite-plain-*/

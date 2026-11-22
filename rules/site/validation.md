@@ -49,6 +49,9 @@ not break, in this order, and stops at the first that fails:
    optional. After a trial `publish`, each check finds that bundle, as it is
    before the page lock, in the folder the environment variable
    `DOCSITE_PLAIN_BUNDLE` names; the folder is removed when the checks end.
+   Without a trial publish the variable is unset, whatever the caller's
+   environment holds. The page lock's passwords reach the trial publish
+   only, not `build`, `lint` or a declared check.
    [Checks that read published pages](publication.md#checks-that-read-published-pages)
    has the use.
 

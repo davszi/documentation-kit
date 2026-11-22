@@ -134,10 +134,13 @@ the publish step only:
 Deploy the `--out` directory. The build output under `.build/docs/` stays
 plain, so deploying it publishes every page unlocked.
 
-After locking, `publish` reads every locked file back, opens it with both
-passwords through the key derivation a browser runs, and compares it with what
-it locked. It fails, and publishes nothing, when one file does not open to
-exactly that.
+After locking, `publish` checks its own work and publishes nothing when the
+check fails. Each password must open its level through the key derivation a
+browser runs. Each locked file, read back from disk, must open with its
+level's key to the bytes that were locked, and a page whose Reference section
+was cut out must go back together to the page it was. The check runs in
+Python: it does not test the reader script, nor the lock page around the
+sealed text.
 
 The passwords never go into the repository, `site.toml`, the bundle or the
 command output. `publish` fails before it builds when a password is missing,
@@ -217,20 +220,27 @@ paths. Such a check reads the plain copy:
 ```
 
 - The plain copy is the bundle the lock step then encrypts, from the same
-  build. Because `publish` opens every locked file again, the deployed
-  bundle is known to hold the text the checks read. In a page that the
-  general password opens, the deployed file holds that text without the
-  sidebar's Reference section, which the tree file carries.
+  build, and `publish` [opens every locked file again](#turn-it-on). So each
+  page of the plain copy is what a reader of the deployed bundle decrypts;
+  the browser's part of that is not tested here. A page that the general
+  password opens reaches such a reader without the sidebar's Reference
+  section, and a reader with the reference password gets the section on
+  every page with the shared sidebar.
 - Deploy and upload only `--out`. The plain copy holds every page unlocked;
   keep it out of the Pages artifact and out of any other uploaded artifact.
-- The passwords stay in the publish step. A check needs none.
+- A `publish` that is killed can leave a folder `.docsite-publish-*` beside
+  `--out` and `.docsite-plain-*` beside the plain copy. Both hold unlocked
+  pages; delete them, and never commit or upload them.
+- The passwords stay in the publish step. A check needs none, and
+  `docsite.py check` hands them to its trial publish only.
 - [`docsite.py check`](validation.md#one-command-and-a-pre-push-gate) names
   the plain copy of its trial bundle to the project's checks in the
   environment variable `DOCSITE_PLAIN_BUNDLE`. A check that reads its bundle
   from that variable runs the same way in the workflow, which sets it as
   above.
-- The plain copy has no `assets/page-lock.js` and `assets/page-lock.css`, and
-  its `reference.tree.js` is readable.
+- The plain copy has no `assets/page-lock.js` and `assets/page-lock.css`. Its
+  `reference.tree.js` is readable; a site without a Reference tree has that
+  file only in the locked bundle.
 
 ### Reading a locked site
 

@@ -34,6 +34,13 @@ option and an environment variable and removes nothing. It needs no migration
 step; a project on 5.2.0 or 5.2.1 moves its pin to `v5.3.0`. adaptation asked
 for it: with the page lock on, its checks could not read its published pages.
 
+One change can stop a `check` that passed before, which the promise reserves
+for a major release: `check` no longer hands the page lock's passwords to
+`build`, `lint` and the declared checks. Only a locked project that ran
+`check` with both passwords in the environment and a declared check that
+used them is affected; none is known, and the lock is on in no project. Such
+a check reads `DOCSITE_PLAIN_BUNDLE` instead.
+
 - **`publish --plain-copy DIR`.** Writes the same bundle, as it is before
   the page lock step, into a second fresh directory outside `--out`. Checks
   that read published pages read it; only `--out` is deployed. Without the
@@ -44,19 +51,25 @@ for it: with the page lock on, its checks could not read its published pages.
   the trial bundle was removed before those checks ran, and a check that
   published for itself failed for a locked site, because it got no
   passwords. The variable joins the stable interfaces.
-- **The lock opens what it wrote.** After locking, `publish` reads every
-  locked file back, opens it with both passwords through the key derivation
-  a browser runs, and compares it with what it locked. It fails and
-  publishes nothing on a difference. A locked publish derives five keys for
-  this in place of three.
+- **The lock opens what it wrote.** After locking, `publish` opens the keys
+  with each password through the key derivation a browser runs, reads every
+  locked file back and compares what it opens to with what was locked; a
+  page whose Reference section was cut out must go back together to the
+  page it was. It fails and publishes nothing on a difference. The check
+  runs in Python and does not test the reader script. A locked publish
+  derives five keys for this in place of three.
+- **`check` keeps the passwords and a foreign bundle folder away from the
+  checks.** The lock's two passwords reach its trial publish only, and
+  `DOCSITE_PLAIN_BUNDLE` is unset without a trial publish, whatever the
+  caller's environment holds.
 - **New rule section**
   [Checks that read published pages](../../../rules/site/publication.md#checks-that-read-published-pages),
   with the workflow steps. No check enforces it: keep the plain copy out of
   every uploaded artifact.
 
-A project whose checks read `_site` or publish for themselves changes them to
-read `DOCSITE_PLAIN_BUNDLE`, sets that variable in its workflow, and drops a
-`[[checks]]` entry that only published. A project without such checks, or
+A project whose checks read `_site` or publish for themselves can change them
+to read `DOCSITE_PLAIN_BUNDLE`, set that variable in its workflow, and drop a
+`[[checks]]` entry that only published; with the page lock on it has to. A project without such checks, or
 without the lock, changes nothing.
 
 ## 5.2.1 — no rule on the lock's passwords

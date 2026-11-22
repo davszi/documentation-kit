@@ -2,6 +2,49 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-22 — Review of 5.3.0: not fit to tag, then fixed
+
+- One independent review of `9b50d6f`, read-only, by a reviewer agent. Its
+  verdict: not fit to tag, two medium findings. It ran four Python test
+  files and probes of its own, and no browser suite. It found no path that
+  puts unlocked text, a password or a content key into `--out`, the command
+  output or an error message.
+- Fixed, medium: a `DOCSITE_PLAIN_BUNDLE` the caller's environment held
+  reached the declared checks when no trial publish ran, so a check could
+  pass on stale pages. `check` now drops the variable and sets it only for
+  its own plain copy.
+- Fixed, medium: the check after locking did not look at the offset where a
+  reference-password reader's browser puts the Reference section back, so
+  a wrong offset passed. It now reads the offset from the written lock page
+  and puts page and section together again; the result must be the page as
+  it was. The rule and the release notes said more than the check proved;
+  they now say what it proves and that it runs in Python.
+- Fixed, low: an interrupt between the two last moves left a plain copy
+  without its bundle; the overlap test with the build output did not
+  resolve a linked `.build`; the rule did not say that a site without a
+  Reference tree has `reference.tree.js` only in the locked bundle, nor
+  that a killed publish can leave `.docsite-publish-*` and
+  `.docsite-plain-*` with unlocked pages. The starter's `.gitignore` names
+  both.
+- Fixed, low, older than this change: `check` handed the lock's passwords
+  to every step. They now reach the trial publish only. By the letter of
+  the promise this can stop a `check` that passed before; the release notes
+  state the exception and why no project is affected. deivid has not
+  decided on this exception yet; it is named in the ask for the release.
+- Not changed: the check after locking does not cover the lock page's other
+  attributes, the padding sizes or the two lock assets. A publish that
+  fails leaves an empty parent folder it created, as `--out` always did.
+- Tests added for each fix. Checks after the fixes: `build` and `lint
+  --strict` pass, and 405 Python tests pass with 2 skipped for missing
+  matplotlib. The full script failed once: `tests/test_reference_tree.cjs`
+  timed out at line 158, a click without JavaScript on the link to the
+  Reference index that the `summary` above it intercepted. The same suite
+  then passed three times alone, and the two suites the script had not
+  reached, listed HTML and the page lock in the browser, passed alone. The
+  fixes touch no file that suite loads. Cause not found; it is the second
+  browser timeout of this kind after the page-lock one of 2026-11-21. The
+  fixes were not reviewed again.
+
 ## 2026-11-22 — A plain copy of the bundle for checks; prepare 5.3.0
 
 - The adaptation session reported, while switching the page lock on: a

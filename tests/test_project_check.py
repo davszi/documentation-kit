@@ -154,10 +154,35 @@ class Check(unittest.TestCase):
         self.assertNotIn('page-lock-data', page)
         self.assertIn('class="sidebar', page)
 
+    NO_BUNDLE = ('\n[[checks]]\ncommand = ["{python}", "-c", '
+                 '"import os, sys; sys.exit(\'DOCSITE_PLAIN_BUNDLE\' in os.environ)"]\n')
+
     def test_without_a_publication_no_bundle_is_named(self):
-        self.declare('\n[[checks]]\ncommand = ["{python}", "-c", '
-                     '"import os, sys; sys.exit(\'DOCSITE_PLAIN_BUNDLE\' in os.environ)"]\n')
+        self.declare(self.NO_BUNDLE)
         self.assertEqual(self.check().returncode, 0)
+        # Not even one the caller's environment holds: a check must not read stale pages.
+        self.assertEqual(self.check(DOCSITE_PLAIN_BUNDLE=str(self.root)).returncode, 0)
+
+    def test_a_skipped_trial_publish_names_no_bundle(self):
+        self.declare('\n[publication]\npages = ["guide.html"]\nlock = true\n' + self.NO_BUNDLE)
+        hide = self.root / 'hide'
+        (hide / 'cryptography').mkdir(parents=True)
+        (hide / 'cryptography/__init__.py').write_text('raise ImportError("hidden")\n')
+        blocker = self.root / 'sitecustomize.py'
+        blocker.write_text('import importlib.util as u\n_find = u.find_spec\n'
+                           'u.find_spec = lambda name, *a, **k: None if name == "cryptography" else _find(name, *a, **k)\n')
+        result = self.check(DOCSITE_PLAIN_BUNDLE=str(self.root), PYTHONPATH=str(self.root))
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn('skipped', result.stdout)
+
+    @unittest.skipUnless(HAS_CRYPTOGRAPHY, 'cryptography is not installed')
+    def test_the_passwords_reach_the_trial_publish_and_no_check(self):
+        self.declare('\n[publication]\npages = ["guide.html"]\nlock = true\n'
+                     '\n[[checks]]\ncommand = ["{python}", "-c", "import os, sys; '
+                     'sys.exit(any(name.startswith(\'DOCSITE_\') and name.endswith(\'_PASSWORD\') for name in os.environ))"]\n')
+        result = self.check(DOCSITE_GENERAL_PASSWORD='general-test-value', DOCSITE_REFERENCE_PASSWORD='reference-test-value')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn('with throwaway passwords', result.stdout)  # the caller's own were used
 
     @unittest.skipUnless(HAS_CRYPTOGRAPHY, 'cryptography is not installed')
     def test_a_locked_site_that_cannot_publish_stops_the_check(self):

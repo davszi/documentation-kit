@@ -527,15 +527,35 @@ class LockBundle(unittest.TestCase):
         def other_tree(tree, section, keyring, size=None):
             return real_tree(tree and tree + ' ', section, keyring, size)
 
+        def other_offset(name, level, data, keyring, versions, section_at=None, **more):
+            return real_page(name, level, data, keyring, versions, 0 if name == 'listed.html' else section_at, **more)
+
+        def other_header(name, level, data, keyring, *rest, **more):
+            stale = page_lock.Keyring(keyring.content, {**keyring.header, 'tree': 'stale'})
+            return real_page(name, level, data, stale if name == 'rule.html' else keyring, *rest, **more)
+
         cases = {'listed.html': ('lock_page', other_path), 'notes/record.md': ('lock_text', other_text),
-                 'index.html': ('lock_page', other_level), 'reference.tree.js': ('lock_tree', other_tree)}
-        for name, (writer, broken) in cases.items():
-            with self.subTest(name=name), patch.object(page_lock, writer, broken):
+                 'index.html': ('lock_page', other_level), 'reference.tree.js': ('lock_tree', other_tree),
+                 'listed.html offset': ('lock_page', other_offset), 'rule.html': ('lock_page', other_header)}
+        for case, (writer, broken) in cases.items():
+            name = case.split()[0]
+            with self.subTest(case=case), patch.object(page_lock, writer, broken):
                 self.setUp()
                 with self.assertRaisesRegex(ValueError, f'could not open {re.escape(name)} again') as caught:
                     self.apply()
                 for password in self.passwords.values():
                     self.assertNotIn(password, str(caught.exception))
+
+    def test_a_cut_page_that_does_not_go_back_together_stops_the_lock(self):
+        real = page_lock.split_reference
+
+        def lossy(markup, name):
+            stripped, section, at = real(markup, name)
+            return (stripped, section, at) if name != 'index.html' or section is None else (stripped + ' ', section, at)
+
+        with patch.object(page_lock, 'split_reference', lossy):
+            with self.assertRaisesRegex(ValueError, 'could not open index.html again'):
+                self.apply()
 
     def test_keys_that_a_password_does_not_open_stop_the_lock(self):
         real = page_lock.make_keyring
@@ -697,6 +717,44 @@ class PublishWithLock(unittest.TestCase):
                     self.assertIn(message, result.stderr)
                     self.assertFalse(out.exists())
                     self.assertFalse((project / '.build/docs').exists())
+
+    def test_plain_copy_cannot_follow_a_symlink_or_lie_in_a_linked_build_folder(self):
+        project = page_lock_fixture.make_project(self.folder / 'project', lock=True)
+        (self.folder / 'real').mkdir()
+        (self.folder / 'link').symlink_to(self.folder / 'real')
+        result = page_lock_fixture.docsite('publish', '--project', project, '--out', self.folder / 'site',
+                                           '--plain-copy', self.folder / 'link/plain',
+                                           env=dict(os.environ, **environment()))
+        self.assertEqual(result.returncode, 1)
+        self.assertIn('Plain copy cannot follow a symlink', result.stderr)
+        # A build folder that is a link: the plain copy must still not land in the build output.
+        (self.folder / 'realbuild').mkdir()
+        (project / '.build').symlink_to(self.folder / 'realbuild')
+        result = page_lock_fixture.docsite('publish', '--project', project, '--out', self.folder / 'site',
+                                           '--plain-copy', self.folder / 'realbuild/docs/html/plain',
+                                           env=dict(os.environ, **environment()))
+        self.assertEqual(result.returncode, 1)
+        self.assertIn('must not overlap', result.stderr)
+
+    def test_an_interrupt_or_error_at_the_last_move_leaves_no_plain_copy(self):
+        from publication import publish_project
+        run, rename = subprocess.run, Path.rename
+        for number, problem in enumerate((OSError('disk'), KeyboardInterrupt())):
+            project = page_lock_fixture.make_project(self.folder / f'project-{number}', lock=True)
+            out, copy = self.folder / f'site-{number}', self.folder / f'checks-{number}/plain'
+
+            def failing(path, target, problem=problem, out=out):
+                if Path(target) == out:
+                    raise problem
+                return rename(path, target)
+
+            with patch('publication.subprocess.run', lambda *a, **k: run(*a, **{'stdout': subprocess.DEVNULL, **k})), \
+                 patch.object(Path, 'rename', failing), \
+                 patch.dict(os.environ, environment()), contextlib.redirect_stdout(io.StringIO()):
+                with self.assertRaises(type(problem)):
+                    publish_project(project, out, kit=page_lock_fixture.KIT, plain_copy=copy)
+            self.assertFalse(out.exists())
+            self.assertEqual(list(copy.parent.iterdir()), [])
 
     def test_a_lock_that_fails_leaves_neither_bundle_nor_plain_copy(self):
         project = page_lock_fixture.make_project(self.folder / 'project', lock=True)

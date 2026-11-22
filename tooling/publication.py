@@ -264,9 +264,10 @@ def publish_project(root: Path, destination: Path, *, kit: Path, plain_copy: Pat
     """
     root, kit = Path(root).resolve(), Path(kit).resolve()
     generated = root / '.build/docs/html'
-    destination = _fresh_output(destination, 'Publication output', generated)
+    # Compare outputs with where the build output really lies, also when .build is a link.
+    destination = _fresh_output(destination, 'Publication output', generated.resolve())
     if plain_copy is not None:
-        plain_copy = _fresh_output(plain_copy, 'Plain copy', generated)
+        plain_copy = _fresh_output(plain_copy, 'Plain copy', generated.resolve())
         if plain_copy.is_relative_to(destination) or destination.is_relative_to(plain_copy):
             raise ValueError('The plain copy must lie outside the publication output: '
                              'what is deployed must not hold it')
@@ -348,7 +349,7 @@ def publish_project(root: Path, destination: Path, *, kit: Path, plain_copy: Pat
                 (staged / 'site').rename(plain_copy)
                 try:
                     output.rename(destination)
-                except OSError:
+                except BaseException:  # an interrupt too: never a plain copy without its bundle
                     shutil.rmtree(plain_copy, ignore_errors=True)
                     raise
             finally:

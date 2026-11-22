@@ -20,6 +20,8 @@ element that is exactly `{python}` becomes the interpreter that runs the check.
 After a trial publish, each command finds the published bundle, as it is
 before the page lock, in the folder that the environment variable
 `DOCSITE_PLAIN_BUNDLE` names; the folder is removed when the checks end.
+Without a trial publish the variable is unset, whatever the caller's
+environment holds. The lock's two passwords reach the trial publish only.
 The checks read the working tree, not a commit; the hook refuses a push while
 tracked files have uncommitted changes.
 """
@@ -101,6 +103,10 @@ def run(project: Path, kit: Path, environ=None) -> int:
         trial, skipped = _trial_lock(site, environ)
         steps.append(("publish, into a temporary folder" + (", with throwaway passwords" if trial else ""), None))
     steps += [(name, [python if part == PLACEHOLDER else part for part in command]) for name, command in own]
+    from page_lock import PASSWORD_VARIABLES
+    # Only the trial publish gets the lock's passwords, and no step a bundle folder from outside.
+    private = {BUNDLE_VARIABLE, *PASSWORD_VARIABLES.values()}
+    outside = {name: value for name, value in environ.items() if name not in private}
     with tempfile.TemporaryDirectory(prefix="docsite-check-") as folder:
         plain = Path(folder) / "plain"
         for number, (name, command) in enumerate(steps, 1):
@@ -112,11 +118,13 @@ def run(project: Path, kit: Path, environ=None) -> int:
                 if command is None:
                     status = subprocess.run([*docsite, "publish", "--project", str(project),
                                              "--out", str(Path(folder) / "site"), "--plain-copy", str(plain)],
-                                            cwd=project, stdout=subprocess.DEVNULL, env={**environ, **trial}).returncode
+                                            cwd=project, stdout=subprocess.DEVNULL,
+                                            env={**outside, **{name: environ[name] for name in PASSWORD_VARIABLES.values()
+                                                               if name in environ}, **trial}).returncode
                 else:
                     # A project's check reads published pages in the plain copy of the trial bundle.
                     bundle = {BUNDLE_VARIABLE: str(plain)} if plain.is_dir() else {}
-                    status = subprocess.run(command, cwd=project, env={**environ, **bundle}).returncode
+                    status = subprocess.run(command, cwd=project, env={**outside, **bundle}).returncode
             except OSError as problem:
                 print(f"check failed at step {number}, {name}: cannot run {command[0]}: {problem.strerror}",
                       file=sys.stderr)
