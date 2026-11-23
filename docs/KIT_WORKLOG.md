@@ -2,6 +2,20 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-23 — Release 5.4.0
+
+- deivid gave the go: "Yes, release 5.4.0". The ask named what the go
+  covers: moving `main` to the release state, the tag `v5.4.0` and the push,
+  which publishes the kit's own site. It gave the size against 5.3.0: 12
+  files changed, 609 lines added and 61 removed, and no migration step.
+- The message with the ask named the visible change in the build: three
+  include failures end in an error line where they ended in a traceback.
+- 5.4.0 holds the changes of the two entries below. One independent
+  review; its findings are fixed and the fixes were not reviewed again.
+- This commit adds only this entry. Checks on it: `build` and `lint
+  --strict` of the kit pass. The full script passed on `574e5c1`, the
+  commit before; the Pages workflow runs it on the push.
+
 ## 2026-11-23 — Review of 5.4.0: not fit to tag, then fixed
 
 - One independent review of `c8d1a4e`, read-only, by a reviewer agent. Its
