@@ -26,6 +26,31 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## 5.4.0 — a page's source for a project's checks
+
+5.4.0 is a minor release under
+[what a version number promises](#what-a-version-number-promises): it adds a
+helper to the stable interfaces and removes nothing. It needs no migration
+step; a project moves its pin to `v5.4.0`. adaptation asked for it: its
+checks imported two undocumented functions of `tooling/build.py`.
+
+- **New helper `tooling/page_source.py`.** `page_source(path, project)`
+  returns a page's frontmatter and its body with every include expanded, as
+  the build inlines it. A problem raises `PageSourceError`, whose `problems`
+  names every one. The module reads no environment variable when imported.
+  `page_source` and `PageSourceError.problems` join the stable interfaces;
+  see [a page's source for checks](../../../rules/site/validation.md#a-pages-source-for-checks).
+- **One implementation.** `build.py` reads frontmatter, expands includes and
+  looks up tracked files through the helper's functions. The built site of
+  the kit and of the starter is unchanged.
+
+A project that imports `parse_frontmatter` or `expand_includes` from
+`tooling/build.py` switches to `page_source`. Both names still work in
+5.4.0, but they were never an interface and may go in any release. They
+record a problem in the build's error list and return text all the same, so
+a check that calls them can pass on a page whose include is missing;
+`page_source` raises.
+
 ## 5.3.0 — a plain copy of the bundle for checks, and a lock that proves it opens
 
 5.3.0 is a minor release under

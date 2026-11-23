@@ -52,6 +52,8 @@ except ImportError:  # pragma: no cover
 
 from site_paths import DOCS, REPO, SITE as SRC, TOPICS as PAGES, HTML as OUT, OUTPUT_ROOT, KIT_SITE, topic_pages
 from site_bundle import SiteBundle, validate_resources
+import page_source
+from page_source import INCLUDE_DEPTH, INCLUDE_RE  # noqa: F401  (names this module has always had)
 from worklog_entries import fenced_spans, links_checked_from
 
 COMPONENTS = KIT_SITE / "components"
@@ -71,7 +73,6 @@ REMOVED_HOOKS = ("path_resolver", "evidence_validator")
 # old documents (`evidence_manifests`) and single old paths mapped to current
 # files (`legacy_files`). A finished working document is cited from Git instead.
 REMOVED_COPY_SETTINGS = ("evidence_manifests", "legacy_files")
-INCLUDE_DEPTH = 8
 KNOWN_COMPONENTS = ("toc", "nav", "tabs", "diagram", "code", "filelinks",
                     "lightbox", "plot-toggles", "carousel", "panel-switcher",
                     "fold-controls", "chapter-reader", "slide-face", "page-redirect")  # emission order
@@ -191,7 +192,6 @@ def inline_svg_figures(content: str, name: str, *, namespace_ids: bool = False) 
 # NOTE: "code" must precede "filelinks" — the source chips code.js injects
 # are rewritten to VS Code / GitHub URLs by the filelinks pass.
 
-INCLUDE_RE = re.compile(r"<!--\s*include:\s*(\S+)\s*-->")
 PAGE_END = "<!-- page-end -->"  # working-notes tail below this never renders
 # Page tabs: top-level <!-- tab: Label --> markers split the page part into
 # panels (content before the first marker stays above the bar as the shared
@@ -384,20 +384,12 @@ def validate_frontmatter(meta: dict, name: str) -> None:
 
 
 def parse_frontmatter(raw: str, name: str) -> tuple[dict, str]:
-    if not raw.startswith("+++\n"):
-        err(f"{name}: missing +++ frontmatter fence at top")
-        return {}, raw
-    end = raw.find("\n+++\n", 4)
-    if end < 0:
-        err(f"{name}: unterminated +++ frontmatter")
-        return {}, raw
-    try:
-        meta = tomllib.loads(raw[4:end])
-    except tomllib.TOMLDecodeError as e:
-        err(f"{name}: frontmatter TOML error: {e}")
-        return {}, raw[end + 5:]
+    """Frontmatter and body; a problem is recorded as a build error. Projects use `page_source.page_source`."""
+    meta, body = page_source.split_frontmatter(raw, name, err)
+    if meta is None:
+        return {}, body
     validate_frontmatter(meta, name)
-    return meta, raw[end + 5:]
+    return meta, body
 
 
 SITE_MAP_MARKER = "<!-- site-map -->"
@@ -493,37 +485,9 @@ def site_map_html(site: dict) -> str:
 
 
 def expand_includes(body: str, name: str, _stack: tuple[Path, ...] = ()) -> str:
-    """Replace include markers; included fragments may include others (depth-limited, no cycles)."""
-    def rep(m: re.Match) -> str:
-        relative = Path(m.group(1))
-        if relative.is_absolute() or '..' in relative.parts:
-            raise ValueError('Include paths must stay inside the theme or project')
-        chain = " -> ".join([*(item.name for item in _stack), m.group(1)])
-        shared = KIT_SITE / relative
-        if shared.is_file() and not shared.is_symlink() and shared.resolve().is_relative_to(KIT_SITE):
-            p = shared
-        else:
-            try:
-                p = local_resource(SRC / relative)
-            except ValueError as error:  # missing or untracked fragment: name the include chain, not a traceback
-                err(f"{name}: include not found or not tracked: {chain} ({error})")
-                return ""
-        if not p.is_file():
-            err(f"{name}: include not found: {chain}")
-            return ""
-        text = p.read_text()
-        if not text.strip():
-            err(f"{name}: include is empty: {m.group(1)}")
-        resolved = p.resolve()
-        if resolved in _stack:
-            err(f"{name}: include cycle: {chain}")
-            return ""
-        if len(_stack) >= INCLUDE_DEPTH:
-            err(f"{name}: includes nest deeper than {INCLUDE_DEPTH} levels: {chain}")
-            return ""
-        return expand_includes(text, name, (*_stack, resolved))
-
-    return INCLUDE_RE.sub(rep, body)
+    """Replace include markers; a problem is recorded as a build error. Projects use `page_source.page_source`."""
+    return page_source.expand_includes(body, name, site=SRC, local=local_resource, problem=err,
+                                       kit_site=KIT_SITE, _stack=_stack)
 
 
 def toc_html(toc: list, name: str, id_to_panel: dict | None = None) -> str:
@@ -983,18 +947,12 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
 
 
 def local_resource(path: Path) -> Path:
-    resolved = path.resolve()
-    if path.is_symlink() or not resolved.is_relative_to(REPO):
-        raise ValueError(f"Project resource escapes its root: {path}")
-    if resolved not in consumer_tracked_paths():
-        raise ValueError(f"Local site input must be tracked by the consumer Git repository: {path}")
-    return resolved
+    return page_source.local_resource(path, REPO, consumer_tracked_paths())
 
 
 @lru_cache(maxsize=1)
 def consumer_tracked_paths() -> frozenset[Path]:
-    result = subprocess.run(['git', 'ls-files', '-z'], cwd=REPO, capture_output=True, check=True)
-    return frozenset(REPO / path for path in result.stdout.decode().split('\0') if path)
+    return page_source.tracked_paths(REPO)
 
 
 def plot_toggle_labels_script(labels: dict[str, str]) -> str:

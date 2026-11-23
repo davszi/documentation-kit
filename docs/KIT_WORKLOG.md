@@ -2,6 +2,46 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-23 — A page's source for a project's checks; prepare 5.4.0
+
+- deivid pasted a request from the adaptation agent: a documented helper
+  that returns a topic page's source as the build reads it, because two of
+  adaptation's checks import `parse_frontmatter` and `expand_includes`
+  from `tooling/build.py`. I checked its facts in the kit and in
+  adaptation's `docs/site/checks/`; they hold.
+- One premise was wrong and makes the case stronger: the request called the
+  errors "printed build errors". The build collects them in a list and
+  returns text all the same, so adaptation's checks could pass on a page
+  whose include is missing.
+- I proposed three changes to the request: the project is an argument and
+  importing reads no environment; every problem of a page is collected and
+  raised once, as the build lists them all; the helper says exactly what it
+  returns, frontmatter and include-expanded text and nothing later.
+  deivid's go: "Yes, build it".
+- `tooling/page_source.py`: `page_source(path, project)`,
+  `PageSourceError` with `problems`, and the functions the build shares:
+  `split_frontmatter`, `expand_includes`, `local_resource`,
+  `tracked_paths`. Frontmatter keys are not validated there.
+- `tooling/build.py` calls them; `parse_frontmatter` and `expand_includes`
+  keep their names and behaviour there, so adaptation's checks still run
+  after it moves the pin.
+- Measured: an identical starter project with nested includes, built with
+  the tooling of `v5.3.0` and with the new tooling, gives the same output
+  under `diff -r`; the kit's own site from the same sources gives the same
+  145 files by SHA-256.
+- Tests in `tests/test_page_source.py`: frontmatter, nested includes, a
+  cycle, paths that leave the project, a missing, untracked and empty
+  include, the depth limit, all problems at once, two projects in one
+  process, and equality with what the build's own functions return,
+  problems included.
+- `rules/site/validation.md` gets the section "A page's source for checks"
+  with the stability promise; the capability map gets a row.
+- Prepared as minor 5.4.0 without a migration guide: nothing has to change,
+  and the release notes carry the line for projects that import the two
+  build functions.
+- Not in this change: adaptation also removes slide blocks with a regular
+  expression of its own, a second dependence on the kit's syntax.
+
 ## 2026-11-22 — Release 5.3.0
 
 - deivid gave the go: "Yes, release 5.3.0". The ask named what the go

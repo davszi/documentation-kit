@@ -84,6 +84,34 @@ tracked hooks folder and points the setting there. The hook:
 `git push --no-verify` skips it once. The project's workflow stays the check
 that counts; the gate finds the failure before the push.
 
+## A page's source for checks
+
+A project's check that looks at what a page says, without building it, reads
+the page through `tooling/page_source.py`:
+
+```python
+import sys; sys.path.insert(0, ".docs-kit/tooling")
+from page_source import page_source, PageSourceError
+
+meta, body = page_source("docs/topics/guide/guide.md", project=".")
+```
+
+- `meta` is the `+++` frontmatter as a dict. `body` is the text after it with
+  every `<!-- include: path -->` marker replaced by its fragment, fragments in
+  fragments included. The build expands includes with the same functions, so
+  `body` is the text the build inlines.
+- Nothing later in the build is applied: slide and fold markers, tabs and
+  the site-map marker stay as written, and no Markdown is rendered.
+  Frontmatter keys are not validated; `build` and `lint` do that.
+- A page with a problem raises `PageSourceError`; its `problems` names every
+  one: a frontmatter fence or TOML that cannot be read, an include that is
+  missing, untracked, empty, outside the theme and the project, part of a
+  cycle or nested too deep. An include must be a tracked file, as in the
+  build, so a new fragment is added with `git add` before the check reads it.
+- `page_source(path, project)` and `PageSourceError.problems` are stable
+  interfaces. The module's other names serve the build and may change; so
+  may every name in `tooling/build.py`, which a check does not import.
+
 ## Local review and browser access
 
 Use the pinned kit from the consuming project root and the concrete commands in the project's context. Complete the [validation above](#validation-and-review) before review. Share the rendered page with its figures first, then source or evidence links where useful.
