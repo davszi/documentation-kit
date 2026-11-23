@@ -25,6 +25,11 @@ does, and this record with its route when the last one goes.
 
 ## Known limits, not fixed
 
+- **A tracked file whose name is not UTF-8.** `build` and `lint` stop with a
+  traceback, `UnicodeDecodeError`, when the project tracks such a file
+  (measured on a starter project with kit 5.4.0). `tooling/page_source.py`
+  reads such names and the capability map skips them; other places that
+  read Git's output do neither.
 - **Reference titles for general-password readers.** A page that the general
   password opens can still link to a Reference page, through a `[[nav]]`
   entry, a site-map card or a link in the text. The link's text and address

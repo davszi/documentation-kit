@@ -91,13 +91,59 @@ class PageSource(unittest.TestCase):
         outside = self.root.parent / f'{self.root.name}-outside.html'
         outside.write_text('<p>secret</p>\n')
         self.addCleanup(outside.unlink)
-        for marker in (f'<!-- include: ../../../{outside.name} -->', f'<!-- include: {outside} -->'):
-            self.write(marker + '\n')
+        for target in (f'../../../{outside.name}', str(outside)):
+            # The problem after it is still named: one bad path does not hide the next.
+            self.write(f'<!-- include: {target} -->\n<!-- include: fragments/missing.html -->\n')
             problems = self.problems()
-            self.assertEqual(problems, ('docs/topics/guide/index.md: Include paths must stay inside the theme or project',))
+            self.assertEqual(problems[0], 'docs/topics/guide/index.md: include paths must stay inside the theme or '
+                                          f'project: {target}')
+            self.assertIn('fragments/missing.html', problems[1])
+            self.assertNotIn('secret', ' '.join(problems))
         (self.fragments / 'link.html').symlink_to(outside)
         self.write('<!-- include: fragments/link.html -->\n')
         self.assertIn('Project resource escapes its root', self.problems()[0])
+
+    def test_text_below_the_page_end_marker_is_left_out_as_in_the_build(self):
+        self.write('shown\n<!-- page-end -->\nnotes\n<!-- include: fragments/missing.html -->\n')
+        self.assertEqual(page_source(self.page, self.root)[1], 'shown\n')
+
+    def test_a_fragment_that_cannot_be_read_is_a_named_problem(self):
+        (self.fragments / 'binary.html').write_bytes(b'\xff\xfe not text')
+        (self.fragments / 'loop.html').symlink_to(self.fragments / 'loop.html')
+        (self.fragments / 'folder.html').mkdir()
+        (self.fragments / 'folder.html/keep.txt').write_text('x\n')
+        self.write('<!-- include: fragments/binary.html -->\n<!-- include: fragments/loop.html -->\n'
+                   '<!-- include: fragments/folder.html -->\n<!-- include: fragments/missing.html -->\n')
+        problems = self.problems()
+        self.assertEqual(len(problems), 4, problems)
+        self.assertIn('include cannot be read as text: fragments/binary.html (UnicodeDecodeError)', problems[0])
+        self.assertIn('fragments/loop.html', problems[1])
+        self.assertIn('fragments/folder.html', problems[2])
+        self.assertIn('fragments/missing.html', problems[3])
+
+    @unittest.skipIf(os.geteuid() == 0, 'root reads every file')
+    def test_a_fragment_without_read_permission_is_a_named_problem(self):
+        self.write('<!-- include: fragments/closed.html -->\n', closed='<p>closed</p>\n')
+        (self.fragments / 'closed.html').chmod(0)
+        self.addCleanup((self.fragments / 'closed.html').chmod, 0o644)
+        self.assertIn('include cannot be read as text: fragments/closed.html (PermissionError)', self.problems()[0])
+
+    def test_a_tracked_file_whose_name_is_not_utf8_does_not_stop_other_pages(self):
+        try:
+            self.root.joinpath(os.fsdecode(b'odd-\xff.txt')).write_text('x\n')
+        except OSError:
+            self.skipTest('the file system refuses the name')
+        self.write('<!-- include: fragments/part.html -->\n', part='<p>part</p>\n')
+        self.assertEqual(page_source(self.page, self.root)[1], '<p>part</p>\n\n')
+
+    def test_a_relative_project_and_a_real_theme_fragment(self):
+        theme_file = next(path for path in sorted((KIT / 'theme/components').glob('*.html')))
+        self.write(f'<!-- include: components/{theme_file.name} -->\n')
+        before = os.getcwd()
+        self.addCleanup(os.chdir, before)
+        os.chdir(self.root.parent)
+        _, body = page_source('docs/topics/guide/index.md', self.root.name)
+        self.assertEqual(body, theme_file.read_text() + '\n')
 
     def test_a_missing_untracked_or_empty_include_raises(self):
         self.write('<!-- include: fragments/missing.html -->\n')
@@ -177,13 +223,16 @@ class EqualsTheBuild(unittest.TestCase):
         fragments.mkdir(parents=True, exist_ok=True)
         (fragments / 'outer.html').write_text('<p id="outer-part">outer 4117</p>\n<!-- include: fragments/inner.html -->\n')
         (fragments / 'inner.html').write_text('<p id="inner-part">inner 9052</p>\n')
-        self.guide.write_text(self.guide.read_text() + '\n<!-- include: fragments/outer.html -->\n')
+        self.guide.write_text(self.guide.read_text() + '\n<!-- include: fragments/outer.html -->\n'
+                              '\n<!-- page-end -->\n\nNotes 7731, never rendered.\n<!-- include: fragments/none.html -->\n')
         track(self.root)
 
     def from_build(self):
-        code = ('import json, sys; sys.path.insert(0, sys.argv[1]); import build; from pathlib import Path; '
+        # The steps of build_page that shape the source: frontmatter, the page-end cut, the includes.
+        code = ('import json, sys; sys.path.insert(0, sys.argv[1]); import build, page_source; from pathlib import Path; '
                 'page = Path(sys.argv[2]); meta, body = build.parse_frontmatter(page.read_text(), "guide/index.md"); '
-                'print(json.dumps([meta, build.expand_includes(body, "guide/index.md"), build._errors]))')
+                'body = build.expand_includes(page_source.rendered_part(body), "guide/index.md"); '
+                'print(json.dumps([meta, body, build._errors]))')
         result = subprocess.run([sys.executable, '-c', code, str(KIT / 'tooling'), str(self.guide)], capture_output=True,
                                 text=True, cwd=self.root, env=dict(os.environ, DOCSITE_PROJECT_ROOT=str(self.root)))
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -201,10 +250,16 @@ class EqualsTheBuild(unittest.TestCase):
         html = (self.root / '.build/docs/html/guide.html').read_text()
         self.assertIn('<p id="outer-part">outer 4117</p>', html)
         self.assertIn('<p id="inner-part">inner 9052</p>', html)
+        # The build renders nothing below the page-end marker, and the helper returns nothing from there.
+        self.assertNotIn('7731', html)
+        self.assertNotIn('7731', body)
 
     def test_helper_and_build_name_the_same_problems(self):
-        self.guide.write_text(self.guide.read_text() + '\n<!-- include: fragments/missing.html -->\n')
+        text = self.guide.read_text()
+        self.guide.write_text(text.replace('<!-- page-end -->', '<!-- include: fragments/missing.html -->\n'
+                                           '<!-- include: /etc/hostname -->\n<!-- page-end -->'))
         _, _, errors = self.from_build()
+        self.assertEqual(len(errors), 2, errors)
         with self.assertRaises(PageSourceError) as caught:
             page_source(self.guide, self.root)
         self.assertEqual([problem.replace('docs/topics/', '') for problem in caught.exception.problems], errors)
@@ -215,6 +270,8 @@ class EqualsTheBuild(unittest.TestCase):
         self.assertNotIn('tomllib.loads(raw', source)
         self.assertIn('page_source.expand_includes(', source)
         self.assertIn('page_source.split_frontmatter(', source)
+        self.assertNotIn('.split(PAGE_END', source)
+        self.assertEqual(source.count('page_source.rendered_part('), 2)
 
 
 if __name__ == '__main__':

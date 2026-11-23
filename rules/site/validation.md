@@ -96,21 +96,24 @@ from page_source import page_source, PageSourceError
 meta, body = page_source("docs/topics/guide/guide.md", project=".")
 ```
 
-- `meta` is the `+++` frontmatter as a dict. `body` is the text after it with
-  every `<!-- include: path -->` marker replaced by its fragment, fragments in
-  fragments included. The build expands includes with the same functions, so
-  `body` is the text the build inlines.
-- Nothing later in the build is applied: slide and fold markers, tabs and
-  the site-map marker stay as written, and no Markdown is rendered.
-  Frontmatter keys are not validated; `build` and `lint` do that.
-- A page with a problem raises `PageSourceError`; its `problems` names every
-  one: a frontmatter fence or TOML that cannot be read, an include that is
-  missing, untracked, empty, outside the theme and the project, part of a
-  cycle or nested too deep. An include must be a tracked file, as in the
-  build, so a new fragment is added with `git add` before the check reads it.
-- `page_source(path, project)` and `PageSourceError.problems` are stable
-  interfaces. The module's other names serve the build and may change; so
-  may every name in `tooling/build.py`, which a check does not import.
+- `meta` is the `+++` frontmatter as a dict. `body` is the text after it, up
+  to a `<!-- page-end -->` marker, with every `<!-- include: path -->` marker
+  replaced by its fragment, fragments in fragments included. The build cuts
+  at the marker and expands includes with the same functions.
+- Nothing else of the build is applied: a project's `content_transform` does
+  not run, slide and fold markers, tabs and the site-map marker stay as
+  written, and no Markdown is rendered. Frontmatter keys are not validated;
+  `build` and `lint` do that.
+- A page with a problem raises `PageSourceError`, a `ValueError`; its
+  `problems` names every one: a frontmatter fence or TOML that cannot be
+  read, an include that is missing, untracked, empty, unreadable, outside
+  the theme and the project, part of a cycle or nested too deep. An include
+  must be a tracked file, as in the build, so a new fragment is added with
+  `git add` before the check reads it.
+- `page_source(path, project)`, `PageSourceError` and its `problems` are
+  stable interfaces. The module's other names serve the build and may
+  change; so may every name in `tooling/build.py`, which a check does not
+  import.
 
 ## Local review and browser access
 

@@ -2,6 +2,46 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-23 — Review of 5.4.0: not fit to tag, then fixed
+
+- One independent review of `c8d1a4e`, read-only, by a reviewer agent. Its
+  verdict: not fit to tag. It found no change in the build's behaviour, by
+  reading old and new code line by line and by running both on scratch
+  projects, and three gaps between the helper and its own description.
+- Fixed, medium: the helper expanded includes below `<!-- page-end -->`,
+  which the build cuts off first. It returned the tail and raised for a
+  missing include there. It now cuts at the marker through
+  `rendered_part`, which the build calls in both places too.
+- Fixed, medium: an absolute path or `..` in an include, and a fragment
+  that is not text, stopped the expansion at once, so later problems of the
+  page were lost. Both are now reported like the others. In the build these
+  cases ended in a traceback; they now end in an error line, still with
+  exit status 1.
+- Fixed, medium to low: a fragment without read permission, a link loop
+  and a tracked file whose name is not UTF-8 left the helper as other
+  exception types; the last one failed every page of a project.
+  Unreadable fragments and loops are named problems now, and the helper
+  decodes tracked names as the system reads them.
+- Measured after that fix, on a starter project with such a file: `build`
+  and `lint` still stop with a traceback, `UnicodeDecodeError`, at another
+  place that reads Git's output. That is older than this change and not
+  fixed here; it is listed in
+  [known open after 5.0.0](open/known-open-after-5.0.0.md). A sentence in
+  my draft of the release notes claimed the opposite and is removed.
+- Measured on the same project: an absolute include followed by a missing
+  one gives two `ERROR:` lines and no traceback.
+- Fixed, low: the texts did not say that a project's `content_transform`
+  does not run; the stability promise left out the name `PageSourceError`.
+- Correction to the entry below and to the message of `c8d1a4e`: the two
+  comparisons with the 5.3.0 tooling covered the built HTML folder.
+  `site-build.json` beside it differs in its version field.
+- Not changed: the helper names a page by its path in the project, the
+  build by its path under `docs/topics/`; no text promises the same
+  wording. The helper reads whatever page path it is given, also outside
+  the project; includes cannot leave the theme and the project.
+- Tests added for each fix, and the comparison with the build now runs the
+  page-end cut. The fixes were not reviewed again.
+
 ## 2026-11-23 — A page's source for a project's checks; prepare 5.4.0
 
 - deivid pasted a request from the adaptation agent: a documented helper

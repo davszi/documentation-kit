@@ -35,14 +35,20 @@ step; a project moves its pin to `v5.4.0`. adaptation asked for it: its
 checks imported two undocumented functions of `tooling/build.py`.
 
 - **New helper `tooling/page_source.py`.** `page_source(path, project)`
-  returns a page's frontmatter and its body with every include expanded, as
-  the build inlines it. A problem raises `PageSourceError`, whose `problems`
-  names every one. The module reads no environment variable when imported.
-  `page_source` and `PageSourceError.problems` join the stable interfaces;
-  see [a page's source for checks](../../../rules/site/validation.md#a-pages-source-for-checks).
-- **One implementation.** `build.py` reads frontmatter, expands includes and
-  looks up tracked files through the helper's functions. The built site of
-  the kit and of the starter is unchanged.
+  returns a page's frontmatter and its body, up to a `<!-- page-end -->`
+  marker, with every include expanded. A problem raises `PageSourceError`,
+  whose `problems` names every one. The module reads no environment variable
+  when imported. `page_source`, `PageSourceError` and its `problems` join
+  the stable interfaces; see
+  [a page's source for checks](../../../rules/site/validation.md#a-pages-source-for-checks).
+- **One implementation.** `build.py` reads frontmatter, cuts at the page-end
+  marker, expands includes and looks up tracked files through the helper's
+  functions. The built pages of the kit and of the starter are unchanged.
+- **Three build failures get a message in place of a traceback.** An include
+  with an absolute path or `..`, an include that cannot be read as text, and
+  a link loop are now reported like other include problems, each with its
+  include chain, and the build names the problems after them too. The build
+  failed in these cases before and still fails.
 
 A project that imports `parse_frontmatter` or `expand_includes` from
 `tooling/build.py` switches to `page_source`. Both names still work in

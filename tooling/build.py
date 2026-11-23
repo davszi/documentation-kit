@@ -53,7 +53,7 @@ except ImportError:  # pragma: no cover
 from site_paths import DOCS, REPO, SITE as SRC, TOPICS as PAGES, HTML as OUT, OUTPUT_ROOT, KIT_SITE, topic_pages
 from site_bundle import SiteBundle, validate_resources
 import page_source
-from page_source import INCLUDE_DEPTH, INCLUDE_RE  # noqa: F401  (names this module has always had)
+from page_source import INCLUDE_DEPTH, INCLUDE_RE, PAGE_END  # noqa: F401  (names this module has always had)
 from worklog_entries import fenced_spans, links_checked_from
 
 COMPONENTS = KIT_SITE / "components"
@@ -192,7 +192,6 @@ def inline_svg_figures(content: str, name: str, *, namespace_ids: bool = False) 
 # NOTE: "code" must precede "filelinks" — the source chips code.js injects
 # are rewritten to VS Code / GitHub URLs by the filelinks pass.
 
-PAGE_END = "<!-- page-end -->"  # working-notes tail below this never renders
 # Page tabs: top-level <!-- tab: Label --> markers split the page part into
 # panels (content before the first marker stays above the bar as the shared
 # header). Distinct hook classes from the mode-views tabs on purpose.
@@ -461,7 +460,7 @@ def site_map_html(site: dict) -> str:
     sources = {}
     for path in topic_pages():
         meta, body = parse_frontmatter(path.read_text(), path.relative_to(PAGES).as_posix())
-        sources[meta.get("slug", path.parent.name) + ".html"] = (meta, body.split(PAGE_END, 1)[0])
+        sources[meta.get("slug", path.parent.name) + ".html"] = (meta, page_source.rendered_part(body))
     from source_pages import load_registry
     for page in load_registry(site, REPO, consumer_tracked_paths())[0]:  # problems are reported by main
         sources.setdefault(page.route, ({"description": page.description} if page.description else {}, ""))
@@ -556,7 +555,7 @@ def build_page(md_path: Path, site: dict, shell: str) -> tuple[str, str] | None:
         if _errors:
             return None
     slug = meta.get("slug", md_path.parent.name)
-    body = body.split(PAGE_END, 1)[0]
+    body = page_source.rendered_part(body)
     comps = list(meta.get("components", ["toc", "nav"]))
     automatic_reader = (bool(site.get("chapter_reader")) and meta.get("reader", True)
                         and "chapter-reader" not in comps and "page-redirect" not in comps and "location.replace(" not in body)
