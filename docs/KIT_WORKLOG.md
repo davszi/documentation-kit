@@ -2,6 +2,21 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-24 — Release 5.5.0
+
+- deivid gave the go: "Yes, release 5.5.0". The ask named what the go
+  covers: moving `main` to the release state, the tag `v5.5.0` and the push,
+  which publishes the kit's own site. It gave the size against 5.4.1: 25
+  files changed, 820 lines added and 47 removed.
+- The message with the ask named two choices that were mine: the rule
+  holds for all text of a page, a project's own styles included, and a
+  migration guide was written. It named what is not verified: Chromium
+  only, the review fixes not reviewed again, and no project built against
+  5.5.0.
+- 5.5.0 holds the changes of the three entries below.
+- This commit adds only this entry. The full check script runs on it before
+  the tag; the Pages workflow runs it again on the push.
+
 ## 2026-11-24 — 5.5.0 waits on its branch for deivid's go
 
 - State: branch `release-5.5.0`, five commits on `v5.4.1` with this one, not pushed, no
