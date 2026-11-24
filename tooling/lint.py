@@ -4,15 +4,21 @@
     python .docs-kit/docsite.py lint --project . [--strict] [--registry] [--since <rev>]
 
 Checks (the shared guides under rules/ are the spec):
-  1. markdown links + anchors resolve (docs/**, AGENTS.md, CLAUDE.md, README.md);
-     worklog entries dated before `worklog_links_checked_from` are skipped
+  1. markdown links + anchors resolve (docs/**, AGENTS.md, CLAUDE.md, README.md,
+     and the tracked Markdown under `record_roots` of site.toml, without the
+     folders that `record_roots_exclude` names); worklog entries dated before
+     `worklog_links_checked_from` are skipped
   2. built-html internal anchors + relative hrefs resolve; links to repository
      files, which the build marks with data-repo-path, must exist and a
      fragment into a Markdown file must match an anchor, `<a href>` in page
      bodies, included fragments and registered source pages included (errors;
      notes on automatically listed pages)
+     an id that a built page carries more than once is a warning, since a
+     link to it reaches only its first element (a note on an automatically
+     listed page)
   3. snippet drift: fenced blocks tagged `source=<path>#L<a>-L<b>` must appear
-     in their source file (error), at the stated lines (warning otherwise)
+     in their source file (error), at the stated lines (warning otherwise);
+     the files of check 1 are read
   4. figure manifest: files ↔ entries both ways, generator scripts exist,
      doc-referenced figures are in the manifest; unreferenced figure = warning,
      except the raster export and the light file of a referenced figure
@@ -58,6 +64,8 @@ A number that a project accepts on one slide face with `data-face-only` is a
 note that names the number and the reason.
 A formula check skipped because Node.js is missing is a note, unless the
 project requires the check.
+A `record_roots` entry that holds no tracked Markdown and a
+`record_roots_exclude` entry that leaves nothing out are notes.
 
 Exit 0 clean (warnings print unless --strict fails them), 1 on errors.
 """
@@ -65,6 +73,7 @@ Exit 0 clean (warnings print unless --strict fails them), 1 on errors.
 from __future__ import annotations
 
 import argparse
+from fnmatch import fnmatchcase
 import html
 import importlib.util
 import json
@@ -124,8 +133,79 @@ def resolve_path(path: Path) -> Path:
 
 
 import worklog_entries as _worklog_entries
-from page_source import unique_heading_id
+from page_source import tracked_paths, unique_heading_id
 from figure_themes import variant_path
+
+_record_cache: dict = {}
+
+
+def record_root_files(site: dict) -> list[Path]:
+    """The tracked Markdown under `record_roots` of site.toml, for the checks that read records.
+
+    A project keeps records outside `docs/`, such as study notes beside their
+    data, and names their folders or files:
+
+        record_roots = ["studies", "CHANGELOG.md"]
+        record_roots_exclude = ["studies/*/results"]
+
+    Every tracked `.md` file under a root joins `md_files()`. An excluded
+    folder with what lies below it, or an excluded file, stays out; in its
+    path `*` stands for one name or part of one, never for several folders. Symlinks are not followed. A wrong setting is
+    an error, and an entry that selects nothing is a note.
+    """
+    key = (REPO, repr(site.get("record_roots")), repr(site.get("record_roots_exclude")))
+    if key in _record_cache:
+        return _record_cache[key]
+    _record_cache[key] = found = []
+    roots, excluded = site.get("record_roots"), site.get("record_roots_exclude", [])
+    if roots is None:
+        if "record_roots_exclude" in site:
+            error("site.toml: record_roots_exclude needs record_roots; alone it leaves nothing out")
+        return found
+
+    def entries(value, name: str) -> list[tuple[str, ...]] | None:
+        if not isinstance(value, list) or not all(isinstance(item, str) and item.strip("/") for item in value):
+            error(f"site.toml: {name} must be a list of paths inside the project")
+            return None
+        parts = [Path(item.strip("/")).parts for item in value]
+        for item, path in zip(value, parts):
+            if Path(item).is_absolute() or ".." in path:
+                error(f"site.toml: {name} entry {item!r} must stay inside the project")
+                return None
+        return parts
+
+    root_parts, excluded_parts = entries(roots, "record_roots"), entries(excluded, "record_roots_exclude")
+    if root_parts is None or excluded_parts is None:
+        return found
+    try:
+        tracked = sorted(path for path in tracked_paths(REPO) if path.suffix == ".md" and not path.is_symlink())
+    except (OSError, subprocess.CalledProcessError):
+        error("site.toml: record_roots needs a Git repository; it reads tracked Markdown")
+        return found
+    used = [False] * len(excluded_parts)
+    for item, root in zip(roots, root_parts):
+        target = REPO.joinpath(*root)
+        if not (target.is_dir() or (target.is_file() and target.suffix == ".md")):
+            error(f"site.toml: record_roots entry {item!r} is not a folder or Markdown file of the project")
+            continue
+        count = 0
+        for path in tracked:
+            parts = path.relative_to(REPO).parts
+            if parts[:len(root)] != root:
+                continue
+            count += 1
+            hit = [len(pattern) <= len(parts) and all(fnmatchcase(part, piece) for part, piece in zip(parts, pattern))
+                   for pattern in excluded_parts]
+            for number, matched in enumerate(hit):
+                used[number] = used[number] or matched
+            if not any(hit):
+                found.append(path)
+        if not count:
+            notice(f"site.toml: record_roots entry {item!r} holds no tracked Markdown file")
+    for item, matched in zip(excluded, used):
+        if not matched:
+            notice(f"site.toml: record_roots_exclude entry {item!r} leaves out no file under record_roots")
+    return found
 
 
 def md_files() -> list[Path]:
@@ -137,6 +217,8 @@ def md_files() -> list[Path]:
     # links are checked as ordinary records wherever they live.
     config = DOCS / "site" / "site.toml"
     site = tomllib.loads(config.read_text()) if config.is_file() else {}
+    # Records that a project keeps outside docs/ and names in `record_roots`.
+    files.update(record_root_files(site))
     for entry in site.get("source_pages", []) if isinstance(site.get("source_pages"), list) else []:
         source = entry.get("source") if isinstance(entry, dict) else None
         if isinstance(source, str) and (REPO / source).is_file():
@@ -380,11 +462,37 @@ def check_source_links() -> None:
                 report(f"{label}: anchor #{fragment} not found in {path}")
 
 
+NOT_MARKUP_RE = re.compile(r"<!--[\s\S]*?-->|<(script|style)\b[\s\S]*?</\1\s*>", re.I)
+ID_ATTRIBUTE_RE = re.compile(r"""<[A-Za-z][^<>]*?\sid\s*=\s*(?:"([^"]+)"|'([^']+)')""")
+
+
+def repeated_ids(markup: str) -> list[tuple[str, int]]:
+    """Each id that the elements of a built page carry more than once, with its count, in page order.
+
+    Scripts, styles and comments are not elements. The build numbers a
+    repeated heading, so what remains is an id written twice by hand: in raw
+    HTML, in a `{#id}` that names an id already used, in a fragment included
+    twice, or in two inline drawings that share the id of a marker or gradient.
+    """
+    counts: dict[str, int] = {}
+    for match in ID_ATTRIBUTE_RE.finditer(NOT_MARKUP_RE.sub("", markup)):
+        name = match[1] or match[2]
+        counts[name] = counts.get(name, 0) + 1
+    return [(name, count) for name, count in counts.items() if count > 1]
+
+
 def check_html() -> None:
+    names, _, automatic = built_page_sources()
     for f in sorted(resolve_path(DOCS / "html").glob("*.html")):
         text = f.read_text()
         ids = html_ids(f)
         rel = f.relative_to(REPO)
+        repeated = repeated_ids(text)
+        if repeated:
+            shown = ", ".join(f"{name} ({count}x)" for name, count in repeated[:8])
+            more = f" and {len(repeated) - 8} more" if len(repeated) > 8 else ""
+            (notice if names.get(f.name) in automatic else warn)(
+                f"{rel}: {len(repeated)} id(s) appear more than once, so a link reaches only the first element: {shown}{more}")
         # Source links are checked by check_source_links from the build's marks.
         source_links = [(m.start(), m.end()) for m in SOURCE_LINK_RE.finditer(text)]
         for m in re.finditer(r'href="([^"]+)"', text):

@@ -396,7 +396,7 @@ The build fails instead of publishing a broken page: untracked or missing media,
 <p class="bs-lead">Run <code>lint --strict</code> before you commit documentation; it covers what the build cannot see.</p>
 
 <div class="bs-checks r32">
-<div class="bs-check"><span class="bs-badge bs-ok">links</span><h3>Links and anchors</h3><p>Markdown links and anchors in <code>docs/</code>, <code>AGENTS.md</code>, <code>CLAUDE.md</code> and <code>README.md</code> resolve, and so do links in the built HTML.</p></div>
+<div class="bs-check"><span class="bs-badge bs-ok">links</span><h3>Links and anchors</h3><p>Markdown links and anchors in <code>docs/</code>, <code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>README.md</code> and the folders that <code>record_roots</code> names resolve, and so do links in the built HTML.</p></div>
 <div class="bs-check"><span class="bs-badge bs-ok">excerpts</span><h3>Code excerpts</h3><p>A fenced block tagged <code>source=path#La-Lb</code> must still appear in its file, at the stated lines.</p></div>
 <div class="bs-check"><span class="bs-badge bs-ok">figures</span><h3>Figures and slide faces</h3><p>Figure files and manifest entries match both ways, and their generators exist. A chapter opens with at most one slide face, and a number on a face also appears in its chapter.</p></div>
 <div class="bs-check"><span class="bs-badge bs-ok">records</span><h3>Worklog and open work</h3><p>Worklog dates run newest first; every open-work bullet links its owner, with no struck or ticked lines.</p></div>

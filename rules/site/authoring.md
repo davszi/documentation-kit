@@ -465,6 +465,34 @@ The page's source line links the file in the configured `gh_repo`. A reader
 without access to a private repository cannot open that link or the edit link,
 although the page itself is public.
 
+### Records outside `docs/`
+
+Lint checks the links, anchors, snippets and figure references of the
+Markdown under `docs/` and of `AGENTS.md`, `CLAUDE.md` and `README.md`. A
+project that keeps records elsewhere, such as study notes beside their data,
+names them in `docs/site/site.toml`, above the first `[[nav]]` table:
+
+```toml
+record_roots = ["studies", "CHANGELOG.md"]
+record_roots_exclude = ["studies/*/results"]   # optional
+```
+
+- `record_roots` lists folders and single Markdown files, as paths from the
+  project root. Every tracked `.md` file under them is checked like a record
+  under `docs/`: a dead link or anchor and a snippet that left its source are
+  errors. Untracked files and symbolic links are not read.
+- `record_roots_exclude` lists folders, with everything below them, and
+  single files that stay out. In an entry `*` stands for one name or part of
+  one, so `studies/*/results` leaves out the `results` folder of every study;
+  it never spans several folders.
+
+The setting only adds files to these checks. It lists no page: what the site
+shows stays with [`reference_roots`](#automatic-reference-listing). Without
+`record_roots` nothing outside `docs/` is read. An entry that is no folder or
+Markdown file of the project is an error, and so is `record_roots_exclude`
+without `record_roots`. A root without tracked Markdown and an exclusion that
+leaves nothing out are notes.
+
 ### Generated figures
 
 A figure generator reads tracked data, asserts the values its page states and

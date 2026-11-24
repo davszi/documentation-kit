@@ -1,7 +1,9 @@
 """Public source anchors include authored HTML but exclude code and comments."""
 from pathlib import Path
+import subprocess
 import tempfile
 import unittest
+from unittest import mock
 
 import lint
 
@@ -95,3 +97,100 @@ Text.
 
 if __name__=="__main__":
     unittest.main()
+
+
+class RecordRoots(unittest.TestCase):
+    """`record_roots` adds a project's tracked Markdown outside docs/ to the checks that read records."""
+
+    FILES = {
+        "docs/guide.md": "# Guide\n",
+        "studies/a/notes.md": "# Notes\n[guide](../../docs/guide.md#guide) [gone](missing.md) [bad](../../docs/guide.md#nowhere)\n",
+        "studies/a/results/run.md": "[gone](missing.md)\n",
+        "studies/b/results/deep/run.md": "[gone](missing.md)\n",
+        "studies/b/plan.md": "# Plan\n",
+        "CHANGELOG.md": "[gone](missing.md)\n",
+        "other/readme.md": "[gone](missing.md)\n",
+    }
+
+    def run_links(self, site: str, *, untracked: dict[str, str] | None = None):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder).resolve()
+            subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+            for path, text in {**self.FILES, "docs/site/site.toml": site}.items():
+                (root / path).parent.mkdir(parents=True, exist_ok=True)
+                (root / path).write_text(text)
+            subprocess.run(["git", "add", "-A"], cwd=root, check=True)
+            for path, text in (untracked or {}).items():
+                (root / path).write_text(text)
+            with mock.patch.object(lint, "REPO", root), mock.patch.object(lint, "DOCS", root / "docs"), \
+                    mock.patch.object(lint, "errors", []), mock.patch.object(lint, "notices", []), \
+                    mock.patch.object(lint, "_record_cache", {}), mock.patch.object(lint, "_entry_cache", {}):
+                files = sorted(path.relative_to(root).as_posix() for path in lint.md_files())
+                lint.check_md_links()
+                lint.check_snippets()
+                return files, list(lint.errors), list(lint.notices)
+
+    def test_without_the_setting_only_docs_and_the_root_files_are_read(self):
+        files, errors, notices = self.run_links("")
+        self.assertEqual(files, ["docs/guide.md"])
+        self.assertEqual((errors, notices), ([], []))
+
+    def test_roots_join_the_link_check_and_excluded_folders_stay_out(self):
+        files, errors, notices = self.run_links(
+            'record_roots = ["studies/", "CHANGELOG.md"]\nrecord_roots_exclude = ["studies/*/results"]\n',
+            untracked={"studies/a/draft.md": "[gone](missing.md)\n"})
+        self.assertEqual(files, ["CHANGELOG.md", "docs/guide.md", "studies/a/notes.md", "studies/b/plan.md"])
+        self.assertEqual(errors, ["CHANGELOG.md: dead link missing.md",
+                                  "studies/a/notes.md: dead link missing.md",
+                                  "studies/a/notes.md: anchor #nowhere not found in ../../docs/guide.md"])
+        self.assertEqual(notices, [])
+
+    def test_a_snippet_in_a_record_root_is_checked(self):
+        site = 'record_roots = ["studies/b"]\n'
+        with mock.patch.dict(self.FILES, {"studies/b/plan.md": "```python source=docs/guide.md#L1-L1\nnot there\n```\n"}):
+            _, errors, _ = self.run_links(site)
+        self.assertEqual(errors, ["studies/b/results/deep/run.md: dead link missing.md",
+                                  "studies/b/plan.md: snippet body no longer appears in docs/guide.md"])
+
+    def test_an_excluded_file_and_a_star_inside_a_name(self):
+        files, _, notices = self.run_links(
+            'record_roots = ["studies"]\nrecord_roots_exclude = ["studies/a/notes.md", "studies/*/res*"]\n')
+        self.assertEqual(files, ["docs/guide.md", "studies/b/plan.md"])
+        self.assertEqual(notices, [])
+
+    def test_an_entry_that_selects_nothing_is_a_note(self):
+        _, errors, notices = self.run_links('record_roots = ["docs/site", "studies"]\nrecord_roots_exclude = ["studies/results"]\n')
+        self.assertEqual(notices, ["site.toml: record_roots entry 'docs/site' holds no tracked Markdown file",
+                                   "site.toml: record_roots_exclude entry 'studies/results' leaves out no file under record_roots"])
+        self.assertEqual(len(errors), 4)  # every dead link under studies/: the exclusion matches no folder
+
+    def test_wrong_settings_are_errors(self):
+        for site, message in (
+                ('record_roots = "studies"\n', "site.toml: record_roots must be a list of paths inside the project"),
+                ('record_roots = ["../elsewhere"]\n', "site.toml: record_roots entry '../elsewhere' must stay inside the project"),
+                ('record_roots = ["/abs"]\n', "site.toml: record_roots entry '/abs' must stay inside the project"),
+                ('record_roots = ["nowhere"]\n', "site.toml: record_roots entry 'nowhere' is not a folder or Markdown file of the project"),
+                ('record_roots = ["docs/site/site.toml"]\n', "site.toml: record_roots entry 'docs/site/site.toml' is not a folder or Markdown file of the project"),
+                ('record_roots = ["studies"]\nrecord_roots_exclude = [3]\n', "site.toml: record_roots_exclude must be a list of paths inside the project"),
+                ('record_roots_exclude = ["studies/*/results"]\n', "site.toml: record_roots_exclude needs record_roots; alone it leaves nothing out")):
+            with self.subTest(site=site):
+                files, errors, _ = self.run_links(site)
+                self.assertEqual(errors, [message])
+                self.assertEqual(files, ["docs/guide.md"])
+
+
+class RepeatedIds(unittest.TestCase):
+    """An id carried twice by the elements of a built page is reported; text that only looks like one is not."""
+
+    def test_elements_count_and_scripts_styles_comments_and_text_do_not(self):
+        markup = """<h2 id="a">A</h2><p id='a'>again</p><svg><marker id="tip"/></svg><svg><marker id="tip"/></svg>
+<section data-id="a" id = "b"></section><div id="c"></div>
+<script>const s = '<div id="c"></div><i id="b"></i>';</script><style>/* <p id="c"> */</style>
+<!-- <p id="c"></p> --><pre>&lt;p id=&quot;c&quot;&gt;</pre><p>the text id="b" is no element</p>"""
+        self.assertEqual(lint.repeated_ids(markup), [("a", 2), ("tip", 2)])
+
+    def test_the_kit_writes_no_repeated_id_for_repeated_headings(self):
+        import build
+        import mistune
+        rendered = mistune.create_markdown(renderer=build.DocsRenderer(), plugins=["table", "math"])(RepeatedHeadings.TEXT)
+        self.assertEqual(lint.repeated_ids(rendered), [])
