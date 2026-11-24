@@ -90,6 +90,66 @@ async function assertHorizontalContainment(page) {
   return measurement;
 }
 
+// The text of the page that renders below `min` px, grouped by where it sits: `[{where, px, count,
+// text, pseudo}]`, smallest first. `rules/writing/pages.md` asks 11 px of all text on a page.
+// - HTML text counts at its computed font size, shown or not, so a closed fold, an inactive chapter
+//   and a closed drawer are read without opening them. A `transform` that scales it is not read.
+// - SVG text counts at its size on screen, the font size times the drawing's scale, and only while
+//   the drawing is rendered. Text in an SVG loaded as an image is not read.
+// - `::before` and `::after` count when their content holds a letter or a digit.
+// Left out: formulas, whose KaTeX sets subscripts and superscripts smaller by design; slide faces,
+// whose drawing labels `slideFaces` measures; and what the `ignore` selector matches or contains.
+const TEXT_MIN_PX = 11;
+
+async function smallText(page, {min = TEXT_MIN_PX, ignore = null} = {}) {
+  await settle(page);
+  return page.evaluate(([min, ignore]) => {
+    const skipped = ['.katex', '[data-slide-face]', 'script', 'style', 'template', 'noscript', ignore].filter(Boolean).join(', ');
+    const where = node => {
+      const parts = [];
+      for (let current = node; current && current !== document.body && parts.length < 3; current = current.parentElement) {
+        const classes = current.getAttribute('class')?.trim().split(/\s+/).slice(0, 2).join('.');
+        parts.unshift(current.tagName.toLowerCase() + (current.id ? '#' + current.id : '') + (classes ? '.' + classes : ''));
+      }
+      return parts.join(' > ');
+    };
+    const groups = new Map();
+    const add = (node, px, text, pseudo) => {
+      if (!(px < min - 0.05)) return;  // a size is compared at one decimal, as it is reported
+      const size = Math.round(px * 10) / 10, key = where(node) + pseudo + ' ' + size;
+      const group = groups.get(key);
+      if (group) group.count += 1;
+      else groups.set(key, {where: where(node) + pseudo, px: size, count: 1, text: text.replace(/\s+/g, ' ').trim().slice(0, 60), pseudo: !!pseudo});
+    };
+    for (const node of document.querySelectorAll('body *')) {
+      if (node.closest(skipped)) continue;
+      let scale = 1;
+      if (node.ownerSVGElement) {
+        const matrix = node.getClientRects().length ? node.getScreenCTM() : null;
+        if (!matrix) continue;
+        scale = Math.sqrt(Math.abs(matrix.a * matrix.d - matrix.b * matrix.c));
+      }
+      const own = [...node.childNodes].filter(child => child.nodeType === 3).map(child => child.data).join('').trim();
+      if (own) add(node, parseFloat(getComputedStyle(node).fontSize) * scale, own, '');
+      for (const pseudo of ['::before', '::after']) {
+        const style = getComputedStyle(node, pseudo);
+        if (style.display === 'none' || !/[\p{L}\p{N}]/u.test(style.content.replace(/url\([^)]*\)/g, ''))) continue;
+        if (/^(none|normal)$/.test(style.content)) continue;
+        add(node, parseFloat(style.fontSize) * scale, style.content, pseudo);
+      }
+    }
+    return [...groups.values()].sort((a, b) => a.px - b.px);
+  }, [min, ignore]);
+}
+
+// Fails with every place where text renders below `min` px; returns the empty list.
+async function assertTextSize(page, {min = TEXT_MIN_PX, ignore = null} = {}) {
+  const small = await smallText(page, {min, ignore});
+  assert.deepEqual(small.map(item => `${item.px} px, ${item.count}x in ${item.where}: "${item.text}"`), [],
+    `Text below ${min} px`);
+  return small;
+}
+
 async function checkLayout(page) {
   await settle(page);
   const images = await visibleMedia(page);
@@ -410,5 +470,6 @@ async function captureElement(page, selector, file, {unclip = false, hide = []} 
   return {width: Math.round(box?.width || 0), height: Math.round(box?.height || 0)};
 }
 
-module.exports = {slideFaces, assertSlideFaces, settle, visibleMedia, measureOverflow, assertHorizontalContainment,
+module.exports = {slideFaces, assertSlideFaces, smallText, assertTextSize, settle, visibleMedia, measureOverflow,
+  assertHorizontalContainment,
   checkLayout, setView, activeChapter, waitActive, goHash, readerChecks, captureElement};

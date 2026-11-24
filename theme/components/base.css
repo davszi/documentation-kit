@@ -32,7 +32,9 @@ p{margin:10px 0}
 strong{color:var(--bright)}
 section,h2,h3,[id]{scroll-margin-top:24px}
 
-code{font-family:var(--mono);font-size:.88em;color:var(--blue);background:rgba(121,192,255,.08);border-radius:5px;padding:1.5px 5px;white-space:nowrap}
+code{font-family:var(--mono);font-size:max(.88em,11px);color:var(--blue);background:rgba(121,192,255,.08);border-radius:5px;padding:1.5px 5px;white-space:nowrap}
+/* A slide face sizes its text in container units, so code on it scales with the face. */
+:where(.slide-canvas) code{font-size:.88em}
 pre{margin:0;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;overflow-x:auto}
 pre code{background:none;padding:0;color:var(--text);font-size:12.5px;line-height:1.45;white-space:pre}
 
@@ -44,7 +46,7 @@ pre code{background:none;padding:0;color:var(--text);font-size:12.5px;line-heigh
 .sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--bg2);
   border-right:1px solid var(--border);padding:22px 10px 60px 18px}
 .sidebar .brand{font:600 13px var(--mono);color:var(--bright);display:block;padding:2px 10px 10px;text-decoration:none}
-.sidebar .brand small{display:block;color:var(--muted);font-weight:400;margin-top:2px}
+.sidebar .brand small{display:block;color:var(--muted);font-weight:400;font-size:11px;margin-top:2px}
 .toc a{display:block;padding:3.5px 10px;color:var(--muted);text-decoration:none;font-size:13px;
   border-left:2px solid transparent;border-radius:0 6px 6px 0}
 .toc a:hover{color:var(--bright)}
@@ -75,7 +77,7 @@ pre code{background:none;padding:0;color:var(--text);font-size:12.5px;line-heigh
 }
 
 /* ---- badges & chips ---- */
-.badge{display:inline-block;vertical-align:2px;font:700 10px/1 var(--mono);letter-spacing:.1em;
+.badge{display:inline-block;vertical-align:2px;font:700 11px/1 var(--mono);letter-spacing:.1em;
   text-transform:uppercase;padding:4px 8px;border-radius:999px;margin-left:8px}
 .badge.accent{color:var(--accent);background:rgba(57,210,192,.1);border:1px solid rgba(57,210,192,.35)}
 .badge.secondary{color:var(--secondary);background:rgba(188,140,255,.1);border:1px solid rgba(188,140,255,.35)}
@@ -97,7 +99,7 @@ a.f:hover{background:rgba(255,166,87,.15)}
 .owns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 4px;font-size:13.5px}
 @media (max-width:640px){.owns{grid-template-columns:1fr}}
 .owns>div{border:1px solid var(--border);border-radius:8px;padding:8px 12px;background:var(--bg2)}
-.owns .k{display:block;font:700 10.5px var(--mono);letter-spacing:.09em;text-transform:uppercase;margin-bottom:3px}
+.owns .k{display:block;font:700 11px var(--mono);letter-spacing:.09em;text-transform:uppercase;margin-bottom:3px}
 .o-yes .k{color:var(--green)} .o-no .k{color:var(--red)}
 
 /* ---- tables ---- */
@@ -152,8 +154,8 @@ svg .b-secondary{stroke:#7c5cad;stroke-width:1.2}
 svg .b-warn{stroke:#a35d5d;stroke-width:1.2}
 svg .b-opt{stroke-dasharray:4 3}
 svg .t{font:600 13.5px var(--mono);fill:#e6edf3;text-anchor:middle}
-svg .s{font:10.6px var(--mono);fill:#8b949e;text-anchor:middle}
-svg .lab{font:10.6px var(--mono);fill:#9da7b3}
+svg .s{font:11px var(--mono);fill:#8b949e;text-anchor:middle}
+svg .lab{font:11px var(--mono);fill:#9da7b3}
 svg .lab.m{text-anchor:middle}
 svg .eq{font:11.5px var(--mono);fill:#79c0ff;text-anchor:middle}
 svg .edge{stroke:#768390;stroke-width:1.3;fill:none}
@@ -163,9 +165,9 @@ svg .dash{stroke-dasharray:5 4}
 /* detailed class graph */
 svg .d-box{fill:#161b22}
 svg .d-t{font:600 13.5px var(--mono);fill:#e6edf3;text-anchor:middle}
-svg .d-note{font:500 10px var(--mono);fill:#8b949e}
+svg .d-note{font:500 11px var(--mono);fill:#8b949e}
 svg .d-l{font:11px var(--mono);fill:#9da7b3}
-svg .d-lab{font:10.5px var(--mono);fill:#8b949e}
+svg .d-lab{font:11px var(--mono);fill:#8b949e}
 svg .d-edge{fill:none;stroke-width:1.2}
 svg .d-call{stroke:#58a6ff}
 svg .d-own{stroke:#768390}
@@ -180,9 +182,9 @@ svg .com{fill:#ffa657}
 svg .spring{stroke:#79c0ff;stroke-width:1.4;fill:none}
 svg .ray{stroke:#f47067;stroke-width:1.3;stroke-dasharray:3 3}
 svg .dim{stroke:#8b949e;stroke-width:.9}
-svg .dimt{font:10.4px var(--mono);fill:#8b949e;text-anchor:middle}
+svg .dimt{font:11px var(--mono);fill:#8b949e;text-anchor:middle}
 svg .axis{stroke:#768390;stroke-width:1.1}
-svg .axt{font:10.6px var(--mono);fill:#8b949e}
+svg .axt{font:11px var(--mono);fill:#8b949e}
 svg .curve{fill:none;stroke:#79c0ff;stroke-width:1.8}
 svg .pt{fill:#39d2c0;stroke:#0d1117;stroke-width:1.4}
 svg .pt2{fill:#f47067;stroke:#0d1117;stroke-width:1.4}
@@ -236,13 +238,13 @@ ul{padding-left:24px} li{margin:4px 0}
 /* ---- page tabs (reuse mode-tab button styling via shared class) ---- */
 .ptabs{margin:24px 0 4px}
 .ptab-panel[hidden]{display:none}
-.toc .nav-group{display:block;font:700 9.5px var(--mono);letter-spacing:.13em;
+.toc .nav-group{display:block;font:700 11px var(--mono);letter-spacing:.13em;
   text-transform:uppercase;color:var(--muted);padding:16px 10px 2px;opacity:.8}
 
 /* ---- callouts: the rendered form of the md registry markers ---- */
 .callout{border:1px solid var(--border);border-radius:10px;background:var(--panel);
   padding:13px 18px 12px;margin:16px 0;font-size:14px}
-.callout::before{display:inline-block;font:700 9.5px/1 var(--mono);letter-spacing:.1em;
+.callout::before{display:inline-block;font:700 11px/1 var(--mono);letter-spacing:.1em;
   text-transform:uppercase;padding:4px 9px;border-radius:999px;margin:2px 0 4px}
 .callout>p:first-of-type{margin-top:6px}
 .callout>p:last-of-type{margin-bottom:2px}
@@ -278,7 +280,7 @@ ul{padding-left:24px} li{margin:4px 0}
 .cb-chips{position:absolute;top:9px;right:11px;display:flex;gap:6px;align-items:center;z-index:3;
   opacity:0;transform:translateY(-3px);transition:opacity .15s ease,transform .15s ease;pointer-events:none}
 .codeblock:hover .cb-chips,.codeblock:focus-within .cb-chips{opacity:1;transform:none;pointer-events:auto}
-.cb-chips .cb{font:600 10.5px var(--mono);letter-spacing:.06em;padding:4px 10px;border-radius:7px;
+.cb-chips .cb{font:600 11px var(--mono);letter-spacing:.06em;padding:4px 10px;border-radius:7px;
   border:1px solid var(--border);background:rgba(13,17,23,.88);backdrop-filter:blur(4px);
   color:var(--muted);cursor:pointer;text-decoration:none;line-height:14px; /* 24 px tall with padding and border: WCAG 2.5.8 target size */
   transition:color .12s ease,border-color .12s ease}
@@ -418,7 +420,7 @@ body.reference-page .content figure{margin:18px 0}
 .toc .repo-tree summary:hover{color:var(--bright);background:rgba(148,178,214,.07)}
 .toc .repo-tree summary:focus-visible,.toc .repo-tree a.repo-tree-file:focus-visible,.toc .repo-tree a.repo-tree-pin:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .toc .repo-tree .has-current>details>summary{color:var(--bright)}
-.toc .repo-tree-count{margin-left:auto;padding:0 7px;border-radius:999px;font:600 10.5px/18px var(--mono);color:var(--muted);
+.toc .repo-tree-count{margin-left:auto;padding:0 7px;border-radius:999px;font:600 11px/18px var(--mono);color:var(--muted);
   background:rgba(148,178,214,.1)}
 .toc .repo-tree details::details-content{block-size:0;overflow:hidden;opacity:0;
   transition:block-size .18s ease,opacity .18s ease,content-visibility .18s allow-discrete}
@@ -477,7 +479,7 @@ body.reader-enabled .sidebar .toc a.xpage.current + .reader-chapter-list::before
 body.reader-enabled .sidebar .toc .reader-chapter-list a{min-height:28px;gap:9px;padding:2px 8px 2px 0;
   font:400 12.5px/1.35 var(--sans);color:#93a2b3}
 body.reader-enabled .sidebar .toc .reader-chapter-list a:hover{color:var(--bright);background:none}
-body.reader-enabled .sidebar .toc .reader-chapter-list a::before{width:19px;height:19px;font:600 9px/1 var(--mono);
+body.reader-enabled .sidebar .toc .reader-chapter-list a::before{width:19px;height:19px;font:600 11px/1 var(--mono);
   color:#6f7f92;background:var(--bg2);border:1px solid rgba(148,178,214,.2);box-shadow:none}
 body.reader-enabled .sidebar .toc .reader-chapter-list a.visited::before{color:color-mix(in srgb,var(--g,#6ee7c5) 80%,#fff);
   border-color:color-mix(in srgb,var(--g,#6ee7c5) 45%,transparent);background:var(--bg2)}

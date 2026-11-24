@@ -109,7 +109,7 @@ body.topic-deck {overflow:hidden;}
 .reader-enabled .toc a.reader-chapter-sub[data-reader-jump-kind="dead-end"] {--jump-color:#f0997b;}
 .reader-enabled .toc a.reader-chapter-sub::before {display:block;content:'↳';font-size:16px;color:var(--muted);}
 .reader-jump-title {min-width:0;overflow-wrap:anywhere;}
-.reader-jump-kind {font-size:10px;font-weight:500;color:var(--jump-color);background:color-mix(in srgb,var(--jump-color) 8%,transparent);border:1px solid color-mix(in srgb,var(--jump-color) 18%,transparent);border-radius:4px;padding:2px 5px;}
+.reader-jump-kind {font-size:11px;font-weight:500;color:var(--jump-color);background:color-mix(in srgb,var(--jump-color) 8%,transparent);border:1px solid color-mix(in srgb,var(--jump-color) 18%,transparent);border-radius:4px;padding:2px 5px;}
 .reader-enabled .toc a.reader-jump-current {color:var(--bright);border-left-color:var(--jump-color);background:color-mix(in srgb,var(--jump-color) 8%,transparent);}
 .chapter-body code {white-space:normal;overflow-wrap:anywhere;}
 .chapter-body pre code {white-space:pre;}
@@ -124,7 +124,7 @@ body.topic-deck {overflow:hidden;}
 .chapter-body details.fold > summary:hover {background:color-mix(in srgb,var(--fold-color) 5%,transparent);}
 .chapter-body details.fold > summary::before {color:var(--fold-color);margin:0;font-size:15px;text-align:center;}
 .chapter-body details.fold[open] > summary {border-bottom:1px solid var(--border);border-radius:9px 9px 0 0;}
-.chapter-body .fold-tag {font-size:10px;letter-spacing:.015em;padding:3px 8px;margin:0;color:var(--fold-color);border-color:color-mix(in srgb,var(--fold-color) 35%,transparent);background:color-mix(in srgb,var(--fold-color) 7%,transparent);white-space:nowrap;opacity:1;}
+.chapter-body .fold-tag {font-size:11px;letter-spacing:.015em;padding:3px 8px;margin:0;color:var(--fold-color);border-color:color-mix(in srgb,var(--fold-color) 35%,transparent);background:color-mix(in srgb,var(--fold-color) 7%,transparent);white-space:nowrap;opacity:1;}
 .fold-title {font-size:15px;font-weight:600;overflow-wrap:anywhere;}
 .fold-content {display:flow-root;min-width:0;padding:16px 20px 20px;}
 .chapter-body details.fold > summary + .fold-content {margin-top:0;}
@@ -303,14 +303,14 @@ body.topic-deck {overflow:hidden;}
 .reader-home:hover {background:rgba(57,210,192,.06);}
 .reader-enabled .sidebar {display:flex;flex-direction:column;}
 .reader-enabled .sidebar .toc {flex:1;min-height:0;overflow-y:auto;padding:6px 0 18px;border-top:1px solid var(--border);margin-top:6px;}
-.reader-enabled .toc .nav-group {padding:16px 10px 4px;font:700 10px var(--mono);letter-spacing:.14em;color:var(--muted);opacity:1;}
+.reader-enabled .toc .nav-group {padding:16px 10px 4px;font:700 11px var(--mono);letter-spacing:.14em;color:var(--muted);opacity:1;}
 .reader-enabled .toc a.xpage {min-height:36px;margin:0;padding:6px 10px;color:var(--text);font-size:13px;border-left:2px solid transparent;border-radius:0 7px 7px 0;}
 .reader-enabled .toc a.xpage:first-of-type {margin-top:4px;}
 .reader-enabled .toc a.xpage:hover {color:var(--bright);background:rgba(255,255,255,.04);}
 .reader-enabled .toc a.xpage.current {color:var(--bright);font-weight:650;border-left-color:var(--accent);background:linear-gradient(90deg,rgba(57,210,192,.12),transparent);}
 .reader-enabled .toc .reader-chapter-list {margin:2px 0 10px 12px;padding-left:6px;border-left:1px solid rgba(57,210,192,.25);}
 .reader-enabled .toc .reader-chapter-list a {min-height:38px;padding:6px 8px;font-size:12px;}
-.reader-enabled .toc .reader-chapter-list .reader-nav-group {padding:12px 8px 4px;font-size:10px;color:var(--accent);opacity:.85;}
+.reader-enabled .toc .reader-chapter-list .reader-nav-group {padding:12px 8px 4px;font-size:11px;color:var(--accent);opacity:.85;}
 .reader-enabled .reader-guide-library {display:none;}
 
 /* Chapter track: numbered pills on a thin rail, coloured per chapter group;
@@ -323,10 +323,10 @@ body.topic-deck {overflow:hidden;}
 .reader-enabled .toc .reader-chapter-list [data-part="2"] {--k:#b69cff;}
 .reader-enabled .toc .reader-chapter-list [data-part="3"] {--k:#5cc8ff;}
 .reader-enabled .toc .reader-chapter-list [data-part="4"] {--k:#ff8597;}
-.reader-enabled .toc .reader-chapter-list .reader-nav-group {position:relative;padding:14px 8px 6px 40px;font:600 9.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:color-mix(in srgb,var(--k,#6ee7c5) 75%,transparent);opacity:1;}
+.reader-enabled .toc .reader-chapter-list .reader-nav-group {position:relative;padding:14px 8px 6px 40px;font:600 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:color-mix(in srgb,var(--k,#6ee7c5) 75%,transparent);opacity:1;}
 .reader-enabled .toc .reader-chapter-list a {position:relative;gap:10px;padding:5px 8px 5px 8px;border-radius:9px;color:#b0bfce;background:none;box-shadow:none;}
 .reader-enabled .toc .reader-chapter-list a:hover {color:#e9eff6;background:rgba(148,178,214,.06);}
-.reader-chapter-list a::before {position:relative;z-index:1;display:grid;place-items:center;width:28px;height:28px;flex:none;border-radius:50%;font:600 10.5px/1 var(--mono);color:#8394a7;background:#080c13;border:1px solid rgba(148,178,214,.2);transition:background .25s,border-color .25s,color .25s,box-shadow .25s,transform .25s;}
+.reader-chapter-list a::before {position:relative;z-index:1;display:grid;place-items:center;width:28px;height:28px;flex:none;border-radius:50%;font:600 11px/1 var(--mono);color:#8394a7;background:#080c13;border:1px solid rgba(148,178,214,.2);transition:background .25s,border-color .25s,color .25s,box-shadow .25s,transform .25s;}
 .reader-chapter-list a:hover::before {color:#e9eff6;border-color:color-mix(in srgb,var(--k) 70%,transparent);transform:translateY(-1px);}
 .reader-chapter-list a.visited::before {color:color-mix(in srgb,var(--k) 85%,#fff);border-color:color-mix(in srgb,var(--k) 38%,transparent);background:color-mix(in srgb,var(--k) 10%,#080c13);}
 .reader-enabled .toc .reader-chapter-list a.active {color:#e9eff6;background:linear-gradient(90deg,color-mix(in srgb,var(--k) 12%,transparent),transparent 80%);box-shadow:none;}
@@ -357,7 +357,7 @@ body.topic-deck {overflow:hidden;}
 .reader-enabled .toc .reader-chapter-list {margin:2px 0 10px 16px;}
 .reader-enabled .toc .reader-chapter-list::before {left:19px;top:-4px;bottom:10px;background:color-mix(in srgb,var(--g,#6ee7c5) 35%,transparent);}
 .reader-enabled .toc .reader-chapter-list a {--k:var(--g,#6ee7c5);min-height:34px;padding:4px 8px;gap:10px;}
-.reader-chapter-list a::before {width:22px;height:22px;font-size:9.5px;color:#6f7f92;border-color:rgba(148,178,214,.18);}
+.reader-chapter-list a::before {width:22px;height:22px;font-size:11px;color:#6f7f92;border-color:rgba(148,178,214,.18);}
 .reader-chapter-list a.visited::before {color:var(--k);border-color:color-mix(in srgb,var(--k) 70%,transparent);background:#080c13;}
 .reader-chapter-list a.active::before {color:#05080d;background:var(--k);border-color:var(--k);box-shadow:0 0 0 3px color-mix(in srgb,var(--k) 20%,transparent),0 0 16px color-mix(in srgb,var(--k) 55%,transparent);}
 .reader-enabled .toc .reader-chapter-list .reader-nav-group {padding:12px 8px 4px 38px;}
@@ -366,7 +366,7 @@ body.topic-deck {overflow:hidden;}
 /* Same row for every chapter: larger titles and numbers; the active chapter is
    marked by its filled pill and bold white text, not by a separate box. */
 .reader-enabled .toc .reader-chapter-list a {font-size:14px;font-weight:400;min-height:36px;}
-.reader-chapter-list a::before {width:24px;height:24px;font:600 10.5px/1 var(--mono);}
+.reader-chapter-list a::before {width:24px;height:24px;font:600 11px/1 var(--mono);}
 .reader-enabled .toc .reader-chapter-list::before {left:20px;}
 .reader-enabled .toc .reader-chapter-list a.active {background:none;color:#fff;font-weight:700;}
 .reader-chapter-list a.active::before {box-shadow:0 0 0 3px color-mix(in srgb,var(--k) 22%,transparent);}

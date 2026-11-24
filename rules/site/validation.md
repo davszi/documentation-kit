@@ -157,6 +157,17 @@ expected counts, screenshots and domain assertions. The shared module provides:
     await assertSlideFaces(page, {within: '#' + id});
   }
   ```
+- `smallText(page, {min = 11, ignore?})` lists the text of the page that
+  renders below the 11 px that [page design](../writing/pages.md#page-design)
+  asks of all text: where it sits, its size, how often and a sample.
+  `assertTextSize(page, {min?, ignore?})` fails with that list. HTML text
+  counts at its computed font size whether it is shown or not, so a closed
+  fold, an inactive chapter and a closed drawer are read without opening
+  them. SVG text counts at its size on screen while the drawing is rendered,
+  and `::before` and `::after` count when they hold a letter or a digit. The
+  check leaves out formulas, slide faces and what the `ignore` selector
+  matches or contains. It does not read text in an SVG loaded as an image,
+  and it does not see a `transform` that scales HTML text.
 - `settle`, `visibleMedia`, `measureOverflow`, `assertHorizontalContainment` and
   `checkLayout` for fonts, running transitions, actually visible images and
   viewport containment.

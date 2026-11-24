@@ -59,9 +59,10 @@ if "$DOCS_NODE" -e "require('./node_modules/playwright')" 2>/dev/null; then
   # from the desktop session; systemd-run itself still needs the real one.
   # test_reference_tree builds its own fixture above the inline Reference limit;
   # test_listed_html serves raw HTML payloads with a local stand-in for outside hosts;
-  # test_page_shell builds its own fixture and, unlike the others, leaves motion on.
+  # test_page_shell builds its own fixture and, unlike the others, leaves motion on;
+  # test_text_size reads every page of the kit's own site, which this script built above.
   for suite in visual_review test_browser_checks test_panel_switcher own_site_review test_reference_tree \
-      test_listed_html test_page_shell; do
+      test_listed_html test_page_shell test_text_size; do
     ${cap[@]+"${cap[@]}"} env DBUS_SESSION_BUS_ADDRESS="unix:path=/nonexistent-docs-kit-review" DOCS_PYTHON="$DOCS_PYTHON" \
       timeout 280 "$DOCS_NODE" "tests/$suite.cjs"
   done

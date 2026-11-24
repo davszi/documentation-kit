@@ -282,8 +282,9 @@ included.
 
 The suites are `tests/visual_review.cjs`, `tests/test_browser_checks.cjs`,
 `tests/test_panel_switcher.cjs`, `tests/own_site_review.cjs`,
-`tests/test_reference_tree.cjs`, `tests/test_listed_html.cjs` and
-`tests/test_page_shell.cjs`; together they take about two minutes.
+`tests/test_reference_tree.cjs`, `tests/test_listed_html.cjs`,
+`tests/test_page_shell.cjs` and `tests/test_text_size.cjs`; together they take
+about two minutes.
 `test_reference_tree.cjs` and `test_page_shell.cjs` each build their own
 project with `DOCS_PYTHON` and open it from disk, without a server. The script gives each a 280-second limit, sets
 `DBUS_SESSION_BUS_ADDRESS=unix:path=/nonexistent-docs-kit-review` so Chromium

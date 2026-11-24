@@ -138,7 +138,7 @@
   background: linear-gradient(90deg, transparent, var(--muted)); }
 .bs-arrow::after { content: ""; position: absolute; right: 6px; top: calc(50% - 6px); border: 7px solid transparent;
   border-left: 9px solid var(--muted); border-right: 0; }
-.bs-arrow span { position: relative; top: -15px; font: 600 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase;
+.bs-arrow span { position: relative; top: -15px; font: 600 11px var(--mono); letter-spacing: .08em; text-transform: uppercase;
   color: var(--muted); white-space: nowrap; }
 /* bs-stack: two or three nodes in one flow column (inputs merge, or an output fans out). */
 .bs-stack { display: grid; gap: 12px; align-content: center; min-width: 0; }

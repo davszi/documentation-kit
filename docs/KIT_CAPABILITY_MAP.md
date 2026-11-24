@@ -46,7 +46,7 @@ and `capability_map.py`. Node scripts under `tests/` load
 | Give a figure generator one dark and one light colour palette, matplotlib settings for either, and both figure files under fixed names | [figure_themes.py](../tooling/figure_themes.py) | exists | `docs/topics/approval-failed-open/draw_figures.py`, `tests/test_figure_themes.py`, `tooling/lint.py`, `tooling/svg_figures.py` |
 | Give a project's check a topic page's frontmatter and its body with includes expanded, as the build inlines them; number the repeated heading ids of a page the same way in the build, lint and the record notes | [page_source.py](../tooling/page_source.py) | exists | `tests/test_page_source.py`, `tooling/build.py`, `tooling/lint.py`, `tooling/record_changes.py` |
 | Write inline SVG figures from a project's figure generator | [svg_figures.py](../tooling/svg_figures.py) | exists | `docs/topics/approval-failed-open/draw_figures.py`, `tests/test_figure_themes.py`, `tests/test_figure_tooling.py` |
-| Check rendered pages in a real browser: layout, overflow, visible media, and slide faces in their page or deck, stacked below 720 px included | [browser_checks.cjs](../tooling/browser_checks.cjs) | exists | not scanned: no Python code |
+| Check rendered pages in a real browser: layout, overflow, visible media, text below 11 px, and slide faces in their page or deck, stacked below 720 px included | [browser_checks.cjs](../tooling/browser_checks.cjs) | exists | not scanned: no Python code |
 
 ## Seen but not built
 

@@ -8,7 +8,7 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const {chromium} = require('../node_modules/playwright');
 const {visibleMedia, measureOverflow, assertHorizontalContainment, checkLayout, readerChecks, captureElement,
-  settle, slideFaces, assertSlideFaces, goHash} = require('../tooling/browser_checks.cjs');
+  settle, slideFaces, assertSlideFaces, smallText, assertTextSize, goHash} = require('../tooling/browser_checks.cjs');
 
 const image = 'data:image/svg+xml,' + encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="blue"/></svg>');
@@ -230,10 +230,36 @@ async function reviewPlotToggleChips(browser) {
   return results;
 }
 
+// smallText reads HTML text shown or hidden, generated text and SVG labels at their size on screen,
+// and leaves out formulas, slide faces and what the caller names.
+async function reviewSmallText(browser) {
+  const page = await browser.newPage({viewport:{width:800,height:600}});
+  await page.setContent(`<!doctype html><style>
+    body{font:16px sans-serif} .tiny{font-size:9px} .edge{font-size:10.96px} .ok{font-size:11px}
+    .mark::before{content:"NEW";font-size:8px} .dot::after{content:"\\2022";font-size:6px}
+    .closed{display:none} .katex,.face,.mine{font-size:7px}
+  </style>
+  <p class="tiny">nine</p><p class="tiny">nine again</p><p class="edge">rounds to eleven</p><p class="ok">eleven</p>
+  <p class="mark">generated</p><p class="dot">bullet only</p>
+  <div class="closed"><p class="tiny" id="hidden">hidden nine</p></div>
+  <span class="katex"><span>x</span></span><div class="face" data-slide-face><p>face text</p></div><p class="mine">left out</p>
+  <svg id="half" width="100" height="50" viewBox="0 0 200 100"><text x="5" y="40" font-size="16">half</text><text x="5" y="80" font-size="24">big</text></svg>
+  <svg id="full" width="200" height="100" viewBox="0 0 200 100"><text x="5" y="40" font-size="16">full</text></svg>`);
+  const found = (await smallText(page, {ignore: '.mine'})).map(item => [item.px, item.count, item.text, item.pseudo]);
+  assert.deepEqual(found, [[8, 1, '"NEW"', true], [8, 1, 'half', false], [9, 2, 'nine', false], [9, 1, 'hidden nine', false]],
+    'Small text: generated text, a label in a drawing at half scale, shown and hidden HTML text; nothing else');
+  assert.equal((await smallText(page)).some(item => item.text === 'left out'), true, 'Without ignore, the named text counts');
+  await assert.rejects(() => assertTextSize(page, {ignore: '.mine'}), /Text below 11 px[\s\S]*8 px, 1x in p\.mark::before/,
+    'assertTextSize names the size, the count and the place');
+  assert.deepEqual(await assertTextSize(page, {min: 6, ignore: '.dot'}), [], 'A lower limit passes the same page');
+  await page.close();
+}
+
 (async () => {
   const browser = await chromium.launch({headless:true});
   try {
     await reviewSlideFaces(browser);
+    await reviewSmallText(browser);
     await reviewFacesAfterChapterChange(browser);
     await reviewPlotToggleChips(browser);
     const page = await browser.newPage({viewport:{width:480,height:320}});
@@ -285,6 +311,6 @@ async function reviewPlotToggleChips(browser) {
     await fs.rm(shot, {force:true});
     await page.close();
     await reviewSmallReaders(browser);
-    console.log('Verified shared browser helpers: stacked slide faces at 390 px (sideways overflow, clipped text, parts outside, page styles) and the empty band at 1600 px, faces measured after the reader chapter slide, plot toggle chips in the zoomed figure at 1600 and 390 px (series colours, one-line labels, wrapping bar), one/two/three-chapter scope, clipped/inactive lazy media, visible broken media, contained scrolling, root overflow, element capture.');
+    console.log('Verified shared browser helpers: stacked slide faces at 390 px (sideways overflow, clipped text, parts outside, page styles) and the empty band at 1600 px, faces measured after the reader chapter slide, text below 11 px (hidden, generated and drawing text; formulas, faces and named parts left out), plot toggle chips in the zoomed figure at 1600 and 390 px (series colours, one-line labels, wrapping bar), one/two/three-chapter scope, clipped/inactive lazy media, visible broken media, contained scrolling, root overflow, element capture.');
   } finally {await browser.close();}
 })().catch(error => {console.error(error);process.exitCode = 1;});
