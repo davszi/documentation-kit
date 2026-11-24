@@ -51,7 +51,7 @@ shared independent-comparison component.
 stable interfaces and what a version number promises. The
 [5.2.0 migration guide](topics/releases/migrations/5.2.0.md)
 moves 5.1.0 consumers to 5.2.0; the releases after it, up to the current
-5.4.0, need no step. The
+5.4.1, need no step. The
 [5.1.0 guide](topics/releases/migrations/5.1.0.md) moves 5.0.0 consumers to
 5.1.0. The
 [5.0.0 guide](topics/releases/migrations/5.0.0.md) moves 4.0.0 consumers to

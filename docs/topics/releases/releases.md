@@ -26,6 +26,56 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## 5.4.1 — seven corrections from adaptation's accessibility, print and phone review
+
+5.4.1 is a patch release under
+[what a version number promises](#what-a-version-number-promises): it
+corrects defects, adds no interface and needs no migration step; a project
+moves its pin to `v5.4.1`. adaptation reported the defects after a review of
+its site on 23 November 2026. Each was measured again on 5.4.0 in headless
+Chromium before it was fixed, and `tests/test_page_shell.cjs` now checks them.
+
+- **The closed drawer takes no keyboard focus.** On a page without the
+  reader, the home page and the Reference pages, the sidebar slides off
+  screen below 900 px. Its links stayed in the focus order: 6 of the first 12
+  Tab stops of a home page landed off screen. The closed sidebar is now
+  inert, and so is the page behind an open drawer. Without JavaScript
+  nothing is inert, because the off-screen links are then the only way to
+  the other pages.
+- **The menu button is a disclosure control.** It states `aria-controls`
+  and `aria-expanded`. Opening the drawer moves focus into it; Escape, the
+  backdrop or the button close it and return focus to the button.
+- **Source links and code chips are 24 px tall** on Reference pages. They
+  were 22.1 and 20.5 px.
+- **Reference prose wraps a long address.** A page with one long URL was
+  1451 px wide in a 390 px window.
+- **A formula in a wide table no longer widens the page.** KaTeX hides a
+  MathML copy of each formula with `position: absolute`; a formula far right
+  in a scrolling table widened the page to 578 px in a 390 px window. The
+  kit's own box for a display equation did not show the defect.
+- **Print never catches a fade.** The reader opens every fold just before
+  printing, and the fold's fade started at opacity .35. Print now switches
+  the reader's animations off, and the panel switcher's, which faded from .4
+  the same way.
+- **A repeated heading gets its own id.** Two headings with the same text
+  had the same `id`, on topic pages and on Reference pages. They are now
+  numbered as GitHub numbers them: `result`, `result-1`, `result-2`. The
+  build, lint and the record notes number alike. The first keeps its id, and
+  every id a page had before is still one of its ids, so lint passes where
+  it passed. One rare case moves where a link lands: after two "Result"
+  headings, a heading "Result 1" had the id `result-1` and now has
+  `result-1-1`, as on GitHub.
+
+A project that worked around these in its own CSS can delete the workaround;
+leaving it does no harm. A project script that sets the body class
+`nav-open` keeps working: the drawer's state follows the class.
+
+Not covered: the fixes ran in Chromium only. Whether small targets of 5.4.0
+failed WCAG 2.5.8 was not established, since its spacing exception may have
+applied. Two findings of the same review wait for a minor release: kit text
+below 11 px, where no rule covers interface text yet, and lint for records
+outside `docs/`.
+
 ## 5.4.0 — a page's source for a project's checks
 
 5.4.0 is a minor release under

@@ -2,6 +2,42 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-24 — Seven corrections from adaptation's review, for 5.4.1
+
+- deivid pasted a request from the adaptation project: propose fixes for
+  nine defects, propose only. Eight came from its accessibility, print and
+  responsive review of 23 November 2026, one from its conformance check. He
+  answered the proposal with "Build 5.4.1". The go covers building the seven
+  patch fixes on the branch `fixes-5.4.1`; it covers no tag and no push.
+- All nine reproduced on 5.4.0, in a scratch project in headless Chromium
+  at 390, 768 and 1600 px. Two reports were corrected. The 11 px minimum
+  covers chart labels and slide-drawing labels, not interface text. KaTeX
+  widened the page for a formula far right in a scrolling table, 578 px in
+  a 390 px window, and not for the kit's display-equation box in 12
+  combinations of width, view and page type.
+- Fixed in `7477f65`: the closed drawer's focus order, the menu button's
+  state and keys, 24 px targets, wrapping of long addresses, the KaTeX
+  rule, and print with animations off. Fixed in `30c9e9c`:
+  repeated heading ids, numbered as GitHub numbers them. The
+  [release notes](topics/releases/releases.md#541--seven-corrections-from-adaptations-accessibility-print-and-phone-review)
+  give the measurements.
+- One addition the proposal did not name: the page behind an open drawer is
+  inert below 900 px, so focus cannot leave the drawer for content the
+  backdrop covers. The reader does the same for its drawer.
+- The project's `visibility: hidden` workaround was not taken over. Without
+  JavaScript the menu button does nothing, and the off-screen links are the
+  only navigation; `inert` set by the script leaves that path open.
+- `tests/test_page_shell.cjs` is new and runs with motion on. The other
+  browser suites ask for reduced motion, which switches the fold fade off,
+  so no check had seen it. Each of its assertions was run against the kit
+  with the matching fix taken out and failed; the panel switcher's print
+  check likewise.
+- Left for a minor release, on deivid's decision: text below 11 px (20
+  `px` declarations of 9 to 10.5 px in the theme) and lint for records
+  outside `docs/`.
+- Not done: no browser but Chromium; no printout on paper; adaptation's own
+  pages and CSS were not opened.
+
 ## 2026-11-23 — Release 5.4.0
 
 - deivid gave the go: "Yes, release 5.4.0". The ask named what the go
