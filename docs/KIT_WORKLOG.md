@@ -2,6 +2,24 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-24 — Release 5.4.1
+
+- deivid gave the go: "Yes, release 5.4.1". The ask named what the go
+  covers: moving `main` to the release state, the tag `v5.4.1` and the push,
+  which publishes the kit's own site. It gave the size against 5.4.0: 21
+  files changed, 544 lines added and 34 removed, and no migration step.
+- The message with the ask named where the build differs from the proposal:
+  the page behind an open drawer is inert, and print switches off the fold
+  fade and the panel fade only. It named what is recorded and not fixed: an
+  explicit `{#id}` takes part in the numbering, and lint and the build find
+  headings differently.
+- 5.4.1 holds the changes of the three entries below. One independent
+  review; its findings are fixed or recorded and the fixes were not reviewed
+  again. Chromium only.
+- This commit adds only this entry. Checks on it: `build` and `lint
+  --strict` of the kit pass. The full script passed on `cc59447`, the
+  commit before; the Pages workflow runs it on the push.
+
 ## 2026-11-24 — Review of 5.4.1: not fit to tag, then fixed
 
 - One independent review of `50a3574`, read-only, by a reviewer agent that
