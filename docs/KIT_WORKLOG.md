@@ -2,6 +2,20 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-24 — Release 5.5.1
+
+- deivid gave the go: "Yes, release 5.5.1". The ask named what the go
+  covers: moving `main` to the release state, the tag `v5.5.1` and the push,
+  which publishes the kit's own site. It gave the size against 5.5.0 as 9
+  files and about 130 lines added, not recounted after the review fixes;
+  counted for this entry at `5ae694f`: 9 files, 135 lines added, 4 removed.
+- The message with the ask named what is not verified: Chromium only,
+  adaptation's own page not measured again, the review fixes not reviewed
+  again, and a topic page without the reader not measured.
+- 5.5.1 holds the changes of the two entries below.
+- This commit adds only this entry. The full check script runs on it before
+  the tag; the Pages workflow runs it again on the push.
+
 ## 2026-11-24 — Review of 5.5.1: not fit to tag, then fixed
 
 - One independent review of `e32aaba`, read-only, by a reviewer agent that
