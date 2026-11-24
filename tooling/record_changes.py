@@ -22,6 +22,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import unquote
 
+from page_source import unique_heading_id
+
 HUNK_RE = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@")
 HEADING_RE = re.compile(r"(#{1,6})\s+(.*)")
 EXPLICIT_ID_RE = re.compile(r"\{#([A-Za-z0-9][\w-]*)\}\s*$")
@@ -29,7 +31,7 @@ MARKDOWN_LINK_RE = re.compile(r"!?\[[^\]]*\]\(\s*<?([^)\s>]+)>?")
 REFERENCE_LINK_RE = re.compile(r"^[ ]{0,3}\[[^\]]+\]:\s*<?([^\s>]+)>?", re.M)
 HREF_RE = re.compile(r"""\bhref\s*=\s*(?:"([^"]*)"|'([^']*)')""", re.I)
 SECTION_RE = re.compile(r"<section\b([^>]*)>|</section\s*>", re.I)
-CHAPTER_HEADING_RE = re.compile(r"^##[ \t]+(.+?)[ \t]*$", re.M)
+ANY_HEADING_RE = re.compile(r"^(#{1,6})[ \t]+(.+?)[ \t]*$", re.M)
 SCHEME_RE = re.compile(r"^(?:[a-z][a-z0-9+.-]*:|//)", re.I)
 PAGE_END = "<!-- page-end -->"
 
@@ -138,6 +140,7 @@ def headings(text: str, slugify) -> list[Heading]:
     found, in_fence = [], False
     lines = text.splitlines()
     start = 0
+    seen: dict[str, int] = {}
     if lines and lines[0] == "+++":
         closing = next((i for i in range(1, len(lines)) if lines[i] == "+++"), None)
         if closing is not None:
@@ -154,7 +157,7 @@ def headings(text: str, slugify) -> list[Heading]:
         body = match.group(2)
         explicit = EXPLICIT_ID_RE.search(body)
         title = re.sub(r"\{#.*\}\s*$", "", body).strip()
-        anchor = explicit.group(1) if explicit else slugify(re.sub(r"\{#.*\}\s*$", "", body))
+        anchor = unique_heading_id(explicit.group(1) if explicit else slugify(re.sub(r"\{#.*\}\s*$", "", body)), seen)
         found.append(Heading(number, len(match.group(1)), title, anchor))
     return found
 
@@ -235,11 +238,13 @@ def _chapter_index(text: str, slugify) -> list[tuple[int, str, str | None]]:
         ident = re.search(r"""\bid\s*=\s*(?:"([^"]*)"|'([^']*)')""", attributes)
         card = classes and "card" in (classes.group(1) or classes.group(2) or "").split()
         events.append((match.start(), "open", (ident.group(1) or ident.group(2)) if card and ident else None))
-    for match in CHAPTER_HEADING_RE.finditer(text):
-        body = match.group(1)
+    seen: dict[str, int] = {}
+    for match in ANY_HEADING_RE.finditer(text):  # every level takes part in the numbering of repeats
+        body = match.group(2)
         explicit = EXPLICIT_ID_RE.search(body)
-        events.append((match.start(), "heading",
-                       explicit.group(1) if explicit else slugify(re.sub(r"\{#.*\}\s*$", "", body))))
+        anchor = unique_heading_id(explicit.group(1) if explicit else slugify(re.sub(r"\{#.*\}\s*$", "", body)), seen)
+        if len(match.group(1)) == 2:
+            events.append((match.start(), "heading", anchor))
     return sorted(events, key=lambda event: event[0])
 
 

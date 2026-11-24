@@ -124,6 +124,7 @@ def resolve_path(path: Path) -> Path:
 
 
 import worklog_entries as _worklog_entries
+from page_source import unique_heading_id
 from figure_themes import variant_path
 
 
@@ -178,6 +179,7 @@ def md_anchors(path: Path) -> set[str]:
     text = re.sub(r"<!--[\s\S]*?-->", "", path.read_text())
     anchors = set(re.findall(r'''<[A-Za-z][^>]*\bid\s*=\s*["']([^"']+)["']''', strip_code(text)))
     in_fence = False
+    seen: dict[str, int] = {}  # repeated headings are numbered as the build numbers them
     for line in text.splitlines():
         if line.lstrip().startswith(("```", "~~~")):
             in_fence = not in_fence
@@ -189,7 +191,7 @@ def md_anchors(path: Path) -> set[str]:
             continue
         text = m.group(1)
         idm = re.search(r"\{#([A-Za-z0-9][\w-]*)\}\s*$", text)
-        anchors.add(idm.group(1) if idm else slugify(re.sub(r"\{#.*\}\s*$", "", text)))
+        anchors.add(unique_heading_id(idm.group(1) if idm else slugify(re.sub(r"\{#.*\}\s*$", "", text)), seen))
     return anchors
 
 

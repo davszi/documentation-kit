@@ -268,6 +268,7 @@ class DocsRenderer(mistune.HTMLRenderer):
     def __init__(self, math_enabled: bool = False) -> None:
         super().__init__(escape=False)
         self.heading_ids: list[str] = []
+        self._seen_ids: dict[str, int] = {}  # one renderer renders one page
         self.math_enabled = math_enabled
 
     def heading(self, text: str, level: int, **attrs) -> str:
@@ -276,6 +277,7 @@ class DocsRenderer(mistune.HTMLRenderer):
             hid, text = m.group(1), text[: m.start()]
         else:
             hid = slugify(text)
+        hid = page_source.unique_heading_id(hid, self._seen_ids)  # a repeated heading: result, result-1, …
         self.heading_ids.append(hid)
         return f'<h{level}{self.id_attribute(hid)}>{text}</h{level}>\n'
 

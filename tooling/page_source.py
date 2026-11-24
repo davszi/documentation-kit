@@ -71,6 +71,23 @@ def rendered_part(body: str) -> str:
     return body.split(PAGE_END, 1)[0]
 
 
+def unique_heading_id(hid: str, seen: dict[str, int]) -> str:
+    """`hid`, or `hid-1`, `hid-2`… when an earlier heading of the page took it; `seen` carries the page's ids.
+
+    GitHub numbers repeated headings the same way, so a link to the second
+    "Result" heading is `#result-1` on GitHub and in the built page. The build,
+    lint and the record notes all number through this function.
+    """
+    if not hid:
+        return hid
+    result = hid
+    while result in seen:
+        seen[hid] += 1
+        result = f"{hid}-{seen[hid]}"
+    seen[result] = 0
+    return result
+
+
 def tracked_paths(repo: Path) -> frozenset[Path]:
     """Every file the project's Git repository tracks; a name that is not UTF-8 is kept as the system reads it."""
     result = subprocess.run(["git", "ls-files", "-z"], cwd=repo, capture_output=True, check=True)
