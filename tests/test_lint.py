@@ -61,6 +61,31 @@ Text.
         named = [hid for hid in ids if hid]
         self.assertEqual(len(named), len(set(named)))
 
+    def test_tabs_of_a_page_share_one_numbering(self):
+        import os
+        import re
+        import subprocess
+        import sys
+        kit = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory(prefix="docs-kit-tab-ids-") as folder:
+            root = Path(folder).resolve()
+            subprocess.run(["git", "init", "-q", str(root)], check=True)
+            env = {key: value for key, value in os.environ.items() if key not in {"DOCSITE_PROJECT_ROOT", "GITHUB_SHA"}}
+            subprocess.run([sys.executable, str(kit / "docsite.py"), "init", str(root)], check=True, capture_output=True, env=env)
+            page = root / "docs/topics/tabbed/index.md"
+            page.parent.mkdir(parents=True)
+            page.write_text('+++\ntoc = []\ntitle = "Tabbed"\npage_only = "a fixture"\n+++\n\n# Tabbed\n\n## Result\n\nBefore the tabs.\n\n'
+                            '<!-- tab: One -->\n\n## Result\n\nIn one.\n\n<!-- tab: Two -->\n\n## Result\n\nIn two.\n')
+            config = root / "docs/site/site.toml"
+            config.write_text(config.read_text() + '\n[[nav]]\nlabel = "Tabbed"\nfile = "tabbed.html"\ngroup = "guide"\n')
+            subprocess.run(["git", "-C", str(root), "add", "-A"], check=True)
+            built = subprocess.run([sys.executable, str(kit / "docsite.py"), "build", "--project", str(root)],
+                                   capture_output=True, text=True, env=env)
+            self.assertEqual(built.returncode, 0, built.stdout + built.stderr)
+            ids = re.findall(r'id="(result[^"]*)"', (root / ".build/docs/html/tabbed.html").read_text())
+            self.assertEqual(sorted(ids), ["result", "result-1", "result-2"])
+            self.assertEqual({"result", "result-1", "result-2"} - lint.md_anchors(page), set())
+
     def test_record_notes_number_the_same_way(self):
         import record_changes
         self.assertEqual([heading.anchor for heading in record_changes.headings(self.TEXT, lint.slugify)], self.IDS)

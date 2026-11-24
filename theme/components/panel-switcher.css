@@ -7,5 +7,5 @@
 .panel-switcher [data-panel][hidden] {display:none;}
 [data-panel-ready] > [data-panel]:not([hidden]) {animation:panel-switcher-in .22s ease-out;}
 @keyframes panel-switcher-in {from {opacity:.4;transform:translateY(4px);}to {opacity:1;transform:none;}}
-@media (prefers-reduced-motion:reduce) {[data-panel-ready] > [data-panel] {animation:none!important;}}
+@media (prefers-reduced-motion:reduce) {.panel-switcher * {animation:none!important;transition:none!important;}}
 @media print {.panel-switcher-controls {display:none!important;}.panel-switcher [data-panel][hidden] {display:block!important;}[data-panel-ready] > [data-panel] {animation:none!important;}}

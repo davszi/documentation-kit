@@ -16,6 +16,15 @@ does, and this record with its route when the last one goes.
   he used, and the Firefox version, are not recorded. The Presentation view
   and the Reference tree outside the lock suite were run in Chromium only.
   Closes with one pass in real Safari on a locked site that is live.
+- **Lint and the build find headings differently.** The build reads
+  Markdown; lint's anchor list and the record notes match lines that start
+  with `#`. They disagree on a setext heading, a heading indented or inside
+  a quote or list, a heading inside an HTML block, and a heading whose text
+  holds a link; the record notes also count a heading inside an HTML
+  comment. From 5.4.1 a repeated heading is numbered, so on a page with
+  repeated headings one such disagreement shifts the ids after it: lint can
+  then reject a fragment the page has, or accept one it lacks. Closes when
+  the three read headings through one function.
 - **ADP with the automatic listing.** ADP's tracked files hold about 6.6 GB
   (6,591,531,630 bytes in the local checkout on 2026-11-15), and its site
   has not been built with the automatic listing on. Only its 331 tracked

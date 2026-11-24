@@ -39,14 +39,16 @@ Chromium before it was fixed, and `tests/test_page_shell.cjs` now checks them.
   reader, the home page and the Reference pages, the sidebar slides off
   screen below 900 px. Its links stayed in the focus order: 6 of the first 12
   Tab stops of a home page landed off screen. The closed sidebar is now
-  inert, and so is the page behind an open drawer. Without JavaScript
-  nothing is inert, because the off-screen links are then the only way to
-  the other pages.
+  inert, and so is the page behind an open drawer, except its top bar.
+  Without JavaScript nothing is inert, because the off-screen links are then
+  the only way to the other pages.
 - **The menu button is a disclosure control.** It states `aria-controls`
-  and `aria-expanded`. Opening the drawer moves focus into it; Escape, the
-  backdrop or the button close it and return focus to the button.
-- **Source links and code chips are 24 px tall** on Reference pages. They
-  were 22.1 and 20.5 px.
+  and `aria-expanded`. Opening the drawer moves focus into it. Escape or the
+  backdrop close it and return focus to the button. The button closes it
+  too: the drawer covers it for a pointer, but it stays reachable by
+  keyboard and screen reader.
+- **Source links of a Reference page and code chips are 24 px tall.** They
+  were 22.1 and 20.5 px. A chip inside a reader fold was 44 px already.
 - **Reference prose wraps a long address.** A page with one long URL was
   1451 px wide in a 390 px window.
 - **A formula in a wide table no longer widens the page.** KaTeX hides a
@@ -55,16 +57,21 @@ Chromium before it was fixed, and `tests/test_page_shell.cjs` now checks them.
   kit's own box for a display equation did not show the defect.
 - **Print never catches a fade.** The reader opens every fold just before
   printing, and the fold's fade started at opacity .35. Print now switches
-  the reader's animations off, and the panel switcher's, which faded from .4
-  the same way.
+  that fade off, and the panel switcher's, which started at .4 the same way.
 - **A repeated heading gets its own id.** Two headings with the same text
   had the same `id`, on topic pages and on Reference pages. They are now
   numbered as GitHub numbers them: `result`, `result-1`, `result-2`. The
-  build, lint and the record notes number alike. The first keeps its id, and
-  every id a page had before is still one of its ids, so lint passes where
-  it passed. One rare case moves where a link lands: after two "Result"
-  headings, a heading "Result 1" had the id `result-1` and now has
-  `result-1-1`, as on GitHub.
+  build, lint and the record notes number through one function, across the
+  tabs of a page too. The first keeps its id, and every id a page had before
+  is still one of its ids, so lint passes where it passed. One rare case
+  moves where a link lands: after two "Result" headings, a heading whose own
+  id is `result-1`, from the text "Result 1" or from an explicit
+  `{#result-1}`, now gets `result-1-1`, and `#result-1` reaches the second
+  "Result". Lint reads headings line by line and the build reads Markdown;
+  where the two disagreed about what a heading is, they still do, and on a
+  page with repeated headings such a disagreement now also shifts the
+  numbers after it. The [open list](../../open/known-open-after-5.0.0.md)
+  names the cases.
 
 A project that worked around these in its own CSS can delete the workaround;
 leaving it does no harm. A project script that sets the body class

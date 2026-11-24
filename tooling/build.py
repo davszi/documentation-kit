@@ -268,7 +268,8 @@ class DocsRenderer(mistune.HTMLRenderer):
     def __init__(self, math_enabled: bool = False) -> None:
         super().__init__(escape=False)
         self.heading_ids: list[str] = []
-        self._seen_ids: dict[str, int] = {}  # one renderer renders one page
+        # The ids of the page so far. A page rendered in several parts, one per tab, hands every part the same dict.
+        self.seen_ids: dict[str, int] = {}
         self.math_enabled = math_enabled
 
     def heading(self, text: str, level: int, **attrs) -> str:
@@ -277,7 +278,7 @@ class DocsRenderer(mistune.HTMLRenderer):
             hid, text = m.group(1), text[: m.start()]
         else:
             hid = slugify(text)
-        hid = page_source.unique_heading_id(hid, self._seen_ids)  # a repeated heading: result, result-1, …
+        hid = page_source.unique_heading_id(hid, self.seen_ids)  # a repeated heading: result, result-1, …
         self.heading_ids.append(hid)
         return f'<h{level}{self.id_attribute(hid)}>{text}</h{level}>\n'
 
@@ -564,6 +565,8 @@ def build_page(md_path: Path, site: dict, shell: str) -> tuple[str, str] | None:
     if SITE_MAP_MARKER in body:
         body = body.replace(SITE_MAP_MARKER, site_map_html(site))
 
+    seen_ids: dict[str, int] = {}  # heading ids are unique across the tabs of the page
+
     def render_chunk(chunk: str) -> str:
         chunk = expand_includes(chunk, name)
         if meta.get("raw"):
@@ -573,6 +576,7 @@ def build_page(md_path: Path, site: dict, shell: str) -> tuple[str, str] | None:
             # markup can't re-enter the markdown parser.
             return slides_to_html(chunk, name)
         renderer = DocsRenderer(math_enabled=bool(meta.get("math")))
+        renderer.seen_ids = seen_ids
         md = mistune.create_markdown(renderer=renderer, plugins=["table", "math"])
         # Slide markers are matched after rendering: Markdown passes standalone
         # comments through unchanged, while code blocks escape example markers.

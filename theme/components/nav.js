@@ -2,9 +2,10 @@
 // the menu button opens the sidebar and moves focus into it; the button, the
 // backdrop, Escape or a link closes it. Below 900 px a closed sidebar is inert,
 // so its off-screen links take no keyboard focus, and an open one makes the
-// page behind it inert. The state follows the body's nav-open class, whichever
-// script sets it. Without JavaScript nothing is inert and the links stay
-// reachable.
+// page behind it inert, except the top bar: its menu button stays reachable by
+// keyboard and screen reader to close the drawer, which covers it for a
+// pointer. The state follows the body's nav-open class, whichever script sets
+// it. Without JavaScript nothing is inert and the links stay reachable.
 (function(){
   var menu = document.getElementById('menu');
   var backdrop = document.getElementById('backdrop');
@@ -17,7 +18,10 @@
     var open = isOpen();
     if (menu) menu.setAttribute('aria-expanded', String(open));
     if (sidebar) sidebar.inert = narrow.matches && !open;
-    if (content) content.inert = narrow.matches && open;
+    var behind = narrow.matches && open;
+    if (content) Array.prototype.forEach.call(content.children, function(node){
+      if (!node.classList.contains('topbar')) node.inert = behind;
+    });
   }
   function closeNav(refocus){
     var was = isOpen();
@@ -39,8 +43,8 @@
     closeNav(true);
   });
   document.querySelectorAll('.toc a').forEach(function(a){ a.addEventListener('click', function(){ closeNav(false); }); });
-  narrow.addEventListener('change', sync);
   new MutationObserver(sync).observe(document.body, {attributes: true, attributeFilter: ['class']});
+  if (narrow.addEventListener) narrow.addEventListener('change', sync); else if (narrow.addListener) narrow.addListener(sync);
   sync();
 })();
 

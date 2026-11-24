@@ -2,6 +2,41 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-24 — Review of 5.4.1: not fit to tag, then fixed
+
+- One independent review of `50a3574`, read-only, by a reviewer agent that
+  ran Python in a scratch copy and no browser. Its verdict: not fit to tag.
+  It found nothing that makes a project's build or lint fail where it
+  passed. The same hour the full check script failed once on that commit,
+  at `own_site_review.cjs`: "edit link hidden in print".
+- Fixed, medium: `.source-origin a` had become `inline-flex`, which outranks
+  the print rule that hides the edit link, so the link printed. Links and
+  chips now reach 24 px by line height alone; their `display` and
+  `box-sizing` are as in 5.4.0, so no rule of the kit or of a project is
+  outranked and the pencil before "Edit source" keeps its space.
+- Fixed, medium: the menu button sits in the page content, which the open
+  drawer made inert. The button then left the focus order with
+  `aria-expanded="true"` unread, and a touch screen-reader user could close
+  the drawer only by following a link. The top bar is now left out of the
+  inert part.
+- Fixed, low to medium: each tab of a page was numbered on its own, so
+  "Result" in two tabs still shared an id while lint listed `result-1`. A
+  page's tabs now share one numbering.
+- Fixed, low: an edit meant for the print rule also narrowed the panel
+  switcher's reduced-motion rule. It is as in 5.4.0 again.
+- Narrowed on my own reading of the review's risk note: the print rule
+  switched every animation and transition of a reader page off, which would
+  hide project content that animates in from `opacity: 0`. It now switches
+  off the fold fade only, the measured defect.
+- Recorded, not fixed: an explicit `{#id}` takes part in the numbering, and
+  lint, the record notes and the build find headings differently. The
+  release notes and the open list say so.
+- New checks: the menu button closes the open drawer by keyboard, a window
+  widened with the drawer open leaves nothing inert, and three "Result"
+  headings across tabs get three ids. The tab check was seen to fail on the
+  commit under review.
+- The fixes were not reviewed again.
+
 ## 2026-11-24 — The page lock opens on a real host, in Firefox on Windows
 
 - deivid reported on 2026-11-23 about adaptation's live, locked site on

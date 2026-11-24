@@ -2,7 +2,7 @@
 // from disk (file://), and of printing with motion left on:
 // - below 900 px the closed drawer takes no keyboard focus; the menu button
 //   states aria-expanded, opening moves focus into the drawer, Escape closes it
-//   and returns focus to the button;
+//   and returns focus to the button, which stays reachable while the drawer is open;
 // - the source links and code chips of a Reference page are at least 24 px tall;
 // - a long address in Reference prose, and a formula far right in a scrolling
 //   table, do not widen the page;
@@ -57,7 +57,10 @@ function buildFixture() {
 const drawer = page => page.evaluate(() => {
   const bar = document.getElementById('sidebar'), menu = document.getElementById('menu'), active = document.activeElement;
   return {open: document.body.classList.contains('nav-open'), expanded: menu.getAttribute('aria-expanded'),
-    controls: menu.getAttribute('aria-controls'), inert: bar.inert, contentInert: document.querySelector('main.content').inert,
+    controls: menu.getAttribute('aria-controls'), inert: bar.inert,
+    // The page behind the drawer is everything in the content but the top bar, which holds the menu button.
+    contentInert: [...document.querySelector('main.content').children].filter(node => !node.classList.contains('topbar')).every(node => node.inert),
+    topbarInert: !!menu.closest('[inert]'),
     focusInDrawer: !!active.closest('#sidebar'), focusOnMenu: active === menu};
 });
 
@@ -94,13 +97,23 @@ const drawer = page => page.evaluate(() => {
       await page.focus('#menu');
       await page.keyboard.press('Enter');
       state = await drawer(page);
-      assert.deepEqual({open: state.open, expanded: state.expanded, inert: state.inert, contentInert: state.contentInert, focusInDrawer: state.focusInDrawer},
-        {open: true, expanded: 'true', inert: false, contentInert: true, focusInDrawer: true}, name + ': open drawer');
+      assert.deepEqual({open: state.open, expanded: state.expanded, inert: state.inert, contentInert: state.contentInert,
+        topbarInert: state.topbarInert, focusInDrawer: state.focusInDrawer},
+        {open: true, expanded: 'true', inert: false, contentInert: true, topbarInert: false, focusInDrawer: true}, name + ': open drawer');
       if (captures) { await page.waitForTimeout(250); await page.screenshot({path: path.join(captures, `390-drawer-${name}.png`)}); }
       await page.keyboard.press('Escape');
       state = await drawer(page);
       assert.deepEqual({open: state.open, expanded: state.expanded, inert: state.inert, contentInert: state.contentInert, focusOnMenu: state.focusOnMenu},
         {open: false, expanded: 'false', inert: true, contentInert: false, focusOnMenu: true}, name + ': Escape closes the drawer');
+      // The menu button closes it by keyboard: the drawer covers the button for a pointer, but it stays focusable.
+      await page.keyboard.press('Enter');
+      assert.equal((await drawer(page)).open, true);
+      await page.focus('#menu');
+      assert.equal((await drawer(page)).focusOnMenu, true, name + ': the menu button takes focus while the drawer is open');
+      await page.keyboard.press('Enter');
+      state = await drawer(page);
+      assert.deepEqual({open: state.open, expanded: state.expanded, contentInert: state.contentInert},
+        {open: false, expanded: 'false', contentInert: false}, name + ': the menu button closes the drawer');
       // The backdrop closes it too, and a class another script sets is followed.
       await page.click('#menu');
       await page.mouse.click(370, 600);
@@ -108,7 +121,8 @@ const drawer = page => page.evaluate(() => {
       await page.evaluate(() => document.body.classList.add('nav-open'));
       await page.waitForFunction(() => !document.getElementById('sidebar').inert);
       await page.evaluate(() => document.body.classList.remove('nav-open'));
-      await page.waitForFunction(() => document.getElementById('sidebar').inert && !document.querySelector('main.content').inert);
+      await page.waitForFunction(() => document.getElementById('sidebar').inert
+        && ![...document.querySelector('main.content').children].some(node => node.inert));
     }
     checked.push('drawer: no focus while closed, aria-expanded, focus moves in, Escape and backdrop close');
 
@@ -116,13 +130,20 @@ const drawer = page => page.evaluate(() => {
     await page.setViewportSize({width: 1600, height: 1000});
     await page.goto(url('notes.long.md.html'));
     assert.equal((await drawer(page)).inert, false, 'wide: the sidebar takes focus');
+    const inertParts = () => page.evaluate(() => [document.getElementById('sidebar').inert,
+      [...document.querySelector('main.content').children].some(node => node.inert)]);
     await page.evaluate(() => document.body.classList.add('nav-open'));
     await page.waitForTimeout(100);
-    assert.deepEqual(await page.evaluate(() => [document.getElementById('sidebar').inert, document.querySelector('main.content').inert]),
-      [false, false], 'wide: nothing is inert with the class set');
+    assert.deepEqual(await inertParts(), [false, false], 'wide: nothing is inert with the class set');
     if (captures) await page.screenshot({path: path.join(captures, '1600-reference.png')});
+    // The window narrows and widens with the drawer open: the page behind is inert only while narrow.
     await page.setViewportSize({width: 390, height: 844});
-    checked.push('wide window: sidebar and page stay reachable');
+    await page.waitForFunction(() => [...document.querySelector('main.content').children].some(node => node.inert));
+    await page.setViewportSize({width: 1600, height: 1000});
+    await page.waitForFunction(() => ![...document.querySelector('main.content').children].some(node => node.inert));
+    assert.deepEqual(await inertParts(), [false, false], 'widened with the drawer open: nothing stays inert');
+    await page.setViewportSize({width: 390, height: 844});
+    checked.push('wide window: sidebar and page stay reachable, also after a resize with the drawer open');
 
     // Reference page: target sizes and no sideways scroll.
     await page.goto(url('notes.long.md.html'));

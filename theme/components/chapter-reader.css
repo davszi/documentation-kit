@@ -255,8 +255,8 @@ body.topic-deck {overflow:hidden;}
   .chapter-body details.fold[data-fold="dead-end"] {--fold-color:#aa492d;}
   .chapter-body details.fold > summary {break-after:avoid;}
   .fold-content p.fold-equation {break-inside:avoid;background:none;overflow:visible;font-size:.85em;}
-  /* The reader opens every fold just before printing; a fade still running would print pale. */
-  .reader-enabled *,.reader-enabled *::before,.reader-enabled *::after {transition:none!important;animation:none!important;}
+  /* The reader opens every fold just before printing; its fade, still running, would print pale. */
+  .chapter-body details.fold[open] > .fold-content {animation:none!important;}
 }
 @media (prefers-reduced-motion:reduce) {
   html {scroll-behavior:auto;}
