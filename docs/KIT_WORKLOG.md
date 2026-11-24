@@ -2,6 +2,34 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-24 — 5.5.0 built on a branch: text limit, record roots, repeated ids
+
+- Decisions by deivid. Asked whether 11 px becomes a rule for all text of
+  the kit or only three named labels are raised: "Yes, all kit text". Asked
+  to build 5.5.0 on a branch with formulas and scaled slide faces outside
+  the limit: "Yes, build it". Tag and push are not part of either answer.
+- A count corrected before the build: the theme had 24 font sizes below
+  11 px, not the 20 that the proposal for 5.4.1 named. A probe in headless
+  Chromium found 27 kinds of text below 11 px on the 61 built pages of the
+  kit's site and starter, at 1440 and 390 px. Three kinds came from relative
+  sizes that no search for `px` finds: inline code in small labels and table
+  headings, and the brand subtitle.
+- Built: the 24 sizes are 11 px; inline code stops at 11 px and keeps its
+  scaling on slide faces; `smallText` and `assertTextSize` in
+  `browser_checks.cjs`; `tests/test_text_size.cjs` on all 59 pages of the
+  kit's site and on a fixture of labels those pages lack. With the old theme
+  the suite fails, on 26 kinds of text on the fixture page.
+- Built: `record_roots` and `record_roots_exclude` for lint, and a lint
+  warning for an id that a built page carries more than once. On the kit's
+  own pages no id is repeated.
+- A reading of mine, not asked: the rule in `rules/writing/pages.md` says
+  all text of a page, a page's own styles included, since the limit for
+  chart labels binds projects the same way. The kit checks only its own
+  site; a project is checked when it calls `assertTextSize`.
+- Not verified: Chromium only. No project was built against this state.
+  The check does not exempt `sub` and `sup` outside formulas.
+- Commits `eedb5e0` and `37d873f`, then the release notes and version.
+
 ## 2026-11-24 — Release 5.4.1
 
 - deivid gave the go: "Yes, release 5.4.1". The ask named what the go

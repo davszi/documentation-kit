@@ -26,6 +26,68 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## 5.5.0 — text of 11 px or more, lint for records outside `docs/`, a warning for a repeated id
+
+5.5.0 is a minor release under
+[what a version number promises](#what-a-version-number-promises): it adds
+two settings and two browser checks, adds one lint warning and changes how
+small labels of the shared theme look. It closes the two findings of
+adaptation's review of 23 November 2026 that 5.4.1 left open. There is no
+migration guide. A project moves its pin to `v5.5.0`, runs its strict lint
+and looks at its pages once; the last paragraph of this section says what it
+can meet.
+
+- **All text of a page is 11 px or more.**
+  [Page design](../../../rules/writing/pages.md#page-design) now states the
+  limit for all text; before, it held for chart labels and the drawing labels
+  of slide faces only. deivid decided this on 24 November 2026, with two
+  things outside the limit: formulas, whose subscripts and superscripts are
+  smaller by design, and slide faces, which are scaled pictures of a slide
+  and keep their own limit for drawing labels.
+- **The theme keeps the limit.** It had 24 font sizes between 9 and
+  10.6 px: tree counts, code chips, fold tags, chapter numbers in the
+  sidebar, group headings, badges, callout labels, labels on flow arrows and
+  the home page, and the classes for drawing text. Each is 11 px now. Inline
+  code stays at 0.88 em and stops at 11 px, so code in a small label or a
+  table heading no longer renders at 10.1 px; on a slide face it scales with
+  the face as before. Measured before the change in headless Chromium, 27
+  kinds of text rendered below 11 px on the 61 built pages of the kit's site
+  and its starter; text on slide faces was among them and is outside the
+  limit. After it, none does on the 59 pages of the kit's site, at 1440 and
+  390 px.
+- **A browser check lists small text.** `smallText` and `assertTextSize` in
+  `tooling/browser_checks.cjs` take a Playwright page, as the
+  [reusable browser checks](../../../rules/site/validation.md#reusable-browser-checks)
+  describe. They read HTML text whether it is shown or not, generated text,
+  and SVG labels at their size on screen. `tests/test_text_size.cjs` runs
+  them on every page of the kit's site.
+- **Lint reads records outside `docs/`.** `record_roots` in `site.toml`
+  names folders and Markdown files whose tracked Markdown joins the link,
+  anchor, snippet and figure-reference checks, and `record_roots_exclude`
+  names folders or files that stay out, such as `studies/*/results`.
+  [Records outside `docs/`](../../../rules/site/authoring.md#records-outside-docs)
+  gives the format. Without the setting lint reads what it read before. The
+  setting lists no page on the site.
+- **Lint warns about an id that a built page carries more than once.** A
+  link to such an id reaches only its first element. 5.4.1 numbers repeated
+  headings, so the warning finds ids written by hand: raw HTML, a `{#id}`
+  that names a taken id, a fragment included twice, two inline drawings that
+  share the id of a marker or gradient. On an automatically listed page it
+  is a note.
+
+What a project can meet at the upgrade. Its small labels grow by 0.4 to 2 px;
+a rule of the project that sets one of these sizes still wins, because no
+selector of the theme changed. Strict lint fails on a page with a repeated
+id until the id is unique. Setting `record_roots` can show dead links that
+were never checked; they are errors from then on. Nothing checks a project's
+own text sizes unless the project calls `assertTextSize` in its browser
+checks.
+
+Not covered: the checks ran in Chromium only. `smallText` does not read
+text in an SVG loaded as an image and does not see a `transform` that scales
+HTML text. No project was built against 5.5.0 before the release, so the
+number of repeated ids and of small texts on a project's pages is not known.
+
 ## 5.4.1 — seven corrections from adaptation's accessibility, print and phone review
 
 5.4.1 is a patch release under

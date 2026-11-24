@@ -25,6 +25,11 @@ does, and this record with its route when the last one goes.
   repeated headings one such disagreement shifts the ids after it: lint can
   then reject a fragment the page has, or accept one it lacks. Closes when
   the three read headings through one function.
+- **Text size on a project's pages.** From 5.5.0 the theme keeps all its
+  text at 11 px or more and `tests/test_text_size.cjs` checks the kit's own
+  site. No project was checked: how much of a project's own text is smaller
+  is not known, and `sub` and `sup` outside formulas count as small text.
+  Closes when one project runs `assertTextSize` on its pages.
 - **ADP with the automatic listing.** ADP's tracked files hold about 6.6 GB
   (6,591,531,630 bytes in the local checkout on 2026-11-15), and its site
   has not been built with the automatic listing on. Only its 331 tracked
