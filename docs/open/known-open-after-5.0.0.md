@@ -41,6 +41,13 @@ does, and this record with its route when the last one goes.
 
 ## Known limits, not fixed
 
+- **A heading can take an id of the page shell.** The build numbers a
+  repeated heading against the other headings of its page, not against the
+  shell's ids: `top`, `menu`, `sidebar`, `toc`, `backdrop`,
+  `repo-tree-label` and `chapter-reader`. A heading "Top" then shares
+  `#top` with the shell, and a link to it reaches the shell. From 5.5.0
+  lint warns. Reserving the ids would rename such a heading's id, so it
+  needs its own decision.
 - **A tracked file whose name is not UTF-8.** `build` and `lint` stop with a
   traceback, `UnicodeDecodeError`, when the project tracks such a file
   (measured on a starter project with kit 5.4.0). `tooling/page_source.py`

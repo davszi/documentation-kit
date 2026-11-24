@@ -238,10 +238,13 @@ async function reviewSmallText(browser) {
     body{font:16px sans-serif} .tiny{font-size:9px} .edge{font-size:10.96px} .ok{font-size:11px}
     .mark::before{content:"NEW";font-size:8px} .dot::after{content:"\\2022";font-size:6px}
     .closed{display:none} .katex,.face,.mine{font-size:7px}
+    .gone::before{content:"GONE";font-size:5px;display:none} .holder{font-size:6px}
   </style>
   <p class="tiny">nine</p><p class="tiny">nine again</p><p class="edge">rounds to eleven</p><p class="ok">eleven</p>
   <p class="mark">generated</p><p class="dot">bullet only</p>
   <div class="closed"><p class="tiny" id="hidden">hidden nine</p></div>
+  <p class="gone ok">no generated text</p>
+  <div class="holder"><script>var held = 1;</script><style>.held{color:red}</style><noscript>no script</noscript><template><p>kept</p></template></div>
   <span class="katex"><span>x</span></span><div class="face" data-slide-face><p>face text</p></div><p class="mine">left out</p>
   <svg id="half" width="100" height="50" viewBox="0 0 200 100"><text x="5" y="40" font-size="16">half</text><text x="5" y="80" font-size="24">big</text></svg>
   <svg id="full" width="200" height="100" viewBox="0 0 200 100"><text x="5" y="40" font-size="16">full</text></svg>`);

@@ -14,7 +14,7 @@ or a derivation carry the explanation. Apply the
 
 Navigation follows prerequisite order. Important comparisons have direct entries opening onto controls and plots. Follow the [shared reader contract](../site/reader.md#shared-reading-layout); do not use page-wide audience tabs. Local method, scenario and diagram-mode tabs are useful within a comparison.
 
-Text on a page renders at 11 px or more, small labels included: tags, counts, chips, captions and group headings. The theme keeps this limit for its own text, and a page's own styles keep it too. Two things are outside it. A formula sets its subscripts and superscripts smaller by design. A slide face is a scaled picture of a slide, and its drawing labels have [their own limit](#slide-faces). The shared [browser check](../site/validation.md#reusable-browser-checks) lists the text below the limit.
+Text on a page renders at 11 px or more, small labels included: tags, counts, chips, captions and group headings. The theme keeps this limit for its own text, and a page's own styles keep it too. Two things are outside it. A formula sets its subscripts and superscripts smaller by design. A slide face is a scaled picture of a slide: its text scales with it, and only the labels of its drawings keep the 11 px, as [slide faces](#slide-faces) say. The shared [browser check](../site/validation.md#reusable-browser-checks) lists the text below the limit.
 
 Use available width. Text, figures and tables share a left edge. Avoid narrow centered text columns and half-empty rows. Expressive details may include short transitions, rich syntax colors, gradient hairlines and hover emphasis; they must respect reduced motion and accessibility.
 

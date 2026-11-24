@@ -34,7 +34,9 @@ owns the shared panel switcher's authoring, behavior and extraction checks.
 
 [Releases and upgrades](topics/releases/releases.md) owns version notes and
 consumer migration steps; `VERSION` holds the current version.
-The current release is 5.5.0, which has no migration guide; its release note says what an upgrade can meet. The
+The current release is 5.5.0. The
+[5.5.0 migration guide](topics/releases/migrations/5.5.0.md) covers the
+warning for a repeated id and the larger small labels. The
 [5.2.0 migration guide](topics/releases/migrations/5.2.0.md) covers
 generated figures in a dark and a light theme and the lint warning for
 untracked tooling. The [5.1.0 guide](topics/releases/migrations/5.1.0.md)

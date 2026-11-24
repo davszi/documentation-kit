@@ -480,7 +480,11 @@ record_roots_exclude = ["studies/*/results"]   # optional
 - `record_roots` lists folders and single Markdown files, as paths from the
   project root. Every tracked `.md` file under them is checked like a record
   under `docs/`: a dead link or anchor and a snippet that left its source are
-  errors. Untracked files and symbolic links are not read.
+  errors. So is an image from a folder named `figures/` that has no
+  `manifest.json` beside it, in a project that keeps
+  [`docs/figures/manifest.json`](#generated-figures). Untracked files,
+  symbolic links and tracked files that are absent from the checkout are not
+  read. A record that is not UTF-8 text is an error.
 - `record_roots_exclude` lists folders, with everything below them, and
   single files that stay out. In an entry `*` stands for one name or part of
   one, so `studies/*/results` leaves out the `results` folder of every study;

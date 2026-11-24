@@ -75,6 +75,7 @@ from __future__ import annotations
 import argparse
 from fnmatch import fnmatchcase
 import html
+from html.parser import HTMLParser
 import importlib.util
 import json
 import os
@@ -148,10 +149,12 @@ def record_root_files(site: dict) -> list[Path]:
         record_roots = ["studies", "CHANGELOG.md"]
         record_roots_exclude = ["studies/*/results"]
 
-    Every tracked `.md` file under a root joins `md_files()`. An excluded
-    folder with what lies below it, or an excluded file, stays out; in its
-    path `*` stands for one name or part of one, never for several folders. Symlinks are not followed. A wrong setting is
-    an error, and an entry that selects nothing is a note.
+    Every tracked `.md` file under a root that exists on disk joins
+    `md_files()`. An excluded folder with what lies below it, or an excluded
+    file, stays out; in its path `*` stands for one name or part of one, never
+    for several folders. Symlinks are not followed. A wrong setting and a
+    record that is not UTF-8 text are errors, and an entry that selects
+    nothing is a note.
     """
     key = (REPO, repr(site.get("record_roots")), repr(site.get("record_roots_exclude")))
     if key in _record_cache:
@@ -177,8 +180,13 @@ def record_root_files(site: dict) -> list[Path]:
     root_parts, excluded_parts = entries(roots, "record_roots"), entries(excluded, "record_roots_exclude")
     if root_parts is None or excluded_parts is None:
         return found
+    if any(not pattern for pattern in excluded_parts):
+        error("site.toml: record_roots_exclude entry '.' would leave out every record; name a folder or a file")
+        return found
     try:
-        tracked = sorted(path for path in tracked_paths(REPO) if path.suffix == ".md" and not path.is_symlink())
+        # Git also lists a file that was deleted or is absent from a sparse checkout.
+        tracked = sorted(path for path in tracked_paths(REPO)
+                         if path.suffix == ".md" and not path.is_symlink() and path.is_file())
     except (OSError, subprocess.CalledProcessError):
         error("site.toml: record_roots needs a Git repository; it reads tracked Markdown")
         return found
@@ -198,8 +206,15 @@ def record_root_files(site: dict) -> list[Path]:
                    for pattern in excluded_parts]
             for number, matched in enumerate(hit):
                 used[number] = used[number] or matched
-            if not any(hit):
-                found.append(path)
+            if any(hit) or path in found:
+                continue
+            try:
+                path.read_text()
+            except (OSError, UnicodeDecodeError) as problem:
+                error(f"{path.relative_to(REPO).as_posix()}: lint cannot read this record under record_roots "
+                      f"({type(problem).__name__}); make it UTF-8 text or name it in record_roots_exclude")
+                continue
+            found.append(path)
         if not count:
             notice(f"site.toml: record_roots entry {item!r} holds no tracked Markdown file")
     for item, matched in zip(excluded, used):
@@ -462,23 +477,51 @@ def check_source_links() -> None:
                 report(f"{label}: anchor #{fragment} not found in {path}")
 
 
-NOT_MARKUP_RE = re.compile(r"<!--[\s\S]*?-->|<(script|style)\b[\s\S]*?</\1\s*>", re.I)
-ID_ATTRIBUTE_RE = re.compile(r"""<[A-Za-z][^<>]*?\sid\s*=\s*(?:"([^"]+)"|'([^']+)')""")
+class _IdCounter(HTMLParser):
+    """Counts the `id` of every element; text of scripts, styles, comments and inert content is no element."""
+
+    INERT = ("template", "textarea", "noscript")
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.counts: dict[str, int] = {}
+        self.inert = 0
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag in self.INERT:
+            self.inert += 1
+        elif not self.inert:
+            for name, value in attrs:
+                if name == "id" and value:
+                    self.counts[value] = self.counts.get(value, 0) + 1
+                    break  # a browser keeps the first id of an element
+
+    def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag not in self.INERT:
+            self.handle_starttag(tag, attrs)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag in self.INERT and self.inert:
+            self.inert -= 1
 
 
 def repeated_ids(markup: str) -> list[tuple[str, int]]:
     """Each id that the elements of a built page carry more than once, with its count, in page order.
 
-    Scripts, styles and comments are not elements. The build numbers a
-    repeated heading, so what remains is an id written twice by hand: in raw
-    HTML, in a `{#id}` that names an id already used, in a fragment included
-    twice, or in two inline drawings that share the id of a marker or gradient.
+    The page is read by Python's HTML parser, so an attribute name in any
+    case, an unquoted value and a character reference count as a browser reads
+    them, and scripts, styles, comments and the content of `template`,
+    `textarea` and `noscript` are not elements. The build numbers a repeated
+    heading against the other headings of its page, so what remains is: an id
+    written twice by hand in raw HTML, a `{#id}` that names an id already
+    used, a fragment included twice, two inline drawings that share the id of
+    a marker or gradient, and a heading whose id is also an id of the theme's
+    page shell, such as `top`, `toc`, `menu` or `sidebar`.
     """
-    counts: dict[str, int] = {}
-    for match in ID_ATTRIBUTE_RE.finditer(NOT_MARKUP_RE.sub("", markup)):
-        name = match[1] or match[2]
-        counts[name] = counts.get(name, 0) + 1
-    return [(name, count) for name, count in counts.items() if count > 1]
+    counter = _IdCounter()
+    counter.feed(markup)
+    counter.close()
+    return [(name, count) for name, count in counter.counts.items() if count > 1]
 
 
 def check_html() -> None:

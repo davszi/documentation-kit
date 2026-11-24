@@ -435,7 +435,7 @@ body.topic-deck {overflow:hidden;}
   .present-title-card {container-type:inline-size;}
   .present-title-canvas {aspect-ratio:16/9;display:flex;flex-direction:column;justify-content:center;gap:1.4cqi;overflow:hidden;padding:5cqi 8cqi;background:radial-gradient(ellipse at 85% 0%,rgba(57,210,192,.08),transparent 55%),linear-gradient(180deg,#0f1620,#0d1117);font-family:"IBM Plex Sans",system-ui,sans-serif;}
   .reader-enabled .present-title-canvas p {margin:0;max-width:none;}
-  .reader-enabled .present-title-eyebrow {font:600 1.2cqi/1.2 "IBM Plex Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);}
+  .reader-enabled .present-title-eyebrow {font:600 max(1.2cqi,11px)/1.2 "IBM Plex Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);}
   .reader-enabled .present-title-heading {font:600 4.6cqi/1.12 "IBM Plex Sans",system-ui,sans-serif;letter-spacing:-.015em;color:var(--bright);max-width:24em;}
   .reader-enabled .present-title-lead {font-size:2cqi;line-height:1.45;color:#a9b4c2;max-width:52em;}
   .present-title-lead code {font-size:.92em;}

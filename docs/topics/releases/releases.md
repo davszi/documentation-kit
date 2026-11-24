@@ -32,10 +32,8 @@ shows the new warnings.
 [what a version number promises](#what-a-version-number-promises): it adds
 two settings and two browser checks, adds one lint warning and changes how
 small labels of the shared theme look. It closes the two findings of
-adaptation's review of 23 November 2026 that 5.4.1 left open. There is no
-migration guide. A project moves its pin to `v5.5.0`, runs its strict lint
-and looks at its pages once; the last paragraph of this section says what it
-can meet.
+adaptation's review of 23 November 2026 that 5.4.1 left open. The
+[5.5.0 migration guide](migrations/5.5.0.md) has the steps.
 
 - **All text of a page is 11 px or more.**
   [Page design](../../../rules/writing/pages.md#page-design) now states the
@@ -54,7 +52,8 @@ can meet.
   kinds of text rendered below 11 px on the 61 built pages of the kit's site
   and its starter; text on slide faces was among them and is outside the
   limit. After it, none does on the 59 pages of the kit's site, at 1440 and
-  390 px.
+  390 px. The eyebrow of the Presentation view's title card was sized in
+  container units alone, 4.7 px in a 390 px window; it stops at 11 px now.
 - **A browser check lists small text.** `smallText` and `assertTextSize` in
   `tooling/browser_checks.cjs` take a Playwright page, as the
   [reusable browser checks](../../../rules/site/validation.md#reusable-browser-checks)
@@ -70,23 +69,24 @@ can meet.
   setting lists no page on the site.
 - **Lint warns about an id that a built page carries more than once.** A
   link to such an id reaches only its first element. 5.4.1 numbers repeated
-  headings, so the warning finds ids written by hand: raw HTML, a `{#id}`
-  that names a taken id, a fragment included twice, two inline drawings that
-  share the id of a marker or gradient. On an automatically listed page it
-  is a note.
+  headings against each other, so the warning finds the rest: raw HTML, a
+  `{#id}` that names a taken id, a fragment included twice, two inline
+  drawings that share the id of a marker or gradient, and a heading whose
+  id is also an id of the page shell. A heading "Top", "Menu", "Sidebar",
+  "TOC", "Backdrop" or "Chapter reader" gets such an id; a link to it
+  reached the shell before this release as well. On an automatically
+  listed page the finding is a note.
 
-What a project can meet at the upgrade. Its small labels grow by 0.4 to 2 px;
-a rule of the project that sets one of these sizes still wins, because no
-selector of the theme changed. Strict lint fails on a page with a repeated
-id until the id is unique. Setting `record_roots` can show dead links that
-were never checked; they are errors from then on. Nothing checks a project's
-own text sizes unless the project calls `assertTextSize` in its browser
-checks.
+A rule of a project that sets one of the raised sizes still wins: the
+theme's selectors for them are as before. Nothing checks a project's own
+text sizes unless the project calls `assertTextSize` in its browser checks.
 
 Not covered: the checks ran in Chromium only. `smallText` does not read
 text in an SVG loaded as an image and does not see a `transform` that scales
 HTML text. No project was built against 5.5.0 before the release, so the
 number of repeated ids and of small texts on a project's pages is not known.
+The shell's ids are not reserved: a heading can still take one, and lint
+then warns.
 
 ## 5.4.1 — seven corrections from adaptation's accessibility, print and phone review
 

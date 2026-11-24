@@ -2,6 +2,45 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-24 — Review of 5.5.0: not fit to tag, then fixed
+
+- One independent review of `bdf9857`, read-only, by a reviewer agent that
+  ran Python in a scratch clone and no browser. Its verdict: not fit to tag.
+  It found no change that the version promise keeps for a major release.
+  The full check script had passed on the same commit.
+- Fixed, medium to high: lint stopped with a traceback when a tracked record
+  under `record_roots` was missing from disk, as after a deletion or in a
+  sparse checkout. Such a file is not read now. A record that is not UTF-8
+  text is an error with the file's name instead of a traceback, and an
+  exclusion of `.` is refused.
+- Fixed, medium: the release note said the warning for a repeated id finds
+  ids written by hand. A heading whose id is an id of the page shell, such
+  as "Top" or "Menu", gets the warning too; the reviewer showed it on the
+  starter. The note and the new migration guide name the case. The shell's
+  ids are still not reserved; the open list has the point.
+- Fixed, medium: the note left out that `record_roots` also brings the
+  figure-manifest errors to those records. The rule and the guide say it.
+- Fixed, low to medium: the eyebrow of the Presentation title card was
+  below 11 px, which the suite could not see. Measured before the fix:
+  4.68 px in a 390 px window. It stops at 11 px, tested at 390, 800 and
+  1440 px.
+- Fixed, low: the version promise says a migration guide gives the step for
+  each change; 5.5.0 had none. `migrations/5.5.0.md` is written and listed.
+- Fixed, low: repeated ids are counted with Python's HTML parser instead of
+  two regular expressions, which read `template` and `textarea` content as
+  elements and missed an upper-case or unquoted `id`. Tests added: the
+  warning against the note on a listed page, the deleted record, the
+  unreadable record, overlapping roots, the skips of `smallText`, inline
+  code at 11 px and on a slide face. `tests/test_lint.py` run as a file ran
+  6 of its tests; its `__main__` block is at the end now.
+- Changed on the reviewer's remark that drawings in inactive chapters were
+  never measured: the suite now shows all chapters of the 6 reader pages and
+  opens every fold before it reads a page.
+- Not changed: a flow-arrow label of 12 or more characters would not fit
+  its 88 px column at 11 px; the longest label of the kit has 11. Estimated
+  from font metrics by the reviewer, not measured.
+- These fixes were not reviewed again.
+
 ## 2026-11-24 — 5.5.0 built on a branch: text limit, record roots, repeated ids
 
 - Decisions by deivid. Asked whether 11 px becomes a rule for all text of

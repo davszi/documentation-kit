@@ -95,9 +95,6 @@ Text.
         self.assertEqual(chapters, ["result", "result-1", "result-1-1", "result-3", "", ""])
 
 
-if __name__=="__main__":
-    unittest.main()
-
 
 class RecordRoots(unittest.TestCase):
     """`record_roots` adds a project's tracked Markdown outside docs/ to the checks that read records."""
@@ -112,7 +109,7 @@ class RecordRoots(unittest.TestCase):
         "other/readme.md": "[gone](missing.md)\n",
     }
 
-    def run_links(self, site: str, *, untracked: dict[str, str] | None = None):
+    def run_links(self, site: str, *, untracked: dict | None = None, deleted: tuple | list = ()):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder).resolve()
             subprocess.run(["git", "init", "-q"], cwd=root, check=True)
@@ -121,7 +118,9 @@ class RecordRoots(unittest.TestCase):
                 (root / path).write_text(text)
             subprocess.run(["git", "add", "-A"], cwd=root, check=True)
             for path, text in (untracked or {}).items():
-                (root / path).write_text(text)
+                (root / path).write_bytes(text) if isinstance(text, bytes) else (root / path).write_text(text)
+            for path in deleted:
+                (root / path).unlink()
             with mock.patch.object(lint, "REPO", root), mock.patch.object(lint, "DOCS", root / "docs"), \
                     mock.patch.object(lint, "errors", []), mock.patch.object(lint, "notices", []), \
                     mock.patch.object(lint, "_record_cache", {}), mock.patch.object(lint, "_entry_cache", {}):
@@ -164,6 +163,24 @@ class RecordRoots(unittest.TestCase):
                                    "site.toml: record_roots_exclude entry 'studies/results' leaves out no file under record_roots"])
         self.assertEqual(len(errors), 4)  # every dead link under studies/: the exclusion matches no folder
 
+    def test_a_tracked_record_that_is_gone_from_disk_is_not_read(self):
+        files, errors, _ = self.run_links('record_roots = ["studies/b"]\n', deleted=["studies/b/plan.md"])
+        self.assertEqual(files, ["docs/guide.md", "studies/b/results/deep/run.md"])
+        self.assertEqual(errors, ["studies/b/results/deep/run.md: dead link missing.md"])
+
+    def test_a_record_that_is_not_utf8_is_an_error_and_is_left_out(self):
+        files, errors, _ = self.run_links('record_roots = ["studies/b"]\nrecord_roots_exclude = ["studies/b/results"]\n',
+                                          untracked={"studies/b/plan.md": b"\xff\xfe caf\xe9"})
+        self.assertEqual(files, ["docs/guide.md"])
+        self.assertEqual(errors, ["studies/b/plan.md: lint cannot read this record under record_roots (UnicodeDecodeError); "
+                                  "make it UTF-8 text or name it in record_roots_exclude"])
+
+    def test_overlapping_roots_read_a_file_once(self):
+        files, errors, _ = self.run_links('record_roots = ["studies", "studies/b", "studies/b/plan.md", "."]\n'
+                                          'record_roots_exclude = ["studies/*/results", "other", "CHANGELOG.md", "docs"]\n')
+        self.assertEqual(files, ["docs/guide.md", "studies/a/notes.md", "studies/b/plan.md"])
+        self.assertEqual(len(errors), 2)
+
     def test_wrong_settings_are_errors(self):
         for site, message in (
                 ('record_roots = "studies"\n', "site.toml: record_roots must be a list of paths inside the project"),
@@ -172,6 +189,7 @@ class RecordRoots(unittest.TestCase):
                 ('record_roots = ["nowhere"]\n', "site.toml: record_roots entry 'nowhere' is not a folder or Markdown file of the project"),
                 ('record_roots = ["docs/site/site.toml"]\n', "site.toml: record_roots entry 'docs/site/site.toml' is not a folder or Markdown file of the project"),
                 ('record_roots = ["studies"]\nrecord_roots_exclude = [3]\n', "site.toml: record_roots_exclude must be a list of paths inside the project"),
+                ('record_roots = ["studies"]\nrecord_roots_exclude = ["."]\n', "site.toml: record_roots_exclude entry '.' would leave out every record; name a folder or a file"),
                 ('record_roots_exclude = ["studies/*/results"]\n', "site.toml: record_roots_exclude needs record_roots; alone it leaves nothing out")):
             with self.subTest(site=site):
                 files, errors, _ = self.run_links(site)
@@ -184,13 +202,42 @@ class RepeatedIds(unittest.TestCase):
 
     def test_elements_count_and_scripts_styles_comments_and_text_do_not(self):
         markup = """<h2 id="a">A</h2><p id='a'>again</p><svg><marker id="tip"/></svg><svg><marker id="tip"/></svg>
-<section data-id="a" id = "b"></section><div id="c"></div>
+<section data-id="a" id = "b"></section><div id="c"></div><a title=" id='c' " href="#c">c</a>
 <script>const s = '<div id="c"></div><i id="b"></i>';</script><style>/* <p id="c"> */</style>
-<!-- <p id="c"></p> --><pre>&lt;p id=&quot;c&quot;&gt;</pre><p>the text id="b" is no element</p>"""
-        self.assertEqual(lint.repeated_ids(markup), [("a", 2), ("tip", 2)])
+<!-- <p id="c"></p> --><pre>&lt;p id=&quot;c&quot;&gt;</pre><p>the text id="b" is no element</p>
+<template><p id="c"></p></template><textarea><p id="c"></p></textarea><noscript><p id="c"></p></noscript>
+<style-box id="box"></style-box><p id="after-the-box"></p><p id="after-the-box"></p>
+<p ID=upper></p><p id=upper></p><p id="x&amp;y"></p><p id="x&y"></p><p data-x="a > b" id="late"></p><p id="late"></p>"""
+        self.assertEqual(lint.repeated_ids(markup),
+                         [("a", 2), ("tip", 2), ("after-the-box", 2), ("upper", 2), ("x&y", 2), ("late", 2)])
+
+    def test_a_heading_that_takes_an_id_of_the_page_shell_is_found(self):
+        self.assertEqual(lint.repeated_ids('<nav id="sidebar"></nav><main><h2 id="sidebar">Sidebar</h2></main>'),
+                         [("sidebar", 2)])
+
+    def test_a_topic_page_gets_a_warning_and_a_listed_page_a_note(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder).resolve()
+            built = root / ".build/docs/html"
+            built.mkdir(parents=True)
+            for name in ("topic.html", "listed.md.html", "clean.html"):
+                (built / name).write_text('<p id="one"></p>' + ('<p id="one"></p>' if name != "clean.html" else ""))
+            sources = ({"topic.html": "docs/topics/topic/index.md", "listed.md.html": "docs/listed.md"}, set(), {"docs/listed.md"})
+            with mock.patch.object(lint, "REPO", root), mock.patch.object(lint, "DOCS", root / "docs"), \
+                    mock.patch.object(lint, "built_page_sources", return_value=sources), \
+                    mock.patch.object(lint, "warnings", []), mock.patch.object(lint, "notices", []), mock.patch.object(lint, "errors", []):
+                lint.check_html()
+                message = "{}: 1 id(s) appear more than once, so a link reaches only the first element: one (2x)"
+                self.assertEqual(lint.warnings, [message.format(".build/docs/html/topic.html")])
+                self.assertEqual(lint.notices, [message.format(".build/docs/html/listed.md.html")])
+                self.assertEqual(lint.errors, [])
 
     def test_the_kit_writes_no_repeated_id_for_repeated_headings(self):
         import build
         import mistune
         rendered = mistune.create_markdown(renderer=build.DocsRenderer(), plugins=["table", "math"])(RepeatedHeadings.TEXT)
         self.assertEqual(lint.repeated_ids(rendered), [])
+
+
+if __name__ == "__main__":
+    unittest.main()
