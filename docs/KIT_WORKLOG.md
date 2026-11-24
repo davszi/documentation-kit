@@ -2,6 +2,34 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-24 — Review of 5.5.1: not fit to tag, then fixed
+
+- One independent review of `e32aaba`, read-only, by a reviewer agent that
+  built a scratch clone and ran no browser. Its verdict: not fit to tag. It
+  judged the change a patch under the version promise, as long as tables
+  are left alone. The full check script had passed on the same commit.
+- Fixed, medium: the rule also reached code in table cells. There
+  `overflow-wrap: anywhere` lowers a column's narrowest width, so on a
+  window wider than 900 px a wide table would squeeze its code columns and
+  break paths inside a word instead of scrolling in its box. The reviewer
+  reasoned this from the CSS and did not see it in a browser. The rule now
+  leaves out code in `td` and `th`.
+- Fixed, low: the rule matched code deeper inside a hand-written `pre`,
+  such as `<pre><b><code>`, and would have removed its line breaks. It now
+  leaves out every `pre code`. The test covers both cases and fails with
+  the first form of the rule: "code deeper inside a hand-written pre keeps
+  its lines".
+- Fixed, low, in the release note: a topic page with
+  `body_class = "reference-page"` gets the wrapping too; the reader's
+  chapters already wrapped inline code; a project that follows the 5.5.0
+  guide uses the tag `v5.5.1`.
+- Checked on the reviewer's doubt about one number: the failing run on the
+  old theme printed "notes.long.md.html at 1100 px: the command reaches
+  1242 px, the page is 1242 px wide". The note's page width is that value.
+- Recorded, not fixed: a topic page without the reader keeps inline code on
+  one line. The open list has the point.
+- These fixes were not reviewed again.
+
 ## 2026-11-24 — 5.5.1 built on a branch: inline code wraps on Reference pages
 
 - deivid passed on a defect from adaptation: inline code is kept on one

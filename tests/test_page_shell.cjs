@@ -40,6 +40,8 @@ function buildFixture() {
     '# Long note', '', `Prose with a bare address ${ADDRESS} in a sentence.`, '',
     `A linked address: [${ADDRESS}](${ADDRESS}).`, '', '```python', 'print("a code block")', '```', '',
     `Test the pipeline with \`${COMMAND}\` from the project root.`, '', `- In a list: \`${COMMAND}\``, '',
+    '| File | Role |', '|---|---|', '| `tooling/source_pages.py` | renders a repository file |', '',
+    '<pre><b><code>two  spaces\nand a second line</code></b></pre>', '',
   ].join('\n'));
   fs.writeFileSync(path.join(root, 'notes/math.md'), [
     '# Math note', '',
@@ -176,17 +178,24 @@ const drawer = page => page.evaluate(() => {
         const code = await page.evaluate(command => {
           const inline = [...document.querySelectorAll('.content :not(pre) > code')].filter(node => node.textContent === command);
           const block = document.querySelector('.content pre code');
+          const style = selector => { const node = document.querySelector(selector); return node && getComputedStyle(node); };
           return {found: inline.length, right: Math.max(...inline.map(node => node.getBoundingClientRect().right)),
-            page: document.documentElement.scrollWidth, block: block && getComputedStyle(block).whiteSpace};
+            page: document.documentElement.scrollWidth, block: block && getComputedStyle(block).whiteSpace,
+            nested: style('.content pre b code')?.whiteSpace, cell: style('.content td code')?.overflowWrap,
+            wraps: getComputedStyle(inline[0]).overflowWrap};
         }, COMMAND);
         assert.ok(code.found >= 1, `${name} holds the long command`);
         assert.ok(code.right <= width && code.page <= width, `${name} at ${width} px: the command reaches ${code.right} px, the page is ${code.page} px wide`);
         if (code.block) assert.equal(code.block, 'pre', 'a code block keeps its lines');
+        assert.equal(code.wraps, 'anywhere', 'inline code may break inside a long word');
+        if (name === 'notes.long.md.html') {
+          assert.equal(code.nested, 'pre', 'code deeper inside a hand-written pre keeps its lines');
+          assert.equal(code.cell, 'break-word', 'code in a table cell leaves the narrowest width of its column alone');
+        }
         await assertHorizontalContainment(page);
       }
     }
-    checked.push('a long inline command wraps on Reference pages at 1440, 1100 and 901 px');
-    await page.setViewportSize({width: 390, height: 844});
+    checked.push('a long inline command wraps on Reference pages at 1440, 1100 and 901 px; code blocks and table cells are as before');
 
     // Print with motion on: the reader opens every fold; none may still fade.
     await page.setViewportSize({width: 1280, height: 900});

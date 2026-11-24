@@ -31,24 +31,32 @@ shows the new warnings.
 5.5.1 is a patch release under
 [what a version number promises](#what-a-version-number-promises): it
 corrects one defect and needs no migration step; a project moves its pin to
-`v5.5.1`. adaptation reported the defect on 24 November 2026; it is as old as
-the Reference pages.
+`v5.5.1`, and a project that follows the
+[5.5.0 migration guide](migrations/5.5.0.md) uses this tag in its place.
+adaptation reported the defect on 24 November 2026; it is as old as the
+Reference pages.
 
 - **Inline code wraps on Reference pages.** The theme keeps inline code on
-  one line, except at phone width and in table cells. A command longer than
-  the text column then widened the whole page: in the kit's fixture a
-  109-character command made a listed page 1242 px wide in a 1100 px window.
-  On Reference pages, listed and registered, inline code now wraps as it
-  does at phone width. A code block keeps its lines and scrolls in its own
-  box. `tests/test_page_shell.cjs` checks both at 1440, 1100 and 901 px.
+  one line, except at phone width, in table cells and in the chapters of the
+  reader. A command longer than the text column then widened the whole
+  page: in the kit's fixture a 109-character command made a listed page
+  1242 px wide in a 1100 px window. On Reference pages, listed and
+  registered, inline code now wraps as it does at phone width. A code block
+  keeps its lines and scrolls in its own box, and code in a table cell
+  breaks as before, so a wide table still scrolls in its box.
+  `tests/test_page_shell.cjs` checks this at 1440, 1100 and 901 px.
 
 What changes to the eye: on a Reference page a short piece of inline code at
 the end of a line can break at a space or a hyphen, as it already does on a
-phone. Topic pages are unchanged; a reader page did not widen in the same
-measurement.
+phone. Topic pages are unchanged, except one that sets
+`body_class = "reference-page"`: it gets the same wrapping, in the labels of
+its build-sheet blocks too.
 
 Not covered: Chromium only. The width adaptation measured on its own page,
-1507 px in a 1440 px window, was not measured again.
+1507 px in a 1440 px window, was not measured again. A topic page without
+the reader still keeps inline code on one line; whether a long command
+widens it was not measured, and the
+[open list](../../open/known-open-after-5.0.0.md) has the point.
 
 ## 5.5.0 — text of 11 px or more, lint for records outside `docs/`, a warning for a repeated id
 

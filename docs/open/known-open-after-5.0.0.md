@@ -16,6 +16,12 @@ does, and this record with its route when the last one goes.
   he used, and the Firefox version, are not recorded. The Presentation view
   and the Reference tree outside the lock suite were run in Chromium only.
   Closes with one pass in real Safari on a locked site that is live.
+- **A long command on a topic page without the reader.** From 5.5.1 inline
+  code wraps on Reference pages; the reader's chapters wrapped it before. A
+  topic page with `reader = false`, or on a site without the chapter
+  reader, still keeps inline code on one line above phone width. Whether a
+  long command widens such a page was not measured. Closes with one
+  measurement and, if it widens, the same rule for those pages.
 - **A browser suite that timed out once.** On the push of 5.5.0 the page
   lock's browser suite timed out once in the Pages workflow, waiting for a
   reader chapter after an unlock, and passed on the rerun and in six local
