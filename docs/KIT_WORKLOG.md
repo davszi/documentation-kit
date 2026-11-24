@@ -2,6 +2,19 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-24 — The page lock opens on a real host, in Firefox on Windows
+
+- deivid reported on 2026-11-23 about adaptation's live, locked site on
+  GitHub Pages: "the unlocking works". Asked which browser and device, he
+  answered on 2026-11-24: "windows pc firefox".
+- This is the first report of the lock on a real host; the kit's checks
+  open locked pages from a local server only. The open item
+  [Safari and the real host](open/known-open-after-5.0.0.md) now says so
+  and stays open for real Safari.
+- Not known: which of the two passwords he used, whether a Reference page
+  was opened, and the Firefox version. Nobody but deivid saw the unlock; the
+  kit records his report, not a check.
+
 ## 2026-11-24 — Seven corrections from adaptation's review, for 5.4.1
 
 - deivid pasted a request from the adaptation project: propose fixes for

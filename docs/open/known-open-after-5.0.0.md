@@ -10,10 +10,12 @@ does, and this record with its route when the last one goes.
 - **Safari and the real host.** The kit's checks run in Chromium only. The
   page lock's browser suite was also run by hand in Firefox 153 and WebKit
   26.5 on Linux and passes there. Safari on macOS or iOS, real phones and
-  screen readers are not tested. The lock has not run on a GitHub Pages
-  host. The Presentation view and the Reference tree outside the lock suite
-  were run in Chromium only. Closes with one pass in real Safari on the
-  first locked site that is live.
+  screen readers are not tested. The lock runs on a GitHub Pages host:
+  deivid unlocked adaptation's live site in Firefox on a Windows PC and
+  reported on 2026-11-23 "the unlocking works". Which of the two passwords
+  he used, and the Firefox version, are not recorded. The Presentation view
+  and the Reference tree outside the lock suite were run in Chromium only.
+  Closes with one pass in real Safari on a locked site that is live.
 - **ADP with the automatic listing.** ADP's tracked files hold about 6.6 GB
   (6,591,531,630 bytes in the local checkout on 2026-11-15), and its site
   has not been built with the automatic listing on. Only its 331 tracked
