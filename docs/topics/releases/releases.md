@@ -26,6 +26,30 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## 5.5.1 — a long command as inline code no longer widens a Reference page
+
+5.5.1 is a patch release under
+[what a version number promises](#what-a-version-number-promises): it
+corrects one defect and needs no migration step; a project moves its pin to
+`v5.5.1`. adaptation reported the defect on 24 November 2026; it is as old as
+the Reference pages.
+
+- **Inline code wraps on Reference pages.** The theme keeps inline code on
+  one line, except at phone width and in table cells. A command longer than
+  the text column then widened the whole page: in the kit's fixture a
+  109-character command made a listed page 1242 px wide in a 1100 px window.
+  On Reference pages, listed and registered, inline code now wraps as it
+  does at phone width. A code block keeps its lines and scrolls in its own
+  box. `tests/test_page_shell.cjs` checks both at 1440, 1100 and 901 px.
+
+What changes to the eye: on a Reference page a short piece of inline code at
+the end of a line can break at a space or a hyphen, as it already does on a
+phone. Topic pages are unchanged; a reader page did not widen in the same
+measurement.
+
+Not covered: Chromium only. The width adaptation measured on its own page,
+1507 px in a 1440 px window, was not measured again.
+
 ## 5.5.0 — text of 11 px or more, lint for records outside `docs/`, a warning for a repeated id
 
 5.5.0 is a minor release under

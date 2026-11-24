@@ -2,6 +2,30 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-24 — 5.5.1 built on a branch: inline code wraps on Reference pages
+
+- deivid passed on a defect from adaptation: inline code is kept on one
+  line above phone width, so a 100-character command made a Reference page
+  of adaptation 1507 px wide in a 1440 px window. Asked to build 5.5.1 on a
+  branch with inline code wrapping on Reference pages: "Yes, build 5.5.1".
+  Tag and push are not part of that answer.
+- Confirmed before the fix on a scratch project in headless Chromium: with
+  a 108-character command a listed and a registered Reference page were
+  1318 px wide in a 1100 px and a 901 px window, and fine at 390 px. A
+  reader topic page did not widen. adaptation's own 1507 px was not measured.
+- Fixed with one rule for inline code on Reference pages; a code block is
+  left alone. The new check in `tests/test_page_shell.cjs` failed on the old
+  theme, "the command reaches 1242 px", and passes now.
+- After the release of 5.5.0, recorded here: the Pages workflow for
+  `8fe485f` failed on its first attempt, in the check job, with a 30-second
+  timeout at `tests/test_page_lock_browser.cjs:258`, where the page waits
+  for a reader chapter after an unlock. The rerun of the failed job passed
+  and published the site. The same suite passed in six local runs on that
+  commit. The cause is not known; it was the first failed run of the last
+  twelve.
+- adaptation pins `v5.5.0` since its commit `d5228b5`, read in its
+  checkout. What its upgrade met is in its own records.
+
 ## 2026-11-24 — Release 5.5.0
 
 - deivid gave the go: "Yes, release 5.5.0". The ask named what the go

@@ -344,6 +344,9 @@ body.reference-page .content:not(:has([data-reader-adapted]))>*{max-width:1040px
 /* A long address or path wraps instead of widening the page. break-word leaves the narrowest width
    of a table column alone, so a wide table still scrolls in its own box. */
 body.reference-page .content{overflow-wrap:break-word}
+/* Inline code is kept on one line elsewhere; here a long command would widen the page, so it wraps
+   as it does at phone width. A code block keeps its lines and scrolls in its own box. */
+body.reference-page .content :not(pre)>code{white-space:normal;overflow-wrap:anywhere}
 body.reference-page .content>.topbar{max-width:none}
 body.reference-page .content h1{font:700 clamp(30px,3.4vw,44px)/1.04 var(--display,var(--sans));text-transform:uppercase;letter-spacing:.005em;margin:4px 0 14px;text-wrap:balance}
 body.reference-page .content h2{font:700 clamp(22px,2.2vw,28px)/1.1 var(--display,var(--sans));text-transform:uppercase;letter-spacing:.01em;margin:46px 0 10px}

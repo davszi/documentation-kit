@@ -16,6 +16,11 @@ does, and this record with its route when the last one goes.
   he used, and the Firefox version, are not recorded. The Presentation view
   and the Reference tree outside the lock suite were run in Chromium only.
   Closes with one pass in real Safari on a locked site that is live.
+- **A browser suite that timed out once.** On the push of 5.5.0 the page
+  lock's browser suite timed out once in the Pages workflow, waiting for a
+  reader chapter after an unlock, and passed on the rerun and in six local
+  runs. The cause is not known. Closes when it is found, or reopens the
+  question when it happens again.
 - **Lint and the build find headings differently.** The build reads
   Markdown; lint's anchor list and the record notes match lines that start
   with `#`. They disagree on a setext heading, a heading indented or inside

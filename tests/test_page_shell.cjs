@@ -22,6 +22,7 @@ const kit = path.resolve(__dirname, '..');
 const python = process.env.DOCS_PYTHON || 'python3';
 const captures = process.env.PAGE_SHELL_CAPTURES || '';
 const ADDRESS = 'https://example.org/' + 'a-long-address-without-a-break/'.repeat(6) + '0123456789abcdef'.repeat(4);
+const COMMAND = 'python -m project.experiments.study --smoke --config configs/base.yaml --seeds 0 1 2 3 --out runs/smoke-check';
 
 function run(command, args, cwd) {
   const env = {...process.env};
@@ -38,12 +39,14 @@ function buildFixture() {
   fs.writeFileSync(path.join(root, 'notes/long.md'), [
     '# Long note', '', `Prose with a bare address ${ADDRESS} in a sentence.`, '',
     `A linked address: [${ADDRESS}](${ADDRESS}).`, '', '```python', 'print("a code block")', '```', '',
+    `Test the pipeline with \`${COMMAND}\` from the project root.`, '', `- In a list: \`${COMMAND}\``, '',
   ].join('\n'));
   fs.writeFileSync(path.join(root, 'notes/math.md'), [
     '# Math note', '',
     '| Quantity | Meaning | Where the method uses it | Unit | Symbol |', '|---|---|---|---|---|',
     '| Lateral acceleration of the body | measured at the centre of gravity | steady-state comparison | m/s² | $a_y$ |',
     '| Yaw rate of the body | measured by the inertial unit | transient response comparison | rad/s | $\\dot\\psi$ |', '',
+    `Test the pipeline with \`${COMMAND}\` from the project root.`, '',
   ].join('\n'));
   const config = path.join(root, 'docs/site/site.toml');
   fs.writeFileSync(config, fs.readFileSync(config, 'utf8').replace(
@@ -164,6 +167,26 @@ const drawer = page => page.evaluate(() => {
     assert.ok(table.scrolls && table.formulaLeft > table.width, 'the fixture formula lies right of the window: ' + JSON.stringify(table));
     await assertHorizontalContainment(page);
     checked.push('formula in a scrolling table does not widen the page');
+
+    // A long command as inline code wraps on a listed and on a registered Reference page; a code block keeps its lines.
+    for (const name of ['notes.long.md.html', 'math-note.html']) {
+      for (const width of [1440, 1100, 901]) {
+        await page.setViewportSize({width, height: 900});
+        await page.goto(url(name));
+        const code = await page.evaluate(command => {
+          const inline = [...document.querySelectorAll('.content :not(pre) > code')].filter(node => node.textContent === command);
+          const block = document.querySelector('.content pre code');
+          return {found: inline.length, right: Math.max(...inline.map(node => node.getBoundingClientRect().right)),
+            page: document.documentElement.scrollWidth, block: block && getComputedStyle(block).whiteSpace};
+        }, COMMAND);
+        assert.ok(code.found >= 1, `${name} holds the long command`);
+        assert.ok(code.right <= width && code.page <= width, `${name} at ${width} px: the command reaches ${code.right} px, the page is ${code.page} px wide`);
+        if (code.block) assert.equal(code.block, 'pre', 'a code block keeps its lines');
+        await assertHorizontalContainment(page);
+      }
+    }
+    checked.push('a long inline command wraps on Reference pages at 1440, 1100 and 901 px');
+    await page.setViewportSize({width: 390, height: 844});
 
     // Print with motion on: the reader opens every fold; none may still fade.
     await page.setViewportSize({width: 1280, height: 900});
