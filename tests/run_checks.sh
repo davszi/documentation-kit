@@ -58,9 +58,10 @@ if "$DOCS_NODE" -e "require('./node_modules/playwright')" 2>/dev/null; then
   # Only the suite gets the unreachable bus address, which keeps Chromium away
   # from the desktop session; systemd-run itself still needs the real one.
   # test_reference_tree builds its own fixture above the inline Reference limit;
-  # test_listed_html serves raw HTML payloads with a local stand-in for outside hosts.
+  # test_listed_html serves raw HTML payloads with a local stand-in for outside hosts;
+  # test_page_shell builds its own fixture and, unlike the others, leaves motion on.
   for suite in visual_review test_browser_checks test_panel_switcher own_site_review test_reference_tree \
-      test_listed_html; do
+      test_listed_html test_page_shell; do
     ${cap[@]+"${cap[@]}"} env DBUS_SESSION_BUS_ADDRESS="unix:path=/nonexistent-docs-kit-review" DOCS_PYTHON="$DOCS_PYTHON" \
       timeout 280 "$DOCS_NODE" "tests/$suite.cjs"
   done
@@ -73,6 +74,6 @@ elif [ "${DOCS_REQUIRE_BROWSER:-0}" = 1 ]; then
   exit 1
 else
   echo "SKIPPED: browser suites (starter reader, layout helpers, panel switcher, own site, Reference tree,"
-  echo "         listed raw HTML)."
+  echo "         listed raw HTML, page shell)."
   echo "         Run npm ci and npx playwright install chromium to run them."
 fi

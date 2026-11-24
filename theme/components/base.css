@@ -224,6 +224,10 @@ ul{padding-left:24px} li{margin:4px 0}
    vendored font shorthand, which is loaded after this stylesheet. */
 .content .katex{font-size:var(--math-inline-size)}
 .content .katex-display > .katex{font-size:var(--math-display-size)}
+/* KaTeX hides its MathML copy with position:absolute. Positioned from the formula, it scrolls and
+   clips with the box that holds the formula; positioned from the page, a formula far right in a
+   scrolling table widens the page. */
+.katex{position:relative}
 
 /* ---- content figures: never overflow the column ---- */
 .content img{display:block;max-width:100%;height:auto;margin:16px 0;
@@ -277,6 +281,7 @@ ul{padding-left:24px} li{margin:4px 0}
 .cb-chips .cb{font:600 10.5px var(--mono);letter-spacing:.06em;padding:4px 10px;border-radius:7px;
   border:1px solid var(--border);background:rgba(13,17,23,.88);backdrop-filter:blur(4px);
   color:var(--muted);cursor:pointer;text-decoration:none;line-height:1;
+  display:inline-flex;align-items:center;box-sizing:border-box;min-height:24px; /* WCAG 2.5.8 target size */
   transition:color .12s ease,border-color .12s ease}
 .cb-chips .cb:hover{color:var(--bright);border-color:var(--muted)}
 .cb-chips .cb-lang{color:var(--accent);border-color:rgba(57,210,192,.35);cursor:default}
@@ -324,7 +329,7 @@ body:not(.reader-enabled) .toc a.xpage.current{color:#fff;font-weight:700;backgr
 .source-origin{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:0 0 22px;padding:9px 14px;
   border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;background:var(--bg2);font-size:13px;color:var(--muted)}
 .source-origin-label{font:600 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
-.source-origin a{color:var(--text);text-decoration:none}
+.source-origin a{display:inline-flex;align-items:center;min-height:24px;color:var(--text);text-decoration:none} /* WCAG 2.5.8 target size */
 .source-origin a:hover,.source-origin a:focus-visible{color:var(--bright);text-decoration:underline}
 .source-origin code{white-space:normal;overflow-wrap:anywhere}
 .source-origin-edit::before{content:"✎ ";color:var(--accent)}
@@ -335,6 +340,9 @@ body:not(.reader-enabled) .toc a.xpage.current{color:#fff;font-weight:700;backgr
    keep a readable measure and the build-sheet heading voice. */
 /* Cap line length on scrolling pages only; the chapter reader sizes its own stage. */
 body.reference-page .content:not(:has([data-reader-adapted]))>*{max-width:1040px}
+/* A long address or path wraps instead of widening the page. break-word leaves the narrowest width
+   of a table column alone, so a wide table still scrolls in its own box. */
+body.reference-page .content{overflow-wrap:break-word}
 body.reference-page .content>.topbar{max-width:none}
 body.reference-page .content h1{font:700 clamp(30px,3.4vw,44px)/1.04 var(--display,var(--sans));text-transform:uppercase;letter-spacing:.005em;margin:4px 0 14px;text-wrap:balance}
 body.reference-page .content h2{font:700 clamp(22px,2.2vw,28px)/1.1 var(--display,var(--sans));text-transform:uppercase;letter-spacing:.01em;margin:46px 0 10px}

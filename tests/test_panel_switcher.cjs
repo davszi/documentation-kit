@@ -106,6 +106,23 @@ ${['first','second'].map(value => `<div id="${id}-${value}" ${panelAttribute}="$
     assert.equal(await page.locator(`.${controlClass}:visible`).count(), 0);
     await page.screenshot({path:path.join(output,'390-no-javascript.png'),fullPage:true});
     await fallback.close();
+    if (!legacy) {
+      // Motion left on, unlike the contexts above: a panel that printing reveals must not print mid-fade.
+      const moving = await browser.newContext({viewport:{width:1600,height:1000}});
+      const sheet = await moving.newPage();
+      sheet.setDefaultTimeout(10000);
+      await sheet.setContent(fixture);
+      await sheet.addStyleTag({content:css});
+      await sheet.addScriptTag({path:source});
+      await sheet.waitForSelector(`[${readyAttribute}]`);
+      await sheet.emulateMedia({media:'print'});
+      const fading = await sheet.evaluate(() => {
+        window.dispatchEvent(new Event('beforeprint'));
+        return document.getAnimations().filter(animation => animation.playState === 'running').length;
+      });
+      assert.equal(fading, 0, 'Print shows no panel mid-fade');
+      await moving.close();
+    }
     await fs.writeFile(path.join(output,'results.json'), JSON.stringify({legacy,source,results,noJavaScriptReadable:true},null,2)+'\n');
     console.log(JSON.stringify({legacy,viewports:results.length,noJavaScriptReadable:true,result:'pass'}));
   } finally {await browser.close();}

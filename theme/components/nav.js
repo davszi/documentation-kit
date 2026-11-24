@@ -1,11 +1,47 @@
-// Mobile nav drawer: hamburger toggles the sidebar, backdrop/TOC-click closes it.
+// Mobile nav drawer on pages without the reader, which drives its own drawer:
+// the menu button opens the sidebar and moves focus into it; the button, the
+// backdrop, Escape or a link closes it. Below 900 px a closed sidebar is inert,
+// so its off-screen links take no keyboard focus, and an open one makes the
+// page behind it inert. The state follows the body's nav-open class, whichever
+// script sets it. Without JavaScript nothing is inert and the links stay
+// reachable.
 (function(){
   var menu = document.getElementById('menu');
   var backdrop = document.getElementById('backdrop');
-  function closeNav(){ document.body.classList.remove('nav-open'); }
-  if (menu) menu.addEventListener('click', function(){ document.body.classList.toggle('nav-open'); });
-  if (backdrop) backdrop.addEventListener('click', closeNav);
-  document.querySelectorAll('.toc a').forEach(function(a){ a.addEventListener('click', closeNav); });
+  var sidebar = document.getElementById('sidebar');
+  var content = document.querySelector('main.content');
+  var narrow = window.matchMedia('(max-width:900px)');
+  function isOpen(){ return document.body.classList.contains('nav-open'); }
+  function sync(){
+    if (document.body.classList.contains('reader-enabled')) return;
+    var open = isOpen();
+    if (menu) menu.setAttribute('aria-expanded', String(open));
+    if (sidebar) sidebar.inert = narrow.matches && !open;
+    if (content) content.inert = narrow.matches && open;
+  }
+  function closeNav(refocus){
+    var was = isOpen();
+    document.body.classList.remove('nav-open');
+    sync();
+    if (was && refocus && menu) menu.focus({preventScroll:true});
+  }
+  function openNav(){
+    document.body.classList.add('nav-open');
+    sync();
+    var first = sidebar && sidebar.querySelector('a[href], button, summary');
+    if (first) first.focus({preventScroll:true});
+  }
+  if (menu) menu.addEventListener('click', function(){ if (isOpen()) closeNav(true); else openNav(); });
+  if (backdrop) backdrop.addEventListener('click', function(){ closeNav(true); });
+  document.addEventListener('keydown', function(event){
+    if (event.key !== 'Escape' || !isOpen() || document.body.classList.contains('reader-enabled')) return;
+    event.preventDefault();
+    closeNav(true);
+  });
+  document.querySelectorAll('.toc a').forEach(function(a){ a.addEventListener('click', function(){ closeNav(false); }); });
+  narrow.addEventListener('change', sync);
+  new MutationObserver(sync).observe(document.body, {attributes: true, attributeFilter: ['class']});
+  sync();
 })();
 
 // nested_nav and folded_groups: groups the reader opens stay open across pages
