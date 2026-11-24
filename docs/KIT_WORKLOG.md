@@ -2,6 +2,21 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-24 — 5.5.0 waits on its branch for deivid's go
+
+- State: branch `release-5.5.0`, five commits on `v5.4.1` with this one, not pushed, no
+  tag. `main` is still 5.4.1.
+- The full check script passed on `710bb80`: 444 Python tests, 2 skipped,
+  and every browser suite, in Chromium. The text-size suite read 60 pages
+  of the kit's site, the new migration guide among them.
+- Reviewed by eye at 1600 and 390 px, after the review fixes: the home
+  page, a Reference page with its folder tree and code blocks, a reader
+  page with its chapter numbers and an open fold, the flow labels and both
+  drawers. No label wraps, sticks out of its box or collides. The
+  Presentation title card was measured, not looked at.
+- This commit corrects the page count in the release note from 59 to 60
+  and adds this entry. Checks on it: `build` and `lint --strict`.
+
 ## 2026-11-24 — Review of 5.5.0: not fit to tag, then fixed
 
 - One independent review of `bdf9857`, read-only, by a reviewer agent that

@@ -51,7 +51,7 @@ adaptation's review of 23 November 2026 that 5.4.1 left open. The
   the face as before. Measured before the change in headless Chromium, 27
   kinds of text rendered below 11 px on the 61 built pages of the kit's site
   and its starter; text on slide faces was among them and is outside the
-  limit. After it, none does on the 59 pages of the kit's site, at 1440 and
+  limit. After it, none does on the 60 pages of the kit's site, at 1440 and
   390 px. The eyebrow of the Presentation view's title card was sized in
   container units alone, 4.7 px in a 390 px window; it stops at 11 px now.
 - **A browser check lists small text.** `smallText` and `assertTextSize` in
