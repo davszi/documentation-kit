@@ -2,6 +2,20 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-25 — Release 5.6.1
+
+- deivid gave the go: "Yes, release 5.6.1". The ask named what the go
+  covers: moving `main` to `7c88751`, the tag `v5.6.1` and the push, which
+  publishes the kit's own site with the retaken pictures. It gave the size
+  against 5.6.0 at `7c88751`: 13 files, 91 lines added, 11 removed, and
+  the result of the full check script there: exit 0, 452 tests.
+- The message with the ask named what is not checked: the two review
+  fixes not reviewed again, Chromium only, and the carousel not looked at
+  after the change of its alternative texts.
+- 5.6.1 holds the changes of the two entries below.
+- This commit adds only this entry. The full check script runs on it before
+  the tag; the Pages workflow runs it again on the push.
+
 ## 2026-11-25 — Review of 5.6.1: fit to tag, three low points
 
 - One independent review read the commit on `v5.6.0`, read-only, opened
