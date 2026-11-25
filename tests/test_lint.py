@@ -326,6 +326,49 @@ class ShellIds(unittest.TestCase):
             self.assertRegex((root / ".build/docs/html/shellids.html").read_text(), r'<section\b[^>]*\bid="chapter-reader-1"')
             self.assertIn('<h2 id="chapter-reader">', (root / ".build/docs/html/plainids.html").read_text())
 
+    def test_the_readers_id_is_taken_only_where_the_page_places_the_bar(self):
+        import build
+        bar = "<!-- include: components/chapter-reader.html -->"
+        self.assertTrue(build.places_reader_bar("## Chapter reader\n\n" + bar + "\n"))
+        self.assertTrue(build.places_reader_bar('<nav id="chapter-reader"></nav>\n'))
+        self.assertFalse(build.places_reader_bar("## Chapter reader\n\nA [link](#chapter-reader).\n"))
+        self.assertFalse(build.places_reader_bar("<!-- include: fragments/chapter-reader.html -->\n"))
+
+    def test_a_page_that_lists_the_reader_without_its_bar_keeps_the_heading(self):
+        import os
+        import subprocess
+        import sys
+        kit = Path(__file__).resolve().parents[1]
+        bar = "\n<!-- include: components/chapter-reader.html -->\n"
+        text = "## Chapter reader\n\nA [link](#chapter-reader) to the heading.\n"
+        with tempfile.TemporaryDirectory(prefix="docs-kit-reader-id-") as folder:
+            root = Path(folder).resolve()
+            subprocess.run(["git", "init", "-q", str(root)], check=True)
+            env = {key: value for key, value in os.environ.items() if key not in {"DOCSITE_PROJECT_ROOT", "GITHUB_SHA"}}
+            subprocess.run([sys.executable, str(kit / "docsite.py"), "init", str(root)], check=True, capture_output=True, env=env)
+            config = root / "docs/site/site.toml"
+            added = ""
+            for slug, body in (("listsreader", text), ("placesbar", text + bar)):
+                page = root / f"docs/topics/{slug}/index.md"
+                page.parent.mkdir(parents=True)
+                page.write_text(f'+++\ntoc = []\ntitle = "Reader id"\npage_only = "a fixture"\nreader = false\n'
+                                f'components = ["chapter-reader", "nav"]\n+++\n\n# Reader id\n\n' + body)
+                added += f'\n[[nav]]\nlabel = "{slug}"\nfile = "{slug}.html"\ngroup = "guide"\n'
+            config.write_text("reference_listing = false\n" + config.read_text() + added)
+            subprocess.run(["git", "-C", str(root), "add", "-A"], check=True)
+            for command in ("build", "lint"):
+                done = subprocess.run([sys.executable, str(kit / "docsite.py"), command, "--project", str(root)],
+                                      capture_output=True, text=True, env=env)
+                self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
+            # Without the bar the heading keeps the id and the link reaches it, as on 5.5.1.
+            listed = (root / ".build/docs/html/listsreader.html").read_text()
+            self.assertIn('<h2 id="chapter-reader">', listed)
+            self.assertEqual(lint.repeated_ids(listed), [])
+            # With the bar the heading gives way to it.
+            placed = (root / ".build/docs/html/placesbar.html").read_text()
+            self.assertIn('<h2 id="chapter-reader-1">', placed)
+            self.assertEqual(lint.repeated_ids(placed), [])
+
     def test_without_a_reference_tree_a_heading_keeps_the_tree_labels_id(self):
         import os
         import subprocess

@@ -2,6 +2,34 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-25 — Second review of 5.5.2: not fit to tag, then fixed
+
+- The second review read `8d2e73d`, read-only, ran Python on scratch
+  projects and ran no browser. Its verdict: not fit to tag. The release
+  stopped before the tag, as the entry below says; nothing was pushed. The
+  full check script had passed on `8454ec4`.
+- Fixed, medium: the reader's id was taken on a page that lists the
+  `chapter-reader` component without placing the bar. A heading "Chapter
+  reader" became `chapter-reader-1` and a link to it failed lint, which
+  passed on 5.5.1. Reproduced with the reviewer's script on `8454ec4`:
+  build 0, lint 1, "dead internal anchor #chapter-reader". The id is now
+  taken where the build places the bar or the page's own source does;
+  after the fix build and lint return 0 and the heading keeps its id.
+- Not changed, named in the release note: a bar that arrives through a
+  project's own fragment; a general-password reader of a locked site, whose
+  page has no Reference section; the record notes, which count the reader's
+  bar only.
+- Not changed, named in the open list: the lock suite tells the fix from
+  the defect only when the page is decrypted before the lock page has
+  loaded. The reviewer reasoned this from the code. The suite did fail on
+  5.5.1 and on the first form in the runs made.
+- Corrected in the release note: "32 of 32" counted 22 runs of the first
+  form under an assertion that could not see its defect; the note now gives
+  the 10 runs of the released form. The three seconds count from the
+  decryption, not from the start of the load.
+- This fix was not reviewed a third time. It was checked with the
+  reviewer's script before and after, and with two new tests.
+
 ## 2026-11-25 — Release 5.5.2
 
 - deivid gave the go: "release first". It answered the question whether to

@@ -42,11 +42,11 @@ three were open points of the kit's own list after 5.5.1.
   scripts: no chapter reader, no menu, no folder tree, no code chips. The
   page lock's browser suite failed once in the Pages workflow for 5.5.0, at
   the line where this shows. Slowed to 40 % of a processor, 4 of 10 local
-  runs of that suite failed this way; with a wait, 32 of 32 passed at the
-  same limit, 10 of them on the released form of the fix. The lock now waits
-  for the lock page's load event and replaces the page in the task after
-  it. A reader who types the password is usually past that point already;
-  the wait covers a fast submit too.
+  runs of that suite failed this way; on the released form of the fix, 10
+  of 10 passed at the same limit. The lock now waits for the lock page's
+  load event and replaces the page in the task after it. A reader who types
+  the password is usually past that point already; the wait covers a fast
+  submit too.
 - **Inline code wraps in the content of every page.** 5.5.1 let it wrap on
   Reference pages. A topic page without the chapter reader had the same
   defect: a 108-character command made it 1235 px wide in a 1100 px window.
@@ -54,10 +54,10 @@ three were open points of the kit's own list after 5.5.1.
   the chapters of the reader and at phone width. Code blocks, code in table
   cells and slide faces are as before, and so is a component that sets
   `white-space` for its own code, such as a build-sheet label.
-- **A heading never takes an id of the shell around its page.** Every page
-  has the shell's ids `top`, `menu`, `sidebar`, `toc` and `backdrop`; a site
-  with a Reference section adds `repo-tree-label`, a page with the chapter
-  reader `chapter-reader`, and a page with labelled plot toggles
+- **A heading no longer takes an id of the shell around its page.** Every
+  page has the shell's ids `top`, `menu`, `sidebar`, `toc` and `backdrop`; a
+  site with a Reference section adds `repo-tree-label`, a page that holds
+  the reader's bar `chapter-reader`, and a page with labelled plot toggles
   `plot-toggle-labels`. A heading "Menu" got the id `menu` as well, so a
   link to it reached the shell's button, the reader could not open it as a
   chapter, and from 5.5.0 strict lint warned. The build now numbers such a
@@ -77,6 +77,16 @@ What a project can meet.
 - An id written by hand in raw HTML is not renamed; lint still warns when
   it repeats an id of the shell. Ids that scripts create while a page runs
   and the ids of the lock page are not reserved.
+- The reader's id is taken where the build places the bar or the page's own
+  source does, through the include of the component or the id written out.
+  A page that only lists the `chapter-reader` component keeps a heading
+  "Chapter reader" at `#chapter-reader`. A bar that arrives through a
+  project's own fragment is not seen: the heading then shares its id, as
+  before, and strict lint warns.
+- On a locked site, a reader with the general password gets a page without
+  its Reference section. A heading "Repo tree label" is at
+  `#repo-tree-label-1` for that reader too, and `#repo-tree-label` then
+  reaches nothing.
 - Inline code that relied on the theme's general rule to stay on one line
   now wraps when its line is full: in a page-header bar of the home page or
   of a build sheet, and inside a project's own element that sets
@@ -85,9 +95,11 @@ What a project can meet.
 Not covered. Chromium only: whether Firefox or Safari ever dropped the
 scripts of a page opened from a saved key is not known; the wait applies to
 every browser. Why Chromium drops the scripts was not found; the fix avoids
-the state in which it happened. When the lock page's load takes longer than
-three seconds, the lock stops waiting and replaces the page in the old
-state. The [open list](../../open/known-open-after-5.0.0.md) keeps these
+the state in which it happened. When the lock page's load takes more than
+three seconds after the page is decrypted, the lock stops waiting and
+replaces the page in the old state. The browser suite tells the fix from
+the defect only in a run where the page is decrypted before the lock page
+has loaded; nothing in the suite forces that order. The [open list](../../open/known-open-after-5.0.0.md) keeps these
 points.
 
 ## 5.5.1 — a long command as inline code no longer widens a Reference page

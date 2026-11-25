@@ -542,6 +542,20 @@ def content_transform():
     return module
 
 
+READER_BAR_ID_RE = re.compile(r"""\bid\s*=\s*["']chapter-reader["']""")
+
+
+def places_reader_bar(body: str) -> bool:
+    """Whether a page's own source places the reader's bar: the include of the component, or its id written out.
+
+    Listing the `chapter-reader` component loads its script and styles; the bar is in the page only when
+    the source puts it there. A bar that arrives through a project's own fragment is not seen here, and a
+    heading "Chapter reader" then shares the bar's id, as it did before headings were numbered past the shell.
+    """
+    return (any(match.group(1) == "components/chapter-reader.html" for match in page_source.INCLUDE_RE.finditer(body))
+            or bool(READER_BAR_ID_RE.search(body)))
+
+
 def build_page(md_path: Path, site: dict, shell: str) -> tuple[str, str] | None:
     name = md_path.relative_to(PAGES).as_posix()
     meta, body = parse_frontmatter(md_path.read_text(), name)
@@ -569,7 +583,7 @@ def build_page(md_path: Path, site: dict, shell: str) -> tuple[str, str] | None:
         body = body.replace(SITE_MAP_MARKER, site_map_html(site))
 
     # Heading ids are unique across the tabs of the page, and none is an id of the shell around them.
-    seen_ids = page_source.taken_ids(reader=automatic_reader or "chapter-reader" in comps,
+    seen_ids = page_source.taken_ids(reader=automatic_reader or places_reader_bar(body),
                                      tree=bool(site.get("_repository_tree")),
                                      plot_labels="plot-toggles" in comps and bool(site.get("plot_toggle_labels")))
 

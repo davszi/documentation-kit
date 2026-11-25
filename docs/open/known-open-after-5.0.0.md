@@ -18,11 +18,14 @@ does, and this record with its route when the last one goes.
   Closes with one pass in real Safari on a locked site that is live.
 - **A locked page replaced while its lock page loads.** In Chromium such
   a page sometimes ran none of its scripts; 5.5.2 waits for the lock page's
-  load event first. Three points stay open: why Chromium drops the scripts;
+  load event first. Four points stay open: why Chromium drops the scripts;
   the fallback, which replaces the page in the old state when that load
-  takes longer than three seconds; and Firefox and Safari, where neither
-  the defect nor the fix was run. Closes with the cause, or with a run of
-  the lock suite in the other two engines under a processor limit.
+  takes more than three seconds after the page is decrypted; Firefox and
+  Safari, where neither the defect nor the fix was run; and the suite,
+  which tells the fix from the defect only in a run where the page is
+  decrypted before the lock page has loaded. Closes with the cause, or with
+  a run of the lock suite in the other two engines under a processor limit
+  and a suite that forces that order.
 - **Lint and the build find headings differently.** The build reads
   Markdown; lint's anchor list and the record notes match lines that start
   with `#`. They disagree on a setext heading, a heading indented or inside
@@ -30,7 +33,10 @@ does, and this record with its route when the last one goes.
   holds a link; the record notes also count a heading inside an HTML
   comment. From 5.4.1 a repeated heading is numbered, so on a page with
   repeated headings one such disagreement shifts the ids after it: lint can
-  then reject a fragment the page has, or accept one it lacks. Closes when
+  then reject a fragment the page has, or accept one it lacks. From 5.5.2
+  the build numbers a heading past the ids of the page's shell; the record
+  notes count the reader's bar only, so on a site with a Reference section
+  they name a chapter "Repo tree label" by `repo-tree-label`. Closes when
   the three read headings through one function.
 - **Text size on a project's pages.** From 5.5.0 the theme keeps all its
   text at 11 px or more and `tests/test_text_size.cjs` checks the kit's own
