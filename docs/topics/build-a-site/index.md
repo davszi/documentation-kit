@@ -286,15 +286,24 @@ A single scroll is still available as **All chapters**, and it is what print and
 
 <p class="bs-lead">Diagrams are HTML or SVG written in the page, images are tracked files, and a chapter that has something to show can open with a slide built around its figure.</p>
 
-<div class="bs-grid g2">
 <figure id="fig-captures">
 <div class="fig-carousel">
-<img src="../topics/build-a-site/media/reader.png" alt="This site's Experiments page in the reader at 1600 by 1000 pixels: menu docked on the left, the keep-experiments-small chapter in the active card, the next chapter at the right edge.">
-<img src="../topics/build-a-site/media/home.png" alt="This site's home page at 1600 by 1000 pixels with its hero, the three paths and the adoption steps.">
+<img src="../topics/build-a-site/media/showcase/environment-face.webp" alt="Slide face from the adaptation project: “Four contributions add up to the next velocity”.">
+<img src="../topics/build-a-site/media/showcase/environment-reader.webp" alt="Its chapter in the reader: “Where the next velocity comes from”.">
+<img src="../topics/build-a-site/media/showcase/families-face.webp" alt="Slide face from the adaptation project: “Each family rewrites one part of the same law”.">
+<img src="../topics/build-a-site/media/showcase/families-reader.webp" alt="Its chapter in the reader: “One law, many variations”.">
+<img src="../topics/build-a-site/media/showcase/supervised-face.webp" alt="Slide face from the adaptation project: “Supervised training rewards the prediction now”.">
+<img src="../topics/build-a-site/media/showcase/supervised-reader.webp" alt="Its chapter in the reader: “Supervised: train for a good prediction now”.">
+<img src="../topics/build-a-site/media/showcase/adaptation-focused-face.webp" alt="Slide face from the adaptation project: “Adaptation-focused training rewards the prediction after practice”.">
+<img src="../topics/build-a-site/media/showcase/adaptation-focused-reader.webp" alt="Its chapter in the reader: “Adaptation-focused training: practise on copies”.">
+<img src="../topics/build-a-site/media/showcase/step-face.webp" alt="Slide face from the adaptation project: “A step too large overshoots the valley, and the error grows”.">
+<img src="../topics/build-a-site/media/showcase/step-reader.webp" alt="Its chapter in the reader: “Step downhill, but not too far”.">
+<img src="../topics/build-a-site/media/showcase/against-reference-face.webp" alt="Slide face from the adaptation project: “A direct polynomial fit beats every neural setting on five of six laws”.">
+<img src="../topics/build-a-site/media/showcase/against-reference-reader.webp" alt="Its chapter in the reader: “Against the minimal reference, a straight-line fit is already enough”.">
 </div>
-<figcaption><b>Figure 3.</b> Two captures of this site (2026-11-08) in a carousel. It advances by itself and pauses on hover; click a capture to open it full screen, scroll to zoom, drag to pan, <kbd>Esc</kbd> to close.</figcaption>
+<figcaption><b>Figure 3.</b> Six chapters of the adaptation project in a carousel: each slide face, then its chapter in the reader. They are examples of what a project can build with the kit, not templates. They were captured from that project at its commit <code>d22ef36</code> on 2026-11-25 and are not maintained; the text and numbers are the project's. The carousel advances by itself and pauses on hover; click a picture to open it full screen, scroll to zoom, drag to pan, <kbd>Esc</kbd> to close.</figcaption>
 </figure>
-<div class="bs-grid g1">
+<div class="bs-grid g2">
 <div class="bs-part bs-teal"><span class="bs-label">Figures</span><h3>Built from the page, checked by the build</h3><ul>
 <li>flows and diagrams are HTML or SVG blocks with a text alternative, like Figures 1 and 2</li>
 <li>images are tracked files; the build packages them and fails on a missing one</li>
@@ -308,7 +317,6 @@ A single scroll is still available as **All chapters**, and it is what print and
 <li>write a face between <code>&lt;!-- slide --&gt;</code> and <code>&lt;!-- /slide --&gt;</code> at the start of a chapter; the first chapter of this page opens with one</li>
 <li>every fact on a slide is also in its chapter; lint checks the numbers and fails on a chapter with two faces</li>
 </ul></div>
-</div>
 </div>
 
 ```bash

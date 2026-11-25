@@ -381,6 +381,20 @@ async function reviewPresentation(page, origin, viewport, failures) {
         assert.equal(tree.open, open, slug + ' Browse by folder disclosure ' + (open ? 'open' : 'closed'));
         assert.deepEqual(tree.folders, folders, slug + ' unfolds only the folders to its own file');
       }
+      // Carousel: the arrows stay on the picture shown and cover no dot, however many rows the dots take.
+      await page.goto(`${origin}/html/build-a-site.html#figures-and-slides`, {waitUntil:'networkidle'});
+      const arrows = await page.evaluate(() => {
+        const box = document.querySelector('#figures-and-slides .fig-carousel');
+        const shown = box.querySelector(':scope > img.fc-active').getBoundingClientRect();
+        const buttons = [...box.querySelectorAll('.fc-btn')].map(button => button.getBoundingClientRect());
+        const dots = [...box.querySelectorAll('.fc-dot')].map(dot => dot.getBoundingClientRect());
+        const overlap = (a, b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+        return {offset: buttons.map(button => Math.round(button.top + button.height / 2 - shown.top - shown.height / 2)),
+          covered: dots.filter(dot => buttons.some(button => overlap(dot, button))).length,
+          rows: new Set(dots.map(dot => Math.round(dot.top))).size, slides: dots.length, height: Math.round(shown.height)};
+      });
+      assert.ok(arrows.height > 0 && arrows.offset.length === 2 && arrows.offset.every(value => Math.abs(value) <= 1) && arrows.covered === 0,
+        'carousel arrows sit on the picture and cover no dot: ' + JSON.stringify(arrows));
       await page.goto(`${origin}/html/build-a-site.html`, {waitUntil:'networkidle'});
       if (viewport.width >= 900) {
         // The reader stage uses the content width; no line-length cap leaves the right side blank.

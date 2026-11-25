@@ -12,7 +12,9 @@
       display: none; width: 100%; margin: 0 auto; }
     .fig-carousel.fig-carousel > img.fc-active,
     .fig-carousel.fig-carousel > .fig-unit.fc-active { display: block; }
-    .fc-btn { position: absolute; top: 50%; transform: translateY(-50%);
+    /* --fc-mid is the middle of the slide shown, so the arrows stay on the
+       picture however many rows of dots follow it. */
+    .fc-btn { position: absolute; top: var(--fc-mid, 50%); transform: translateY(-50%);
       z-index: 5; background: rgba(20, 24, 32, 0.75); color: #dfe6ef;
       border: 1px solid rgba(255,255,255,.15); border-radius: 999px;
       width: 38px; height: 38px; font-size: 19px; line-height: 1;
@@ -70,6 +72,11 @@
       const name = (el.alt || inner?.getAttribute("aria-label")
         || el.src?.split("/").pop() || "").replace(/\.(png|svg)$/, "");
       label.textContent = `${name}  (${idx + 1}/${imgs.length})`;
+      centre();
+    }
+    function centre() {
+      const el = imgs[idx];
+      if (el.offsetHeight) box.style.setProperty("--fc-mid", `${el.offsetTop + el.offsetHeight / 2}px`);
     }
     function tick() {
       // never rotate under an open lightbox — the zoomed figure's slide
@@ -88,6 +95,9 @@
     box.addEventListener("click", (e) => {
       if (e.target.closest("img, svg.inline-fig")) manual();
     });
+    // a slide has no height until its picture has loaded, and a new width changes it
+    imgs.forEach((im) => im.addEventListener("load", centre));
+    window.addEventListener("resize", centre);
     show(0);
     timer = setInterval(tick, interval);
   });
