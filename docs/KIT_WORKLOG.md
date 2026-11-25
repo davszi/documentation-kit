@@ -2,6 +2,21 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-25 — Release 5.6.0
+
+- deivid gave the go: "Yes, release 5.6.0". The ask named what the go
+  covers: moving `main` to `19fa3c4`, the tag `v5.6.0` and the push, which
+  publishes the kit's own site and with it six adaptation chapters as
+  pictures. It gave the size against 5.5.2 at `19fa3c4`: 28 files, 225
+  lines added, 20 removed, and the result of the full check script there:
+  exit 0, 452 tests.
+- The message with the ask named what is not verified: the review fixes
+  not reviewed again, the carousel fix for a closed fold not run in a
+  browser, Chromium only, and page types that rest on chapter headings.
+- 5.6.0 holds the changes of the two entries below.
+- This commit adds only this entry. The full check script runs on it before
+  the tag; the Pages workflow runs it again on the push.
+
 ## 2026-11-25 — Review of 5.6.0: not fit to tag, then fixed
 
 - One independent review read the three commits on `v5.5.2`, read-only,
