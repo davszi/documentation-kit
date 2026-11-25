@@ -2,6 +2,49 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-25 — 5.6.0 built on a branch: page types, six rules, a showcase
+
+- 5.5.2 is released: tag `v5.5.2` on `9415956`, pushed with `main`. The
+  Pages workflow passed, and the live site shows the 5.5.2 note and the
+  new rule for inline code. Branch `fixes-5.5.2` is deleted after the
+  merge.
+- Source of the rules: seven proposals from adaptation's refactor, pasted
+  by deivid with the aim that ML and engineering projects alike "dont feel
+  forced to follow" what does not fit them. Each was discussed and its
+  wording shown before anything was written.
+- Page types. The first sort by chapter headings gave one group of 23
+  pages; deivid: "from adp u could extract more meaningful ones". Reading
+  ADP's chapters and records split it; he asked to merge some, and
+  architecture went into design and collection into specification. He
+  asked where adaptation was: the first count had missed 12 pages in
+  nested folders, 7 of them adaptation's. Its related-work page and two
+  of ADP's share one order, and he answered "Yes, add it". Final: six
+  types from 48 pages.
+- Wording accepted by deivid: the page types section ("yes"), the colour
+  table and the term list ("Yes, both"), the new reading, the review
+  order and the merge ("Yes, all three"). Against the pasted proposals:
+  a colour row says where its meaning holds, the palette keeps the
+  values, the term list links to definitions, and the addendum has three
+  parts, not six.
+- Showcase. A brief from the adaptation session asked for five chapters
+  as HTML snapshots in the kit. deivid on publishing them: "they can be
+  public no need to lock, but these shouldnt be templates just examples";
+  on the form: "yea maybe picture is best"; on when: "Yes, in 5.6.0".
+  adaptation was built at `d22ef36` with kit `v5.5.1` in a scratch clone
+  and captured there; nothing was written into adaptation. Twelve WebP
+  pictures, 611,034 bytes together.
+- Removed on deivid's word ("remove the examples from your own docs"):
+  `docs/topics/build-a-site/media/reader.png` and `home.png`, two captures
+  of the kit's own site from 2026-11-08, 773,647 bytes together. Both
+  were tracked and stay in Git at `v5.5.2`. Kept: the two slide faces of
+  the kit's own pages, which the site suite runs on, and the starter.
+- Found while placing the pictures: with twelve slides the carousel's
+  arrows covered its dots at 390 px. The arrows now follow the slide
+  shown; the site suite checks it at 1600 and 390 px.
+- Looked at by eye: the showcase figure at 1440 and 390 px, both slides
+  of the first example, and a sheet of all six faces.
+- Not pushed and not tagged. Release waits for deivid's go.
+
 ## 2026-11-25 — Release 5.5.2: the go after the second review
 
 - deivid gave the go again: "Yes, release". The ask said that the release

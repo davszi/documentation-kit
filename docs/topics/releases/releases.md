@@ -26,6 +26,66 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## 5.6.0 — page types, six smaller rules and a showcase of chapters
+
+5.6.0 is a minor release under
+[what a version number promises](#what-a-version-number-promises): it adds
+rules and one section anchor, changes where the carousel puts its arrows
+and adds no check. It needs no migration step; a project moves its pin to
+`v5.6.0`. The rules come from a refactor of adaptation's site. Each is
+worded so that an engineering project can follow it as well as a study: it
+opens with the condition that makes it apply, and a project without that
+condition has nothing to do.
+
+- **Page types.** A page answers one question of its reader, and the
+  question gives a default order for its chapters. The new section
+  [page types](../../../rules/writing/pages.md#page-types) names six:
+  design, method, specification, investigation, qualification and related
+  work. They come from sorting the 48 pages for people of ADP, adaptation,
+  Tempo and the kit by their chapter headings. A page takes a type where it
+  fits; a project names its own type where none does, and may name one of
+  its pages as the reference for a type. A page that needs two types is
+  usually two pages.
+- **Colour meanings in one table.** A project whose figures give a colour a
+  meaning keeps the meanings in its development conventions, each with the
+  pages where it holds; see
+  [figures and comparisons](../../../rules/writing/figures.md#figures-and-comparisons).
+- **A list of terms.** A project that has renamed terms, or whose pages use
+  simpler words than its records, keeps a list of them that links to the
+  defining records; see
+  [naming and honest claims](../../../rules/records.md#naming-and-honest-claims).
+- **A new reading of saved results is a result.** A breakdown or a count
+  that the record does not give goes into the record that owns the results
+  before a page shows it; see
+  [numbers and staleness](../../../rules/records.md#numbers-and-staleness).
+- **One chapter at a time.** Page work on several chapters is reviewed by
+  eye one chapter at a time, then once as a whole; see
+  [validation and review](../../../rules/site/validation.md#validation-and-review).
+- **A chapter with nothing new is merged.** A chapter that would only
+  repeat another chapter or page gives its point to the chapter that owns
+  the subject; see
+  [page design](../../../rules/writing/pages.md#page-design).
+- **A showcase.** Figure 3 of [Build a site](../build-a-site/index.md) shows
+  six chapters of the adaptation project in twelve pictures: each slide
+  face and its chapter in the reader. They are examples of what a project
+  can build, not templates, taken at that project's commit `d22ef36` and
+  not maintained. They replace two captures of the kit's own site, and the
+  README shows one of them.
+- **The carousel's arrows stay on the picture.** They sat at half the
+  height of the whole carousel, dots and label included, so with many
+  slides at phone width they covered the dots. They now follow the middle
+  of the slide shown.
+
+What a project can do. Nothing is required and no check reads any of this.
+A project that has colour meanings or renamed terms writes the table or the
+list into its development conventions when it next touches them.
+
+Not covered. The page types rest on chapter headings, not on a full reading
+of the 48 pages, and several ADP pages mix types today. No type is defined
+for a history page or a guide: each had too few pages outside the kit. The
+showcase comes from one project. The carousel change was run in Chromium
+only.
+
 ## 5.5.2 — a locked page that opened without its scripts, and two smaller corrections
 
 5.5.2 is a patch release under
