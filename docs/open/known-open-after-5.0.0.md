@@ -16,6 +16,13 @@ does, and this record with its route when the last one goes.
   he used, and the Firefox version, are not recorded. The Presentation view
   and the Reference tree outside the lock suite were run in Chromium only.
   Closes with one pass in real Safari on a locked site that is live.
+- **A locked page replaced while its lock page loads.** In Chromium such
+  a page sometimes ran none of its scripts; 5.5.2 waits for the lock page's
+  load event first. Three points stay open: why Chromium drops the scripts;
+  the fallback, which replaces the page in the old state when that load
+  takes longer than three seconds; and Firefox and Safari, where neither
+  the defect nor the fix was run. Closes with the cause, or with a run of
+  the lock suite in the other two engines under a processor limit.
 - **Lint and the build find headings differently.** The build reads
   Markdown; lint's anchor list and the record notes match lines that start
   with `#`. They disagree on a setext heading, a heading indented or inside

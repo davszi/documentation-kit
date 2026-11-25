@@ -22,7 +22,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import unquote
 
-from page_source import unique_heading_id
+from page_source import taken_ids, unique_heading_id
 
 HUNK_RE = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@")
 HEADING_RE = re.compile(r"(#{1,6})\s+(.*)")
@@ -238,7 +238,8 @@ def _chapter_index(text: str, slugify) -> list[tuple[int, str, str | None]]:
         ident = re.search(r"""\bid\s*=\s*(?:"([^"]*)"|'([^']*)')""", attributes)
         card = classes and "card" in (classes.group(1) or classes.group(2) or "").split()
         events.append((match.start(), "open", (ident.group(1) or ident.group(2)) if card and ident else None))
-    seen: dict[str, int] = {}
+    # These are the chapter ids of the built page, so the numbering starts as the build's does on a reader page.
+    seen = taken_ids(reader=True)
     for match in ANY_HEADING_RE.finditer(text):  # every level takes part in the numbering of repeats
         body = match.group(2)
         explicit = EXPLICIT_ID_RE.search(body)

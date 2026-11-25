@@ -355,14 +355,15 @@ class ListedFileRenderer(DocsRenderer):
         return super().id_attribute(hid) if self.raw_html.admits_identifier(hid) else ""
 
 
-def render_listed_file(text: str, source: str, *, reader: bool = False) -> tuple[str, list[str]]:
+def render_listed_file(text: str, source: str, *, reader: bool = False, tree: bool = False) -> tuple[str, list[str]]:
     """An automatically listed file as HTML that keeps only admitted raw HTML,
-    and notes on what was not admitted. `reader` says that the page gets the reader's bar."""
+    and notes on what was not admitted. `reader` and `tree` say that the page gets the
+    reader's bar and the Reference tree, whose ids a heading then leaves alone."""
     from source_pages import ListedHtml
     raw_html = ListedHtml(source)
     text = text.replace("\x00", "\ufffd")  # ListedHtml marks tags with U+0000
     renderer = ListedFileRenderer(raw_html)
-    renderer.seen_ids = page_source.taken_ids(reader=reader)
+    renderer.seen_ids = page_source.taken_ids(reader=reader, tree=tree)
     rendered = mistune.create_markdown(renderer=renderer, plugins=["table", "math"])(text)
     return raw_html.finish(rendered)
 
@@ -568,7 +569,9 @@ def build_page(md_path: Path, site: dict, shell: str) -> tuple[str, str] | None:
         body = body.replace(SITE_MAP_MARKER, site_map_html(site))
 
     # Heading ids are unique across the tabs of the page, and none is an id of the shell around them.
-    seen_ids = page_source.taken_ids(reader=automatic_reader or "chapter-reader" in comps)
+    seen_ids = page_source.taken_ids(reader=automatic_reader or "chapter-reader" in comps,
+                                     tree=bool(site.get("_repository_tree")),
+                                     plot_labels="plot-toggles" in comps and bool(site.get("plot_toggle_labels")))
 
     def render_chunk(chunk: str) -> str:
         chunk = expand_includes(chunk, name)
@@ -782,12 +785,12 @@ def build_source_page(page, routes: dict[str, str], site: dict, shell: str,
         unchecked[page.route] = set()
     else:
         try:
-            with_reader = bool(page.reader and site.get("chapter_reader"))
+            around = {"reader": bool(page.reader and site.get("chapter_reader")), "tree": bool(site.get("_repository_tree"))}
             if page.automatic:
-                content, tolerated = render_listed_file(text, name, reader=with_reader)
+                content, tolerated = render_listed_file(text, name, **around)
             else:
                 renderer = DocsRenderer(math_enabled=page.math)
-                renderer.seen_ids = page_source.taken_ids(reader=with_reader)
+                renderer.seen_ids = page_source.taken_ids(**around)
                 content = mistune.create_markdown(renderer=renderer, plugins=["table", "math"])(text)
         except Exception as problem:  # noqa: BLE001 - only an automatic page reaches the fallback
             if not page.automatic:

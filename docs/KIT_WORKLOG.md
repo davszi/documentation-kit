@@ -2,6 +2,44 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-25 — Review of 5.5.2: not fit to tag, then fixed
+
+- One independent review of `4494301`, read-only, by a reviewer agent that
+  ran Python on scratch projects, read Chromium's source and ran no
+  browser. Its verdict: not fit to tag. The full check script had passed on
+  the same commit.
+- Fixed, medium: the first form of the lock fix resumed inside the lock
+  page's load event. Chromium then gives the written page no load event of
+  its own, so the lock's scroll to a fragment and every `load` listener of
+  a component never ran. The reviewer read this from
+  `DispatchLoadEventAndFinalize` in Chromium's `document.cc`. Confirmed in
+  the browser: the tab recorded `complete` at the replacement and no load
+  after it. The replacement now runs in the task after the load event, and
+  the suite checks both; it fails on 5.5.1 with `interactive` and on the
+  first form with the missing load. 10 of 10 runs at 40 % of a processor
+  pass on the final form.
+- Fixed, medium: `repo-tree-label` was reserved on every site. On a site
+  without a Reference tree a heading "Repo tree label" was renamed and a
+  link to it failed lint, which passed on 5.5.1; the reviewer reproduced
+  it. An id is now taken only on a page that holds its element: the tree's
+  label with a tree, the reader's bar with the reader, the plot labels with
+  labelled plot toggles.
+- Fixed, low: the record notes named a chapter by the id it had before the
+  shell was counted. They start as the build does on a reader page.
+- Found while fixing the test: the suite's step "the same shared link on a
+  new load" changes only the fragment, so the browser stays on the page and
+  no lock page opens. The tab therefore sees two replacements, one by
+  password and one by saved key, not three. The step is unchanged.
+- Corrected in the release note: the three-second fallback replaces the
+  page in the old state; a typed password is usually, not always, after the
+  load; a page with "Menu" and "Menu 1" shifts its second id; inline code
+  that relied on the general rule wraps in two header bars. The open list
+  keeps the unexplained cause, the fallback and the other engines.
+- Not changed: the theme's rule from 5.5.1 for Reference pages stays,
+  though the new rule covers most of it; it still outranks a build-sheet
+  label on a topic page with the body class `reference-page`.
+- These fixes were not reviewed again.
+
 ## 2026-11-25 — 5.5.2 built on a branch: three open points closed
 
 - After the release of 5.5.1 the closing message named three open points

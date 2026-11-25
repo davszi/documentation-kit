@@ -256,9 +256,19 @@ class ShellIds(unittest.TestCase):
         return renderer.heading_ids
 
     def test_the_build_numbers_a_heading_past_the_shell(self):
-        self.assertEqual(self.render(), ["top-1", "menu-1", "menu-2", "sidebar-1", "toc-1", "backdrop-1", "repo-tree-label-1",
+        self.assertEqual(self.render(), ["top-1", "menu-1", "menu-2", "sidebar-1", "toc-1", "backdrop-1", "repo-tree-label",
                                          "chapter-reader"])
-        self.assertEqual(self.render(reader=True)[-1], "chapter-reader-1")
+        # An id is taken only where the page holds its element: without a Reference tree or the reader's
+        # bar, a heading keeps the id, and a link to it keeps working.
+        self.assertEqual(self.render(reader=True, tree=True)[-2:], ["repo-tree-label-1", "chapter-reader-1"])
+        import page_source
+        self.assertEqual(set(page_source.taken_ids(plot_labels=True)) - set(page_source.taken_ids()), {"plot-toggle-labels"})
+
+    def test_the_record_notes_name_the_chapter_as_the_page_has_it(self):
+        import record_changes
+        chapters = [value for _, kind, value in record_changes._chapter_index("## Menu\n\n## Chapter reader\n", lint.slugify)
+                    if kind == "heading"]
+        self.assertEqual(chapters, ["menu-1", "chapter-reader-1"])
 
     def test_lint_reads_the_file_as_github_shows_it(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -274,9 +284,11 @@ class ShellIds(unittest.TestCase):
         import source_tree
         components = Path(__file__).resolve().parents[1] / "theme/components"
         written = lambda name: set(re.findall(r'\bid="([^"{]+)"', (components / name).read_text()))
-        self.assertEqual(set(page_source.SHELL_IDS), written("shell.html") | {source_tree.TREE_LABEL_ID})
+        self.assertEqual(set(page_source.SHELL_IDS), written("shell.html"))
+        self.assertEqual(set(page_source.TREE_IDS), {source_tree.TREE_LABEL_ID})
         self.assertEqual(set(page_source.READER_IDS), written("chapter-reader.html"))
-        self.assertLessEqual(set(page_source.SHELL_IDS + page_source.READER_IDS), source_pages.KIT_IDS)
+        self.assertIn(f'id="{page_source.PLOT_LABEL_IDS[0]}"', (components.parents[1] / "tooling/build.py").read_text())
+        self.assertLessEqual(set(page_source.taken_ids(reader=True, tree=True, plot_labels=True)), source_pages.KIT_IDS)
 
     def test_built_pages_carry_no_id_twice(self):
         import os
@@ -313,6 +325,32 @@ class ShellIds(unittest.TestCase):
             # The reader's bar is part of a reader page only, so only there the heading gives way to it.
             self.assertRegex((root / ".build/docs/html/shellids.html").read_text(), r'<section\b[^>]*\bid="chapter-reader-1"')
             self.assertIn('<h2 id="chapter-reader">', (root / ".build/docs/html/plainids.html").read_text())
+
+    def test_without_a_reference_tree_a_heading_keeps_the_tree_labels_id(self):
+        import os
+        import subprocess
+        import sys
+        kit = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory(prefix="docs-kit-no-tree-") as folder:
+            root = Path(folder).resolve()
+            subprocess.run(["git", "init", "-q", str(root)], check=True)
+            env = {key: value for key, value in os.environ.items() if key not in {"DOCSITE_PROJECT_ROOT", "GITHUB_SHA"}}
+            subprocess.run([sys.executable, str(kit / "docsite.py"), "init", str(root)], check=True, capture_output=True, env=env)
+            page = root / "docs/topics/notree/index.md"
+            page.parent.mkdir(parents=True)
+            page.write_text('+++\ntoc = []\ntitle = "No tree"\npage_only = "a fixture"\nreader = false\n+++\n\n# No tree\n\n'
+                            '## Repo tree label\n\nA [link](#repo-tree-label) to the heading.\n\n## Menu\n\nText.\n')
+            config = root / "docs/site/site.toml"
+            config.write_text("reference_listing = false\n" + config.read_text()
+                              + '\n[[nav]]\nlabel = "No tree"\nfile = "notree.html"\ngroup = "guide"\n')
+            subprocess.run(["git", "-C", str(root), "add", "-A"], check=True)
+            built = subprocess.run([sys.executable, str(kit / "docsite.py"), "build", "--project", str(root)],
+                                   capture_output=True, text=True, env=env)
+            self.assertEqual(built.returncode, 0, built.stdout + built.stderr)
+            markup = (root / ".build/docs/html/notree.html").read_text()
+            self.assertEqual(markup.count('id="repo-tree-label"'), 1)
+            self.assertIn('<h2 id="repo-tree-label">', markup)
+            self.assertIn('<h2 id="menu-1">', markup)
 
 
 if __name__ == "__main__":

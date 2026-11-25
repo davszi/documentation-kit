@@ -329,10 +329,13 @@
     // A saved key is ready before the lock page has finished loading. Replaced
     // in that state, the written page sometimes ran none of its scripts in
     // Chromium: no reader, no menu, no code chips. So wait for the lock page's
-    // load event, and at most LOAD_WAIT ms for a resource that never arrives.
+    // load event, and at most LOAD_WAIT ms for a resource that never arrives;
+    // after that wait the page is replaced in the old state. The replacement
+    // runs in a task after the load event: inside it, Chromium gives the
+    // written page no load event of its own.
     if (document.readyState !== 'complete') {
       await new Promise(function (resolve) {
-        window.addEventListener('load', resolve, {once: true});
+        window.addEventListener('load', function () { setTimeout(resolve, 0); }, {once: true});
         setTimeout(resolve, LOAD_WAIT);
       });
     }

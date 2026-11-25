@@ -236,13 +236,18 @@ async function referenceTree(page) {
     // 5. Deep links with a fragment land on their target after unlock, also without the .html suffix,
     //    and a shared Presentation link opens its slide.
     const deep = await browser.newContext({viewport: {width: 1400, height: 900}, reducedMotion: 'reduce'});
-    // The lock replaces its page only after the lock page has loaded. Replaced while it still loads,
-    // which a saved key makes possible, the written page sometimes ran none of its scripts in Chromium.
-    const replacedAt = [];
-    await deep.exposeBinding('recordReplace', (source, state) => { replacedAt.push(state); });
+    // The lock replaces its page only after the lock page has loaded, and the written page gets its own
+    // load event. Replaced while the lock page still loads, which a saved key makes possible, the written
+    // page sometimes ran none of its scripts in Chromium; replaced inside the lock page's load event, it
+    // gets no load event. The tab's name carries the record over every replacement and navigation.
     await deep.addInitScript(() => {
       const open = Document.prototype.open;
-      Document.prototype.open = function (...args) { window.recordReplace(document.readyState); return open.apply(this, args); };
+      Document.prototype.open = function (...args) {
+        window.name += document.readyState + ' ';
+        const result = open.apply(this, args);
+        window.addEventListener('load', () => { window.name += 'loaded '; });
+        return result;
+      };
     });
     const deepPage = watch(await deep.newPage());
     await deepPage.goto(url('guide.html?view=present#evidence'));
@@ -265,10 +270,12 @@ async function referenceTree(page) {
     await waitUnlocked(deepPage);
     await deepPage.waitForFunction(() => document.querySelector('[data-reader-chapter].topic-active')?.id === 'locked-detail');
     assert.equal(await activeChapter(deepPage), 'locked-detail');
-    // One opening by password and at least one by saved key; a report can be lost when its page is replaced at once.
-    assert.ok(replacedAt.length >= 2, 'the deep links opened by password and by saved key: ' + JSON.stringify(replacedAt));
-    assert.deepEqual(replacedAt.filter(state => state !== 'complete'), [], 'the lock page had loaded before each replacement');
-    results.replacedAfterLoad = replacedAt.length;
+    // Two lock pages were replaced in this tab: one opened by password and this one by saved key. The link
+    // to #slides differed from the open page only in its fragment, so the browser stayed on that page.
+    const replaced = (await deepPage.evaluate(() => window.name)).trim().split(' ');
+    assert.deepEqual(replaced, ['complete', 'loaded', 'complete', 'loaded'],
+      'each replacement came after the lock page had loaded, and each written page got its load event');
+    results.replacedAfterLoad = replaced.filter(state => state === 'complete').length;
     await deepPage.goto(url('widgets#far-heading'));
     await waitUnlocked(deepPage);
     // The browser scrolls to a fragment when the replaced document finishes loading;
