@@ -288,17 +288,17 @@ A single scroll is still available as **All chapters**, and it is what print and
 
 <figure id="fig-captures">
 <div class="fig-carousel">
-<img src="../topics/build-a-site/media/showcase/environment-face.webp" alt="Slide face from the adaptation project: “Four contributions add up to the next velocity”.">
+<img src="../topics/build-a-site/media/showcase/environment-face.webp" alt="Slide face from the adaptation project: four contributions, drawn head to tail, add up to the next velocity.">
 <img src="../topics/build-a-site/media/showcase/environment-reader.webp" alt="Its chapter in the reader: “Where the next velocity comes from”.">
-<img src="../topics/build-a-site/media/showcase/families-face.webp" alt="Slide face from the adaptation project: “Each family rewrites one part of the same law”.">
+<img src="../topics/build-a-site/media/showcase/families-face.webp" alt="Slide face from the adaptation project: one law written large, with each family under the part it rewrites.">
 <img src="../topics/build-a-site/media/showcase/families-reader.webp" alt="Its chapter in the reader: “One law, many variations”.">
-<img src="../topics/build-a-site/media/showcase/supervised-face.webp" alt="Slide face from the adaptation project: “Supervised training rewards the prediction now”.">
+<img src="../topics/build-a-site/media/showcase/supervised-face.webp" alt="Slide face from the adaptation project: supervised training as a flow from the rows of each cursor to one loss.">
 <img src="../topics/build-a-site/media/showcase/supervised-reader.webp" alt="Its chapter in the reader: “Supervised: train for a good prediction now”.">
-<img src="../topics/build-a-site/media/showcase/adaptation-focused-face.webp" alt="Slide face from the adaptation project: “Adaptation-focused training rewards the prediction after practice”.">
+<img src="../topics/build-a-site/media/showcase/adaptation-focused-face.webp" alt="Slide face from the adaptation project: adaptation-focused training, where a copy practises before it is scored.">
 <img src="../topics/build-a-site/media/showcase/adaptation-focused-reader.webp" alt="Its chapter in the reader: “Adaptation-focused training: practise on copies”.">
-<img src="../topics/build-a-site/media/showcase/step-face.webp" alt="Slide face from the adaptation project: “A step too large overshoots the valley, and the error grows”.">
+<img src="../topics/build-a-site/media/showcase/step-face.webp" alt="Slide face from the adaptation project: a step too large overshoots the valley, beside the values of a real failed run.">
 <img src="../topics/build-a-site/media/showcase/step-reader.webp" alt="Its chapter in the reader: “Step downhill, but not too far”.">
-<img src="../topics/build-a-site/media/showcase/against-reference-face.webp" alt="Slide face from the adaptation project: “A direct polynomial fit beats every neural setting on five of six laws”.">
+<img src="../topics/build-a-site/media/showcase/against-reference-face.webp" alt="Slide face from the adaptation project: a direct polynomial fit compared with the neural settings on six laws.">
 <img src="../topics/build-a-site/media/showcase/against-reference-reader.webp" alt="Its chapter in the reader: “Against the minimal reference, a straight-line fit is already enough”.">
 </div>
 <figcaption><b>Figure 3.</b> Six chapters of the adaptation project in a carousel: each slide face, then its chapter in the reader. They are examples of what a project can build with the kit, not templates. They were captured from that project at its commit <code>d22ef36</code> on 2026-11-25 and are not maintained; the text and numbers are the project's. The carousel advances by itself and pauses on hover; click a picture to open it full screen, scroll to zoom, drag to pan, <kbd>Esc</kbd> to close.</figcaption>

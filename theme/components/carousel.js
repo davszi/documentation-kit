@@ -95,9 +95,10 @@
     box.addEventListener("click", (e) => {
       if (e.target.closest("img, svg.inline-fig")) manual();
     });
-    // a slide has no height until its picture has loaded, and a new width changes it
+    // a slide has no height until its picture has loaded or its fold opens, and a new width changes it
     imgs.forEach((im) => im.addEventListener("load", centre));
     window.addEventListener("resize", centre);
+    if (window.ResizeObserver) new ResizeObserver(centre).observe(box);
     show(0);
     timer = setInterval(tick, interval);
   });

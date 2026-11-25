@@ -26,7 +26,7 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
-## 5.6.0 — page types, six smaller rules and a showcase of chapters
+## 5.6.0 — page types, five smaller rules and a showcase of chapters
 
 5.6.0 is a minor release under
 [what a version number promises](#what-a-version-number-promises): it adds

@@ -2,13 +2,40 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
-## 2026-11-25 — 5.6.0 built on a branch: page types, six rules, a showcase
+## 2026-11-25 — Review of 5.6.0: not fit to tag, then fixed
+
+- One independent review read the three commits on `v5.5.2`, read-only,
+  and ran no build and no browser. Its verdict: not fit to tag, for one
+  wrong count. The full check script had passed on the same state: exit 0,
+  452 tests.
+- Fixed, medium: the release note's heading, the entry below and the
+  first commit's subject said "six" smaller rules. There are five: of the
+  seven proposals, two became the page types. The commit subject was
+  corrected on the unpushed branch, so its three commits have new hashes.
+- Fixed, low: a carousel inside a closed fold has no height when the page
+  loads, so its arrows kept the old place until the next slide. The
+  carousel now also places them when its box changes size. Inferred by
+  the reviewer from the code; not run in a browser before or after.
+- Fixed, low: the alternative texts of two slide faces quoted only the
+  first clause of a title in quotation marks. All six now describe the
+  picture and quote nothing.
+- Not changed, low: the rule that a decision page ends with an options
+  table names no page type. The default order of a type may change, so
+  the two do not conflict.
+- The reviewer confirmed the links and anchors of the new rule text, the
+  two byte counts, that no check was added and that no mention of the
+  removed pictures remains outside this worklog. It could not check the
+  count of 48 pages or the review by eye.
+
+## 2026-11-25 — 5.6.0 built on a branch: page types, five rules, a showcase
 
 - 5.5.2 is released: tag `v5.5.2` on `9415956`, pushed with `main`. The
   Pages workflow passed, and the live site shows the 5.5.2 note and the
   new rule for inline code. Branch `fixes-5.5.2` is deleted after the
   merge.
-- Source of the rules: seven proposals from adaptation's refactor, pasted
+- Source of the rules: seven proposals from adaptation's refactor, K1 to
+  K7. K3, named reference pages, and K4, site structure, became the page
+  types; the other five became one rule each. They were pasted
   by deivid with the aim that ML and engineering projects alike "dont feel
   forced to follow" what does not fit them. Each was discussed and its
   wording shown before anything was written.
