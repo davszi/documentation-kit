@@ -2,9 +2,9 @@
 
 ## Page design
 
-Give each section one coherent purpose: answer a question, show a construction or compare alternatives. Split when the purpose changes; merge thin sections into their concept. Heading levels do not require separate cards. Use cards, tiles, tabs and callouts for distinct roles, without arbitrary word limits or one-screen constraints.
+Give each section one coherent purpose: answer a question, show a construction or compare alternatives. Split when the purpose changes; merge thin sections into their concept, across pages too: a chapter that would only repeat what another chapter or page shows gives its remaining point to the chapter that owns the subject, and its anchor still leads there. Heading levels do not require separate cards. Use cards, tiles, tabs and callouts for distinct roles, without arbitrary word limits or one-screen constraints.
 
-Titles state the takeaway. A one-sentence `bs-lead` states the claim before the evidence. When reporting on the reader's questions, use each question as a heading, answer directly, then show evidence. Follow the [explanation prerequisites](explanations.md#story-and-reading-layers) and keep a formal, plain human voice. Internal registry tags, bug-hunt narratives, file-routing tables and debugging chronology stay off rendered surfaces. A page that explains how something works names the people who do that work by role, not by name: one role word for each role, such as "the developer", throughout the page. A name stays where the page states who decided, approved or said something, and in a method's name, a citation or a contact line. A user name inside a path is a name too and is replaced before the page is published.
+Titles state the takeaway. A one-sentence `bs-lead` states the claim before the evidence. When reporting on the reader's questions, use each question as a heading, answer directly, then show evidence. Follow the [explanation prerequisites](explanations.md#story-and-reading-layers) and keep a formal, plain human voice. Where the project keeps a [list of its terms](../records.md#naming-and-honest-claims), pages use those terms. Internal registry tags, bug-hunt narratives, file-routing tables and debugging chronology stay off rendered surfaces. A page that explains how something works names the people who do that work by role, not by name: one role word for each role, such as "the developer", throughout the page. A name stays where the page states who decided, approved or said something, and in a method's name, a citation or a contact line. A user name inside a path is a name too and is replaced before the page is published.
 
 When the purpose of a section is to explain a mechanism or spatial
 relationship, place the figure after the heading or a one-sentence takeaway. Follow it with the
@@ -19,6 +19,25 @@ Text on a page renders at 11 px or more, small labels included: tags, counts, ch
 Use available width. Text, figures and tables share a left edge. Avoid narrow centered text columns and half-empty rows. Expressive details may include short transitions, rich syntax colors, gradient hairlines and hover emphasis; they must respect reduced motion and accessibility.
 
 Be visually ambitious, in chapters and on slide faces alike. Give each claim the most telling picture its content allows, and choose the form for that claim: a drawing of the mechanism, several small plots side by side, an annotated figure, a diagram beside a decisive number, a matrix, a timeline. Vary the forms across a page; a page whose chapters all show the same kind of figure has not looked for the better one. The limits are honesty, readable labels and accessibility: a picture shows only what the chapter states and its evidence supports. Caution is not a limit. A figure that works may still be improved, and improving it in the chapter is part of the work.
+
+### Page types
+
+A page answers one question of its reader. The question gives the page its type, and the type gives a default order for its chapters. Use a type when the page fits it. The order is a starting point: leave out a part that has nothing to say, and change the order when the subject needs it. No check reads a page's type.
+
+| Type | The reader asks | Default order | For example |
+|---|---|---|---|
+| Design | How does this system, or this part, work? | purpose; parts; one step from start to end; settings; how it was checked; limits | a simulator's clocks; the environment of a learning task |
+| Method | How is this problem solved, and why this way? | problem; formulation; solution; whether it worked; alternatives; limits | a route optimiser; a training scheme |
+| Specification | What is agreed, or what exists, item by item? | scope; each item with its status or guarantee; origin and checks; what is left out | capability requirements; a set of benchmark tracks; the task families of a dataset |
+| Investigation | What is the answer to this question? | question; answer; what was run; evidence; limits; next step | a comparison of two training schemes; a cost study |
+| Qualification | Is this system accepted against its bar? | system and bar; status at a glance; verdict for each gate; exceptions; what remains | a platform release; the evaluation of a model before release |
+| Related work | What did others do, and what does it mean for us? | what the other work does; what matches ours; what it means for us; sources | a comparable simulator; earlier work on the same method |
+
+An investigation or qualification page presents the [required content](../experiments/workflow.md#required-content) of its experiment; the type adds none of its own.
+
+A page that needs two types is usually two pages: split it and link them. A design or method page still says how it was checked, and links to the record that holds the numbers.
+
+A project may name one of its pages as the reference for a type; a new page of that type starts from it. For a kind of page that none of these types fits, the project names its own type in its [development conventions](../documentation.md#canonical-homes): the reader's question, a default order and one reference page. A project keeps no list of the types of its pages.
 
 ### Project-owned homepages
 
@@ -96,8 +115,8 @@ A review of existing faces sorts each one into three groups and gives the reason
 - No fact exists only on a slide. Every number and claim on it is stated, with its evidence, in the chapter below; update both in the same edit. This is the one sanctioned repetition of a fact: the slide is a view of the chapter, never its owner. Lint warns about a number that a face shows and its chapter does not, as [slide faces and decks](../site/authoring.md#slide-faces-and-decks) describes; claims stay with the review.
 - Keep the canvas uncrowded. A face that does not fit 16:9 has too much content for one slide; move detail into the chapter instead of shrinking type. Below 720 px the face stacks into a readable column: nothing on it overflows sideways, no text is cut off and no part sticks out of the face. At every width the labels of its drawings keep the 11 px that [figures](figures.md#figures-and-comparisons) asks of chart labels. The shared [browser check](../site/validation.md#reusable-browser-checks) reports each of these.
 - A figure on a face gets a short caption without a new number; a figure taken from the chapter may name the chapter figure it comes from.
-- Give each tone one meaning across all of a project's slides: `is-alert` marks failures and warnings, `is-held` marks held-out, hidden or pending items, and everything else stays neutral.
+- Give each tone one meaning across all of a project's slides: `is-alert` marks failures and warnings, `is-held` marks held-out, hidden or pending items, and everything else stays neutral. Colours that carry a meaning in the drawings of a face follow the project's [colour meanings](figures.md#figures-and-comparisons).
 
 ## Completion and review
 
-Follow the requested review arrangement: separate prototype or uncommitted in-place trial. Preserve content, evidence, media identities and public anchors during layout work. Follow the [documentation review gate](../documentation.md#rules-for-changes-and-chronology) and complete [site validation](../site/validation.md#validation-and-review), including the project-required checks. A decision page ends with a criteria-based options table and a clear verdict.
+Follow the requested review arrangement: separate prototype or uncommitted in-place trial. Preserve content, evidence, media identities and public anchors during layout work. Follow the [documentation review gate](../documentation.md#rules-for-changes-and-chronology) and complete [site validation](../site/validation.md#validation-and-review), including the project-required checks. Work on several chapters is reviewed there one chapter at a time. A decision page ends with a criteria-based options table and a clear verdict.

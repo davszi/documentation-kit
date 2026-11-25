@@ -469,6 +469,8 @@ Baselines need the same care. A baseline cited for what currently ships has to m
 
 Name a mechanism by what the reader can see it do. Terms from inside a formulation belong only where that formulation is being explained. When something is renamed, the rename covers every surface it appears on, so that no old name lingers. For a function, say what it receives, what it returns, what it optimizes or interpolates, and which of its inputs vary and which stay fixed.
 
+A project that has renamed terms, or whose pages use simpler words than its records, keeps a short list of them among its development conventions: each term, where it is defined and the words it replaced. The list defines nothing itself, and a rename starts there.
+
 <!-- /fold -->
 
 Full guide: [naming and honest claims](records.html#naming-and-honest-claims).
@@ -486,6 +488,8 @@ Full guide: [naming and honest claims](records.html#naming-and-honest-claims).
 A number without its conditions cannot be checked, and a number whose inputs have changed can look authoritative while no longer being true. Writing records therefore requires full provenance for any current measured claim, and a rerun before quoting it as current when code, input data, method, workload or runtime conditions affecting it change. A historical label does not qualify changed inputs. Configuration values, derivations and design arithmetic are not measurements: they cite their source and are labelled accordingly.
 
 A current measured claim records the eight items above and links its raw result and limitations. The number is recorded in the record of the work that measured it, and a page that quotes it is held to the same rule.
+
+A new way of reading saved results counts as a result as well: a breakdown the record does not give, a count across settings, a pattern noticed while drawing a figure. It is written into the record that owns the results, with how it is computed and how far it reaches, before a page shows it.
 
 <div class="bs-grid g2">
 <div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>A number without provenance</h3><p>"The new layout loads much faster." No commit, command, workload or baseline is given, and the input data changed after the run.</p></div>
@@ -530,9 +534,20 @@ Full guide: [numbers and staleness](records.html#numbers-and-staleness). Screens
 <div class="bs-check"><span class="bs-badge bs-ok">navigation</span><h3>Prerequisite order</h3><p>Navigation follows prerequisite order, and important comparisons have direct entries. No page-wide audience tabs; local method, scenario and diagram-mode tabs are useful.</p></div>
 </div>
 
-A heading that only names a topic, such as "Results", makes the reader search the section for its conclusion, and a section with two purposes buries both. The guide gives each section one coherent purpose: answering a question, showing a construction or comparing alternatives. It splits a section when the purpose changes and merges thin sections into their concept; cards, tiles, tabs and callouts mark distinct roles, without arbitrary word limits or one-screen constraints. Internal registry tags, bug-hunt narratives, file-routing tables and debugging chronology stay off rendered surfaces, so the page keeps a formal, plain human voice.
+A heading that only names a topic, such as "Results", makes the reader search the section for its conclusion, and a section with two purposes buries both. The guide gives each section one coherent purpose: answering a question, showing a construction or comparing alternatives. It splits a section when the purpose changes and merges thin sections into their concept, also when the repeated content sits on another page; cards, tiles, tabs and callouts mark distinct roles, without arbitrary word limits or one-screen constraints. Internal registry tags, bug-hunt narratives, file-routing tables and debugging chronology stay off rendered surfaces, so the page keeps a formal, plain human voice.
 
 A page that explains how something works names the people who do that work by role, not by name. It uses one role word for each role, such as "the developer", throughout the page, so the explanation reads the same whoever does the work. A name stays where the page states who decided, approved or said something, and in a method's name, a citation or a contact line. A user name inside a path is a name too and is replaced before publishing.
+
+A page as a whole has one job as well: it answers one question of its reader. The guide names six such questions as page types and gives each a default order of chapters. A page takes a type where it fits, changes the order where its subject needs that, and leaves out a part that has nothing to say. A project names a type of its own where none of the six fits. A page that needs two types is usually two pages. Nothing checks a page's type.
+
+| Page type | The reader asks |
+|---|---|
+| Design | How does this system, or this part, work? |
+| Method | How is this problem solved, and why this way? |
+| Specification | What is agreed, or what exists, item by item? |
+| Investigation | What is the answer to this question? |
+| Qualification | Is this system accepted against its bar? |
+| Related work | What did others do, and what does it mean for us? |
 
 <div class="bs-grid g2">
 <div class="bs-part bs-red"><span class="bs-label">Example · not this</span><h3>Results</h3><p>The section opens with setup, walks through each measurement and states in its last sentence which option was kept and why.</p></div>
@@ -549,7 +564,7 @@ One thing is shared: navigation. It belongs to the whole site, not to any single
 
 <!-- /fold -->
 
-Full guide: [page design](page-design.html#page-design) and [project-owned homepages](page-design.html#project-owned-homepages).
+Full guide: [page design](page-design.html#page-design), [page types](page-design.html#page-types) with the default order of each, and [project-owned homepages](page-design.html#project-owned-homepages).
 
 </section>
 
@@ -724,7 +739,7 @@ Every included figure carries the four items above.
 <!-- unreferenced figure: reason -->
 ```
 
-**Generated figures.** Each names its generator and its input data in a manifest or in metadata; this holds for SVG, PNG and interactive data alike. Git holds the revision, the date and the exact bytes of the figure and of its generator, so the manifest does not record them again. Figures take their colours from the kit's figure palettes, never from a style invented for one figure, and each generated figure file is written in a dark and a light theme. An explicit manifest maps figures to generators and is checked for missing and orphaned resources.
+**Generated figures.** Each names its generator and its input data in a manifest or in metadata; this holds for SVG, PNG and interactive data alike. Git holds the revision, the date and the exact bytes of the figure and of its generator, so the manifest does not record them again. Figures take their colours from the kit's figure palettes, never from a style invented for one figure, and each generated figure file is written in a dark and a light theme. An explicit manifest maps figures to generators and is checked for missing and orphaned resources. Where colours carry a meaning across figures, such as one colour for each method, the project keeps those meanings in one table, and every figure that a reader compares follows it.
 
 **Flows written in the page source.** HTML flows, like the figures on this page, count as local diagrams. The page source is their generator, and their layout passes the same collision and overflow review.
 

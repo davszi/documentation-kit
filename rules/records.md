@@ -14,6 +14,8 @@ Records use plain Markdown headings, tables, lists, exact file references and ev
 
 Use one term per object across prose, controls, legends, tables, figures and output. Name a mechanism the reader sees; use formulation internals only when explaining that formulation. A rename sweeps all surfaces. State what a function receives, returns and optimizes/interpolates, and which inputs vary or stay fixed.
 
+A project that has renamed terms, or whose pages use a simpler term than its records, keeps one list of those terms in its [development conventions](documentation.md#canonical-homes): the term, a link to the record that defines it, and the words it replaces. The list defines nothing itself. Where a record keeps the older or more technical term on purpose, the list says so. A rename changes the list first, then sweeps all surfaces.
+
 Decision rationale belongs beside the decision, including why an instrument/default was chosen and why alternatives lost. A baseline cited for current shipped behavior measures what ships; label retired baselines historical. An experimental verdict and deployment measurements are distinct content kinds.
 
 Separate claims requiring different evidence: visual fidelity, smoothness, input preservation, correspondence with a source and physical accuracy. A local check or smoother drawing proves only its tested property. Label accepted future behavior, implemented behavior, CPU checks and native/runtime observations separately. Say "not measured" plainly and provide a supported bound where available. Never manufacture an estimate to fill an empty metric.
@@ -23,6 +25,8 @@ Separate claims requiring different evidence: visual fidelity, smoothness, input
 A current measured claim requires a source commit, exact reproduction command, runtime/environment, workload, units, baseline, method and scope. Link its raw result and limitations. Config values, derivations and design arithmetic are not measurements; cite their source and label them accordingly.
 
 When code, input data, method, workload or runtime conditions affecting a claim change, rerun before quoting it as current evidence. Keep the old record's date, runtime, inputs and scope; a historical label does not qualify changed inputs. Presentation-only edits may reuse captured results only after checking identities, numbers and treatments remain intact.
+
+A new reading of saved results is a result too: a breakdown the record does not give, a count across settings, a pattern found while drawing a figure. Before a page shows it, the record that owns the results gets a dated addition with the reading, how it is computed from the tracked data, and its scope. The addition says so when it reruns nothing and changes no earlier conclusion.
 
 When a redesign restates numbers in new prose, figures or slides, record each number's source in a ledger and lock the evidence blocks kept verbatim. The project owns the ledger format and the checks for both. A slide face may show only numbers that its chapter also shows; every distinct number a redesigned chapter shows, figure labels included, has a ledger source. The kit's lint checks the part about slide faces: it warns when a face shows a number that its chapter does not show outside the face, as [slide faces and decks](site/authoring.md#slide-faces-and-decks) describes. The ledger of sources, and the checks of the ledger and of the locked blocks, stay the project's.
 
