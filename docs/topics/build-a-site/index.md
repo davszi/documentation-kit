@@ -301,8 +301,17 @@ A single scroll is still available as **All chapters**, and it is what print and
 <img src="../topics/build-a-site/media/showcase/against-reference-face.webp" alt="Slide face from the adaptation project: a direct polynomial fit compared with the neural settings on six laws.">
 <img src="../topics/build-a-site/media/showcase/against-reference-reader.webp" alt="Its chapter in the reader: “Against the minimal reference, a straight-line fit is already enough”.">
 </div>
-<figcaption><b>Figure 3.</b> Six chapters of the adaptation project in a carousel: each slide face, then its chapter in the reader. They are examples of what a project can build with the kit, not templates. They were captured from that project at its commit <code>d22ef36</code> on 2026-11-25 and are not maintained; the text and numbers are the project's. The carousel advances by itself and pauses on hover; click a picture to open it full screen, scroll to zoom, drag to pan, <kbd>Esc</kbd> to close.</figcaption>
+<figcaption><b>Figure 3.</b> Six chapters of the adaptation project in a carousel: each slide face, then its chapter in the reader, scrolled to its main figure. They are examples of what a project can build with the kit, not templates. They were captured from that project at its commit <code>d22ef36</code> on 2026-11-25 and are not maintained; the text and numbers are the project's. The carousel advances by itself and pauses on hover; click a picture to open it full screen, scroll to zoom, drag to pan, <kbd>Esc</kbd> to close.</figcaption>
 </figure>
+
+What each example shows, in the order of the carousel:
+
+- **Pictures 1 and 2, a mechanism built step by step.** The face adds the four terms of a sum head to tail and magnifies the two small ones; the chapter builds the same sum over four panels.
+- **Pictures 3 and 4, a formula's terms as the visual.** Each family sits under the part of the law it rewrites, and an empty column marks the parts that no family rewrites.
+- **Pictures 5 to 8, twin chapters.** Two training methods on the same data with a different reward, drawn in one visual language so that the difference reads across the two.
+- **Pictures 9 and 10, real numbers and a historical case.** The teaching example uses the project's own numbers, and the failed run on the face shows only the values that were recorded, with no curve invented between them.
+- **Pictures 11 and 12, a result with its limit.** The face states the claim together with the one law where it stops holding; the chapter goes law by law.
+
 <div class="bs-grid g2">
 <div class="bs-part bs-teal"><span class="bs-label">Figures</span><h3>Built from the page, checked by the build</h3><ul>
 <li>flows and diagrams are HTML or SVG blocks with a text alternative, like Figures 1 and 2</li>

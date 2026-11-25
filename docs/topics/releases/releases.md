@@ -26,6 +26,33 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## 5.6.1 — the showcase pictures retaken, and a line on what each shows
+
+5.6.1 is a patch release under
+[what a version number promises](#what-a-version-number-promises): it
+corrects the showcase that 5.6.0 added to
+[Build a site](../build-a-site/index.md) and needs no migration step. Only
+the kit's own site and its README picture change; a project moves its pin
+to `v5.6.1` and builds as before. A review from the adaptation project
+named the three points.
+
+- **One picture showed a defect of the page it came from.** In the picture
+  of the chapter "Against the minimal reference" the page's footer lay over
+  the bottom of the reader. The picture is retaken at the same commit,
+  `d22ef36`, with the footer hidden.
+- **Each reader picture shows its chapter's main figure.** Two of the six
+  showed only the opening text of their chapter. All six are retaken,
+  scrolled so that the figure starts the view.
+- **A line says what each example shows.** Under the figure, five lines
+  name the kind of chapter and what to look at.
+
+Not covered. The chapter "Step downhill, but not too far" has two figures,
+the error valley and the recorded failed run, with text between them; one
+picture cannot hold both, and it shows the valley. The failed run is on
+that chapter's slide face. Hiding the footer changes what a reader of
+that page saw at `d22ef36`; the adaptation project has since removed the
+footer in a commit of its own.
+
 ## 5.6.0 — page types, five smaller rules and a showcase of chapters
 
 5.6.0 is a minor release under

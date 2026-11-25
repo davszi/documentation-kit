@@ -2,6 +2,35 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-25 — 5.6.1 built on a branch: showcase pictures retaken
+
+- 5.6.0 is released: tag `v5.6.0` on `d705a2f`, pushed with `main`. The
+  Pages workflow passed, and the live site shows the 5.6.0 note, the page
+  types and the twelve pictures. Branch `rules-5.6.0`, this session's
+  scratch files and the brief from the adaptation session are removed.
+- deivid pasted a review of the showcase from the adaptation project with
+  three points. Checked before acting: the footer over the reader in the
+  picture of "Against the minimal reference" was visible in the picture;
+  the adaptation commit `33ccf8f`, "Remove the footers after the last
+  chapter of the three Cursor readers", exists in the local checkout.
+- My miss in 5.6.0: I had looked at three of the six reader pictures
+  before the release, saw the footer line in one and let it pass, and
+  did not check that each picture showed its chapter's figure. I had also
+  proposed one line per example and then wrote only alternative texts.
+- Retaken: all six reader pictures, from adaptation at `d22ef36` built
+  with kit `v5.5.1` in a scratch clone, 1440 by 810 px, footer hidden,
+  the chapter scrolled so that its main figure starts 16 px below the
+  chapter head. The twelve pictures are 545,768 bytes together.
+- Limit: the chapter "Step downhill, but not too far" has its two figures
+  1,223 px apart at this width, more than one window shows. The picture
+  shows the first, the error valley; the recorded failed run is on the
+  slide face.
+- Added under Figure 3: five lines that name the kind of chapter and what
+  to look at, in the review's wording where the pictures support it.
+- Looked at by eye: a sheet of all six retaken pictures, the chapter at
+  1440 px, and slides 10 and 12 in the carousel at 390 px.
+- Not pushed and not tagged. Release waits for deivid's go.
+
 ## 2026-11-25 — Release 5.6.0
 
 - deivid gave the go: "Yes, release 5.6.0". The ask named what the go
