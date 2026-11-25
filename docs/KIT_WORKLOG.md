@@ -2,6 +2,25 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-25 — Release 5.5.2
+
+- deivid gave the go: "release first". It answered the question whether to
+  build the next rule changes as 5.6.0 on a branch, whose other choice was
+  "Release 5.5.2 first". The earlier ask named what the release covers:
+  moving `main` to the release state, the tag `v5.5.2` and the push, which
+  publishes the kit's own site. Size against 5.5.1 at `8d2e73d`: 18 files,
+  375 lines added, 42 removed.
+- The messages with the ask named what is not verified: Chromium only, the
+  cause of the dropped scripts in Chromium not known, the three-second
+  fallback that replaces the page in the old state, and the review fixes
+  not reviewed again.
+- For the last point a second review, read-only, reads the fix commit
+  `8d2e73d` while the checks run. The tag waits for both; a finding stops
+  the release.
+- 5.5.2 holds the changes of the two entries below.
+- This commit adds only this entry. The full check script runs on it before
+  the tag; the Pages workflow runs it again on the push.
+
 ## 2026-11-25 — Review of 5.5.2: not fit to tag, then fixed
 
 - One independent review of `4494301`, read-only, by a reviewer agent that
