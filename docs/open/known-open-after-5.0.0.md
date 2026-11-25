@@ -16,17 +16,6 @@ does, and this record with its route when the last one goes.
   he used, and the Firefox version, are not recorded. The Presentation view
   and the Reference tree outside the lock suite were run in Chromium only.
   Closes with one pass in real Safari on a locked site that is live.
-- **A long command on a topic page without the reader.** From 5.5.1 inline
-  code wraps on Reference pages; the reader's chapters wrapped it before. A
-  topic page with `reader = false`, or on a site without the chapter
-  reader, still keeps inline code on one line above phone width. Whether a
-  long command widens such a page was not measured. Closes with one
-  measurement and, if it widens, the same rule for those pages.
-- **A browser suite that timed out once.** On the push of 5.5.0 the page
-  lock's browser suite timed out once in the Pages workflow, waiting for a
-  reader chapter after an unlock, and passed on the rerun and in six local
-  runs. The cause is not known. Closes when it is found, or reopens the
-  question when it happens again.
 - **Lint and the build find headings differently.** The build reads
   Markdown; lint's anchor list and the record notes match lines that start
   with `#`. They disagree on a setext heading, a heading indented or inside
@@ -52,13 +41,6 @@ does, and this record with its route when the last one goes.
 
 ## Known limits, not fixed
 
-- **A heading can take an id of the page shell.** The build numbers a
-  repeated heading against the other headings of its page, not against the
-  shell's ids: `top`, `menu`, `sidebar`, `toc`, `backdrop`,
-  `repo-tree-label` and `chapter-reader`. A heading "Top" then shares
-  `#top` with the shell, and a link to it reaches the shell. From 5.5.0
-  lint warns. Reserving the ids would rename such a heading's id, so it
-  needs its own decision.
 - **A tracked file whose name is not UTF-8.** `build` and `lint` stop with a
   traceback, `UnicodeDecodeError`, when the project tracks such a file
   (measured on a starter project with kit 5.4.0). `tooling/page_source.py`

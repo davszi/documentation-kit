@@ -50,9 +50,19 @@ function buildFixture() {
     '| Yaw rate of the body | measured by the inertial unit | transient response comparison | rad/s | $\\dot\\psi$ |', '',
     `Test the pipeline with \`${COMMAND}\` from the project root.`, '',
   ].join('\n'));
+  // A topic page without the reader, with the same command and a build-sheet label that keeps its code whole.
+  fs.mkdirSync(path.join(root, 'docs/topics/plain'));
+  fs.writeFileSync(path.join(root, 'docs/topics/plain/index.md'), [
+    '+++', 'title = "Plain"', 'toc = []', 'reader = false', 'page_only = "a fixture"', 'page_css = ["build-sheet.css"]', '+++', '',
+    '# Plain', '', `Test the pipeline with \`${COMMAND}\` from the project root.`, '',
+    '<div class="bs-part"><span class="bs-label">Label with <code>code kept whole</code></span></div>', '',
+    '| File | Role |', '|---|---|', '| `tooling/source_pages.py` | renders a repository file |', '',
+    '```python', 'print("a code block")', '```', '',
+  ].join('\n'));
   const config = path.join(root, 'docs/site/site.toml');
   fs.writeFileSync(config, fs.readFileSync(config, 'utf8').replace(
     '# reference_roots = ["docs"]', 'reference_roots = ["docs", "notes"]')
+    + '\n[[nav]]\nlabel = "Plain"\nfile = "plain.html"\ngroup = "guide"\n'
     + '\n[[source_pages]]\nsource = "notes/math.md"\nslug = "math-note"\ntitle = "Math note"\nmath = true\n');
   run('git', ['add', '-A'], root);
   run(python, [path.join(kit, 'docsite.py'), 'build', '--project', root], kit);
@@ -170,8 +180,9 @@ const drawer = page => page.evaluate(() => {
     await assertHorizontalContainment(page);
     checked.push('formula in a scrolling table does not widen the page');
 
-    // A long command as inline code wraps on a listed and on a registered Reference page; a code block keeps its lines.
-    for (const name of ['notes.long.md.html', 'math-note.html']) {
+    // A long command as inline code wraps on a listed and on a registered Reference page and on a topic page
+    // without the reader; a code block keeps its lines.
+    for (const name of ['notes.long.md.html', 'math-note.html', 'plain.html']) {
       for (const width of [1440, 1100, 901]) {
         await page.setViewportSize({width, height: 900});
         await page.goto(url(name));
@@ -188,6 +199,12 @@ const drawer = page => page.evaluate(() => {
         assert.ok(code.right <= width && code.page <= width, `${name} at ${width} px: the command reaches ${code.right} px, the page is ${code.page} px wide`);
         if (code.block) assert.equal(code.block, 'pre', 'a code block keeps its lines');
         assert.equal(code.wraps, 'anywhere', 'inline code may break inside a long word');
+        if (name === 'plain.html') {
+          assert.equal(await page.evaluate(() => document.body.classList.contains('reader-enabled')), false, 'the fixture page has no reader');
+          assert.equal(code.cell, 'normal', 'code in a table cell of a topic page is as before');
+          assert.equal(await page.evaluate(() => getComputedStyle(document.querySelector('.bs-label code')).whiteSpace), 'nowrap',
+            'a build-sheet label keeps its code on one line');
+        }
         if (name === 'notes.long.md.html') {
           assert.equal(code.nested, 'pre', 'code deeper inside a hand-written pre keeps its lines');
           assert.equal(code.cell, 'break-word', 'code in a table cell leaves the narrowest width of its column alone');
@@ -195,7 +212,7 @@ const drawer = page => page.evaluate(() => {
         await assertHorizontalContainment(page);
       }
     }
-    checked.push('a long inline command wraps on Reference pages at 1440, 1100 and 901 px; code blocks and table cells are as before');
+    checked.push('a long inline command wraps on Reference pages and on a topic page without the reader at 1440, 1100 and 901 px; code blocks, table cells and build-sheet labels are as before');
 
     // Print with motion on: the reader opens every fold; none may still fade.
     await page.setViewportSize({width: 1280, height: 900});

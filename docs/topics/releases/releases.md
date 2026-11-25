@@ -26,6 +26,55 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## 5.5.2 — a locked page that opened without its scripts, and two smaller corrections
+
+5.5.2 is a patch release under
+[what a version number promises](#what-a-version-number-promises): it
+corrects three defects and needs no migration step; a project moves its pin
+to `v5.5.2`, and a project that follows the
+[5.5.0 migration guide](migrations/5.5.0.md) uses this tag in its place. The
+three were open points of the kit's own list after 5.5.1.
+
+- **A locked page opened from a saved key runs its scripts.** A reader whose
+  key is saved in the tab or on the device gets the page without typing a
+  password. The lock then replaced its page while the lock page was still
+  loading, and in Chromium the written page sometimes ran none of its
+  scripts: no chapter reader, no menu, no folder tree, no code chips. The
+  page lock's browser suite timed out on it once in the Pages workflow for
+  5.5.0. Slowed to 40 % of a processor, 4 of 10 local runs of that suite
+  failed this way; with the wait, 22 of 22 passed at the same limit. The lock now waits for the
+  lock page's load event, and at most three seconds, before it replaces the
+  page. A reader who types the password is not affected: by then the lock
+  page has loaded. Why Chromium drops the scripts was not found; the fix
+  avoids the state in which it happened.
+- **Inline code wraps in the content of every page.** 5.5.1 let it wrap on
+  Reference pages. A topic page without the chapter reader had the same
+  defect: a 108-character command made it 1235 px wide in a 1100 px window.
+  Inline code now wraps in the content of any page. Code blocks, code in
+  table cells, slide faces and a component that keeps its code on one line,
+  such as a build-sheet label, are as before.
+- **A heading never takes an id of the page shell.** The shell around a
+  page has the ids `top`, `menu`, `sidebar`, `toc`, `backdrop` and
+  `repo-tree-label`, and a page with the chapter reader also
+  `chapter-reader`. A heading "Menu" got the id `menu` as well, so a link to
+  it reached the shell's button, the reader could not open it as a chapter,
+  and from 5.5.0 strict lint warned. The build now numbers such a heading
+  past the shell: `menu-1`. On an automatically listed page the heading had
+  no id at all and now has one.
+
+What a project can meet. A link to `#menu` still reaches the shell, as it
+did; the heading is at `#menu-1`, and the sidebar and the reader use that id.
+Lint reads a Markdown file as GitHub shows it, where the heading is `#menu`:
+a link from another file to `file.md#menu` passes lint and, on the built
+site, opens the page at its top or at the shell element, as before. An id
+written by hand in raw HTML is not renamed; lint still warns when it repeats
+an id of the shell. Ids that scripts create while a page runs and the ids of
+the lock page are not reserved.
+
+Not covered: Chromium only. Whether Firefox or Safari ever dropped the
+scripts of a page opened from a saved key is not known; the wait applies to
+every browser.
+
 ## 5.5.1 — a long command as inline code no longer widens a Reference page
 
 5.5.1 is a patch release under

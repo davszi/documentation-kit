@@ -71,6 +71,26 @@ def rendered_part(body: str) -> str:
     return body.split(PAGE_END, 1)[0]
 
 
+# Ids of the elements that the build writes around a page's content: the shell (theme/components/shell.html),
+# the Reference tree's label in the sidebar, and the reader's bar on a page that uses the reader.
+SHELL_IDS = ("backdrop", "sidebar", "toc", "repo-tree-label", "top", "menu")
+READER_IDS = ("chapter-reader",)
+
+
+def taken_ids(reader: bool = False) -> dict[str, int]:
+    """The ids a built page holds before its first heading, for `unique_heading_id`.
+
+    The build starts every page with them, so a heading "Menu" gets `menu-1`
+    and can be reached; with the id `menu` a link found the shell's button
+    first. `reader` adds the id of the reader's bar. Lint's anchor list and
+    the record notes read the Markdown file as GitHub shows it, where no
+    shell exists, and start empty. Ids that scripts create while the page
+    runs and the ids of the lock page are not reserved: no built page holds
+    them, so a link to such a heading works where the script does not run.
+    """
+    return dict.fromkeys(SHELL_IDS + (READER_IDS if reader else ()), 0)
+
+
 def unique_heading_id(hid: str, seen: dict[str, int]) -> str:
     """`hid`, or `hid-1`, `hid-2`… when an earlier heading of the page took it; `seen` carries the page's ids.
 

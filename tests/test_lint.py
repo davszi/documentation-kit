@@ -239,5 +239,81 @@ class RepeatedIds(unittest.TestCase):
         self.assertEqual(lint.repeated_ids(rendered), [])
 
 
+class ShellIds(unittest.TestCase):
+    """A heading never takes an id of the shell around the page, so a link can reach it."""
+
+    HEADINGS = "## Top\n\nText.\n\n## Menu\n\nText.\n\n## Menu\n\nText.\n\n## Sidebar\n\nText.\n\n## TOC\n\nText.\n\n" \
+               "## Backdrop\n\nText.\n\n## Repo tree label\n\nText.\n\n## Chapter reader\n\nText.\n"
+
+    def render(self, **taken):
+        import build
+        import mistune
+        import page_source
+        renderer = build.DocsRenderer()
+        if taken:
+            renderer.seen_ids = page_source.taken_ids(**taken)
+        mistune.create_markdown(renderer=renderer)(self.HEADINGS)
+        return renderer.heading_ids
+
+    def test_the_build_numbers_a_heading_past_the_shell(self):
+        self.assertEqual(self.render(), ["top-1", "menu-1", "menu-2", "sidebar-1", "toc-1", "backdrop-1", "repo-tree-label-1",
+                                         "chapter-reader"])
+        self.assertEqual(self.render(reader=True)[-1], "chapter-reader-1")
+
+    def test_lint_reads_the_file_as_github_shows_it(self):
+        with tempfile.TemporaryDirectory() as folder:
+            source = Path(folder) / "source.md"
+            source.write_text(self.HEADINGS)
+            self.assertEqual(lint.md_anchors(source), {"top", "menu", "menu-1", "sidebar", "toc", "backdrop", "repo-tree-label",
+                                                       "chapter-reader"})
+
+    def test_the_lists_name_the_ids_the_shell_writes(self):
+        import re
+        import page_source
+        import source_pages
+        import source_tree
+        components = Path(__file__).resolve().parents[1] / "theme/components"
+        written = lambda name: set(re.findall(r'\bid="([^"{]+)"', (components / name).read_text()))
+        self.assertEqual(set(page_source.SHELL_IDS), written("shell.html") | {source_tree.TREE_LABEL_ID})
+        self.assertEqual(set(page_source.READER_IDS), written("chapter-reader.html"))
+        self.assertLessEqual(set(page_source.SHELL_IDS + page_source.READER_IDS), source_pages.KIT_IDS)
+
+    def test_built_pages_carry_no_id_twice(self):
+        import os
+        import re
+        import subprocess
+        import sys
+        kit = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory(prefix="docs-kit-shell-ids-") as folder:
+            root = Path(folder).resolve()
+            subprocess.run(["git", "init", "-q", str(root)], check=True)
+            env = {key: value for key, value in os.environ.items() if key not in {"DOCSITE_PROJECT_ROOT", "GITHUB_SHA"}}
+            subprocess.run([sys.executable, str(kit / "docsite.py"), "init", str(root)], check=True, capture_output=True, env=env)
+            for slug, extra in (("shellids", ""), ("plainids", "reader = false\n")):
+                page = root / f"docs/topics/{slug}/index.md"
+                page.parent.mkdir(parents=True)
+                page.write_text(f'+++\ntoc = []\ntitle = "Shell ids"\npage_only = "a fixture"\n{extra}+++\n\n# Shell ids\n\n' + self.HEADINGS)
+            (root / "docs/listed.md").write_text("# Listed\n\n" + self.HEADINGS)
+            (root / "docs/registered.md").write_text("# Registered\n\n" + self.HEADINGS)
+            config = root / "docs/site/site.toml"
+            config.write_text(config.read_text()
+                              + '\n[[nav]]\nlabel = "Shell ids"\nfile = "shellids.html"\ngroup = "guide"\n'
+                              + '\n[[nav]]\nlabel = "Plain ids"\nfile = "plainids.html"\ngroup = "guide"\n'
+                              + '\n[[source_pages]]\nsource = "docs/registered.md"\nslug = "registered"\ntitle = "Registered"\n')
+            subprocess.run(["git", "-C", str(root), "add", "-A"], check=True)
+            built = subprocess.run([sys.executable, str(kit / "docsite.py"), "build", "--project", str(root)],
+                                   capture_output=True, text=True, env=env)
+            self.assertEqual(built.returncode, 0, built.stdout + built.stderr)
+            for name in ("shellids.html", "plainids.html", "docs.listed.md.html", "registered.html"):
+                with self.subTest(page=name):
+                    markup = (root / ".build/docs/html" / name).read_text()
+                    self.assertEqual(lint.repeated_ids(markup), [])
+                    self.assertIn('id="menu-2"', markup)
+                    self.assertEqual(len(re.findall(r'\bid="top"', markup)), 1)
+            # The reader's bar is part of a reader page only, so only there the heading gives way to it.
+            self.assertRegex((root / ".build/docs/html/shellids.html").read_text(), r'<section\b[^>]*\bid="chapter-reader-1"')
+            self.assertIn('<h2 id="chapter-reader">', (root / ".build/docs/html/plainids.html").read_text())
+
+
 if __name__ == "__main__":
     unittest.main()

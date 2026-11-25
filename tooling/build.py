@@ -269,7 +269,7 @@ class DocsRenderer(mistune.HTMLRenderer):
         super().__init__(escape=False)
         self.heading_ids: list[str] = []
         # The ids of the page so far. A page rendered in several parts, one per tab, hands every part the same dict.
-        self.seen_ids: dict[str, int] = {}
+        self.seen_ids: dict[str, int] = page_source.taken_ids()  # a heading never takes an id of the shell
         self.math_enabled = math_enabled
 
     def heading(self, text: str, level: int, **attrs) -> str:
@@ -355,13 +355,15 @@ class ListedFileRenderer(DocsRenderer):
         return super().id_attribute(hid) if self.raw_html.admits_identifier(hid) else ""
 
 
-def render_listed_file(text: str, source: str) -> tuple[str, list[str]]:
+def render_listed_file(text: str, source: str, *, reader: bool = False) -> tuple[str, list[str]]:
     """An automatically listed file as HTML that keeps only admitted raw HTML,
-    and notes on what was not admitted."""
+    and notes on what was not admitted. `reader` says that the page gets the reader's bar."""
     from source_pages import ListedHtml
     raw_html = ListedHtml(source)
     text = text.replace("\x00", "\ufffd")  # ListedHtml marks tags with U+0000
-    rendered = mistune.create_markdown(renderer=ListedFileRenderer(raw_html), plugins=["table", "math"])(text)
+    renderer = ListedFileRenderer(raw_html)
+    renderer.seen_ids = page_source.taken_ids(reader=reader)
+    rendered = mistune.create_markdown(renderer=renderer, plugins=["table", "math"])(text)
     return raw_html.finish(rendered)
 
 
@@ -565,7 +567,8 @@ def build_page(md_path: Path, site: dict, shell: str) -> tuple[str, str] | None:
     if SITE_MAP_MARKER in body:
         body = body.replace(SITE_MAP_MARKER, site_map_html(site))
 
-    seen_ids: dict[str, int] = {}  # heading ids are unique across the tabs of the page
+    # Heading ids are unique across the tabs of the page, and none is an id of the shell around them.
+    seen_ids = page_source.taken_ids(reader=automatic_reader or "chapter-reader" in comps)
 
     def render_chunk(chunk: str) -> str:
         chunk = expand_includes(chunk, name)
@@ -779,10 +782,12 @@ def build_source_page(page, routes: dict[str, str], site: dict, shell: str,
         unchecked[page.route] = set()
     else:
         try:
+            with_reader = bool(page.reader and site.get("chapter_reader"))
             if page.automatic:
-                content, tolerated = render_listed_file(text, name)
+                content, tolerated = render_listed_file(text, name, reader=with_reader)
             else:
                 renderer = DocsRenderer(math_enabled=page.math)
+                renderer.seen_ids = page_source.taken_ids(reader=with_reader)
                 content = mistune.create_markdown(renderer=renderer, plugins=["table", "math"])(text)
         except Exception as problem:  # noqa: BLE001 - only an automatic page reaches the fallback
             if not page.automatic:

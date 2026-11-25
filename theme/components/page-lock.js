@@ -17,6 +17,7 @@
   var KEY = 32;
   var TREE = 'reference.tree.js';
   var LOCKED_TREE = 'docsLockedReferenceTree';
+  var LOAD_WAIT = 3000;  // ms to wait for the lock page's load event before replacing it anyway
   var encoder = new TextEncoder();
 
   function fromBase64(text) {
@@ -325,6 +326,16 @@
     // nav.js reads the folder tree from here before it would load reference.tree.js.
     if (tree && typeof tree.tree === 'string') window.docsReferenceTree = tree.tree;
     var markup = joinSection(plain, pageLevel === 1 ? sectionAt : null, tree && tree.section);
+    // A saved key is ready before the lock page has finished loading. Replaced
+    // in that state, the written page sometimes ran none of its scripts in
+    // Chromium: no reader, no menu, no code chips. So wait for the lock page's
+    // load event, and at most LOAD_WAIT ms for a resource that never arrives.
+    if (document.readyState !== 'complete') {
+      await new Promise(function (resolve) {
+        window.addEventListener('load', resolve, {once: true});
+        setTimeout(resolve, LOAD_WAIT);
+      });
+    }
     // Replace the document: its scripts run and DOMContentLoaded fires again,
     // so every component starts as on a normal load of the page.
     document.open();

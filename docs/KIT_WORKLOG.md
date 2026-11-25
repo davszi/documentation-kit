@@ -2,6 +2,42 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-25 — 5.5.2 built on a branch: three open points closed
+
+- After the release of 5.5.1 the closing message named three open points
+  of the kit's list, and deivid answered "well work on these". Tag and push
+  are not part of that answer.
+- The timeout of the page lock's browser suite. Reproduced with the suite
+  limited to 40 % of a processor: 4 of 10 runs failed at the same line as
+  in the Pages workflow. In a failing run the unlocked page was complete
+  and none of its scripts had run: no reader view, no code chips, no style
+  from the lightbox, and a second DOMContentLoaded started nothing. The
+  lock had replaced its page in the state `interactive`, as it does in
+  every opening from a saved key; in passing runs too, so that state is
+  needed for the failure and does not always cause it. With a wait for the
+  lock page's load event 22 of 22 runs passed at the same limit. Why
+  Chromium drops the scripts was not found. An attempt to force the failure
+  by delaying the lock page's fonts did not reproduce it.
+- Fixed in `page-lock.js`: wait for the load event, at most three seconds.
+  The suite now records the document state at each replacement and fails
+  when one is not `complete`; without the fix it fails on `interactive`.
+- A topic page without the reader: measured on a scratch project, 1235 px
+  wide in a 1100 px and a 901 px window with a 108-character command.
+  Fixed with one rule for inline code in the content of any page, written
+  so that it weighs no more than the theme's general rule for `code`.
+- A heading with an id of the shell. The build now starts the numbering of
+  a page's headings with the ids of the shell, and of the reader's bar on a
+  page that has it. Decided by me, not asked: only ids that the built page
+  holds are reserved. An id that exists only while a script runs, or only
+  on the lock page, is left alone, because renaming such a heading could
+  break a link that lint passes today. Lint's anchor list still reads the
+  file as GitHub shows it.
+- One test expectation changed, in `tests/test_listed_html.py`: a heading
+  "Menu" of a listed file lost its id before and now gets `menu-1`. The
+  goal of the old expectation holds: the page's content gets no id of the
+  kit.
+- Not verified: Chromium only.
+
 ## 2026-11-24 — Release 5.5.1
 
 - deivid gave the go: "Yes, release 5.5.1". The ask named what the go

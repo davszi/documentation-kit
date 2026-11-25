@@ -227,13 +227,16 @@ class KitIds(unittest.TestCase):
         self.assertEqual(missing, set())
 
     def test_a_kit_id_or_name_is_removed_in_any_case(self):
+        # From 5.5.2 a heading named like a part of the shell is numbered past it, "menu-1", and keeps
+        # an id that is not the kit's; before, it lost its id. An id the kit only looks up while the
+        # page runs, such as "page-lock", and an id written by hand are removed as before.
         rendered, notes = render_listed_file(
-            '# Menu\n\n## TOC\n\n## Kept {#Sidebar}\n\n<a id="SideBar" name="docsReferenceTree">a</a> '
+            '# Menu\n\n## TOC\n\n## Page lock\n\n## Kept {#Sidebar}\n\n<a id="SideBar" name="docsReferenceTree">a</a> '
             '<span id="module">m</span> <a id="own" name="anchor">b</a>\n', 'n.md')
-        self.assertEqual(rendered, '<h1>Menu</h1>\n<h2>TOC</h2>\n<h2>Kept</h2>\n'
+        self.assertEqual(rendered, '<h1 id="menu-1">Menu</h1>\n<h2 id="toc-1">TOC</h2>\n<h2>Page lock</h2>\n<h2>Kept</h2>\n'
                                    '<p><a>a</a> <span>m</span> <a id="own" name="anchor">b</a></p>\n')
-        self.assertEqual(notes, ["n.md: 6 id or name value(s) of the kit's page removed: "
-                                 'SideBar, Sidebar, docsReferenceTree, menu, module, toc'])
+        self.assertEqual(notes, ["n.md: 5 id or name value(s) of the kit's page removed: "
+                                 'SideBar, Sidebar, docsReferenceTree, module, page-lock'])
 
 
 class Structure(unittest.TestCase):
