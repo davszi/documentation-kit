@@ -2,6 +2,17 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-25 — Release 5.5.2: the go after the second review
+
+- deivid gave the go again: "Yes, release". The ask said that the release
+  now includes the fix of the second review, `82f677c`, that this fix had
+  no third review, and that nothing was tagged or pushed. It gave the
+  result of the full check script on `82f677c`: exit 0, 452 tests.
+- Size against 5.5.1 at `82f677c`: 18 files, 498 lines added, 43 removed.
+- 5.5.2 holds the changes of the four entries below.
+- This commit adds only this entry. The full check script runs on it before
+  the tag; the Pages workflow runs it again on the push.
+
 ## 2026-11-25 — Second review of 5.5.2: not fit to tag, then fixed
 
 - The second review read `8d2e73d`, read-only, ran Python on scratch
