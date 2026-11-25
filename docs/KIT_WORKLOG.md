@@ -2,6 +2,21 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-25 — Review of 5.6.1: fit to tag, three low points
+
+- One independent review read the commit on `v5.6.0`, read-only, opened
+  all twelve pictures and ran no build and no browser. Its verdict: fit
+  to tag. It found no footer or other overlay, each reader picture on its
+  figure, and each of the five new lines supported by its two pictures.
+  It confirmed the byte total and the tag commits.
+- Fixed, low: the alternative text of the retaken picture of "Against the
+  minimal reference" quoted a heading that is no longer in view. The six
+  reader pictures now say what is in view.
+- Fixed, low: the release note said that only the site and the README
+  picture change; the current-release lines change too.
+- Not checked by the reviewer: the rendered carousel, and the scroll
+  offset this log gives.
+
 ## 2026-11-25 — 5.6.1 built on a branch: showcase pictures retaken
 
 - 5.6.0 is released: tag `v5.6.0` on `d705a2f`, pushed with `main`. The

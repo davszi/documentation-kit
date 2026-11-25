@@ -32,8 +32,8 @@ shows the new warnings.
 [what a version number promises](#what-a-version-number-promises): it
 corrects the showcase that 5.6.0 added to
 [Build a site](../build-a-site/index.md) and needs no migration step. Only
-the kit's own site and its README picture change; a project moves its pin
-to `v5.6.1` and builds as before. A review from the adaptation project
+the kit's own pages, records and README change, nothing that a project
+builds from; a project moves its pin to `v5.6.1` and builds as before. A review from the adaptation project
 named the three points.
 
 - **One picture showed a defect of the page it came from.** In the picture
