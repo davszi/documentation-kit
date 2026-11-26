@@ -53,8 +53,11 @@ on the kit's navy background.
   theme CSS wrote directly now reads a custom property on `:root`. Those
   without a base colour of their own are derived, each a mix of two base
   colours, and keep the kit's exact value until a project sets one of the
-  two. Syntax colours, the fold and chapter-group hues, print colours and the
-  light backdrop of site-map pictures stay as they were.
+  two. The controls that scripts draw (lightbox, carousel, plot-toggle chips,
+  the lock page's notice) read the same properties, and the six group tones
+  and the sidebar's glows are lighter steps of the hue colours. Syntax
+  colours, the fold hues, the tinted edges of diagram boxes, print colours and
+  the light backdrop of site-map pictures stay as they were.
 - **Figures on the project's background.** `figure_themes.palette("dark")`,
   and with it `write_both`, `matplotlib_rc` and the `svg_figures` colours,
   takes its surfaces and text from the project's table; the series and alert

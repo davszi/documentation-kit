@@ -536,11 +536,15 @@ Without the table, or with an empty one, nothing is written and the site
 builds as before.
 
 The theme's other colours, such as the sidebar, the slide faces, the code
-block edges and the steps of the sidebar text, are derived: each is a mix of
-two base colours, listed in `tooling/theme_colors.py`. A derived colour keeps
-the kit's exact value until the project sets one of the two colours it mixes,
-so a table that sets only `accent` changes only the accent. The table sets base
-colours only.
+block edges, the steps of the sidebar text and the controls that scripts draw
+(the lightbox, carousel arrows and dots, plot-toggle chips and the lock page's
+notice), are derived: each is a mix of two base colours, listed in
+`tooling/theme_colors.py`. The six tones that navigation groups without a
+`[group_colors]` colour take in order, and the reader's chapter parts, are
+lighter steps of `accent`, `secondary`, `orange`, `blue`, `red` and `green`.
+A derived colour keeps the kit's exact value until the project sets one of the
+two colours it mixes, so a table that sets only `accent` changes the accent and
+the first group tone. The table sets base colours only.
 
 The build checks that the colours keep text readable, with the ratios of the
 [figure palettes](#generated-figures): 4.5:1 for text and 3:1 for marks. It

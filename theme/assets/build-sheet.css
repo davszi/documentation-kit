@@ -56,7 +56,7 @@
 .chapter-body tbody tr:hover { background: rgba(var(--orange-rgb),.05); }
 
 /* Tones: set --tone on a block. */
-.bs-orange { --tone: var(--orange); } .bs-teal { --tone: var(--accent); } .bs-violet { --tone: #b69cff; }
+.bs-orange { --tone: var(--orange); } .bs-teal { --tone: var(--accent); } .bs-violet { --tone: var(--group-tone-2); }
 .bs-blue { --tone: var(--blue); } .bs-green { --tone: var(--green); } .bs-red { --tone: var(--red); } .bs-muted { --tone: var(--muted); }
 
 /* Lead: one sentence that makes the chapter's claim. */

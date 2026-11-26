@@ -77,7 +77,7 @@
 .home-map .map-text span{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
 .home-map .map-card{position:relative;border-top:2px solid var(--g,var(--border));
   background:linear-gradient(180deg,color-mix(in srgb,var(--g,var(--nav-group)) 6%,transparent),transparent 90px),var(--bg2)}
-.home-map .map-card:hover{border-color:color-mix(in srgb,var(--g,#6ee7c5) 50%,var(--border));box-shadow:0 0 24px color-mix(in srgb,var(--g,#6ee7c5) 14%,transparent)}
+.home-map .map-card:hover{border-color:color-mix(in srgb,var(--g,var(--group-tone-1)) 50%,var(--border));box-shadow:0 0 24px color-mix(in srgb,var(--g,var(--group-tone-1)) 14%,transparent)}
 .home-map .map-card::after{content:"→";position:absolute;right:14px;top:12px;color:var(--g,var(--muted));opacity:.7;transition:transform .2s}
 .home-map .map-card:hover::after{transform:translateX(3px)}
 .home-map .map-card:focus-visible,.home-router a:focus-visible,.home-link:focus-visible,.home-cta a:focus-visible{outline:2px solid var(--g,var(--accent));outline-offset:2px}

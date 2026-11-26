@@ -15,20 +15,20 @@
     /* --fc-mid is the middle of the slide shown, so the arrows stay on the
        picture however many rows of dots follow it. */
     .fc-btn { position: absolute; top: var(--fc-mid, 50%); transform: translateY(-50%);
-      z-index: 5; background: rgba(20, 24, 32, 0.75); color: #dfe6ef;
+      z-index: 5; background: rgba(var(--control-rgb, 20, 24, 32), 0.75); color: var(--control-text, #dfe6ef);
       border: 1px solid rgba(255,255,255,.15); border-radius: 999px;
       width: 38px; height: 38px; font-size: 19px; line-height: 1;
       cursor: pointer; transition: background .15s; }
-    .fc-btn:hover { background: rgba(60, 70, 90, 0.9); }
+    .fc-btn:hover { background: rgba(var(--control-hover-rgb, 60, 70, 90), 0.9); }
     .fc-prev { left: 8px; } .fc-next { right: 8px; }
     .fc-dots { display: flex; justify-content: center; gap: 7px;
       margin-top: 8px; flex-wrap: wrap; }
     .fc-dot { width: 9px; height: 9px; border-radius: 50%; border: 0;
-      padding: 0; background: rgba(140, 150, 165, 0.4); cursor: pointer;
+      padding: 0; background: rgba(var(--control-dot-rgb, 140, 150, 165), 0.4); cursor: pointer;
       transition: transform .15s, background .15s; }
     .fc-dot.fc-active { background: var(--bright, #7fd4ff);
       transform: scale(1.3); }
-    .fc-label { text-align: center; color: #9aa4b2; font-size: 12.5px;
+    .fc-label { text-align: center; color: var(--caption, #9aa4b2); font-size: 12.5px;
       margin-top: 4px; min-height: 1.2em; }
   `;
   document.head.appendChild(style);

@@ -156,7 +156,8 @@
 // the next tone in order, so every group header, page, chapter list and home-page
 // map group matches.
 (function(){
-  var tones = ['#6ee7c5', '#b69cff', '#ffb35c', '#5cc8ff', '#ff8597', '#9ad46b'];
+  // The tones are theme colours (base.css), so a project's [theme_colors] can move them.
+  var tones = [1, 2, 3, 4, 5, 6].map(function(n){ return 'var(--group-tone-' + n + ')'; });
   var order = [];
   document.querySelectorAll('.toc .nav-group[data-group]').forEach(function(label){
     var group = label.getAttribute('data-group');

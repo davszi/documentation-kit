@@ -233,7 +233,8 @@
     var box = document.createElement('div');
     box.setAttribute('role', 'alert');
     box.style.cssText = 'position:fixed;left:16px;right:16px;bottom:16px;z-index:2000;max-width:36rem;margin:auto;' +
-      'padding:12px 16px;border-radius:10px;background:#161b22;color:#e6edf3;border:1px solid #f0883e;' +
+      'padding:12px 16px;border-radius:10px;background:var(--panel,#161b22);color:var(--bright,#e6edf3);' +
+      'border:1px solid var(--warn-line,#f0883e);' +
       'font:15px/1.5 system-ui,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.5)';
     box.textContent = text + ' ';
     var close = document.createElement('button');

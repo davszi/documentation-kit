@@ -93,7 +93,9 @@ class Colours(unittest.TestCase):
         anchors = {**theme_colors.BASE, 'black': '#000000', 'white': '#ffffff'}
         for name, (kit, first, share, second) in theme_colors.DERIVED.items():
             mixed = theme_colors.mix(anchors[first], share, anchors[second])
-            self.assertLess(distance(mixed, kit), 5.0 if name == 'rule' else 2.5, f'{name}: {mixed} for {kit}')
+            # A group tone is a lighter step of a hue in another direction than the hue itself.
+            limit = 5.0 if name == 'rule' else 7.0 if name in theme_colors.HUE_DERIVED else 2.5
+            self.assertLess(distance(mixed, kit), limit, f'{name}: {mixed} for {kit}')
 
     def test_mix_is_srgb_color_mix(self):
         self.assertEqual(theme_colors.mix('#ffffff', 50, '#000000'), '#808080')
@@ -111,8 +113,10 @@ class Colours(unittest.TestCase):
 
     def test_the_stylesheet_sets_only_what_the_table_changes(self):
         css = theme_colors.stylesheet({'accent': '#FF8800'}).decode()
+        # The accent and the first group tone, a lighter step of it, and nothing else.
         self.assertEqual(css, '/* Generated from [theme_colors] in docs/site/site.toml. */\n'
-                              ':root{\n  --accent:#ff8800;\n  --accent-rgb:255,136,0;\n}\n')
+                              ':root{\n  --accent:#ff8800;\n  --accent-rgb:255,136,0;\n'
+                              '  --group-tone-1:#ffac4d;\n  --group-tone-1-rgb:255,172,77;\n}\n')
         css = theme_colors.stylesheet(BROWN).decode()
         self.assertIn('  --bg:#2b211b;\n  --bg-rgb:43,33,27;\n', css)
         self.assertIn('  --sidebar-bg:#1f1813;\n  --sidebar-bg-rgb:31,24,19;\n', css)
@@ -132,11 +136,12 @@ class Colours(unittest.TestCase):
                 self.assertTrue(name[2:] in props or name in defined, f'{path.name} reads {name}')
 
     def test_no_navy_or_grey_literal_is_left_outside_print(self):
-        # Hues with a meaning of their own (syntax colours, fold types, chapter groups, the
-        # default group tone) and white and black stay literal; every neutral reads a property.
-        kept = {'#000', '#000000', '#fff', '#ffffff', '#6ee7c5', '#b69cff', '#ffb35c', '#5cc8ff', '#ff8597',
+        # Hues with a meaning of their own (syntax colours, fold types, the tinted diagram box
+        # edges), the light backdrop of site-map pictures and white and black stay literal;
+        # every neutral and every group tone reads a property.
+        kept = {'#000', '#000000', '#fff', '#ffffff',
                 '#a99df0', '#5dcaa5', '#85b7eb', '#f0997b', '#e3b341', '#ff7b9d', '#7ee787', '#56d4dd',
-                '#2f7f76', '#7c5cad', '#a35d5d', '#f7f8fa', '#f0883e'}
+                '#2f7f76', '#7c5cad', '#a35d5d', '#f7f8fa'}
         kit_values = {*theme_colors.BASE.values(), *(kit for kit, *_ in theme_colors.DERIVED.values())}
         for path in THEME_CSS:
             css = outside_print(path.read_text())
@@ -146,8 +151,20 @@ class Colours(unittest.TestCase):
                 self.assertIn(literal.lower(), kept, f'{path.name} writes {literal}')
                 self.assertNotIn(literal.lower(), kit_values, f'{path.name} writes {literal}')
             for channels in re.findall(r'rgba?\((\d+\s*,\s*\d+\s*,\s*\d+)', css):
-                self.assertIn(channels.replace(' ', ''), {'0,0,0', '255,255,255', '110,231,197', '182,156,255'},
-                              f'{path.name} writes rgba({channels})')
+                self.assertIn(channels.replace(' ', ''), {'0,0,0', '255,255,255'}, f'{path.name} writes rgba({channels})')
+
+    def test_scripts_draw_their_controls_in_theme_colours(self):
+        # Styles that scripts inject read the same properties, with the kit's value as fallback.
+        # The reader's own scripts are left for the reader branch; fold-controls.js stays literal.
+        reserved = {'chapter-reader.js', 'fold-controls.js', 'slide-face.js'}
+        for path in sorted((KIT / 'theme/components').glob('*.js')):
+            if path.name in reserved:
+                continue
+            text = re.sub(r'var\(--[\w-]+,\s*[^()]*\)', '', path.read_text())  # a property with its fallback
+            literals = re.findall(r'#[0-9a-fA-F]{6}\b|#[0-9a-fA-F]{3}\b(?![\w-])', text)
+            self.assertEqual([c for c in literals if c.lower() not in {'#fff', '#000'}], [], path.name)
+            for channels in re.findall(r'rgba?\((\d+\s*,\s*\d+\s*,\s*\d+)', text):
+                self.assertIn(re.sub(r'\s', '', channels), {'0,0,0', '255,255,255'}, f'{path.name} writes rgba({channels})')
 
 
 class Contrast(unittest.TestCase):

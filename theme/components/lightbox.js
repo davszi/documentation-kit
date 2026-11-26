@@ -4,7 +4,7 @@
   const style = document.createElement("style");
   style.textContent = `
     .lb-overlay { position: fixed; inset: 0; z-index: 1000;
-      background: rgba(8, 10, 14, 0.92); cursor: zoom-out;
+      background: rgba(var(--overlay-rgb, 8, 10, 14), 0.92); cursor: zoom-out;
       overflow: hidden; }
     /* the transform is the ONLY positioner: absolute top-left origin,
        no flex centering underneath it (that double-offset put the
@@ -13,7 +13,7 @@
       top: 0; max-width: none; max-height: none;
       transform-origin: 0 0; cursor: grab; user-select: none;
       box-shadow: 0 8px 40px rgba(0,0,0,.6); border-radius: 4px;
-      background: #101319; margin: 0; }
+      background: var(--lightbox-bg, #101319); margin: 0; }
     .lb-overlay img.lb-drag, .lb-overlay svg.lb-drag { cursor: grabbing; }
     /* The bar spans the window less a 4vw margin on each side and wraps
        whole chips; centred with left: 50% it shrank to half the window and
@@ -23,7 +23,7 @@
       right: 4vw; z-index: 1001; margin: 0; pointer-events: none; }
     .lb-overlay .fig-chip { pointer-events: auto; cursor: pointer; }
     .lb-hint { position: fixed; bottom: 14px; left: 50%;
-      transform: translateX(-50%); color: #9aa4b2; font-size: 12px;
+      transform: translateX(-50%); color: var(--caption, #9aa4b2); font-size: 12px;
       font-family: inherit; pointer-events: none; }
     main img, .card img, .ptab-panel img { cursor: zoom-in; }
   `;

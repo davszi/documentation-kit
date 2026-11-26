@@ -92,13 +92,37 @@ DERIVED = {
     "sheet-text": ("#e5ebf0", "bright", 100, "bright"),
     # The tint of hover washes and thin lines; the theme uses it only see-through, as --rule-rgb
     "rule": ("#94b2d6", "text", 45, "muted"),
+    # Controls that scripts draw over pages and figures: lightbox, carousel, plot chips, lock notice
+    "overlay": ("#080a0e", "bg", 60, "black"),          # the lightbox backdrop, see-through
+    "lightbox-bg": ("#101319", "bg", 78, "panel"),      # behind an enlarged picture
+    "caption": ("#9aa4b2", "muted", 73, "text"),        # lightbox hint, carousel label, a chip's default dot
+    "control": ("#141820", "bg2", 86, "border"),        # a carousel arrow, see-through
+    "control-hover": ("#3c465a", "panel2", 83, "bright"),
+    "control-text": ("#dfe6ef", "bright", 76, "text"),
+    "control-dot": ("#8c96a5", "muted", 96, "text"),    # a carousel dot, see-through
+    "chip": ("#1e2430", "panel2", 98, "bg"),            # a plot-toggle chip, see-through
+    "chip-hover": ("#374155", "panel2", 74, "muted"),
+    "chip-text": ("#cdd6e0", "text", 82, "bright"),
+    "warn-line": ("#f0883e", "orange", 90, "black"),    # the edge of the lock page's notice
+    # Group tones: navigation groups without a [group_colors] colour take them in order
+    # (nav.js), and so do the reader's chapter parts. Each is a lighter step of a hue.
+    "group-tone-1": ("#6ee7c5", "accent", 70, "white"),
+    "group-tone-2": ("#b69cff", "secondary", 81, "text"),
+    "group-tone-3": ("#ffb35c", "orange", 89, "white"),
+    "group-tone-4": ("#5cc8ff", "blue", 100, "blue"),
+    "group-tone-5": ("#ff8597", "red", 81, "white"),
+    "group-tone-6": ("#9ad46b", "green", 66, "white"),
 }
+# Derived from a hue, not a neutral: their mixes only follow the hue, so they stay further
+# from the kit's value (tests/test_theme_colors.py allows more for them).
+HUE_DERIVED = ("warn-line", *(f"group-tone-{n}" for n in range(1, 7)))
 
 # Colours the theme also uses see-through. Each has a second property, `--<name>-rgb`,
 # with its channels, used as `rgba(var(--accent-rgb),.35)`: that is the legacy syntax
 # the theme had, so the kit's pages render exactly as before (a color-mix() tint would
 # move gradients to Oklab and round differently).
-CHANNELS = ("bg", "accent", "secondary", "blue", "orange", "red", "green", "sidebar-bg", "deck-bg", "rule")
+CHANNELS = ("bg", "accent", "secondary", "blue", "orange", "red", "green", "sidebar-bg", "deck-bg", "rule",
+            "overlay", "control", "control-hover", "control-dot", "chip", "chip-hover", "group-tone-1", "group-tone-2")
 
 TEXT_CONTRAST, MARK_CONTRAST = 4.5, 3.0  # WCAG ratios: text, and graphical marks
 _TEXT_ON = {"bg": "the page", "bg2": "code and panels", "panel": "cards", "panel2": "raised cards"}
@@ -112,6 +136,8 @@ TEXT_PAIRS = (
     ("nav-number", "bg2"),
     ("diagram-label", "panel"),
     ("reader-text", "bg"), ("reader-strong", "bg"), ("sheet-text", "panel"),
+    *[(f"group-tone-{n}", "sidebar-bg") for n in range(1, 7)],   # group labels in the sidebar
+    ("caption", "overlay"), ("control-text", "control"), ("chip-text", "chip"),
     ("bg", "accent"),                     # the lock page's button text
     ("red", "figure-panel"),              # the is-alert tone's text on a slide tile
 )

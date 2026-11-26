@@ -14,12 +14,12 @@
     .fig-chips { display: flex; flex-wrap: wrap; gap: 7px;
       justify-content: center; margin-top: 6px; }
     .fig-chip { display: inline-flex; align-items: center; gap: 6px;
-      font-size: 12.5px; color: #cdd6e0; background: rgba(30, 36, 48, .6);
+      font-size: 12.5px; color: var(--chip-text, #cdd6e0); background: rgba(var(--chip-rgb, 30, 36, 48), .6);
       border: 1px solid rgba(255,255,255,.12); border-radius: 999px;
       padding: 3px 11px; cursor: pointer; user-select: none;
       white-space: nowrap;
       transition: opacity .15s, background .15s; }
-    .fig-chip:hover { background: rgba(55, 65, 85, .8); }
+    .fig-chip:hover { background: rgba(var(--chip-hover-rgb, 55, 65, 85), .8); }
     .fig-chip.off { opacity: .38; }
     .fig-chip.off .fig-dot { background: transparent !important;
       border: 1px solid currentColor; }
@@ -55,7 +55,7 @@
         if (c && c !== "none" && c !== "rgba(0, 0, 0, 0)") return c;
       }
     }
-    return "#9aa4b2";
+    return "var(--caption, #9aa4b2)";
   }
 
   // Chips controlling `svg`'s groups; toggles are mirrored onto `mirror`

@@ -2,6 +2,24 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-26 — Scripts and group tones follow `[theme_colors]`
+
+- Asked by the coordinator before the independent review: the owner wants
+  the whole site in the project's palette, so the colours that scripts
+  inject and the default group tones follow the table too.
+- `lightbox.js`, `carousel.js`, `plot-toggles.js`, `page-lock.js` and
+  `nav.js` now write `var(--name, <kit value>)`, with eleven new derived
+  colours. `nav.js` gives a group without a colour `var(--group-tone-N)`;
+  the six tones, the reader's chapter parts and the sidebar's mint and
+  violet glows are lighter steps of the hue colours.
+- Left literal: `fold-controls.js`, reserved for the reader branch, with its
+  fold hues and its bar of see-through greys; the fold and layer hues in
+  `chapter-reader.css`; syntax colours; the tinted diagram box edges; the
+  light backdrop of site-map pictures.
+- The `chapter-reader.css` part of this change was folded into its own
+  earlier commit, so that file still changes in one commit; that rewrote the
+  three unpushed commits after it.
+
 ## 2026-11-26 — Browser tabs name the site first
 
 - deivid added it to the same release through the coordinator: tab titles
