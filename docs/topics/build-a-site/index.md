@@ -238,18 +238,18 @@ toc = []
 <p class="bs-lead">Every topic page becomes a row of chapter cards; readers choose one, two or all chapters and open optional depth only when they want it.</p>
 
 <div class="bs-checks r32">
-<div class="bs-check"><span class="bs-badge bs-ok">try</span><h3>Move</h3><p>Press <kbd>→</kbd> and <kbd>←</kbd>, or the arrows in the top bar. Each chapter remembers where you stopped.</p></div>
+<div class="bs-check"><span class="bs-badge bs-ok">try</span><h3>Move</h3><p>Press <kbd>→</kbd> and <kbd>←</kbd>, or the arrows of the stepper at the bottom of the chapter. A click on the strip of the next chapter at the edge works too, and so does a sideways swipe. Each chapter remembers where you stopped.</p></div>
 <div class="bs-check"><span class="bs-badge bs-ok">try</span><h3>Choose the layout</h3><p><b>One chapter</b>, <b>Two chapters</b> side by side, or <b>All chapters</b> as one long scroll, which hides the slides until you switch <b>Slides</b> on. On a page with slides, <b>Presentation</b> fills the window with the chapter's slide; scroll down for the full chapter.</p></div>
 <div class="bs-check"><span class="bs-badge bs-ok">try</span><h3>Dock the menu</h3><p>On screens wider than 900 px the menu starts docked. <code>«</code> hides it; <code>☰</code> brings it back docked. The choice holds across the site.</p></div>
 <div class="bs-check"><span class="bs-badge bs-ok">try now</span><h3>Pin a reference</h3><p>Choose <b>Two chapters</b>, press <code>⌖</code> on this chapter's header, then press <kbd>→</kbd>: this chapter stays, the other column moves.</p></div>
-<div class="bs-check"><span class="bs-badge bs-ok">try now</span><h3>Open a layer</h3><p>The buttons under this heading open every fold of one kind: Math, Experiments, Code or Alternatives. Each column keeps its own choice.</p></div>
+<div class="bs-check"><span class="bs-badge bs-ok">try now</span><h3>Open a layer</h3><p>Under <b>Also show</b> at the bottom of the menu, a button opens every fold of one kind on the whole page: Math, Experiments, Code or Alternatives. <b>All</b> switches every kind.</p></div>
 </div>
 
 Long technical pages fail readers in two ways: the point scrolls away under detail, or a definition disappears while you read the part that uses it. Chapters keep one claim per screen. Pinning holds the definition beside its use. Layers keep the visible story short without deleting the detail; it stays one click away, and printing a page opens all of it.
 
 <!-- fold: code How to write chapters and layers -->
 
-A chapter is a `##` heading, or an explicit `<section class="card" id="…">` when you want control over its contents. The frontmatter `toc` gives each chapter its short label in the toolbar. A layer is a typed fold: `<!-- fold: math Title -->` … `<!-- /fold -->`, with `experiment`, `code` or `dead-end` (shown as Alternatives) in place of `math`. These lines in this site's configuration turn the reader on for every page that does not opt out:
+A chapter is a `##` heading, or an explicit `<section class="card" id="…">` when you want control over its contents. The frontmatter `toc` gives each chapter its short label in the menu's chapter list. A layer is a typed fold: `<!-- fold: math Title -->` … `<!-- /fold -->`, with `experiment`, `code` or `dead-end` (shown as Alternatives) in place of `math`. A fold starts closed; `<!-- fold: math (open) Title -->` starts it open. These lines in this site's configuration turn the reader on for every page that does not opt out:
 
 ```toml source=docs/site/site.toml#L4-L7
 title = "Documentation kit"

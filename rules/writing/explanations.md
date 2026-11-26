@@ -12,7 +12,7 @@ Supporting derivation.
 <!-- /fold -->
 ```
 
-Use `math`, `experiment`, `code` and `dead-end` (displayed as Alternatives). The complete argument, narrative figures, comparison cases and verdict remain intelligible with every fold closed. Optional layers deepen that argument; they do not hide a separate required argument. A fold title is already its heading; do not repeat it inside. Preserve deep-link anchors when consolidating.
+Use `math`, `experiment`, `code` and `dead-end` (displayed as Alternatives). A fold starts closed. For one that should start open, write `(open)` after the kind: `<!-- fold: math (open) Title -->`. Use it for depth that most readers of the chapter need. The complete argument, narrative figures, comparison cases and verdict remain intelligible with every fold closed. Optional layers deepen that argument; they do not hide a separate required argument. A fold title is already its heading; do not repeat it inside. Preserve deep-link anchors when consolidating.
 
 Choose by narrative weight, not element type: a table or equation may carry the Story; a plot may be supporting detail. Default to visible figures and folded reference density. Keep competing formulations together, with assumptions and verdict explicit. Add a new layer only for recurring content and follow the [maintenance procedure](../site/reader.md#extending-reading-layers).
 
