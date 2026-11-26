@@ -2,6 +2,20 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — Release 5.8.0
+
+- deivid gave the go: "Yes, release 5.8.0". The ask named what the go
+  covers: moving `main` to the release commit, the tag `v5.8.0` and the
+  push, which rebuilds the kit's own site. It gave the size against 5.7.0
+  at `f935ba8`: 17 files, 344 lines added, 30 removed, and the result of
+  the full check script there: exit 0, 509 tests.
+- The message with the ask named what is not verified: the three review
+  fixes not reviewed again; Chromium only; one test page looked at, not
+  ADP's real pages; ADP's ten pages measured on its old build.
+- 5.8.0 holds the changes of the two entries below.
+- This commit adds only this entry. The full check script runs on it before
+  the tag; the Pages workflow runs it again on the push.
+
 ## 2026-11-26 — Review of 5.8.0: not fit to tag, then fixed
 
 - One independent review read the commit on `v5.7.0`, with no browser, and
