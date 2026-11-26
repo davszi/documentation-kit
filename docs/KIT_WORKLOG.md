@@ -2,6 +2,31 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-26 — Review of 5.8.0: not fit to tag, then fixed
+
+- One independent review read the commit on `v5.7.0`, with no browser, and
+  ran the layout function and fixture builds on both versions. Its verdict:
+  not fit to tag. The full check script had passed on the same commit:
+  exit 0, 506 tests; none of its tests covered the three defects.
+- Fixed, high: an opening that holds a slide face. Joined under the first
+  chapter's heading, the face no longer opened a chapter, and lint reported
+  an error on a page that passed on 5.7.0, which a minor release may not
+  do. Such an opening is a built chapter and stays one, without a warning.
+  Reproduced on a fixture after the fix: build 0, strict lint clean.
+- Fixed, medium: on a page with one styling host around its content, the
+  decision of the page was dropped, so `opening = "keep"` did not stop the
+  warning and a record would have been warned.
+- Fixed, low: the opening could land inside a fold or a column, after a
+  heading deeper in the first card. It now follows only a heading that
+  sits directly in the chapter, or in cards nested at its start; otherwise
+  it starts the card.
+- Corrected: the release note on pages with several groups, and a stale
+  docstring.
+- Confirmed by the review: the id of the joined block is unique, also with
+  several groups; no build that passed fails, apart from a wrong value of
+  the new key; the kit's own site and the starter get no warning.
+- These fixes were not reviewed again. Each has a test.
+
 ## 2026-11-26 — 5.8.0 built on a branch: no Introduction chapter
 
 - 5.7.0 is released: tag `v5.7.0` on `15bd2b3`, pushed with `main`. The

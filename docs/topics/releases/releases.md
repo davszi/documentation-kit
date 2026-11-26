@@ -62,9 +62,11 @@ author decides; ADP has ten. The kit's own site, adaptation and Tempo have
 none.
 
 Not covered. The warning reads the built page, so it names the page, not
-the line of its source. Text that stands before the first chapter of a
-later group of a page with several groups joins that group's first chapter
-and is not counted in the warning. Chromium only.
+the line of its source. On a page with several groups, each group's
+opening joins that group's first chapter, and the warning gives the word
+count of the first such opening on the page only. An opening that holds a
+slide face of its own stays a chapter, as before, and gets no warning: it
+is a built chapter. Chromium only.
 
 ## 5.7.0 — a calmer chapter reader, a project's own site colours, site names in browser tabs
 

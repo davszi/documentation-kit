@@ -85,6 +85,39 @@ class ChapterLayoutTests(unittest.TestCase):
         silent, _ = reader_page([(None, '<style>.x{}</style><!-- note --><h2 id="a">A</h2><p>B</p>')], [['A', '#a']], 'Guide', '')
         self.assertNotIn('data-reader-opening', silent)
 
+    def test_an_opening_with_a_slide_face_stays_a_chapter(self):
+        # Joined, the face would no longer open a chapter and lint would report an error that 5.7.0 did not.
+        face = '<div class="slide-face" data-slide-face=""><p>Face</p></div>'
+        text = '<h1>T</h1>' + face + '<p>Opening words.</p><h2 id="first">First</h2><p>Body.</p>'
+        markup, toc = reader_page([(None, text)], [['First', '#first']], 'Guide', '')
+        self.assertEqual([href for _, href in toc], ['#reader-introduction', '#first'])
+        self.assertNotIn('reader-opening', markup)
+        intro = markup[markup.index('id="reader-introduction"'):markup.index('id="first"')]
+        self.assertIn('data-slide-face', intro)
+
+    def test_a_styling_host_page_passes_the_decision_on(self):
+        text = '<div class="host"><h1>T</h1><p>Four words stand here.</p><h2 id="a">A</h2><p>B</p></div>'
+        kept, _ = reader_page([(None, text)], [['A', '#a']], 'Guide', '', opening='keep')
+        self.assertIn('data-reader-opening-kept=""', kept)
+        self.assertNotIn('data-reader-opening="', kept)
+        record, _ = reader_page([(None, text)], [['A', '#a']], 'Guide', '', opening='record')
+        self.assertNotIn('data-reader-opening', record)
+
+    def test_the_opening_never_lands_inside_a_fold_or_a_column(self):
+        for holder, inner in (('<details>', '<details><summary>s</summary><h3>Deep</h3><p>x</p></details><p>After.</p>'),
+                              ('bs-grid', '<div class="bs-grid g2"><div><h3>Left</h3><p>x</p></div><div><p>y</p></div></div>')):
+            with self.subTest(holder=holder):
+                text = '<h1>T</h1><p>Opening words.</p><section class="card" id="a">' + inner + '</section>'
+                markup, _ = reader_page([(None, text)], [['A', '#a']], 'Guide', '')
+                card = markup[markup.index('<section class="card">'):]
+                # At the start of the card, before the block that holds the deep heading.
+                self.assertLess(card.index('Opening words.'), card.index(holder))
+        # A card nested at the start of the chapter still counts: the opening follows its heading.
+        nested = '<h1>T</h1><p>Opening words.</p><section class="card" id="a"><section class="card"><h2>A</h2><p>B</p></section></section>'
+        markup, _ = reader_page([(None, nested)], [['A', '#a']], 'Guide', '')
+        self.assertLess(markup.index('<h2>A</h2>'), markup.index('Opening words.'))
+        self.assertLess(markup.index('Opening words.'), markup.index('<p>B</p>'))
+
     def test_a_page_without_chapters_keeps_its_text_as_one_chapter(self):
         markup, toc = reader_page([(None, '<h1>A guide</h1><p>Only text.</p>')], [['Overview', '#top']], 'Guide', '')
         self.assertEqual([href for _, href in toc], ['#reader-introduction'])

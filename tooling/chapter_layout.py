@@ -74,6 +74,18 @@ def label(text):
     return html.unescape(re.sub(r"<[^>]+>", "", text)).strip()
 
 
+def _opens(root: Element, heading: Element) -> bool:
+    """Whether `heading` is the root itself or sits directly in it, or in cards nested at its start."""
+    if heading is root:
+        return True
+    for child in root.children:
+        if child is heading:
+            return True
+        if child.tag == "section" and child.start <= heading.start < child.end:
+            return _opens(child, heading)
+    return False
+
+
 def adapt_sections(content: str, toc: list, *, group: str | None = None, reserved_ids: set | None = None,
                    opening: str = "warn"):
     """Return wrapped chapters, generated TOC entries and the original page title."""
@@ -84,7 +96,7 @@ def adapt_sections(content: str, toc: list, *, group: str | None = None, reserve
     if len(roots) == 1 and roots[0].tag in {"div", "article"}:
         host = roots[0]
         inside, entries, title = adapt_sections(
-            content[host.opening_end:host.closing_start], toc, group=group, reserved_ids=reserved_ids)
+            content[host.opening_end:host.closing_start], toc, group=group, reserved_ids=reserved_ids, opening=opening)
         opening = content[host.start:host.opening_end]
         opening = opening[:-1] + ' data-reader-host="">'
         return opening + inside + content[host.closing_start:host.end], entries, title
@@ -116,8 +128,9 @@ def adapt_sections(content: str, toc: list, *, group: str | None = None, reserve
                     and not content[previous.end:root.start].strip():
                 start = previous.start
             # Where a page's opening joins this chapter: after its heading, or at the start of a card without one.
-            inside = heading is not None and root.start <= heading.start < root.end
-            join = heading.end if inside else root.opening_end if root.tag == "section" else root.end
+            # A heading deeper inside, in a fold or a grid, is not the place: the text would hide or sit in a column.
+            join = heading.end if heading is not None and _opens(root, heading) else \
+                root.opening_end if root.tag == "section" else root.end
             boundaries.append((start, anchor, title, join))
 
     title_node = next((node for node in roots if node.tag == "h1"), None)
@@ -150,7 +163,10 @@ def adapt_sections(content: str, toc: list, *, group: str | None = None, reserve
     # moves into About beside the shared header.
     meaningful = re.sub(r"<!--[\s\S]*?-->", "", introduction).strip()
     joined = ""
-    if meaningful and boundaries:
+    # An opening with a slide face of its own is a built chapter and stays one: joined, its face would no
+    # longer open a chapter, and the first chapter could hold two.
+    faced = any("data-slide-face" in node.attrs for root in roots if root.start < first for node in root.descendants())
+    if meaningful and boundaries and not faced:
         text = re.sub(r"<[^>]+>", " ", re.sub(r"<(script|style)\b[\s\S]*?</\1>", " ", meaningful))
         words = len(html.unescape(text).split())
         mark = (' data-reader-opening-kept=""' if opening == "keep" else

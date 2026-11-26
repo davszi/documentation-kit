@@ -796,10 +796,10 @@ SHORT_INTRODUCTION = 600
 def merge_short_introduction(markup: str) -> str:
     """Move a short opening (source line plus a few sentences) into the first chapter.
 
-    The chapter reader keeps text before the first second-level heading as its
-    own chapter. A registered file usually opens with one or two sentences, which
-    would leave a nearly empty card, so a short opening joins the first chapter.
-    A longer opening, or one with its own figures or subheadings, stays separate.
+    A registered file usually opens with one or two sentences. A short opening
+    moves here, directly under the first chapter's heading with the source line.
+    A longer opening, or one with its own figures or subheadings, is left to the
+    chapter reader, which joins it to the first chapter in a block of its own.
     """
     first = _H2.search(markup)
     if not first:
