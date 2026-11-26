@@ -137,7 +137,9 @@ pages = ["shared-rule.html", "other-rule.html"]
         self.assertIn('href="https://github.com/example/project/blob/main/policy/rule.md"', page)
         self.assertIn('href="https://github.com/example/project/edit/main/policy/rule.md"', page)
         self.assertIn('class="source-page reference-page"', page)
-        self.assertIn('<title>Shared rule</title>', page)
+        # The tab names a page by its [[nav]] label, which this test sets to the slug.
+        self.assertIn(' · shared-rule</title>', page)
+        self.assertIn('<span class="t">Shared rule</span>', page)
         # Registered targets become routes; other repository files stay source links.
         self.assertIn('href="other-rule.html#second-part"', page)
         self.assertIn('href="other-rule.html"', page)

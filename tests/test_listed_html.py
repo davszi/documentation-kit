@@ -425,7 +425,7 @@ class Built(unittest.TestCase):
         for script in ('toc', 'nav', 'code', 'filelinks'):
             self.assertEqual(page.count(f'<script defer src="assets/{script}.js'), 1, script)
         self.assertEqual(page.count('<main'), 1)
-        self.assertIn('<title>Title {{CONTENT}} {{SCRIPTS}}</title>', page)
+        self.assertIn(' · Title {{CONTENT}} {{SCRIPTS}}</title>', page)
         self.assertIn('Text {{SCRIPTS}} {{CONTENT}} {{TOC}} {{CROSSNAV}} {{HEAD_EXTRA}} {{TITLE}}.', page)
 
     def test_attempts(self):

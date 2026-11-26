@@ -18,9 +18,10 @@ import html
 from pathlib import Path
 import re
 import sys
+import tomllib
 
 from chapter_layout import Structure, label
-from site_paths import OUTPUT_ROOT, KIT_SITE
+from site_paths import OUTPUT_ROOT, KIT_SITE, REPO
 
 DECK_ROOT = OUTPUT_ROOT.parent / "slides"
 SITE_PREFIX = "../docs/html/"
@@ -175,7 +176,7 @@ def build_deck(selection, *, title: str) -> tuple[str, list[str]]:
     document = (
         "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n"
         "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n"
-        f"<title>{html.escape(title)}</title>\n{head}<style>\n{deck_css}</style>\n</head>\n"
+        f"<title>{html.escape(deck_tab_title(title))}</title>\n{head}<style>\n{deck_css}</style>\n</head>\n"
         f'<body class="{html.escape(" ".join(["slide-deck-page", *body_classes]), quote=True)}">\n'
         f'<header class="deck-bar"><strong>{html.escape(title)}</strong>'
         f'<span class="deck-count" data-deck-count>{len(frames)} slides</span>'
@@ -184,6 +185,15 @@ def build_deck(selection, *, title: str) -> tuple[str, list[str]]:
         '<main class="slide-deck" data-slide-deck>\n' + "\n".join(frames) + "\n</main>\n"
         f"<script>\n{deck_js}</script>\n" + (math_scripts() if uses_math else "") + "</body>\n</html>\n")
     return document, problems
+
+
+def deck_tab_title(title: str) -> str:
+    """The deck's browser-tab title: the site's `title` from site.toml, then the deck's."""
+    config = REPO / "docs" / "site" / "site.toml"
+    site_title = tomllib.loads(config.read_text()).get("title") if config.is_file() else None
+    if not isinstance(site_title, str) or not site_title.strip():
+        return title
+    return f"{site_title.strip()} · {title}"
 
 
 def math_scripts() -> str:

@@ -76,7 +76,7 @@ async function unlockWith(page, password, {remember = false} = {}) {
 }
 
 async function waitUnlocked(page) {
-  await page.waitForFunction(() => document.title !== 'Locked page' && !document.getElementById('page-lock'),
+  await page.waitForFunction(() => document.title !== 'Lock fixture · Locked' && !document.getElementById('page-lock'),
     null, {timeout: 20000});
   await page.waitForLoadState('load');
   await settle(page);
@@ -122,7 +122,7 @@ async function referenceTree(page) {
     const page = watch(await context.newPage());
     await page.goto(url('guide.html'));
     await waitForm(page);
-    assert.equal(await page.title(), 'Locked page');
+    assert.equal(await page.title(), 'Lock fixture · Locked');
     assert.equal(await page.getAttribute('meta[name=robots]', 'content'), 'noindex, nofollow, noarchive');
     assert.ok(!(await page.content()).includes(MARKERS.topic));
     await page.screenshot({path: path.join(output, '1400-lock.png')});

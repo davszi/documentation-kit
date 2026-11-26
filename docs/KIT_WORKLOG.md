@@ -2,6 +2,21 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-26 — Browser tabs name the site first
+
+- deivid added it to the same release through the coordinator: tab titles
+  with the project's name first, the in-page titles unchanged.
+- Choices the request left open: the home page shows the site's `title`
+  alone, because its `[[nav]]` label (often "Home" or "Overview") would only
+  repeat that it is the start; a site without `title` keeps today's tab
+  titles instead of a made-up "Documentation". A `[[nav]]` entry always has
+  a label, so the `short` value the request named second is never reached.
+- The shell's `<title>` reads a new `{{TAB_TITLE}}`; `{{TITLE}}` stays for
+  the top bar. The lock page takes the site's title from `publish` through
+  `prepare_lock`, never from the page it locks.
+- Tests: `tests/test_tab_titles.py`; the expectations in five test files
+  that quoted a page's `<title>` now quote the tab title or the top bar.
+
 ## 2026-11-26 — A project's own site colours: `[theme_colors]`
 
 - Asked for by the embodied-safety-gates project through the coordinator: its

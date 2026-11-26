@@ -414,6 +414,24 @@ def site_name(site: dict) -> str:
     return site.get("title") or "Documentation"
 
 
+def tab_title(site: dict, fname: str, title: str) -> str:
+    """A page's browser-tab title: the site's `title`, then the page's short name.
+
+    The short name is the page's `[[nav]]` label when an entry lists the page,
+    else its title. The home page shows the site's title alone. A site without
+    a `title` keeps the page's title alone.
+    """
+    name = site.get("title")
+    if not isinstance(name, str) or not name.strip():
+        return title
+    name = name.strip()
+    if fname == "index.html":
+        return name
+    entry = next((n for n in site.get("nav", []) if n.get("file") == fname), None)
+    short = entry["label"] if entry else title
+    return f"{name} · {short}" if short and short != name else name
+
+
 _BRAND_MARKS: dict[str, str] = {}
 
 
@@ -962,6 +980,7 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
     page = shell.replace("<body>", '<body' + body_class + ' data-site-home-label="' + html.escape(site_name(site), quote=True) + '">')
     values = {
         "{{TITLE}}": html.escape(meta.get("title", "")),
+        "{{TAB_TITLE}}": html.escape(tab_title(site, fname, meta.get("title", ""))),
         "{{BRAND}}": brand_mark_html(site) + '<span class="brand-name">' + html.escape(site_name(site)) + "</span>",
         "{{BRAND_SUB}}": html.escape(meta.get("brand_sub", "")),
         "{{TOC}}": toc,

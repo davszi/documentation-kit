@@ -97,6 +97,16 @@ is deprecated, accepted and not read. `brand_sub` stays a page's own line. It ap
 name on a page without the chapter reader and on the page's site-map card when
 the page has no `description`.
 
+The browser tab names the site first, then the page: "`title` · short name".
+The short name is the page's `[[nav]]` label when an entry lists the page,
+otherwise the page's title; Reference pages, automatically listed files and the
+Reference index use their titles. The home page's tab shows `title` alone,
+since its label would only repeat that it is the start. A deck from `slides`
+shows "`title` · deck title", and a lock page from `publish` shows
+"`title` · Locked" and nothing of the page it locks. A site without `title`
+keeps the page title alone, and a lock page "Locked page". The heading and the
+title in the page's top bar stay the page's own title.
+
 Navigation groups take their colour from `--g`. A `[group_colors]` table in
 `site.toml` sets it for the whole site, one hex colour per group, such as
 `"guide" = "#6ee7c5"`: the group's sidebar header and page links, its home-page

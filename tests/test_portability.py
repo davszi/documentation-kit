@@ -246,7 +246,8 @@ private_prefixes = ["configs/"]
         page = (self.root / '.build/docs/html/guide.html').read_text()
         self.assertIn('<body class="project-reader scientific-content"', page)
         self.assertIn('Imported source remains project-owned', page)
-        self.assertIn('<title>Imported project content</title>', page)
+        # The tab names the page by its [[nav]] label; the page's own title stays in its top bar.
+        self.assertIn('<span class="t">Imported project content</span>', page)
         self.assertIn('assets/chapter-reader.js', page)
 
     def test_transformed_metadata_is_validated_before_output(self):

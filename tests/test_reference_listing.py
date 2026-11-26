@@ -297,7 +297,7 @@ class ReferenceListing(Project):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn('problem(s) in automatically listed reference pages were tolerated', result.stdout)
         page = self.page('notes.messy.md.html')
-        self.assertIn('<title>messy</title>', page)
+        self.assertIn(' · messy</title>', page)
         self.assertIn(GONE + 'dead link</span>', page)
         self.assertIn(GONE + 'absolute one</span>', page)
         self.assertIn(GONE + 'outside</span>', page)

@@ -70,6 +70,23 @@ stylesheets resolves to the colours it had. The bytes of `base.css`,
 `panel-switcher.css`, `home.css` and `build-sheet.css` change, so each page
 gets new `?v=` queries for them, as for any theme change.
 
+### Browser tabs name the site first
+
+A tab showed the page's title alone, often a long sentence, and a lock page
+only "Locked page". Each tab now starts with the site's `title`:
+
+- **Pages.** "`title` · short name": the page's `[[nav]]` label, or, for a
+  page without an entry, such as a Reference page, a listed file or the
+  Reference index, its title. The home page shows `title` alone.
+- **Lock pages and decks.** A lock page from `publish` shows
+  "`title` · Locked" and still nothing of the page it locks; a deck from
+  `slides` shows "`title` · deck title".
+- **Unchanged.** The page's heading and the title in its top bar stay the
+  page's own. A site without `title` keeps today's tab titles. See
+  [authoring paths](../../../rules/site/authoring.md#authoring-paths).
+
+Every built page changes in its `<title>` element.
+
 ## 5.6.1 — the showcase pictures retaken, and a line on what each shows
 
 5.6.1 is a patch release under
