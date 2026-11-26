@@ -228,6 +228,10 @@ class Series(unittest.TestCase):
         self.assertEqual(figure_themes.problems(figure_themes.DARK), [])
         self.assertEqual(figure_themes.problems(figure_themes.LIGHT), [])
         self.assertEqual(figure_themes.problems(figure_themes.project_dark({**BROWN, **HUES})), [])
+        # The kit's own hues on the brown surfaces, with only surface and text keys set.
+        neutrals = {key: value for key, value in BROWN.items() if key != 'red'}
+        self.assertEqual(figure_themes.project_dark(neutrals).series, figure_themes.DARK.series)
+        self.assertEqual(figure_themes.problems(figure_themes.project_dark(neutrals)), [])
 
     def test_the_simulation_matches_the_tests_own(self):
         from test_figure_themes import DEUTAN, PROTAN
@@ -248,6 +252,7 @@ class Series(unittest.TestCase):
     def test_neighbours_that_come_too_close_are_named(self):
         # Full colour vision: a violet next to a near-identical accent.
         self.assertIn('neighbouring series accent #39d2c0 and violet #44cfc0 are', self.found(secondary='#44cfc0'))
+        self.assertIn('neighbouring series accent #b48cf0 and violet #bc8cff are', self.found(accent='#b48cf0'))
         # Deuteranopia: a green beside an orange of the same lightness.
         self.assertIn('with deuteranopia; need 8.0', self.found(secondary='#7fa94a', orange='#c49a3c'))
 
@@ -282,10 +287,8 @@ class Figures(unittest.TestCase):
         table = {**BROWN, **HUES}
         dark = figure_themes.palette('dark', root=self.project(
             '\n[theme_colors]\n' + ''.join(f'{key} = "{value}"\n' for key, value in table.items())))
-        # accent, violet, warm, blue; the first series has no key yet and stays the kit's.
-        self.assertEqual(dark.series, (figure_themes.DARK.accent, '#b180d4', '#cb882e', '#549de5'))
+        self.assertEqual(dark.series, ('#56ae6c', '#b180d4', '#cb882e', '#549de5'))   # accent, violet, warm, blue
         self.assertEqual(dark.alert, '#ff7b72')
-        self.assertNotIn('accent', figure_themes.HUE_KEYS.values())
         only = figure_themes.project_dark({'orange': '#cb882e'})
         self.assertEqual(only.series, (figure_themes.DARK.accent, figure_themes.DARK.violet, '#cb882e',
                                        figure_themes.DARK.blue))

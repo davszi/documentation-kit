@@ -612,10 +612,10 @@ surfaces: `palette("dark")`, `matplotlib_rc("dark")`, `write_both` and the
 `svg_figures` colours take the background, panel, lines and text from the
 project's colours. They read `docs/site/site.toml` of the project at
 `DOCSITE_PROJECT_ROOT`, or of the working directory, so run a generator from
-the project root. Four keys colour the series and the alert when the table
-sets them: `secondary` the violet series, `orange` the warm one, `blue` the
-blue one and `red` the alert. The first series, accent, stays the kit's for
-now, and the series order (accent, violet, warm, blue) never changes.
+the project root. Five keys colour the series and the alert when the table
+sets them, the same hues the interface uses: `accent` the first series,
+`secondary` the violet one, `orange` the warm one, `blue` the blue one and
+`red` the alert. The series order (accent, violet, warm, blue) never changes.
 
 `figure_themes.problems` checks a palette: text at 4.5:1 and marks at 3:1 on
 the background and the panel; each series colour and the alert inside an OKLCH

@@ -66,10 +66,9 @@ on the kit's navy background.
   or HTML stay as written.
 - **Figures in the project's colours.** `figure_themes.palette("dark")`,
   and with it `write_both`, `matplotlib_rc` and the `svg_figures` colours,
-  takes its surfaces and text from the project's table, and its violet, warm
-  and blue series and its alert from `secondary`, `orange`, `blue` and `red`
-  when the table sets them. The first series stays the kit's accent for now,
-  and the order stays. The build checks the series as a categorical chart
+  takes its surfaces and text from the project's table, and its four series
+  and its alert from `accent`, `secondary`, `orange`, `blue` and `red` when
+  the table sets them, in the fixed order accent, violet, warm, blue. The build checks the series as a categorical chart
   palette: lightness band, chroma, neighbours apart with full colour vision
   and with three colour deficiencies, the alert apart from every series, and
   3:1 on both surfaces; a palette that fails stops the build and names the

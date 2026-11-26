@@ -29,9 +29,8 @@ dark chart that shows both.
 
 A project that sets its own site colours in `[theme_colors]` (`theme_colors.py`)
 gets dark figures in them: `palette("dark")` takes the surfaces and text colours
-of the project's site, and the hues the table sets (`secondary` for violet,
-`orange` for warm, `blue`, `red` for alert; the first series, accent, stays
-the kit's for now), read from
+of the project's site, and the hues the table sets (`accent`, `secondary` for
+violet, `orange` for warm, `blue`, `red` for alert), read from
 `docs/site/site.toml` under DOCSITE_PROJECT_ROOT or the working directory, so
 run generators from the project root. The series order stays. `problems` runs
 the contrast and series checks on such a palette, and `palette` refuses one
@@ -80,10 +79,9 @@ THEMES = {"dark": DARK, "light": LIGHT}
 # The site colour each dark figure role takes; the kit's values are DARK's.
 SITE_ROLES = {"ink": "figure-ink", "sub": "figure-sub", "dim": "figure-dim", "line": "figure-line",
               "panel": "figure-panel", "bg": "figure-bg"}
-# The [theme_colors] key each dark figure hue takes, only when the table sets that key. The
-# first series, accent, has no key yet: whether figures share the interface's accent or get a
-# key of their own is undecided, so it stays the kit's; adding its key here is the whole change.
-HUE_KEYS = {"violet": "secondary", "warm": "orange", "blue": "blue", "alert": "red"}
+# The [theme_colors] key each dark figure hue takes, only when the table sets that key. Figures
+# share the interface's hues: the first series is the site's accent.
+HUE_KEYS = {"accent": "accent", "violet": "secondary", "warm": "orange", "blue": "blue", "alert": "red"}
 TEXT_CONTRAST, MARK_CONTRAST = theme_colors.TEXT_CONTRAST, theme_colors.MARK_CONTRAST
 
 # Series checks, after the categorical colour method of the dataviz guide. Distances are

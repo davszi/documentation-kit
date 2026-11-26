@@ -2,6 +2,17 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-26 — `accent` colours the first figure series
+
+- deivid decided against separate interface and content colours: `accent`
+  stays the first series, so `HUE_KEYS` now maps all five hues.
+- The kit's own hues on the brown surfaces, with only surface and text keys
+  set, pass every figure check: neighbours at least 13.1 apart with any
+  deficiency (violet and warm, tritanopia), the alert 11.2 from warm, marks
+  at least 5.47:1 on the figure panel. The site's text checks fail one pair:
+  the kit's red #f47067 on the brown panel2, 4.15:1; with `red = "#ff7b72"`
+  every check passes.
+
 ## 2026-11-26 — Figure series follow `[theme_colors]`, checked as a categorical palette
 
 - deivid asked that the content colour map follow the project palette too.
