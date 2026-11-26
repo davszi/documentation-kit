@@ -89,6 +89,50 @@ async function reviewFacesAfterChapterChange(browser) {
   }
 }
 
+// Review findings on the reader with the real components: a page with slide faces and
+// no folds shows, in All chapters, Slides without a dead All switch; a chapter written
+// as a card without a heading of its own keeps its strip in One chapter, and a heading
+// inside a nested card keeps its size; hidden click zones show nothing.
+async function reviewReaderEdges(browser) {
+  const components = path.join(__dirname, '../theme/components');
+  const [controls, css, script, faceCss, faceScript] = await Promise.all(['chapter-reader.html', 'chapter-reader.css',
+    'chapter-reader.js', 'slide-face.css', 'slide-face.js'].map(file => fs.readFile(path.join(components, file), 'utf8')));
+  const url = 'http://reader-fixture.test/edges.html';
+  const page = await browser.newPage({viewport:{width:1600, height:900}, reducedMotion:'reduce'});
+  try {
+    const errors = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await page.route(url, route => route.fulfill({contentType:'text/html', body:`<!doctype html>
+      <style>:root{--bg:#101720;--bg2:#19222d;--panel:#141b24;--border:#334051;--text:#dce5ef;--muted:#bac5d5;--bright:#fff;--accent:#39d2c0;--mono:monospace}
+      *{box-sizing:border-box}body{margin:0}.layout{display:grid}.content{min-width:0}.card{padding:20px;background:var(--panel)}${css}${faceCss}</style>
+      <div id="backdrop" class="backdrop"></div><div class="layout"><aside id="sidebar" class="sidebar"><nav id="toc" class="toc">
+      <a href="#one">One</a><a href="#two">Two</a><a href="#bare">Bare</a></nav></aside>
+      <main class="content"><span data-reader-title="Edges" data-reader-adapted hidden></span>${controls}
+      <section class="card" id="one" data-reader-chapter><h2>One</h2><div class="slide-face" data-slide-face><div class="slide-canvas">
+        <p class="slide-title">A finding</p><div class="slide-main"><p>Short text.</p></div></div></div><h3>After the slide</h3><p>Text.</p></section>
+      <section class="card" id="two" data-reader-chapter><h2>Two</h2><p>Chapter text.</p></section>
+      <section class="card" id="bare" data-reader-chapter><p>A chapter without a heading.</p><div class="card"><h3>Nested heading</h3><p>Text.</p></div></section>
+      </main></div><script>${script}</script><script>${faceScript}</script>`}));
+    await page.goto(url, {waitUntil:'load'});
+    await settle(page);
+    const shown = selector => page.evaluate(selector => [...document.querySelectorAll(selector)].map(node => getComputedStyle(node).display !== 'none'), selector);
+    assert.deepEqual(await shown('.topic-peek'), [false, true], 'The first chapter shows no previous click zone');
+    await page.click('[data-reader-view="full"]');
+    await settle(page);
+    assert.deepEqual(await shown('.reader-layer-all, [data-reader-slides]'), [false, true], 'All chapters without folds offers Slides and no All switch');
+    assert.deepEqual(await shown('.topic-peek'), [false, false], 'All chapters shows no click zones');
+    await page.click('[data-reader-view="single"]');
+    await page.goto(url + '#bare', {waitUntil:'load'});
+    await settle(page);
+    const bare = await page.evaluate(() => ({strip: getComputedStyle(document.querySelector('#bare .chapter-header')).display,
+      nested: parseFloat(getComputedStyle(document.querySelector('#bare h3')).fontSize),
+      other: getComputedStyle(document.querySelector('#two .chapter-header')).display}));
+    assert.ok(bare.strip !== 'none' && bare.other === 'none' && bare.nested < 32,
+      'A chapter without its own headline keeps its strip; a nested heading keeps its size: ' + JSON.stringify(bare));
+    assert.deepEqual(errors, []);
+  } finally {await page.close();}
+}
+
 // Slide faces with the real slide-face stylesheet: a stacked face at 390 px that overflows
 // sideways, clips text or lets a part stick out is reported; a sound face reports nothing; the
 // empty band is information only; a face the page does not show is not measured. A drawing whose
@@ -264,6 +308,7 @@ async function reviewSmallText(browser) {
     await reviewSlideFaces(browser);
     await reviewSmallText(browser);
     await reviewFacesAfterChapterChange(browser);
+    await reviewReaderEdges(browser);
     await reviewPlotToggleChips(browser);
     const page = await browser.newPage({viewport:{width:480,height:320}});
     await page.setContent(`<!doctype html><style>

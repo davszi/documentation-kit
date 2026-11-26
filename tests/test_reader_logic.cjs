@@ -245,7 +245,24 @@ function checkPageLayers() {
   page.layers(['dead-end']);
   assert.ok(page.sections.every((_, index) => JSON.stringify(page.states(index)) === '[false,false,false,true]'),
     'In All chapters an option acts on every chapter');
-  return 'options on every chapter, both columns, pinned and All chapters; saved fold clicks; replaced states; All switch';
+  // Review finding: a fold keeps its state while the page is open, however it
+  // was opened (a deep or jump link, find in page); only an option click changes it.
+  const kept = bootReader('#notation');
+  kept.folds(1)[2].open = true;
+  kept.folds(1)[0].open = true;
+  kept.chapterKey('ArrowRight');
+  kept.chapterKey('ArrowLeft');
+  assert.deepEqual(kept.states(1), [true, false, true, false], 'Folds opened without a click resume on return');
+  kept.click(deepLink(kept));
+  kept.chapterKey('ArrowRight');
+  kept.chapterKey('ArrowLeft');
+  assert.equal(kept.folds(FIXTURE.deepChapter)[0].open, true, 'A fold opened by a deep link stays open on return');
+  kept.click(kept.links[1]);
+  kept.layers(['code']);
+  kept.layers([]);
+  assert.deepEqual(kept.states(1), [true, false, false, false], 'Only an option click changes such a fold');
+  return 'options on every chapter, both columns, pinned and All chapters; saved fold clicks; replaced states; All switch; '
+    + 'folds kept while the page is open';
 }
 
 // An author can make a fold start open. A saved state for a fold wins on the
@@ -569,16 +586,36 @@ function checkFrame() {
   touch.assertCentred(1, 'A drag under 70 px');
   touch.swipe(200, 300, 100, 480);
   touch.assertCentred(1, 'A mostly upright drag');
-  const wide = touch.document.getElementById('depth-table').parentElement;
-  wide.scrollWidth = 900;
-  wide.clientWidth = 300;
   const style = touch.window.getComputedStyle;
-  touch.window.getComputedStyle = node => ({...style(node), overflowX: node === wide ? 'auto' : 'visible'});
-  touch.swipe(250, 400, 100, 400, touch.document.getElementById('depth-table'));
+  const story = touch.document.getElementById('story-1');
+  story.scrollWidth = 900;
+  story.clientWidth = 300;
+  touch.window.getComputedStyle = node => ({...style(node), overflowX: node === story ? 'auto' : 'visible'});
+  touch.swipe(250, 400, 100, 400, story);
   touch.assertCentred(1, 'A drag that starts inside something that scrolls sideways');
-  wide.scrollWidth = 300;
+  // Review finding: controls that own their keys own their drags too, and a pinch-zoomed page pans.
   touch.swipe(250, 400, 100, 400, touch.document.getElementById('depth-table'));
+  touch.assertCentred(1, 'A drag that starts on a table region');
+  for (const [tag, role] of [['input', null], ['svg', null], ['canvas', null], ['div', 'slider']]) {
+    const control = new FakeElement(tag, touch.document);
+    if (role) control.setAttribute('role', role);
+    touch.sections[1].appendChild(control);
+    touch.swipe(250, 400, 100, 400, control);
+    touch.assertCentred(1, `A drag that starts on ${role ? 'role=' + role : tag}`);
+  }
+  touch.window.visualViewport = {scale: 2};
+  touch.swipe(250, 400, 100, 400, touch.document.getElementById('story-1'));
+  touch.assertCentred(1, 'A drag while the page is pinch-zoomed');
+  touch.window.visualViewport = {scale: 1};
+  story.scrollWidth = 300;
+  touch.swipe(250, 400, 100, 400, story);
   touch.assertCentred(2, 'The same drag once the box no longer scrolls sideways');
+  touch.click(touch.control('pair'));
+  touch.assertPair(2, 3);
+  touch.swipe(250, 400, 100, 400, touch.document.getElementById('story-2'));
+  touch.assertPair(3, 4, 'A swipe in Two chapters moves both columns');
+  touch.swipe(100, 400, 250, 400, touch.document.getElementById('story-3'));
+  touch.assertPair(2, 3, 'A swipe back in Two chapters');
 
   // Narrow windows: choices made in the overlay navigation close it.
   const narrow = bootReader('#notation', {width: 744});
@@ -594,11 +631,31 @@ function checkFrame() {
   for (const gone of ['From start', 'layer buttons', 'independently for each column']) {
     assert.ok(!help.includes(gone), `The help no longer mentions ${gone}`);
   }
+  // Review finding: a chapter without a headline of its own keeps its strip, and a
+  // heading inside a nested card is not taken for its headline.
+  const headless = bootReader('', {headless: [2]});
+  assert.ok(headless.sections[2].classes.has('topic-headless'), 'A chapter without a headline is marked to keep its strip');
+  assert.ok(!headless.document.getElementById('heading-2').classes.has('chapter-headline'), 'A nested heading is not the headline');
+  assert.equal(headless.sections[2].getAttribute('aria-label'), CHAPTERS[2].label, 'The chapter is named by its label');
+  assert.ok(!headless.sections[1].classes.has('topic-headless') && headless.document.getElementById('heading-1').classes.has('chapter-headline'),
+    'A chapter with its own heading keeps it as the headline');
+  // Storage that throws: the reader still works, in memory.
+  const refused = bootReader('#notation', {storageThrows: true});
+  refused.layers(['math']);
+  assert.deepEqual(refused.states(1), [true, false, false, false], 'Options work when storage throws');
+  refused.toggleFold(1, 1);
+  refused.chapterKey('ArrowRight');
+  refused.chapterKey('ArrowLeft');
+  assert.deepEqual(refused.states(1), [true, true, false, false], 'Fold clicks work when storage throws');
+  refused.click(refused.control('drawer'));
+  refused.click(refused.control('pair'));
+  refused.assertPair(1, 2, 'Arrangements work when storage throws');
   const sections = bootReader('', {unit: 'section'});
   assert.deepEqual(['single', 'pair', 'full'].map(name => sections.control(name).getAttribute('aria-label')),
     ['One section', 'Two sections', 'All sections'], 'The icons are named in the page\'s unit');
   return 'bar contents, icon row names and place, island position and place, island arrows, step-back on scroll, '
-    + 'scrolled marks, click zone width, swipe and its exceptions, overlay closing on a view choice, help text, unit names';
+    + 'scrolled marks, click zone width, swipe and its exceptions, overlay closing on a view choice, help text, '
+    + 'chapters without a headline, storage that throws, unit names';
 }
 
 // Pages with different titles, units, chapter counts and groups each get their

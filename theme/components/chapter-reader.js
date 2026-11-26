@@ -120,7 +120,18 @@ document.addEventListener('DOMContentLoaded', () => {
   topics.forEach((topic, index) => {
     const section = topic.section;
     // A slide face's title is not a heading; skip any heading inside one regardless.
-    const heading = [...section.querySelectorAll('h2, h3')].find(node => !node.closest('[data-slide-face]'));
+    // The chapter's own headline: a heading of the chapter itself, not one inside a slide
+    // face, a fold, a figure, a tab panel or a card nested further in. A card that opens the
+    // chapter (an adapted page keeps the author's card inside its chapter) is the chapter.
+    const heading = [...section.querySelectorAll('h2, h3')].find(node => {
+      for (let up = node.parentElement; up && up !== section; up = up.parentElement) {
+        if (up.matches('[data-slide-face], details, aside, figure, [role="tabpanel"]')) return false;
+        if (up.matches('section, article, .card') && !(up.parentElement === section && section.children[0] === up)) return false;
+      }
+      return true;
+    });
+    // Without a headline of its own the chapter keeps its strip, which names it, in One chapter.
+    section.classList.toggle('topic-headless', !heading);
     const header = make('header', 'chapter-header');
     const identity = make('div', 'chapter-identity');
     const number = make('span', 'chapter-number', String(index + 1).padStart(2, '0'));
@@ -142,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (heading?.id) section.setAttribute('aria-labelledby', heading.id);
     else section.setAttribute('aria-label', topic.label);
     strip.appendChild(section);
-    Object.assign(topic, {header, body, heading, pin, folds: [...body.querySelectorAll('details.fold')], shown: false});
+    Object.assign(topic, {header, body, heading, pin, folds: [...body.querySelectorAll('details.fold')]});
     topic.folds.forEach(fold => {
       const summary = fold.querySelector('summary'), tag = summary?.querySelector('.fold-tag');
       const text = summary?.textContent || '', title = (tag ? text.slice(tag.textContent.length) : text).trim();
@@ -220,7 +231,10 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   stage.addEventListener('touchstart', event => {
     const touch = event.touches[0];
-    swipeStart = event.touches.length === 1 && !full && !presenting && !scrollsSideways(event.target) ? {x:touch.clientX, y:touch.clientY} : null;
+    // Controls that own their keys (inputs, sliders, drawings, canvases) own their drags too,
+    // and a pinch-zoomed page pans instead of turning.
+    const owned = event.target?.closest?.(keyOwners) || scrollsSideways(event.target) || window.visualViewport?.scale > 1;
+    swipeStart = event.touches.length === 1 && !full && !presenting && !owned ? {x:touch.clientX, y:touch.clientY} : null;
   }, {passive:true});
   stage.addEventListener('touchcancel', () => { swipeStart = null; }, {passive:true});
   stage.addEventListener('touchend', event => {
@@ -372,8 +386,10 @@ document.addEventListener('DOMContentLoaded', () => {
   tools.querySelector('[data-reader-help]').addEventListener('click', event => showDialog(help, event.currentTarget));
   function columnFor(index) { return !full && paired ? Math.max(0, pair.indexOf(index)) : activeColumn; }
   function shownIndices() { return full ? topics.map((_, index) => index) : paired ? pair : [active]; }
-  // When a chapter is shown, each fold takes the reader's saved state for it;
-  // otherwise it is open when its kind is switched on or its author opened it.
+  // At load each fold takes the reader's saved state for it; otherwise it is open
+  // when its kind is switched on or its author opened it. After that a fold keeps
+  // its state while the page is open, however it was opened (a click, a deep or
+  // jump link, find in page); only an option click changes it.
   function resolveFold(fold) {
     const info = foldInfo.get(fold), saved = foldStates.get(info.key);
     fold.open = saved !== undefined ? saved : layers.has(fold.dataset.fold) || info.authored;
@@ -540,8 +556,6 @@ document.addEventListener('DOMContentLoaded', () => {
     topics.forEach((topic, i) => {
       topic.section.classList.remove('topic-preview-hover');
       const shown = full || (paired ? pair.includes(i) : i === active);
-      if (shown && !topic.shown) topic.folds.forEach(resolveFold);
-      topic.shown = shown;
       topic.section.inert = !shown;
       topic.section.classList.toggle('topic-active', i === active);
       topic.section.classList.toggle('topic-visible', shown);

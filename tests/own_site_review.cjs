@@ -336,11 +336,55 @@ async function reviewFrame(browser, origin) {
   assert.ok(state.headline >= 32 && state.headline <= 50, 'the chapter name is the large headline: ' + state.headline);
   checked.push('no bar', 'icon row', 'island at the bottom centre', 'fade', 'headline');
 
+  // Review finding: a hidden click zone shows nothing and takes no click, at the first and
+  // the last chapter and in All chapters.
+  const zonesShown = () => page.evaluate(() => [...document.querySelectorAll('.topic-peek')]
+    .map(node => `${node.className.split('-').pop()}:${node.hidden ? 'hidden' : 'on'}:${getComputedStyle(node).display === 'none' ? 'none' : 'shown'}`));
+  assert.deepEqual(await zonesShown(), ['prev:hidden:none', 'next:on:shown'], 'the first chapter has no previous zone');
+  await page.goto(`${origin}/html/${PRESENT_PAGE}.html#reference-guides`, {waitUntil: 'networkidle'});
+  await settle(page);
+  assert.deepEqual(await zonesShown(), ['prev:on:shown', 'next:hidden:none'], 'the last chapter has no next zone');
+  await setView(page, 'full');
+  await settle(page);
+  assert.deepEqual(await zonesShown(), ['prev:hidden:none', 'next:hidden:none'], 'All chapters has no click zones');
+  const edge = await page.evaluate(() => {
+    const line = [...document.querySelectorAll('[data-reader-chapter] .chapter-body p')].find(node => { const r = node.getBoundingClientRect(); return r.top > 80 && r.bottom < innerHeight - 120; });
+    const r = line.getBoundingClientRect();
+    return document.elementFromPoint(r.left + 3, r.top + 6)?.closest('.topic-peek') ? 'zone' : 'text';
+  });
+  assert.equal(edge, 'text', 'in All chapters the start of a line is text, not a click zone');
+  await setView(page, 'single');
+  await page.goto(url, {waitUntil: 'networkidle'});
+  await settle(page);
+  checked.push('no hidden click zone at the first and last chapter or in All chapters');
+
+  // Review finding: the docked row never runs under the island at narrower wide windows:
+  // the reading time goes first, then the label.
+  for (const width of [1000, 1200]) {
+    await page.setViewportSize({width, height: 900});
+    await settle(page);
+    await page.waitForFunction(() => !document.querySelector('.reader-island').classList.contains('reader-island-away'), null, {timeout: 3000});
+    const fit = await page.evaluate(() => {
+      const row = document.querySelector('[data-reader-chapter].topic-active [data-slide-bridge-lead]');
+      const island = document.querySelector('.reader-island').getBoundingClientRect();
+      const shown = [...row.querySelectorAll('.slide-bridge-pill, .slide-bridge-meta')].filter(node => getComputedStyle(node).display !== 'none');
+      return {docked: document.body.classList.contains('reader-nav-docked'), parts: shown.map(node => node.className),
+        labelRight: Math.max(0, ...shown.map(node => node.getBoundingClientRect().right)), islandLeft: island.left, islandRight: island.right,
+        buttonLeft: row.querySelector('.slide-bridge-button').getBoundingClientRect().left};
+    });
+    assert.ok(fit.docked && fit.labelRight < fit.islandLeft - 4 && fit.buttonLeft > fit.islandRight + 4,
+      `at ${width} px the row stays clear of the island: ` + JSON.stringify(fit));
+  }
+  await page.setViewportSize({width: 1600, height: 900});
+  await settle(page);
+  checked.push('the row clears the island at 1000 and 1200 px');
+
   // The "Full chapter" row at three window heights: inside the window, docked on the island's line,
   // its label at the far left and "Continue reading" at the far right; gone after a scroll.
   for (const height of [900, 680, 560]) {
     await page.setViewportSize({width: 1600, height});
     await settle(page);
+    await page.waitForFunction(() => !document.querySelector('.reader-island').classList.contains('reader-island-away'), null, {timeout: 3000});
     state = await frameState(page);
     const {row, island, card} = state;
     assert.ok(row && row.shown && row.box.top >= 0 && row.box.bottom <= height, `the row shows inside the window at ${height} px: ` + JSON.stringify(row));
@@ -359,8 +403,12 @@ async function reviewFrame(browser, origin) {
   }
   await page.setViewportSize({width: 1600, height: 900});
   await settle(page);
-  await page.click('[data-reader-chapter].topic-active .slide-bridge-button');
+  // Review finding: activated by keyboard, the docked button hands focus to its chapter before it hides.
+  await page.focus('[data-reader-chapter].topic-active .slide-bridge-button');
+  await page.keyboard.press('Enter');
   await page.waitForFunction(() => document.querySelector('[data-reader-chapter].topic-active .chapter-body').scrollTop > 100);
+  assert.ok(await page.evaluate(() => document.activeElement.matches('[data-reader-chapter].topic-active')),
+    'after Continue reading by keyboard the focus is on the chapter, not on the hidden button');
   const landed = await page.evaluate(() => {
     const card = document.querySelector('[data-reader-chapter].topic-active');
     return card.querySelector('.chapter-headline').getBoundingClientRect().top - card.querySelector('.chapter-body').getBoundingClientRect().top;
@@ -409,12 +457,17 @@ async function reviewFrame(browser, origin) {
   assert.ok(state.row.shown && !state.row.pillShown && !state.row.meta, 'narrow: the label and reading time are not shown');
   assert.ok(state.row.button.bottom <= state.island.top && state.island.top - state.row.button.bottom < 24,
     '"Continue reading" sits just above the island: ' + JSON.stringify([state.row.button, state.island]));
-  const swipe = (from, to) => narrow.evaluate(([from, to]) => {
-    const target = document.elementFromPoint(from, 420);
+  // A drag starts on a line of text, or on a drawing, which keeps its own drags.
+  const swipe = (from, to, on = 'p') => narrow.evaluate(([from, to, on]) => {
+    const target = [...document.querySelectorAll(`[data-reader-chapter].topic-active .chapter-body ${on}`)]
+      .find(node => !node.parentElement.closest('svg, a, button, summary, [data-reader-horizontal]') && node.getBoundingClientRect().height > 0);
     const touch = x => new Touch({identifier: 1, target, clientX: x, clientY: 420});
     target.dispatchEvent(new TouchEvent('touchstart', {bubbles: true, touches: [touch(from)], changedTouches: [touch(from)]}));
     target.dispatchEvent(new TouchEvent('touchend', {bubbles: true, touches: [], changedTouches: [touch(to)]}));
-  }, [from, to]);
+  }, [from, to, on]);
+  await swipe(300, 120, 'svg');
+  await narrow.waitForTimeout(300);
+  assert.equal((await frameState(narrow)).active, FACE_CHAPTER, 'a drag that starts on a drawing does not turn the chapter');
   await swipe(300, 120);
   await waitPresent(narrow, PLAIN_CHAPTERS[0], 'single');
   await swipe(120, 160);
@@ -504,6 +557,25 @@ async function reviewArrangements(browser, origin) {
   assert.deepEqual(order.slice(0, 6), ['One chapter', 'Two chapters', 'All chapters', 'Presentation', 'About this page', 'Reader help'],
     'Tab reaches every icon in order after the hide button: ' + order);
   assert.ok(await page.evaluate(() => !!document.activeElement.closest('#toc')), 'then the page list');
+  // Review finding: Tab never leaves the focus under the fade and the stepper at the bottom.
+  await page.goto(`${url}#the-reader`, {waitUntil: 'networkidle'});
+  await settle(page);
+  await page.focus('[data-reader-chapter].topic-active');
+  const covered = [];
+  let inside = 0;
+  for (let step = 0; step < 60; step++) {
+    await page.keyboard.press('Tab');
+    const place = await page.evaluate(() => {
+      const node = document.activeElement, card = node.closest('[data-reader-chapter].topic-active');
+      if (!card) return null;
+      const box = node.getBoundingClientRect(), bottom = card.getBoundingClientRect().bottom;
+      return {what: node.tagName + ' ' + node.textContent.trim().slice(0, 24), clear: Math.round(bottom - box.bottom), height: Math.round(box.height)};
+    });
+    if (place) inside += 1;
+    if (place && place.height < 300 && place.clear < 70) covered.push(place);
+  }
+  assert.ok(inside >= 4, 'Tab walks through the chapter: ' + inside);
+  assert.deepEqual(covered, [], 'every element Tab reaches in a chapter sits clear of the fade');
   await page.focus('.topic-peek-next');
   await page.keyboard.press('Tab');
   assert.ok(await page.evaluate(() => !!document.activeElement.closest('.reader-island')), 'Tab after the chapter reaches the stepper');

@@ -109,6 +109,10 @@ document.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('click', () => {
       const scroller = scrollerOf(face);
       const target = arrived ? topIn(face, scroller) - 8 : topIn(flowMark(), scroller) - 4;
+      // A docked bridge hides once its chapter scrolls; keyboard focus moves to the
+      // chapter first, so it is not left on a hidden button.
+      const chapterBox = bridge.closest('.topic-card');
+      if (flowMark() !== bridge && chapterBox && button.contains(document.activeElement)) chapterBox.focus({preventScroll: true});
       (scroller || window).scrollTo({top: Math.max(0, target), behavior: reduce() ? 'auto' : 'smooth'});
     });
   });

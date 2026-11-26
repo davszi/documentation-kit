@@ -291,6 +291,7 @@ function bootReader(hash = '', options = {}) {
     pageName = 'reader-check', title = 'Reader check', unit = 'chapter', groups = {},
     redirects = {}, adapted = false, headingTag = 'h3', foldKinds = null,
     subsections = [], sitePages = SITE_PAGES, runReader = true, authorOpen = [],
+    headless = [], storageThrows = false,
   } = options;
   const location = new URL(`file:///fixture-site/${pageName}.html${hash}`);
   const document = new FakeElement('document');
@@ -344,7 +345,12 @@ function bootReader(hash = '', options = {}) {
     if (groups[chapter.id]) section.dataset.readerGroup = groups[chapter.id];
     if (adapted) section.dataset.readerChapter = '';
     section.top = 1000 + 200 * index;
-    make(headingTag, {id: 'heading-' + index, parent: section, text: chapter.label});
+    // A headless chapter has no heading of its own, only one inside a card after its opening text.
+    if (headless.includes(index)) {
+      make('p', {parent: section, text: 'Opening text'});
+      make('h3', {id: 'heading-' + index, parent: make('div', {cls: 'card', parent: section}), text: 'Nested'});
+    }
+    else make(headingTag, {id: 'heading-' + index, parent: section, text: chapter.label});
     make('p', {id: 'story-' + index, parent: section, text: 'Story content'});
     for (const kind of foldKinds?.[index] ?? FOLD_KINDS) {
       const fold = make('details', {id: `fold-${index}-${kind}`, cls: 'fold fold-' + kind, parent: section});
@@ -404,7 +410,9 @@ function bootReader(hash = '', options = {}) {
   window.scrollBy = ({top}) => { window.scrollY += top; };
   window.dispatchEvent = event => window.emit(event.type, event);
   const storage = new Map(Object.entries(stored));
-  const localStorage = {
+  // Storage that throws stands for a browser that refuses site data.
+  const refuse = () => { throw new Error('SecurityError: storage is disabled'); };
+  const localStorage = storageThrows ? {getItem: refuse, setItem: refuse} : {
     getItem: key => storage.get(key) ?? null,
     setItem: (key, value) => storage.set(key, String(value)),
   };

@@ -440,6 +440,7 @@ body.topic-deck {overflow:hidden;}
 .reader-enabled .reader-layer:hover {color:var(--bright);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--layer-color) 55%,var(--border));}
 .reader-enabled .reader-layer[aria-pressed="true"] {color:var(--bright);background-color:color-mix(in srgb,var(--layer-color) 12%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--layer-color) 70%,transparent);}
 .reader-layer[aria-pressed="true"]::before {background:var(--layer-color);box-shadow:0 0 8px color-mix(in srgb,var(--layer-color) 55%,transparent);}
+.reader-enabled .reader-layer-all[hidden] {display:none;}
 .reader-enabled .reader-layer-all {display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 4px 0 8px;border:0;border-radius:8px;background:transparent;color:var(--muted);font-size:11px;font-weight:600;line-height:1;letter-spacing:.08em;text-transform:uppercase;}
 .reader-enabled .reader-layer-all:hover {color:var(--bright);}
 .reader-switch {position:relative;flex:none;width:28px;height:16px;border-radius:999px;background:rgba(255,255,255,.16);transition:background .15s;}
@@ -486,17 +487,17 @@ body.reader-enabled.reader-nav-docked {--reader-header:0px;}
   /* A layer in the chapter's own colour fades the text out under the bottom
      line of controls, so no readable line sits under the island. It is a layer
      over the text, not a mask on it, so the "Full chapter" row above it shows. */
-  .content[data-topic-layout="deck"]:is([data-topic-view="single"],[data-topic-view="pair"]) .chapter-body {padding-bottom:150px;}
+  .content[data-topic-layout="deck"]:is([data-topic-view="single"],[data-topic-view="pair"]) .chapter-body {padding-bottom:150px;scroll-padding-bottom:130px;}
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-strip > .topic-card {position:relative;}
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-strip > .topic-active::after,
   .content[data-topic-layout="deck"][data-topic-view="pair"] .topic-strip > .topic-visible::after {content:'';position:absolute;z-index:5;left:0;right:0;bottom:0;height:120px;border-radius:0 0 11px 11px;pointer-events:none;background:linear-gradient(to bottom,transparent,var(--reader-card-bg,var(--panel)) 55%);}
 
   /* One chapter: no chapter strip; the chapter's name is the large headline
      that starts the full chapter. */
-  .content[data-topic-layout="deck"][data-topic-view="single"] .chapter-header {display:none;}
-  .reader-enabled .content[data-topic-view="single"] .chapter-headline,
-  .reader-enabled .content[data-topic-view="single"] :is(.chapter-body,.slide-chapter).has-slide-face .chapter-headline.slide-bridge-title {font-size:clamp(32px,3.6vw,50px)!important;line-height:1.08!important;letter-spacing:-.012em!important;}
-  .reader-enabled .content[data-topic-view="single"] :is(.chapter-body,.slide-chapter).has-slide-face .chapter-headline.slide-bridge-title {margin:28px 0 16px!important;}
+  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-card:not(.topic-headless) > .chapter-header {display:none;}
+  .reader-enabled .content[data-topic-layout="deck"][data-topic-view="single"] .chapter-headline,
+  .reader-enabled .content[data-topic-layout="deck"][data-topic-view="single"] :is(.chapter-body,.slide-chapter).has-slide-face .chapter-headline.slide-bridge-title {font-size:clamp(32px,3.6vw,50px)!important;line-height:1.08!important;letter-spacing:-.012em!important;}
+  .reader-enabled .content[data-topic-layout="deck"][data-topic-view="single"] :is(.chapter-body,.slide-chapter).has-slide-face .chapter-headline.slide-bridge-title {margin:28px 0 16px!important;}
 
   /* The neighbours still peek, drawn at 90% and dimmer; each click zone is
      fitted by the script to the strip of its neighbour that shows. */
@@ -505,7 +506,7 @@ body.reader-enabled.reader-nav-docked {--reader-header:0px;}
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-strip > .topic-active ~ .topic-card {transform-origin:left center;}
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-strip > .topic-card:has(~ .topic-active) {transform-origin:right center;}
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-strip > .topic-preview-hover {opacity:.95;}
-  .content[data-topic-view="single"] .topic-peek {top:5%;bottom:auto;height:90%;display:grid;place-items:center;}
+  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-peek:not([hidden]) {top:5%;bottom:auto;height:90%;display:grid;place-items:center;}
   .topic-peek::after {content:'\203A';font-size:26px;line-height:1;color:var(--text);opacity:.4;transition:opacity .15s,transform .15s;}
   .topic-peek-prev::after {content:'\2039';}
   .topic-peek:is(:hover,:focus-visible)::after {opacity:1;}
@@ -519,9 +520,20 @@ body.reader-enabled.reader-nav-docked {--reader-header:0px;}
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] > * {pointer-events:auto;}
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active.topic-scrolled .slide-bridge[data-slide-bridge-lead] {opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease,visibility 0s .25s;}
 }
+/* A docked row shares its line with the island: a narrower chapter drops the
+   reading time first, then the label, so neither runs under the island. */
+@media screen {
+  @container chapter (max-width:880px) {
+    .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] .slide-bridge-meta {display:none;}
+  }
+  @container chapter (max-width:520px) {
+    .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] .slide-bridge-pill {display:none;}
+  }
+}
 @media screen and (max-width:900px) {
   /* No room for three things on one line: "Continue reading" sits just above the island. */
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active::after {height:150px;}
+  .content[data-topic-layout="deck"][data-topic-view="single"] .chapter-body {scroll-padding-bottom:160px;}
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] {bottom:76px;justify-content:center;}
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead]::before,
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] :is(.slide-bridge-pill,.slide-bridge-meta) {display:none;}
