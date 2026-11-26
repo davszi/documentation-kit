@@ -100,6 +100,35 @@ starts with the site's `title`:
   [authoring paths](../../../rules/site/authoring.md#authoring-paths).
 
 Every built page of a site with `title` changes in its `<title>` element.
+## 5.6.2 — figures inlined into a page without the reader no longer repeat ids
+
+5.6.2 is a patch release under
+[what a version number promises](#what-a-version-number-promises): it
+corrects one defect of the build and needs no migration step; a project
+moves its pin to `v5.6.2`. ADP reported it: its home page repeated 242 ids.
+
+- **The defect.** The build inlines an SVG figure written as
+  `<img src="../figures/name.svg">`. On a page with the chapter reader it
+  names every id of the figure after the figure. On any other page, such as
+  a home page whose cards carry figure thumbnails, it left the ids as the
+  file has them. Two figures from the same plotting library share ids, so
+  the page held each of them several times: a clip path or a glyph of one
+  figure could bind to another figure, and from 5.5.0 strict lint warned
+  about a repeated id that no project could remove.
+- **The correction.** On a page without the reader, the build now renames
+  an id that an earlier figure of the same page already has, together with
+  the references to it inside that figure. The first figure with an id
+  keeps it. A page with the reader is built as before.
+
+What a project can meet. On a page without the reader, an id inside the
+second or a later inlined figure changes when an earlier figure has the
+same id. A link to such an id reached the first figure before and still
+does. A group of plot toggles keeps the start of its id, `tg-<group>--`.
+Strict lint no longer warns about these ids.
+
+Not covered. An id of a figure that repeats an id of the page's own text,
+such as a heading, is not renamed; lint warns. The correction was run on a
+fixture with three figures, not on ADP's home page.
 
 ## 5.6.1 — the showcase pictures retaken, and a line on what each shows
 

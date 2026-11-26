@@ -122,6 +122,30 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   `tests/test_theme_colors.py`, the guide section and the release note. The
   tests of the touched files pass, and the kit's own site builds and lints
   strictly clean; the full check script runs on the final commit.
+## 2026-11-26 — 5.6.2 built on a branch: inlined figures repeat no id
+
+- 5.6.1 is released: tag `v5.6.1` on `b176311`, pushed with `main`. The
+  Pages workflow passed, and the live site serves the retaken pictures.
+- deivid pasted a finding from the ADP session: its home page repeats 242
+  ids, because `tooling/build.py` makes the ids of inlined SVG figures
+  unique on chapter-reader pages only, and the lint check of 5.5.0 then
+  flags them. Checked in the code: `inline_svg_figures` was called with
+  `namespace_ids="chapter-reader" in comps`.
+- Reproduced on a fixture before the change: a page with `reader = false`
+  and three inlined figures held `clip`, `mark` and `tg-series--a` three
+  times each.
+- Fixed: on a page without the reader an id is renamed when an earlier
+  figure of the page has it, with its references. The first figure keeps
+  its ids, so no link that worked changes its target. Reader pages take
+  the same path as before.
+- Checked: the new tests fail before the change and pass after it. The
+  kit's own 60 built pages are byte-identical with and without it.
+- Not checked: ADP's own home page. ADP's tracked files hold about 6.6 GB
+  and nothing is written into its checkout from here.
+- Also in this session, not part of the release: four prototypes of a
+  calmer chapter reader and a fifth built from deivid's choices, as
+  scratch files. Nothing of them is in the kit.
+- Not pushed and not tagged. Release waits for deivid's go.
 
 ## 2026-11-25 — Release 5.6.1
 

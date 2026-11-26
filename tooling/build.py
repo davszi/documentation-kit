@@ -148,6 +148,7 @@ def inline_svg_figures(content: str, name: str, *, namespace_ids: bool = False) 
     and carries the img alt as aria-label."""
 
     occurrence = 0
+    taken: set[str] = set()  # ids of the figures inlined so far on this page
 
     def sub(m: re.Match) -> str:
         nonlocal occurrence
@@ -159,22 +160,30 @@ def inline_svg_figures(content: str, name: str, *, namespace_ids: bool = False) 
             return m.group(0)
         svg = path.read_text()
         svg = svg[svg.find("<svg"):]
+        # Inlined figures share one DOM: Matplotlib's generic ids must not bind clip paths or glyph
+        # references to a different figure. A page with the chapter reader names every id after its
+        # figure. Any other page renames only an id that an earlier figure of the page already has,
+        # so the first figure keeps its ids and a link that reached one before still reaches it.
+        # Both keep the tg-<group>-- convention consumed by plot-toggles.js.
+        prefix = f"figure-{Path(fname).stem}-{occurrence}"
+        identifiers = re.findall(r'\bid="([^"]+)"', svg)
+
+        def renamed(key: str) -> str:
+            if key.startswith("tg-") and "--" in key:
+                return key.split("--", 1)[0] + "--" + prefix + "-" + key.split("--", 1)[1]
+            return prefix + "-" + key
+
         if namespace_ids:
-            # Inline galleries share one DOM: Matplotlib's generic IDs must not
-            # bind clip paths or glyph references to a different figure. Keep
-            # the tg-<group>-- convention consumed by plot-toggles.js.
-            prefix = f"figure-{Path(fname).stem}-{occurrence}"
-            identifiers = re.findall(r'\bid="([^"]+)"', svg)
-            remap = {
-                key: (key.split("--", 1)[0] + "--" + prefix + "-" + key.split("--", 1)[1]
-                      if key.startswith("tg-") and "--" in key
-                      else key if key.startswith(Path(fname).stem + "-")
-                      else prefix + "-" + key)
-                for key in identifiers
-            }
-            svg = re.sub(r'\bid="([^"]+)"', lambda match: 'id="' + remap[match[1]] + '"', svg)
+            remap = {key: renamed(key) for key in identifiers
+                     if (key.startswith("tg-") and "--" in key) or not key.startswith(Path(fname).stem + "-")}
+        else:
+            remap = {key: renamed(key) for key in identifiers if key in taken}
+        if remap:
+            svg = re.sub(r'\bid="([^"]+)"', lambda match: 'id="' + remap.get(match[1], match[1]) + '"', svg)
             svg = re.sub(r'url\(#([^)]*)\)', lambda match: 'url(#' + remap.get(match[1], match[1]) + ')', svg)
             svg = re.sub(r'((?:xlink:)?href=")#([^"]+)"', lambda match: match[1] + '#' + remap.get(match[2], match[2]) + '"', svg)
+        taken.update(remap.get(key, key) for key in identifiers)
+        if namespace_ids:
             # Existing Matplotlib SVGs may contain spaces after path commands.
             # Keep the imported reader markup clean without changing source figures.
             svg = re.sub(r'[ \t]+$', '', svg, flags=re.MULTILINE)

@@ -396,5 +396,68 @@ class ShellIds(unittest.TestCase):
             self.assertIn('<h2 id="menu-1">', markup)
 
 
+
+class InlinedFigureIds(unittest.TestCase):
+    """SVG figures inlined into one page keep their ids apart, with the chapter reader and without it."""
+
+    SVG = ('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 10 10">'
+           '<defs><clipPath id="clip"><rect width="10" height="10"/></clipPath><path id="mark" d="M0 0h2"/></defs>'
+           '<g id="tg-series--a" clip-path="url(#clip)"><use xlink:href="#mark"/></g></svg>\n')
+    BODY = ('<img src="../figures/one.svg" alt="one">\n\n<img src="../figures/two.svg" alt="two">\n\n'
+            '<img src="../figures/one.svg" alt="one again">\n')
+
+    def built(self):
+        import os
+        import subprocess
+        import sys
+        kit = Path(__file__).resolve().parents[1]
+        folder = tempfile.TemporaryDirectory(prefix="docs-kit-figure-ids-")
+        self.addCleanup(folder.cleanup)
+        root = Path(folder.name).resolve()
+        subprocess.run(["git", "init", "-q", str(root)], check=True)
+        env = {key: value for key, value in os.environ.items() if key not in {"DOCSITE_PROJECT_ROOT", "GITHUB_SHA"}}
+        subprocess.run([sys.executable, str(kit / "docsite.py"), "init", str(root)], check=True, capture_output=True, env=env)
+        (root / "docs/figures").mkdir(exist_ok=True)
+        for name in ("one.svg", "two.svg"):
+            (root / "docs/figures" / name).write_text(self.SVG)
+        added = ""
+        for slug, extra in (("plainfigures", "reader = false\n"), ("readerfigures", "")):
+            page = root / f"docs/topics/{slug}/index.md"
+            page.parent.mkdir(parents=True)
+            page.write_text(f'+++\ntoc = []\ntitle = "Figures"\npage_only = "a fixture"\n{extra}+++\n\n# Figures\n\n## Three figures\n\n' + self.BODY)
+            added += f'\n[[nav]]\nlabel = "{slug}"\nfile = "{slug}.html"\ngroup = "guide"\n'
+        config = root / "docs/site/site.toml"
+        config.write_text(config.read_text() + added)
+        subprocess.run(["git", "-C", str(root), "add", "-A"], check=True)
+        done = subprocess.run([sys.executable, str(kit / "docsite.py"), "build", "--project", str(root)], capture_output=True, text=True, env=env)
+        self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
+        return {slug: (root / f".build/docs/html/{slug}.html").read_text() for slug in ("plainfigures", "readerfigures")}
+
+    def figures(self, markup):
+        import re
+        return re.findall(r'<svg\b[^>]*class="inline-fig".*?</svg>', markup, flags=re.S)
+
+    def test_a_page_without_the_reader_repeats_no_figure_id(self):
+        import re
+        markup = self.built()["plainfigures"]
+        self.assertEqual(lint.repeated_ids(markup), [])
+        figures = self.figures(markup)
+        self.assertEqual(len(figures), 3)
+        # The first figure keeps its ids, so a link that reached one before still reaches it.
+        self.assertEqual(set(re.findall(r'\bid="([^"]+)"', figures[0])), {"clip", "mark", "tg-series--a"})
+        for figure in figures:
+            with self.subTest(figure=figures.index(figure)):
+                ids = set(re.findall(r'\bid="([^"]+)"', figure))
+                # Every reference stays inside its own figure, and the toggle group keeps its "tg-<group>--" start.
+                self.assertLessEqual(set(re.findall(r'url\(#([^)]+)\)', figure)) | set(re.findall(r'href="#([^"]+)"', figure)), ids)
+                self.assertEqual(len([value for value in ids if value.startswith("tg-series--")]), 1)
+
+    def test_a_reader_page_names_every_figure_id_as_before(self):
+        import re
+        markup = self.built()["readerfigures"]
+        self.assertEqual(lint.repeated_ids(markup), [])
+        ids = set(re.findall(r'\bid="([^"]+)"', self.figures(markup)[0]))
+        self.assertEqual(ids, {"figure-one-1-clip", "figure-one-1-mark", "tg-series--figure-one-1-a"})
+
 if __name__ == "__main__":
     unittest.main()
