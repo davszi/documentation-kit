@@ -50,8 +50,9 @@ on the kit's navy background.
   [theme colours](../../../rules/site/authoring.md#theme-colours).
 - **Readable text is checked.** The build and lint fail when the colours
   leave text below 4.5:1 or a mark below 3:1 on its surface, naming each
-  pair: text on the page and card surfaces, the sidebar text, the `is-alert`
-  and `is-held` slide tones and the dark figure palette.
+  pair: text on the page and card surfaces, `accent` and `red` on raised
+  cards, the sidebar text, the `is-alert` and `is-held` slide tones and the
+  dark figure palette.
 - **Every theme colour follows the table.** Each navy or grey colour the
   theme CSS wrote directly now reads a custom property on `:root`. Those
   without a base colour of their own are derived, each a mix of two base
@@ -63,11 +64,16 @@ on the kit's navy background.
   the tinted edges of diagram boxes, print colours and the light backdrop of
   site-map pictures stay as they were. Colours written in a project's own SVG
   or HTML stay as written.
-- **Figures on the project's background.** `figure_themes.palette("dark")`,
+- **Figures in the project's colours.** `figure_themes.palette("dark")`,
   and with it `write_both`, `matplotlib_rc` and the `svg_figures` colours,
-  takes its surfaces and text from the project's table; the series and alert
-  colours stay. A palette that fails the figure contrast checks raises an
-  error before a file is written. See
+  takes its surfaces and text from the project's table, and its violet, warm
+  and blue series and its alert from `secondary`, `orange`, `blue` and `red`
+  when the table sets them. The first series stays the kit's accent for now,
+  and the order stays. The build checks the series as a categorical chart
+  palette: lightness band, chroma, neighbours apart with full colour vision
+  and with three colour deficiencies, the alert apart from every series, and
+  3:1 on both surfaces; a palette that fails stops the build and names the
+  pair, and `write_both` writes no file. See
   [generated figures](../../../rules/site/authoring.md#generated-figures).
 
 Without the table the pages look exactly as before: screenshots of a

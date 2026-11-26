@@ -2,6 +2,37 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-26 — Figure series follow `[theme_colors]`, checked as a categorical palette
+
+- deivid asked that the content colour map follow the project palette too.
+  `figure_themes.project_dark` now takes violet, warm and blue and the alert
+  from `secondary`, `orange`, `blue` and `red` when the table sets them. The
+  first series, accent, is held: deivid is deciding whether interface and
+  content colours get separate keys, so `HUE_KEYS` leaves it out and gains
+  one entry when that is decided.
+- `figure_themes.problems` adds the series checks of the dataviz method:
+  OKLCH lightness band and chroma floor, neighbours 15 apart (OKLab x100)
+  with full vision and 8 with protanopia, deuteranopia and tritanopia
+  (Machado 2009, severity 1.0), and the alert 10 apart from every series.
+  Two deviations keep the kit's own palettes passing, both measured: the
+  dark band ends at 0.80, not the method's 0.70, because the kit's dark
+  hues reach 0.799 (warm); the alert has no colour-deficiency floor, because
+  the kit's light alert and warm are 3.4 apart with deuteranopia and its
+  dark ones 7.8.
+- New text pairs: `accent` and `red` on `panel2` (step numbers, build-sheet
+  chips). With the project's proposed hues two pairs fail and are reported,
+  not loosened: `secondary` #b180d4 on panel 4.41:1 and `accent` #56ae6c on
+  panel2 4.33:1. The kit's red #f47067 is 4.15:1 on the brown panel2, so the
+  test palette sets red #ff7b72.
+- The theme's content hues already follow the keys: `--accent`,
+  `--secondary`, `--blue`, `--orange`, `--red`, `--green` and every build-sheet
+  tone (`.bs-violet` through the second group tone). Still literal: the
+  tinted diagram box edges `#2f7f76`, `#7c5cad`, `#a35d5d`, syntax colours
+  and fold hues.
+- A four-series chart drawn with `write_both` on the brown palette puts the
+  kit's teal accent, the project's lilac, ochre and blue and the red alert on
+  the brown background; the light file is unchanged.
+
 ## 2026-11-26 — Review fixes for `[theme_colors]` and tab titles; lock pages keep "Locked page"
 
 - An independent review of branch `site-palette` said "ready after fixes".

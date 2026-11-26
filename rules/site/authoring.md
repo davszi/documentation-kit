@@ -560,10 +560,11 @@ follow in a later release, tracked in the kit's
 The build checks that the colours keep text readable, with the ratios of the
 [figure palettes](#generated-figures): 4.5:1 for text and 3:1 for marks. It
 checks the text colours on the page, panel and card surfaces, the accent
-colours on the page and on cards, code comments in a code block, the sidebar
-text and group tones on the sidebar, the
-`is-alert` and `is-held` slide tones on a slide tile, and the dark figure
-palette on the project's surfaces. A table that fails stops the build and lint
+colours on the page and on cards, `accent` and `red` on raised cards (step
+numbers and build-sheet chips), code comments in a code block, the sidebar
+text and group tones on the sidebar, the `is-alert` and `is-held` slide tones
+on a slide tile, and the dark figure palette, with the series checks of
+[generated figures](#generated-figures). A table that fails stops the build and lint
 and names, in one error, each bad key and each failing pair with its colours
 and its ratio, cut to two decimals so a ratio just below the floor never reads
 as passing. The reader is dark, so a light `bg` fails these checks.
@@ -611,9 +612,24 @@ surfaces: `palette("dark")`, `matplotlib_rc("dark")`, `write_both` and the
 `svg_figures` colours take the background, panel, lines and text from the
 project's colours. They read `docs/site/site.toml` of the project at
 `DOCSITE_PROJECT_ROOT`, or of the working directory, so run a generator from
-the project root. The series and alert colours stay the kit's.
-`figure_themes.problems` runs the contrast checks above on a palette, and a
-project palette that fails them raises an error before any file is written.
+the project root. Four keys colour the series and the alert when the table
+sets them: `secondary` the violet series, `orange` the warm one, `blue` the
+blue one and `red` the alert. The first series, accent, stays the kit's for
+now, and the series order (accent, violet, warm, blue) never changes.
+
+`figure_themes.problems` checks a palette: text at 4.5:1 and marks at 3:1 on
+the background and the panel; each series colour and the alert inside an OKLCH
+lightness band (0.48 to 0.80 for the dark palette, 0.43 to 0.78 for the light
+one) with OKLCH chroma of at least 0.10; neighbours in the series order at
+least 15 apart in OKLab (x100) with full colour vision and 8 apart with
+protanopia, deuteranopia and tritanopia, simulated after Machado, Oliveira and
+Fernandes (2009); and the alert at least 10 apart from every series colour.
+The method is that of a categorical chart palette; its dark band ends at 0.70,
+and the kit's own dark figures reach 0.80 on their darker background. The alert
+carries a label, so it has no colour-deficiency floor: the kit's light palette
+has alert and warm 3.4 apart with deuteranopia. The build runs these checks on
+the project's dark palette, and a palette that fails them raises an error
+before any file is written.
 `figure_themes.DARK` stays the kit's palette, and the light palette does not
 change. After changing the table, run the generators again; until then their
 `--check` reports the figures drawn in the old colours.

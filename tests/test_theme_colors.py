@@ -17,9 +17,12 @@ import theme_colors  # noqa: E402
 from test_figure_themes import distance  # noqa: E402
 
 HAS_CRYPTOGRAPHY = importlib.util.find_spec('cryptography') is not None
-# A warm dark brown, the palette a consuming project asked for.
+# A warm dark brown, the palette a consuming project asked for. The kit's red, #f47067, is only
+# 4.15:1 on this panel2, so the palette sets a lighter red, which its figures' alert then takes.
 BROWN = {'bg': '#2b211b', 'bg2': '#30251e', 'panel': '#3a2c23', 'panel2': '#44342a', 'border': '#59493a',
-         'text': '#e6dccd', 'bright': '#f2e9dc', 'muted': '#b3a593'}
+         'text': '#e6dccd', 'bright': '#f2e9dc', 'muted': '#b3a593', 'red': '#ff7b72'}
+# The project's proposed hues for its figures and pages: sage, lilac, ochre, blue, red.
+HUES = {'accent': '#56ae6c', 'secondary': '#b180d4', 'orange': '#cb882e', 'blue': '#549de5', 'red': '#ff7b72'}
 BROWN_TOML = '\n[theme_colors]\n' + ''.join(f'{key} = "{value}"\n' for key, value in BROWN.items())
 THEME_CSS = [*sorted((KIT / 'theme/components').glob('*.css')), *sorted((KIT / 'theme/assets').glob('*.css'))]
 
@@ -168,6 +171,18 @@ class Colours(unittest.TestCase):
 
 
 class Contrast(unittest.TestCase):
+    def test_the_project_hues_fail_two_text_pairs(self):
+        # Reported, not loosened: lilac text on cards and sage step numbers on raised cards.
+        found = theme_colors.contrast_problems({**BROWN, **HUES})
+        self.assertEqual([line.split(' has ')[0] for line in found],
+                         ['theme_colors: text colour secondary #b180d4 on panel #3a2c23',
+                          'theme_colors: text colour accent #56ae6c on panel2 #44342a'])
+
+    def test_the_kit_red_is_too_dark_for_the_brown_raised_cards(self):
+        found = theme_colors.contrast_problems({key: value for key, value in BROWN.items() if key != 'red'})
+        self.assertEqual(len(found), 1)
+        self.assertIn('text colour red #f47067 on panel2 #44342a has contrast 4.15:1', found[0])
+
     def test_the_kit_colours_and_the_brown_palette_pass(self):
         self.assertEqual(theme_colors.contrast_problems(), [])
         self.assertEqual(theme_colors.contrast_problems(BROWN), [])
@@ -206,6 +221,40 @@ class Contrast(unittest.TestCase):
                         found)
 
 
+class Series(unittest.TestCase):
+    """The figure series checks: lightness band, chroma, neighbours, colour deficiencies and alert."""
+
+    def test_the_kit_palettes_and_the_project_hues_pass(self):
+        self.assertEqual(figure_themes.problems(figure_themes.DARK), [])
+        self.assertEqual(figure_themes.problems(figure_themes.LIGHT), [])
+        self.assertEqual(figure_themes.problems(figure_themes.project_dark({**BROWN, **HUES})), [])
+
+    def test_the_simulation_matches_the_tests_own(self):
+        from test_figure_themes import DEUTAN, PROTAN
+        for first, second in (('#39d2c0', '#bc8cff'), ('#ffa657', '#79c0ff')):
+            self.assertAlmostEqual(figure_themes.distance(first, second), distance(first, second), places=6)
+            self.assertAlmostEqual(figure_themes.distance(first, second, 'protanopia'),
+                                   distance(first, second, PROTAN), places=6)
+            self.assertAlmostEqual(figure_themes.distance(first, second, 'deuteranopia'),
+                                   distance(first, second, DEUTAN), places=6)
+
+    def found(self, **hues):
+        return '\n'.join(figure_themes.series_problems(figure_themes.project_dark({**BROWN, **hues})))
+
+    def test_a_series_colour_outside_the_band_or_grey_is_named(self):
+        self.assertIn('blue #2f4f7a has OKLCH lightness 0.4', self.found(blue='#2f4f7a'))
+        self.assertIn('violet #9a929e has OKLCH chroma 0.0', self.found(secondary='#9a929e'))
+
+    def test_neighbours_that_come_too_close_are_named(self):
+        # Full colour vision: a violet next to a near-identical accent.
+        self.assertIn('neighbouring series accent #39d2c0 and violet #44cfc0 are', self.found(secondary='#44cfc0'))
+        # Deuteranopia: a green beside an orange of the same lightness.
+        self.assertIn('with deuteranopia; need 8.0', self.found(secondary='#7fa94a', orange='#c49a3c'))
+
+    def test_alert_must_stand_apart_from_every_series_colour(self):
+        self.assertIn('alert #ffa05a and warm #ffa657 are', self.found(red='#ffa05a'))
+
+
 class Figures(unittest.TestCase):
     def project(self, table: str) -> Path:
         folder = tempfile.TemporaryDirectory(prefix='docs-kit-theme-figures-')
@@ -224,10 +273,22 @@ class Figures(unittest.TestCase):
         self.assertEqual((dark.bg, dark.panel, dark.line, dark.ink, dark.sub, dark.dim),
                          (BROWN['bg'], colors['figure-panel'], colors['figure-line'], BROWN['bright'],
                           colors['figure-sub'], colors['figure-dim']))
-        # Series and alert stay the kit's, so a project's figures keep their colour meanings.
+        # Hues the table leaves out stay the kit's; the table's red becomes the alert.
         self.assertEqual(dark.series, figure_themes.DARK.series)
-        self.assertEqual(dark.alert, figure_themes.DARK.alert)
+        self.assertEqual(dark.alert, BROWN['red'])
         self.assertEqual(figure_themes.palette('light', root=self.project(BROWN_TOML)), figure_themes.LIGHT)
+
+    def test_the_hue_keys_colour_the_series_in_their_fixed_order(self):
+        table = {**BROWN, **HUES}
+        dark = figure_themes.palette('dark', root=self.project(
+            '\n[theme_colors]\n' + ''.join(f'{key} = "{value}"\n' for key, value in table.items())))
+        # accent, violet, warm, blue; the first series has no key yet and stays the kit's.
+        self.assertEqual(dark.series, (figure_themes.DARK.accent, '#b180d4', '#cb882e', '#549de5'))
+        self.assertEqual(dark.alert, '#ff7b72')
+        self.assertNotIn('accent', figure_themes.HUE_KEYS.values())
+        only = figure_themes.project_dark({'orange': '#cb882e'})
+        self.assertEqual(only.series, (figure_themes.DARK.accent, figure_themes.DARK.violet, '#cb882e',
+                                       figure_themes.DARK.blue))
 
     def test_write_both_draws_on_the_project_background_from_the_project_root(self):
         root = self.project(BROWN_TOML)
@@ -347,6 +408,11 @@ class Site(unittest.TestCase):
         self.assertEqual(result.stderr.count('error:'), 1, result.stderr)
         self.assertIn("theme_colors sets 'page', which is not a theme colour", result.stderr)
         self.assertIn("theme_colors gives 'bg' the value 'navy'", result.stderr)
+
+    def test_a_failing_figure_series_stops_the_build(self):
+        result = self.build('\n[theme_colors]\nsecondary = "#3ed4c2"\n')
+        self.assertEqual(result.returncode, 2)
+        self.assertIn('dark figures: neighbouring series accent #39d2c0 and violet #3ed4c2 are', result.stderr)
 
     def test_a_bad_table_stops_the_build_and_lint_with_the_reason(self):
         for table, message in (

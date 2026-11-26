@@ -135,6 +135,8 @@ TEXT_PAIRS = (
                                         "nav-text", "nav-text-strong", "nav-hover")],
     ("nav-number", "bg2"),
     ("faint", "bg2"),                     # code comments in a code block
+    ("accent", "panel2"),                 # numbered steps (ol.steps)
+    ("red", "panel2"),                    # the reason in a build-sheet chip
     ("diagram-label", "panel"),
     ("reader-text", "bg"), ("reader-strong", "bg"), ("sheet-text", "panel"),
     *[(f"group-tone-{n}", "sidebar-bg") for n in range(1, 7)],   # group labels in the sidebar
