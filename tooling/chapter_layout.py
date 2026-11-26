@@ -74,7 +74,8 @@ def label(text):
     return html.unescape(re.sub(r"<[^>]+>", "", text)).strip()
 
 
-def adapt_sections(content: str, toc: list, *, group: str | None = None, reserved_ids: set | None = None):
+def adapt_sections(content: str, toc: list, *, group: str | None = None, reserved_ids: set | None = None,
+                   opening: str = "warn"):
     """Return wrapped chapters, generated TOC entries and the original page title."""
     structure = Structure(content)
     roots = structure.roots
@@ -114,7 +115,10 @@ def adapt_sections(content: str, toc: list, *, group: str | None = None, reserve
             if root.tag == "h2" and previous is not None and "data-slide-face" in previous.attrs \
                     and not content[previous.end:root.start].strip():
                 start = previous.start
-            boundaries.append((start, anchor, title))
+            # Where a page's opening joins this chapter: after its heading, or at the start of a card without one.
+            inside = heading is not None and root.start <= heading.start < root.end
+            join = heading.end if inside else root.opening_end if root.tag == "section" else root.end
+            boundaries.append((start, anchor, title, join))
 
     title_node = next((node for node in roots if node.tag == "h1"), None)
     page_title = content[title_node.start:title_node.end] if title_node else ""
@@ -139,24 +143,39 @@ def adapt_sections(content: str, toc: list, *, group: str | None = None, reserve
         chapters.append('<section class="card reader-adapted"' + attrs + '>\n' + body + '\n</section>\n')
         entries.append([title, "#" + identifier])
 
-    # An introduction stays a first-class chapter, not hidden in About. Only
-    # the redundant page-title heading moves into About beside the shared header.
+    # Text before the first chapter is never hidden. It joins the first chapter, after that chapter's
+    # heading: as a chapter of its own it was a thin card of text alone. The block keeps the id such a
+    # chapter had, and says how many words it holds unless the page keeps it on purpose or is a record.
+    # A page without any chapter keeps its text as its one chapter. Only the redundant page-title heading
+    # moves into About beside the shared header.
     meaningful = re.sub(r"<!--[\s\S]*?-->", "", introduction).strip()
-    if meaningful:
+    joined = ""
+    if meaningful and boundaries:
+        text = re.sub(r"<[^>]+>", " ", re.sub(r"<(script|style)\b[\s\S]*?</\1>", " ", meaningful))
+        words = len(html.unescape(text).split())
+        mark = (' data-reader-opening-kept=""' if opening == "keep" else
+                f' data-reader-opening="{words}"' if opening == "warn" and words else "")
+        joined = (f'<div class="reader-opening" id="{html.escape(intro_id, quote=True)}"{mark}>\n'
+                  + introduction.strip() + "\n</div>\n")
+    elif meaningful:
         intro_label = next((text for text, href in toc if href == "#top"), "Introduction")
         wrap(intro_id, intro_label,
              '<h2 data-reader-generated="">' + html.escape(intro_label) + '</h2>\n' + introduction)
     else:
         chapters.append(introduction)
-    for i, (start, anchor, title) in enumerate(boundaries):
+    for i, (start, anchor, title, join) in enumerate(boundaries):
         end = boundaries[i + 1][0] if i + 1 < len(boundaries) else len(content)
         body = content[start:end]
+        moved = len(joined) if i == 0 else 0  # the opening goes into the first chapter and shifts what follows it
+        if moved:
+            body = body[:join - start] + joined + body[join - start:]
         # Transfer the original public anchor to its containing chapter. Keep
         # the inner element, heading, all other attributes and relative paths.
         aliases = [node for root in roots for node in root.descendants()
                    if start <= node.start < end and node.attrs.get("id") == anchor.attrs["id"]]
         for node in reversed(aliases):
-            a, b = node.start - start, node.opening_end - start
+            shift = moved if node.start >= join else 0
+            a, b = node.start - start + shift, node.opening_end - start + shift
             opening = re.sub(r'\s+id=("[^"]*"|\x27[^\x27]*\x27)', "", body[a:b], count=1)
             body = body[:a] + opening + body[b:]
         wrap(anchor.attrs["id"], title, body)
@@ -165,14 +184,15 @@ def adapt_sections(content: str, toc: list, *, group: str | None = None, reserve
     return "".join(chapters), entries, page_title
 
 
-def reader_page(chunks: list[tuple[str | None, str]], toc: list, title: str, toolbar: str):
+def reader_page(chunks: list[tuple[str | None, str]], toc: list, title: str, toolbar: str, *, opening: str = "warn"):
     sections, entries, titles = [], [], []
     reserved = {identifier for _, content in chunks for identifier in re.findall(r'\bid="([^"]+)"', content)}
     for group, content in chunks:
         if not content.strip():
             continue
-        markup, links, heading = adapt_sections(content, toc, group=group, reserved_ids=reserved)
+        markup, links, heading = adapt_sections(content, toc, group=group, reserved_ids=reserved, opening=opening)
         reserved.update(href[1:] for _, href in links)
+        reserved.update(re.findall(r'class="reader-opening" id="([^"]+)"', markup))  # a joined opening has no entry
         sections.append(markup)
         entries.extend(links)
         if heading:

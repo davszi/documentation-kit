@@ -536,6 +536,11 @@ def check_html() -> None:
             more = f" and {len(repeated) - 8} more" if len(repeated) > 8 else ""
             (notice if names.get(f.name) in automatic else warn)(
                 f"{rel}: {len(repeated)} id(s) appear more than once, so a link reaches only the first element: {shown}{more}")
+        opening = re.search(r'class="reader-opening"[^>]*\bdata-reader-opening="(\d+)"', text)
+        if opening:
+            warn(f"{rel}: {opening[1]} word(s) stand before the first chapter; they now open that chapter. "
+                 "Decide whether the page needs them: move them into a chapter, or keep them on purpose with "
+                 'opening = "keep" in the page\'s frontmatter')
         # Source links are checked by check_source_links from the build's marks.
         source_links = [(m.start(), m.end()) for m in SOURCE_LINK_RE.finditer(text)]
         for m in re.finditer(r'href="([^"]+)"', text):

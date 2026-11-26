@@ -26,6 +26,46 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## 5.8.0 — no Introduction chapter: a page's opening joins its first chapter
+
+5.8.0 is a minor release under
+[what a version number promises](#what-a-version-number-promises): it changes
+how the reader lays out a page and adds one lint warning, which fails
+`--strict`. The [5.8.0 migration guide](migrations/5.8.0.md) gives the step
+for it.
+
+deivid asked why pages had an Introduction chapter at all: it gave him small
+chapters of text alone that did not fill the screen. The reader made that
+chapter from whatever a page has before its first chapter, because the kit
+hides nothing an author wrote. ADP's built site had ten of them on topic
+pages, from 59 to 352 words, nine with no picture or table. The page rules
+ask for the opposite: each chapter carries a visual block, and a thin
+chapter is merged.
+
+- **The opening joins the first chapter.** Text before the first chapter of
+  a page opens that chapter, under the chapter's heading. This holds for
+  topic pages and for records shown as pages, whatever the length; for
+  records only a short opening joined before. A page without any chapter
+  keeps its text as its one chapter.
+- **Lint asks the author to decide.** Strict lint warns for each topic page
+  that has such text and gives its length in words. The author moves the
+  text into a chapter, or keeps it on purpose with `opening = "keep"` in the
+  page's frontmatter, a new key; any other value stops the build. Records
+  get no warning. See
+  [authoring paths](../../../rules/site/authoring.md#authoring-paths).
+
+What a project can meet. A page that had an Introduction chapter has one
+chapter fewer, so the stepper counts one less and a check of the project
+that counts chapters sees the new number. A link to `#reader-introduction`
+still lands on the text. Strict lint fails on such a topic page until its
+author decides; ADP has ten. The kit's own site, adaptation and Tempo have
+none.
+
+Not covered. The warning reads the built page, so it names the page, not
+the line of its source. Text that stands before the first chapter of a
+later group of a page with several groups joins that group's first chapter
+and is not counted in the warning. Chromium only.
+
 ## 5.7.0 — a calmer chapter reader, a project's own site colours, site names in browser tabs
 
 5.7.0 is a minor release under

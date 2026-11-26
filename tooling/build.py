@@ -62,7 +62,7 @@ KATEX_SRC = KIT_SITE / "assets" / "vendor" / "katex"
 
 # `brand` is accepted and not read: the sidebar header names the site (site_name).
 FRONTMATTER_KEYS = {"title", "slug", "brand", "brand_sub", "body_class", "math", "components", "page_css", "toc", "raw", "ongoing", "reader",
-                    "description", "thumbnail", "page_only"}
+                    "description", "thumbnail", "page_only", "opening"}
 # A [[nav]] table accepts only these keys. TOML assigns every key written after a table header to that
 # table, so a top-level setting placed below the first [[nav]] silently becomes part of a nav entry.
 NAV_KEYS = {"label", "file", "group", "short", "hidden"}
@@ -404,6 +404,8 @@ def validate_frontmatter(meta: dict, name: str) -> None:
         err(f"{name}: frontmatter needs title")
     if "toc" not in meta:
         err(f"{name}: frontmatter needs toc (the sidebar is generated)")
+    if "opening" in meta and meta["opening"] != "keep":
+        err(f'{name}: frontmatter opening accepts only "keep": the text before the first chapter is kept on purpose')
     for key in ("description", "thumbnail"):
         if key in meta and (not isinstance(meta[key], str) or not meta[key].strip()):
             err(f"{name}: {key} must be a non-empty string")
@@ -665,7 +667,8 @@ def build_page(md_path: Path, site: dict, shell: str) -> tuple[str, str] | None:
         try:
             content, meta["toc"] = reader_page(
                 chunks, meta.get("toc", []), meta["title"],
-                (COMPONENTS / "chapter-reader.html").read_text())
+                (COMPONENTS / "chapter-reader.html").read_text(),
+                opening="keep" if meta.get("opening") == "keep" else "warn")
         except ValueError as error:
             err(f"{name}: chapter layout: {error}")
             return None
@@ -878,8 +881,9 @@ def build_source_page(page, routes: dict[str, str], site: dict, shell: str,
         from source_pages import merge_short_introduction
         content = merge_short_introduction(content)
         try:
+            # A record is written for agents and may open with a line of its own: no warning for it.
             content, meta["toc"] = reader_page([(None, content)], [], title,
-                                               (COMPONENTS / "chapter-reader.html").read_text())
+                                               (COMPONENTS / "chapter-reader.html").read_text(), opening="record")
         except ValueError as error:
             err(f"{name}: chapter layout: {error}")
             return None

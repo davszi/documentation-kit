@@ -2,6 +2,31 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-26 — 5.8.0 built on a branch: no Introduction chapter
+
+- 5.7.0 is released: tag `v5.7.0` on `15bd2b3`, pushed with `main`. The
+  Pages workflow passed, and the live site shows the new reader, the new
+  tab titles and the 5.7.0 note. The branches `release-5.7.0`,
+  `reader-5.7.0` and `fix-5.6.2` and the local preview folder are deleted,
+  the last three on deivid's "Yes, delete them".
+- deivid asked what the rule about introductions and 600 is, then why the
+  reader makes Introduction chapters at all: "it ends in situations where i
+  have these small slides ... without any images and not filling the
+  screen". Measured in ADP's built site of 26 November: ten topic pages
+  with such a chapter, 59 to 352 words, nine without a picture or table.
+  The 600 characters softened this for records only.
+- His decision: "always join and also warn so that they really think if
+  their introductions are a good thing to have", and on the strength of
+  the warning: "Yes, fail until decided".
+- Built: the text before a page's first chapter opens that chapter, under
+  its heading, in a block that keeps the id `reader-introduction`. Strict
+  lint warns for a topic page with such text and gives the word count;
+  `opening = "keep"` in the frontmatter is the author's decision to keep
+  it. Records get no warning. A page without chapters is unchanged.
+- Two tests expected an Introduction chapter and now expect the joined
+  text; each says so in a comment.
+- Not pushed and not tagged. Release waits for deivid's go.
+
 ## 2026-11-26 — Release 5.7.0
 
 - deivid gave the go: "Yes, release 5.7.0". The ask named what the go

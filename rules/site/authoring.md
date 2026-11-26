@@ -40,7 +40,7 @@ its local path, which leads outside the bundle.
 
 ## Authoring paths
 
-Two kinds of page render: topic entry pages at `docs/topics/*/index.md`, or inside a [topic group folder](#topic-group-folders), and [registered source pages](#registered-source-pages). Every new entry page needs frontmatter with `title` and `toc` (an empty list is valid with automatic chapters), plus a corresponding `[[nav]]` entry in `docs/site/site.toml`. The folder supplies its public slug; set `slug = "index"` on the home page. Slugs are lowercase filename stems without directories. Use `hidden = true` for a built, directly reachable page outside navigation, subject to the documentation deletion policy.
+Two kinds of page render: topic entry pages at `docs/topics/*/index.md`, or inside a [topic group folder](#topic-group-folders), and [registered source pages](#registered-source-pages). Every new entry page needs frontmatter with `title` and `toc` (an empty list is valid with automatic chapters), plus a corresponding `[[nav]]` entry in `docs/site/site.toml`. A topic page starts with its first chapter. Text before the first chapter is not hidden: in the reader it opens that chapter, under the chapter's heading, and strict lint warns with its length in words, so that the author decides whether the page needs it. The author moves it into a chapter, or keeps it on purpose with `opening = "keep"` in the frontmatter, which stops the warning. The folder supplies its public slug; set `slug = "index"` on the home page. Slugs are lowercase filename stems without directories. Use `hidden = true` for a built, directly reachable page outside navigation, subject to the documentation deletion policy.
 
 A rendered page body above `<!-- page-end -->` uses the logical public `docs/html/` URL origin, mapped to `.build/docs/html/`. Its source-only notes tail resolves from the actual source folder. Normal Markdown records resolve links from their own folder.
 
@@ -293,9 +293,9 @@ pinned = true                        # optional: list first in the sidebar
 the site-map card text and the sidebar tooltip. `math = true` enables formulas.
 `reader = true` uses the chapter reader when the site enables it; otherwise the
 page scrolls. In the
-reader, a short opening (under 600 characters, without subheadings, figures or
-tables) joins the first chapter with the source line instead of becoming a
-nearly empty Introduction chapter; a longer opening stays its own chapter. One
+reader, the opening of a registered file joins the first chapter together with
+the source line; there is no Introduction chapter. A record gets no lint
+warning for its opening. One
 slug belongs to one page. Topic entry pages keep their own frontmatter path and
 cannot be registered.
 

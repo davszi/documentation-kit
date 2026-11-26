@@ -39,7 +39,14 @@ class ChapterLayoutTests(unittest.TestCase):
         ids = [node.attrs['id'] for root in Structure(markup).roots for node in root.descendants() if 'id' in node.attrs]
         self.assertEqual(len(ids), len(set(ids)))
         self.assertTrue({'name', 'first', 'sub', 'last'} <= set(ids))
-        self.assertEqual([href for _, href in toc], ['#reader-introduction', '#first', '#last', '#sub'])
+        # Changed in 5.8.0: the text before the first chapter is no chapter of its own. It opens the first
+        # chapter, after that chapter's heading, and keeps the id an Introduction chapter had.
+        self.assertEqual([href for _, href in toc], ['#first', '#last', '#sub'])
+        self.assertNotIn('Introduction</h2>', markup)
+        first = markup[markup.index('id="first"'):markup.index('id="last"')]
+        self.assertLess(first.index('<h2>First</h2>'), first.index('class="reader-opening" id="reader-introduction"'))
+        self.assertLess(first.index('Original introduction.'), first.index('1.25 m'))
+        self.assertIn('data-reader-opening="2"', first)
         self.assertIn('<pre>keep(x)</pre>', markup)
         self.assertIn('<h2>First</h2>', markup)
 
@@ -56,8 +63,32 @@ class ChapterLayoutTests(unittest.TestCase):
         markup, toc = reader_page(chunks, [['First', '#first'], ['Second', '#second']], 'Guide', '')
         ids = [node.attrs['id'] for root in Structure(markup).roots for node in root.descendants() if 'id' in node.attrs]
         self.assertEqual(len(ids), len(set(ids)))
-        self.assertEqual(len(toc), 4)
-        self.assertTrue({'first', 'second'} <= set(ids))
+        # Changed in 5.8.0: each group's opening joins its first chapter, so two entries, not four.
+        self.assertEqual(len(toc), 2)
+        self.assertTrue({'first', 'second', 'reader-introduction', 'reader-introduction-intro'} <= set(ids))
+
+    def test_an_opening_is_marked_for_lint_unless_kept_or_a_record(self):
+        text = '<h1>A guide</h1><p>Three words here.</p><section class="card" id="one"><h2>One</h2><p>Body.</p></section>'
+        toc = [['One', '#one']]
+        warned, _ = reader_page([(None, text)], toc, 'Guide', '')
+        self.assertIn('data-reader-opening="3"', warned)
+        kept, _ = reader_page([(None, text)], toc, 'Guide', '', opening='keep')
+        self.assertIn('data-reader-opening-kept=""', kept)
+        self.assertNotIn('data-reader-opening="', kept)
+        record, _ = reader_page([(None, text)], toc, 'Guide', '', opening='record')
+        self.assertIn('class="reader-opening"', record)
+        self.assertNotIn('data-reader-opening', record)
+        # Inside a card the opening follows the card's heading; the card keeps its own markup.
+        self.assertLess(warned.index('<h2>One</h2>'), warned.index('Three words here.'))
+        self.assertLess(warned.index('Three words here.'), warned.index('<p>Body.</p>'))
+        # Only a style block or a comment before the first chapter is not text: nothing to decide.
+        silent, _ = reader_page([(None, '<style>.x{}</style><!-- note --><h2 id="a">A</h2><p>B</p>')], [['A', '#a']], 'Guide', '')
+        self.assertNotIn('data-reader-opening', silent)
+
+    def test_a_page_without_chapters_keeps_its_text_as_one_chapter(self):
+        markup, toc = reader_page([(None, '<h1>A guide</h1><p>Only text.</p>')], [['Overview', '#top']], 'Guide', '')
+        self.assertEqual([href for _, href in toc], ['#reader-introduction'])
+        self.assertNotIn('reader-opening', markup)
 
     def test_every_live_page_preserves_evidence(self):
         site = build.tomllib.loads((build.SRC / 'site.toml').read_text())

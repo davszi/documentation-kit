@@ -465,5 +465,60 @@ class InlinedFigureIds(unittest.TestCase):
         ids = set(re.findall(r'\bid="([^"]+)"', self.figures(markup)[0]))
         self.assertEqual(ids, {"figure-one-1-clip", "figure-one-1-mark", "tg-series--figure-one-1-a", "figure-one-1-tg-solo"})
 
+
+class OpeningBeforeTheFirstChapter(unittest.TestCase):
+    """Text before a topic page's first chapter opens that chapter, and lint asks its author to decide about it."""
+
+    BODY = "# Opening\n\nSeven words stand before the first chapter.\n\n## First chapter\n\nBody.\n\n## Second chapter\n\nMore.\n"
+
+    def project(self, frontmatter=""):
+        import os
+        import subprocess
+        import sys
+        kit = Path(__file__).resolve().parents[1]
+        folder = tempfile.TemporaryDirectory(prefix="docs-kit-opening-")
+        self.addCleanup(folder.cleanup)
+        root = Path(folder.name).resolve()
+        subprocess.run(["git", "init", "-q", str(root)], check=True)
+        env = {key: value for key, value in os.environ.items() if key not in {"DOCSITE_PROJECT_ROOT", "GITHUB_SHA"}}
+        run = lambda *command: subprocess.run([sys.executable, str(kit / "docsite.py"), *command, "--project", str(root)],
+                                              capture_output=True, text=True, env=env)
+        subprocess.run([sys.executable, str(kit / "docsite.py"), "init", str(root)], check=True, capture_output=True, env=env)
+        page = root / "docs/topics/opening/index.md"
+        page.parent.mkdir(parents=True)
+        page.write_text(f'+++\ntoc = []\ntitle = "Opening"\npage_only = "a fixture"\n{frontmatter}+++\n\n' + self.BODY)
+        config = root / "docs/site/site.toml"
+        config.write_text(config.read_text() + '\n[[nav]]\nlabel = "Opening"\nfile = "opening.html"\ngroup = "guide"\n')
+        subprocess.run(["git", "-C", str(root), "add", "-A"], check=True)
+        return root, run
+
+    def test_lint_warns_until_the_author_decides(self):
+        root, run = self.project()
+        built = run("build")
+        self.assertEqual(built.returncode, 0, built.stdout + built.stderr)
+        markup = (root / ".build/docs/html/opening.html").read_text()
+        # No chapter of its own: the text opens the first chapter, after its heading.
+        self.assertNotIn("Introduction", markup)
+        self.assertLess(markup.index("First chapter</h2>"), markup.index("Seven words stand before"))
+        self.assertLess(markup.index("Seven words stand before"), markup.index("Body."))
+        plain, strict = run("lint"), run("lint", "--strict")
+        self.assertEqual(plain.returncode, 0, plain.stdout + plain.stderr)
+        self.assertIn("opening.html: 7 word(s) stand before the first chapter", plain.stdout + plain.stderr)
+        self.assertNotEqual(strict.returncode, 0)
+
+    def test_keep_in_the_frontmatter_is_the_decision(self):
+        root, run = self.project('opening = "keep"\n')
+        self.assertEqual(run("build").returncode, 0)
+        strict = run("lint", "--strict")
+        self.assertEqual(strict.returncode, 0, strict.stdout + strict.stderr)
+        self.assertNotIn("stand before the first chapter", strict.stdout + strict.stderr)
+        self.assertIn("Seven words stand before", (root / ".build/docs/html/opening.html").read_text())
+
+    def test_another_value_is_refused(self):
+        _, run = self.project('opening = "drop"\n')
+        built = run("build")
+        self.assertNotEqual(built.returncode, 0)
+        self.assertIn('frontmatter opening accepts only "keep"', built.stdout + built.stderr)
+
 if __name__ == "__main__":
     unittest.main()
