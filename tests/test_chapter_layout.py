@@ -9,6 +9,15 @@ from reader_content import page_problems, reader_content_problems
 
 
 class ChapterLayoutTests(unittest.TestCase):
+    def test_fold_marker_can_start_open(self):
+        source = ('<!-- fold: math (open) Derivation of the bound -->\nProof.\n<!-- /fold -->\n\n'
+                  '<!-- fold: code Listing -->\nx = 1\n<!-- /fold -->\n')
+        markup = build.folds_to_html(source, 'fixture')
+        self.assertIn('<details class="fold fold-math" data-fold="math" open>\n'
+                      '<summary><span class="fold-tag">math</span> Derivation of the bound</summary>', markup)
+        self.assertIn('<details class="fold fold-code" data-fold="code">\n', markup)
+        self.assertNotIn('(open)', markup)
+
     def test_source_offsets_count_only_lf_inside_opaque_scripts(self):
         for separator in ('\u2028', '\r', '\f'):
             with self.subTest(separator=repr(separator)):

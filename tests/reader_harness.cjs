@@ -289,7 +289,7 @@ function bootReader(hash = '', options = {}) {
     width = 800, gap = 16, reducedMotion = false, stored = {}, chapters = CHAPTERS,
     pageName = 'reader-check', title = 'Reader check', unit = 'chapter', groups = {},
     redirects = {}, adapted = false, headingTag = 'h3', foldKinds = null,
-    subsections = [], sitePages = SITE_PAGES, runReader = true,
+    subsections = [], sitePages = SITE_PAGES, runReader = true, authorOpen = [],
   } = options;
   const location = new URL(`file:///fixture-site/${pageName}.html${hash}`);
   const document = new FakeElement('document');
@@ -348,6 +348,8 @@ function bootReader(hash = '', options = {}) {
     for (const kind of foldKinds?.[index] ?? FOLD_KINDS) {
       const fold = make('details', {id: `fold-${index}-${kind}`, cls: 'fold fold-' + kind, parent: section});
       fold.dataset.fold = kind;
+      // An author-open fold: `<!-- fold: math (open) ... -->` or raw HTML with `open`.
+      fold.open = authorOpen.some(([chapter, open]) => chapter === index && open === kind);
       const summary = make('summary', {parent: fold});
       make('span', {cls: 'fold-tag', parent: summary, text: kind});
       make('span', {parent: summary, text: 'Details'});
@@ -479,16 +481,26 @@ function readerControls(page, {stage, chapters, width, gap, back}) {
     document.emit('keydown', {key: value, target: document.activeElement || content, ...fields});
   const chapterKey = (value, fields = {}) => key(value, {target: content, ...fields});
   const visible = () => sections.filter(section => !section.inert).map(section => section.id);
-  let readingIndex = 0;
-  const read = index => { readingIndex = index; return sections[index].querySelector('.chapter-layers'); };
-  // Press layer buttons in the chosen chapter until exactly `kinds` are on.
+  // The page-wide "Also show" options at the bottom of the navigation.
+  const panel = () => document.querySelector('.reader-layers');
+  const option = kind => kind === 'all' ? panel().querySelector('[data-reader-layer-all]')
+    : panel().querySelector(`[data-reader-layer="${kind}"]`);
+  // Press options until exactly `kinds` are on.
   const layers = kinds => {
-    sections[readingIndex].querySelectorAll('[data-reader-layer]').forEach(node => {
+    panel().querySelectorAll('[data-reader-layer]').forEach(node => {
       if ((node.getAttribute('aria-pressed') === 'true') !== kinds.includes(node.dataset.readerLayer)) click(node);
     });
   };
   const folds = index => sections[index].querySelectorAll('details.fold');
   const states = index => folds(index).map(fold => fold.open);
+  // A reader's own click on a fold summary: the summary's click handlers run,
+  // then the browser toggles the fold unless a handler prevented it.
+  const toggleFold = (index, n) => {
+    const fold = folds(index)[n], summary = fold.querySelector('summary');
+    const event = summary.emit('click', {button: 0, preventDefault() { this.defaultPrevented = true; }});
+    if (!event.defaultPrevented) fold.open = !fold.open;
+    return event;
+  };
   const pin = index => click(sections[index].querySelector('.chapter-pin'));
   const translateX = node => Number(node.style.transform.match(/translate3d\(([-\d.]+)px/)[1]);
 
@@ -518,8 +530,8 @@ function readerControls(page, {stage, chapters, width, gap, back}) {
       assert.ok(x + section.offsetWidth <= 0 || x >= stage.clientWidth, `${what}: ${section.id} is placed off stage`);
     });
   };
-  return {stage, strip, bodies, control, click, key, chapterKey, visible, read, layers, folds, states,
-    pin, back, assertCentred, assertPair};
+  return {stage, strip, bodies, control, click, key, chapterKey, visible, panel, option, layers, folds, states,
+    toggleFold, pin, back, assertCentred, assertPair};
 }
 
 // Run fold-controls.js on a booted page, with its own storage.

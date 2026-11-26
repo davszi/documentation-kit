@@ -91,13 +91,14 @@ _SVG_IMG_RE = re.compile(r'<img([^>]*?)\ssrc="\.\./figures/([^"]+\.svg)"([^>]*?)
 #   <!-- fold: math The route-level problem -->
 #   ...markdown (blank-line separated from the markers)...
 #   <!-- /fold -->
-# Types drive the color + the reader-mode bar (fold-controls.js).
+# `<!-- fold: math (open) The route-level problem -->` makes the fold start open.
+# Types drive the color + the reader's "Also show" options (fold-controls.js).
 FOLD_TYPES = ("math", "experiment", "code", "dead-end")
 # The markers match to the end of their own line only. Matching further would
 # swallow the blank line after a closing marker, and Markdown would then read
 # the next paragraph as part of the HTML block and show it as raw text.
 _FOLD_OPEN_RE = re.compile(
-    r"^<!--\s*fold:\s*(" + "|".join(FOLD_TYPES) + r")\s+(.+?)\s*-->[ \t]*$", re.M)
+    r"^<!--\s*fold:\s*(" + "|".join(FOLD_TYPES) + r")\s+(\(open\)\s+)?(.+?)\s*-->[ \t]*$", re.M)
 _FOLD_CLOSE_RE = re.compile(r"^<!--\s*/fold\s*-->[ \t]*$", re.M)
 
 
@@ -108,8 +109,8 @@ def folds_to_html(chunk: str, name: str) -> str:
         err(f"{name}: unbalanced fold markers ({n_open} open, {n_close} close)")
 
     def open_sub(m: re.Match) -> str:
-        kind, title = m.group(1), m.group(2)
-        return (f'<details class="fold fold-{kind}" data-fold="{kind}">\n'
+        kind, opened, title = m.group(1), m.group(2), m.group(3)
+        return (f'<details class="fold fold-{kind}" data-fold="{kind}"{" open" if opened else ""}>\n'
                 f'<summary><span class="fold-tag">{kind}</span> '
                 f"{html.escape(title)}</summary>\n")
 

@@ -69,23 +69,36 @@ document.addEventListener('DOMContentLoaded', () => {
   const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
   const kinds = [['math', 'Math'], ['experiment', 'Experiments'], ['code', 'Code'], ['dead-end', 'Alternatives']];
   const validKinds = new Set(kinds.map(([kind]) => kind));
-  const preferenceKey = 'foldcolumns:' + location.pathname;
-  let profiles = [new Set(), new Set()];
+  // One set of reading layers for the whole page, in every chapter and column.
+  // A returning reader keeps what the first column had (foldcolumns) or the
+  // single mode of the plain fold bar (foldmode).
+  const layersKey = 'foldlayers:' + location.pathname;
+  const readStored = key => { try { return JSON.parse(localStorage.getItem(key)); } catch (_) { return null; } };
+  let layers = new Set();
   try {
-    let saved = null;
-    try { saved = JSON.parse(localStorage.getItem(preferenceKey)); } catch (_) {}
-    if (Array.isArray(saved) && saved.length === 2 && saved.every(Array.isArray)) profiles = saved.map(values => new Set(values.filter(kind => validKinds.has(kind))));
+    const saved = readStored(layersKey), columns = readStored('foldcolumns:' + location.pathname);
+    if (Array.isArray(saved)) layers = new Set(saved.filter(kind => validKinds.has(kind)));
+    else if (Array.isArray(columns) && Array.isArray(columns[0])) layers = new Set(columns[0].filter(kind => validKinds.has(kind)));
     else {
       const legacy = localStorage.getItem('foldmode:' + location.pathname);
-      const initial = legacy === 'all' ? [...validKinds] : validKinds.has(legacy) ? [legacy] : [];
-      profiles = [new Set(initial), new Set(initial)];
+      layers = new Set(legacy === 'all' ? [...validKinds] : validKinds.has(legacy) ? [legacy] : []);
     }
   } catch (_) {}
+  // A reader's own click on a fold is saved for that fold and wins on the next
+  // visit. Saved states are [key, open] pairs, the most recent last, bounded.
+  const statesKey = 'foldstates:' + location.pathname, foldStateLimit = 200;
+  let foldStates = new Map();
+  try {
+    const saved = readStored(statesKey);
+    if (Array.isArray(saved)) foldStates = new Map(saved.filter(entry => Array.isArray(entry) && typeof entry[0] === 'string' && typeof entry[1] === 'boolean').slice(-foldStateLimit));
+  } catch (_) {}
+  const foldInfo = new Map(), foldKeyCount = new Map();
+  let layerChanges = 0;
   // All chapters hides slide faces unless the reader turns them on for this page.
   const slidesKey = 'readerslides:' + location.pathname;
   let slidesShown = false;
   try { slidesShown = localStorage.getItem(slidesKey) === 'shown'; } catch (_) {}
-  const generations = [0, 0], foldCache = [new Map(), new Map()], positions = new Map();
+  const positions = new Map();
   topics.forEach((topic, index) => {
     const section = topic.section;
     // A slide face's title is not a heading; skip any heading inside one regardless.
@@ -104,21 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
     pin.setAttribute('aria-pressed', 'false');
     tools.appendChild(pin);
     header.appendChild(identity); header.appendChild(tools);
-    const layerRow = make('div', 'chapter-layers'); layerRow.setAttribute('role', 'group'); layerRow.setAttribute('aria-label', 'Reading layers');
-    const story = button('chapter-layer chapter-layer-preset', 'Story', 'Story only'); story.dataset.readerPreset = 'story';
-    story.addEventListener('click', () => setLayers(columnFor(index), new Set(), index)); layerRow.appendChild(story);
-    const layerButtons = kinds.map(([kind, label]) => {
-      const node = button('chapter-layer', label); node.dataset.readerLayer = kind;
-      node.addEventListener('click', () => {
-        const owner = columnFor(index), layers = new Set(profiles[owner]);
-        if (layers.has(kind)) layers.delete(kind); else layers.add(kind);
-        setLayers(owner, layers, index);
-      });
-      layerRow.appendChild(node); return node;
-    });
-    const all = button('chapter-layer chapter-layer-preset', 'All', 'Show all'); all.dataset.readerPreset = 'all';
-    all.addEventListener('click', () => setLayers(columnFor(index), new Set(validKinds), index)); layerRow.appendChild(all);
-    header.appendChild(layerRow);
     const body = make('div', 'chapter-body');
     [...section.childNodes].forEach(node => body.appendChild(node));
     section.appendChild(header); section.appendChild(body);
@@ -126,14 +124,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (heading?.id) section.setAttribute('aria-labelledby', heading.id);
     else section.setAttribute('aria-label', topic.label);
     strip.appendChild(section);
-    Object.assign(topic, {header, body, heading, layerRow, layerButtons, story, all, pin, folds: [...body.querySelectorAll('details.fold')], owner: null, generation: -1});
-    // Legacy chapters without typed folds expose their complete story. Empty
-    // layer switches would suggest controls that do not affect their content.
-    layerRow.hidden = !topic.folds.length;
+    Object.assign(topic, {header, body, heading, pin, folds: [...body.querySelectorAll('details.fold')], shown: false});
     topic.folds.forEach(fold => {
       const summary = fold.querySelector('summary'), tag = summary?.querySelector('.fold-tag');
+      const text = summary?.textContent || '', title = (tag ? text.slice(tag.textContent.length) : text).trim();
+      // A fold is known by its chapter, kind and title; the author's open
+      // attribute is its starting state when no option or click decides.
+      const base = section.id + '|' + fold.dataset.fold + '|' + title, seen = (foldKeyCount.get(base) || 0) + 1;
+      foldKeyCount.set(base, seen);
+      foldInfo.set(fold, {key: seen > 1 ? base + '#' + seen : base, authored: fold.open === true});
+      summary?.addEventListener('click', event => { if (!event.defaultPrevented) rememberFold(fold, !fold.open); });
       if (!summary || !tag) return;
-      const title = summary.textContent.slice(tag.textContent.length).trim();
       tag.textContent = kinds.find(([kind]) => kind === fold.dataset.fold)?.[1] || fold.dataset.fold;
       const titleNode = make('span', 'fold-title', title);
       summary.replaceChildren(tag, titleNode);
@@ -244,6 +245,22 @@ document.addEventListener('DOMContentLoaded', () => {
   else toc.prepend(chapterList);
   sidebar.insertBefore(drawerHead, toc);
   sidebar.setAttribute('aria-label', 'Documentation drawer'); sidebar.inert = true;
+  // "Also show": one set of options for the page, at the bottom of the
+  // navigation. Only the kinds of fold the page has are offered; with nothing
+  // switched on the reader is in the story. All is a switch over every kind.
+  const presentKinds = kinds.filter(([kind]) => topics.some(topic => topic.folds.some(fold => fold.dataset.fold === kind)));
+  const layerPanel = nav.querySelector('[data-reader-layers]');
+  const allSwitch = layerPanel.querySelector('[data-reader-layer-all]');
+  layerPanel.setAttribute('aria-label', 'Also show, in every ' + unit);
+  const layerButtons = presentKinds.map(([kind, label]) => {
+    const node = button('reader-layer', label); node.dataset.readerLayer = kind; node.setAttribute('aria-pressed', 'false');
+    node.addEventListener('click', () => setLayers([kind], !layers.has(kind)));
+    layerPanel.querySelector('.reader-layers-row').appendChild(node); return node;
+  });
+  allSwitch.addEventListener('click', () => setLayers(presentKinds.map(([kind]) => kind), allSwitch.getAttribute('aria-checked') !== 'true'));
+  layerPanel.hidden = !presentKinds.length;
+  sidebar.appendChild(layerPanel);
+  topics.forEach(topic => topic.folds.forEach(resolveFold));
   const backdrop = document.getElementById('backdrop');
   backdrop?.addEventListener('click', () => closeDrawer());
   nav.querySelector('[data-reader-drawer]')?.addEventListener('click', event => toggleDrawer('chapters', event.currentTarget));
@@ -292,8 +309,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const helpItems = [
     ['Move through chapters', 'Use the arrows or the left and right arrow keys. Each chapter resumes where you left it. Controls inside figures keep their own keys.'],
     ['Compare two chapters', 'Two chapters shows two equal columns. Arrows move both until you pin one. Select an unpinned column before choosing its chapter from the navigation drawer.'],
-    ['Choose how much to read', 'Story is always visible. The layer buttons under each chapter heading combine Math, Experiments, Code and Alternatives independently for each column. On narrow columns, scroll the row sideways. You can still open individual folds.'],
-    ['Hold a reference', 'Pin the button on a column header to hold that chapter while the other moves. Purple marks the pinned column; its own scrolling and layer buttons still work.'],
+    ['Choose how much to read', 'With nothing switched on you read the story. Also show, at the bottom of the navigation, opens Math, Experiments, Code or Alternatives in every chapter and both columns at once; All switches every kind on or off. A fold you open or close yourself keeps that state on your next visit, until you choose its kind again.'],
+    ['Hold a reference', 'Pin the button on a column header to hold that chapter while the other moves. Purple marks the pinned column; its own scrolling still works.'],
     ['Keep navigation handy', 'On wide screens the navigation docks beside the page. Hide it with « and bring it back with ☰; the choice holds across the site. Reading stays interactive and chapter links keep the sidebar open. On narrow screens, navigation opens over the page and closes after choosing a chapter.']
   ];
   if (presentable) helpItems.push(['Present the slides', 'Presentation shows each chapter\'s slide across the window, starting at the current chapter; From start begins at the first. Left and right arrows or Page Up and Page Down change chapter, Home and End go to the first and last. Scroll, or use the up and down arrows and Space, to read the full chapter below its slide. F switches fullscreen; Escape leaves. All chapters hides the slides until you turn on Slides.']);
@@ -311,23 +328,26 @@ document.addEventListener('DOMContentLoaded', () => {
   nav.querySelector('[data-reader-help]').addEventListener('click', event => showDialog(help, event.currentTarget));
   function columnFor(index) { return !full && paired ? Math.max(0, pair.indexOf(index)) : activeColumn; }
   function shownIndices() { return full ? topics.map((_, index) => index) : paired ? pair : [active]; }
-  function cacheFolds(topic) {
-    if (topic.owner === null) return;
-    foldCache[topic.owner].set(topic.section.id, {generation: topic.generation, states: topic.folds.map(fold => fold.open)});
+  // When a chapter is shown, each fold takes the reader's saved state for it;
+  // otherwise it is open when its kind is switched on or its author opened it.
+  function resolveFold(fold) {
+    const info = foldInfo.get(fold), saved = foldStates.get(info.key);
+    fold.open = saved !== undefined ? saved : layers.has(fold.dataset.fold) || info.authored;
   }
-  function assignFolds(topic, owner) {
-    if (topic.owner === owner && topic.generation === generations[owner]) return;
-    cacheFolds(topic);
-    const saved = foldCache[owner].get(topic.section.id);
-    topic.folds.forEach((fold, index) => { fold.open = saved?.generation === generations[owner] ? saved.states[index] : profiles[owner].has(fold.dataset.fold); });
-    topic.owner = owner; topic.generation = generations[owner];
+  function saveFoldStates() {
+    while (foldStates.size > foldStateLimit) foldStates.delete(foldStates.keys().next().value);
+    try { localStorage.setItem(statesKey, JSON.stringify([...foldStates])); } catch (_) {}
+  }
+  function rememberFold(fold, open) {
+    const key = foldInfo.get(fold).key;
+    foldStates.delete(key); foldStates.set(key, open); saveFoldStates();
   }
   function remember() {
     // Presentation always opens a chapter on its slide; it keeps no reading positions.
-    shownIndices().forEach(index => { const topic = topics[index]; if (!full && !presenting) positions.set(topic.section.id, topic.body.scrollTop); cacheFolds(topic); });
+    if (!full && !presenting) shownIndices().forEach(index => { const topic = topics[index]; positions.set(topic.section.id, topic.body.scrollTop); });
   }
   function restore() { topics.forEach((topic, index) => { topic.body.scrollTop = presenting && index === active ? 0 : positions.get(topic.section.id) || 0; }); }
-  function captureAnchor(topic, layers) {
+  function captureAnchor(topic, opensAfter) {
     const rect = topic.body.getBoundingClientRect();
     const top = full ? nav.getBoundingClientRect().bottom + topic.header.getBoundingClientRect().height + 12 : rect.top + 12;
     // Keep the visible paragraph anchored as the selected folds change.
@@ -339,47 +359,54 @@ document.addEventListener('DOMContentLoaded', () => {
     let offset = node.getBoundingClientRect().top - top;
     let fold = node.closest('details.fold');
     while (fold && topic.body.contains(fold)) {
-      if (!layers.has(fold.dataset.fold)) { node = fold.querySelector('summary') || node; offset = Math.max(0, offset); }
+      if (!opensAfter(fold)) { node = fold.querySelector('summary') || node; offset = Math.max(0, offset); }
       fold = fold.parentElement?.closest('details.fold');
     }
     return {node, offset, top};
   }
-  function setLayers(owner, layers, index) {
-    const anchor = captureAnchor(topics[index], layers);
-    remember(); profiles[owner] = layers; generations[owner]++;
-    shownIndices().filter(i => columnFor(i) === owner).forEach(i => assignFolds(topics[i], owner));
+  // An option sets every fold of its kinds, in every chapter, and replaces the
+  // saved states of those folds: only an author-open fold that the option
+  // closes keeps a saved state, so the next visit shows it closed as well.
+  function setLayers(changed, on) {
+    const index = active, opensAfter = fold => changed.includes(fold.dataset.fold) ? on : fold.open;
+    const anchor = captureAnchor(topics[index], opensAfter);
+    remember();
+    changed.forEach(kind => { if (on) layers.add(kind); else layers.delete(kind); });
+    layerChanges += 1;
+    topics.forEach(topic => topic.folds.forEach(fold => {
+      if (!changed.includes(fold.dataset.fold)) return;
+      const info = foldInfo.get(fold);
+      fold.open = on; foldStates.delete(info.key);
+      if (!on && info.authored) foldStates.set(info.key, false);
+    }));
     function restoreAnchor() {
       if (!anchor?.node.isConnected) return;
       const delta = anchor.node.getBoundingClientRect().top - anchor.top - anchor.offset;
       if (full) window.scrollBy({top:delta, behavior:'instant'}); else topics[index].body.scrollTop += delta;
     }
     restoreAnchor();
-    const generation = generations[owner], wasFull = full, scroll = full ? window.scrollY : topics[index].body.scrollTop;
+    const change = layerChanges, wasFull = full, scroll = full ? window.scrollY : topics[index].body.scrollTop;
     // Responsive figures may finish their reflow on the next frame. Do not
     // overwrite a newer layer change, navigation or deliberate reader scroll.
     requestAnimationFrame(() => {
-      if (generations[owner] !== generation || full !== wasFull || !shownIndices().includes(index) || columnFor(index) !== owner) return;
+      if (layerChanges !== change || full !== wasFull || !shownIndices().includes(index)) return;
       if ((full ? window.scrollY : topics[index].body.scrollTop) !== scroll) return;
       restoreAnchor(); remember();
     });
-    try { localStorage.setItem(preferenceKey, JSON.stringify(profiles.map(profile => [...profile]))); } catch (_) {}
-    updateReadingButtons();
+    try { localStorage.setItem(layersKey, JSON.stringify([...layers])); } catch (_) {}
+    saveFoldStates();
+    syncLayerControls();
     remember();
   }
-  function updateReadingButtons() {
-    topics.forEach((topic, index) => {
-      const owner = columnFor(index), profile = profiles[owner];
-      const side = paired && !full ? owner ? 'Right' : 'Left' : 'Active';
-      topic.layerRow.setAttribute('aria-label', `${side} column reading layers; Story always stays visible`);
-      topic.layerButtons.forEach(node => {
-        const on = profile.has(node.dataset.readerLayer), label = kinds.find(([kind]) => kind === node.dataset.readerLayer)[1];
-        node.setAttribute('aria-pressed', String(on));
-        node.setAttribute('aria-label', `${on ? 'Hide' : 'Show'} ${label.toLowerCase()} in the ${side.toLowerCase()} column`);
-        node.title = node.getAttribute('aria-label');
-      });
-      topic.story.setAttribute('aria-pressed', String(profile.size === 0));
-      topic.all.setAttribute('aria-pressed', String(profile.size === validKinds.size));
+  function syncLayerControls() {
+    const allOn = presentKinds.length > 0 && presentKinds.every(([kind]) => layers.has(kind));
+    layerButtons.forEach(node => {
+      const kind = node.dataset.readerLayer, on = layers.has(kind), label = kinds.find(([key]) => key === kind)[1];
+      node.setAttribute('aria-pressed', String(on));
+      node.title = `${on ? 'Hide' : 'Show'} ${label.toLowerCase()} in every ${unit}`;
     });
+    allSwitch.setAttribute('aria-checked', String(allOn));
+    allSwitch.title = `${allOn ? 'Close' : 'Open'} every fold in every ${unit}`;
   }
   function targetFromHash(hash) { try {
     const id = decodeURIComponent(hash.slice(1));
@@ -464,7 +491,8 @@ document.addEventListener('DOMContentLoaded', () => {
     topics.forEach((topic, i) => {
       topic.section.classList.remove('topic-preview-hover');
       const shown = full || (paired ? pair.includes(i) : i === active);
-      if (shown) assignFolds(topic, columnFor(i));
+      if (shown && !topic.shown) topic.folds.forEach(resolveFold);
+      topic.shown = shown;
       topic.section.inert = !shown;
       topic.section.classList.toggle('topic-active', i === active);
       topic.section.classList.toggle('topic-visible', shown);
@@ -489,7 +517,7 @@ document.addEventListener('DOMContentLoaded', () => {
     viewButtons.forEach(node => { node.setAttribute('aria-pressed', String(node.dataset.readerView === view)); node.disabled = node.dataset.readerView === 'pair' && topics.length < 2; }); viewSelect.value = view;
     const pairOption = viewSelect.querySelector('option[value="pair"]'); if (pairOption) pairOption.disabled = topics.length < 2;
     if (slidesButton) slidesButton.hidden = !presentable || !full;
-    updateReadingButtons(); setOffset(); align(animate);
+    syncLayerControls(); setOffset(); align(animate);
     syncPresentation();
   }
   function currentView() { return presenting ? 'present' : full ? 'full' : paired ? 'pair' : 'single'; }

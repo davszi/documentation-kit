@@ -3,9 +3,9 @@
 // small fake DOM (tests/reader_harness.cjs) on a synthetic page; the reader
 // toolbar comes from the real chapter-reader.html. Covered: navigation, pins,
 // scroll restore, history, deep links, fold wrapping and key ownership,
-// dialogs, per-column layers and fold caches, presets and their storage,
-// legacy migration, the navigation drawer, print, reduced motion, page
-// identities, redirects, jump groups and the fold-controls opt-in.
+// dialogs, the page-wide "Also show" options, saved fold states, author-open
+// folds and their storage, legacy migration, the navigation drawer, print,
+// reduced motion, page identities, redirects, jump groups and fold controls.
 // Ported from ADP's experiments/track_geometry/test_road_review_topics.cjs at
 // commit e21c2e84. Its layout and stylesheet-value checks were not ported:
 // widths here are fixture input that selects code paths, not layout claims.
@@ -165,132 +165,164 @@ function checkFoldsKeysAndDrawer() {
   help.emit('cancel');
   assert.equal(page.document.activeElement, page.control('about'), 'Closing help returns focus to its trigger');
 
-  const row = page.read(1);
-  assert.equal(row.querySelectorAll('button').length, 6, 'Each chapter has Story, four layers and All inline');
-  assert.equal(page.document.querySelector('.reader-popover'), null, 'Layers stay inline instead of opening a menu');
-  assert.ok(!page.key('ArrowRight', {target: row.querySelector('button')}).defaultPrevented,
-    'Layer buttons keep their arrow keys');
+  // Changed behaviour: each chapter used to carry six option buttons under its
+  // heading (Story, four kinds, All). One "Also show" set in the navigation replaces them.
+  assert.equal(page.document.querySelectorAll('.chapter-layers, [data-reader-preset]').length, 0,
+    'No chapter carries option buttons');
+  const panel = page.panel();
+  assert.equal(page.sidebar.children.at(-1), panel, 'The options sit at the bottom of the navigation');
+  assert.equal(panel.hidden, false, 'A page with folds shows its options');
+  assert.deepEqual(panel.querySelectorAll('[data-reader-layer]').map(node => node.textContent),
+    ['Math', 'Experiments', 'Code', 'Alternatives'], 'The options are the kinds, in order, without Story');
+  assert.ok(!panel.textContent.includes('Story'), 'Story is not an option');
+  assert.equal(page.option('all').getAttribute('role'), 'switch', 'All is a switch');
+  assert.ok(!page.key('ArrowRight', {target: page.option('math')}).defaultPrevented, 'Options keep their arrow keys');
   return 'fold wrapping, equation and table key ownership, deep links, external and modifier links, '
-    + 'drawer, dialogs and inline layers';
+    + 'drawer, dialogs and the options panel';
 }
 
-// Layers follow the column, including a pinned chapter. Manual folds are cached
-// per chapter and column; explicit choices replace that column's old defaults.
-function checkColumnLayers() {
+// One set of options for the page acts on every chapter, on both columns, on a
+// pinned chapter and in All chapters. A reader's own fold click is saved and
+// wins; an option click sets every fold of its kind and replaces their saved
+// states. Changed behaviour: each column used to keep its own layers and a
+// fold cache per chapter and column.
+function checkPageLayers() {
   const page = bootReader('#notation');
+  const statesKey = 'foldstates:' + page.location.pathname;
+  const layersKey = 'foldlayers:' + page.location.pathname;
   page.click(page.control('pair'));
   page.assertPair(1, 2);
-  page.read(1); page.layers(['math', 'experiment']);
-  assert.deepEqual(page.states(1), [true, true, false, false], 'Left layers open the left chapter folds');
-  assert.deepEqual(page.states(2), [false, false, false, false], 'Left layers leave the right column closed');
-  page.read(2); page.layers(['code', 'dead-end']);
-  assert.deepEqual(page.states(1), [true, true, false, false], 'Right layers leave the left column alone');
-  assert.deepEqual(page.states(2), [false, false, true, true], 'Right layers open the right chapter folds');
+  page.layers(['math', 'experiment']);
+  for (const index of [1, 2]) {
+    assert.deepEqual(page.states(index), [true, true, false, false], 'An option opens its kind in both columns');
+  }
+  assert.deepEqual(page.states(6), [true, true, false, false], 'An option opens its kind in chapters not shown');
   page.pin(1);
   page.chapterKey('ArrowRight');
   page.assertPair(1, 3);
-  assert.deepEqual(page.states(1), [true, true, false, false], 'The pinned chapter keeps its layers');
-  assert.deepEqual(page.states(3), [false, false, true, true], 'A chapter entering a column takes that column\'s layers');
-  page.folds(3)[0].open = true;
-  page.folds(3)[3].open = false;
+  assert.deepEqual(page.states(1), [true, true, false, false], 'The pinned chapter keeps the page layers');
+  assert.deepEqual(page.states(3), [true, true, false, false], 'A chapter entering a column shows the page layers');
+  page.toggleFold(3, 0);
+  page.toggleFold(3, 3);
   page.chapterKey('ArrowRight');
   page.chapterKey('ArrowLeft');
-  assert.deepEqual(page.states(3), [true, false, true, false], 'Manual folds resume on return');
-  page.read(1); page.layers(['experiment']);
-  assert.deepEqual(page.states(3), [true, false, true, false], 'Changing the pinned column leaves the other column alone');
-  page.read(3); page.layers(['math']);
-  page.chapterKey('ArrowRight');
-  page.chapterKey('ArrowLeft');
-  assert.deepEqual(page.states(3), [true, false, false, false], 'Explicit layers replace earlier manual folds');
-  page.read(3);
-  page.click(page.sections[3].querySelector('[data-reader-preset="all"]'));
-  assert.deepEqual(page.states(3), [true, true, true, true], 'The All preset opens every layer');
-  page.click(page.sections[3].querySelector('[data-reader-preset="story"]'));
-  assert.deepEqual(page.states(3), [false, false, false, false], 'The Story preset closes every layer');
-  const profileKey = 'foldcolumns:' + page.location.pathname;
-  assert.ok(page.storage.has(profileKey), 'Column layer choices are stored under the page-scoped foldcolumns key');
-  assert.deepEqual(JSON.parse(page.storage.get(profileKey)), [['experiment'], []],
-    'Column layer choices are stored under the page-scoped foldcolumns key');
+  page.assertPair(1, 3);
+  assert.deepEqual(page.states(3), [false, true, false, true], "The reader's own fold clicks resume on return");
+  assert.deepEqual(JSON.parse(page.storage.get(statesKey)), [['solver|math|Details', false], ['solver|dead-end|Details', true]],
+    'Each fold click is saved for that fold');
+  page.layers(['experiment']);
+  assert.deepEqual(page.states(3), [false, true, false, true], 'Switching Math off leaves the clicks on other kinds');
+  assert.deepEqual(page.states(1), [false, true, false, false], 'Switching Math off closes Math in every chapter');
+  page.layers(['experiment', 'dead-end']);
+  page.layers(['experiment']);
+  assert.deepEqual(page.states(3), [false, true, false, false], 'An option click replaces the saved state of its kind');
+  assert.deepEqual(JSON.parse(page.storage.get(statesKey)), [], 'Replaced fold states are not kept');
+  assert.deepEqual(JSON.parse(page.storage.get(layersKey)), ['experiment'], 'The options are stored for the page');
+  page.click(page.option('all'));
+  assert.ok(page.sections.every((_, index) => page.states(index).every(Boolean)), 'All on opens every fold in every chapter');
+  assert.equal(page.option('all').getAttribute('aria-checked'), 'true', 'The All switch shows on');
+  assert.ok(page.panel().querySelectorAll('[data-reader-layer]').every(node => node.getAttribute('aria-pressed') === 'true'),
+    'All on switches every kind on');
+  page.click(page.option('all'));
+  assert.ok(page.sections.every((_, index) => page.states(index).every(open => !open)), 'All off closes every fold');
+  assert.deepEqual(JSON.parse(page.storage.get(layersKey)), [], 'All off stores no kind');
 
-  page.read(3); page.layers(['code']);
+  page.layers(['code']);
   page.chapterKey('ArrowRight');
-  page.read(4); page.layers(['math', 'experiment']);
+  page.assertPair(1, 4);
+  page.layers(['math']);
   page.back();
   page.assertPair(1, 3, 'Back restores the pair');
-  assert.deepEqual(page.states(3), [true, true, false, false], 'Back restores the arrangement, not old layer choices');
-  assert.equal(page.history.state.chapterReader.activeColumn, 1, 'History keeps the active column');
-  page.click(page.control('single'));
-  assert.deepEqual(page.visible(), ids([3]), 'Single view keeps the active right chapter');
-  page.read(3); page.layers(['dead-end']);
-  page.click(page.control('pair'));
-  page.assertPair(2, 3, 'Pair view from a right-column chapter keeps it on the right');
-  assert.deepEqual(page.states(2), [false, true, false, false], 'The left column restores its own layers');
-  assert.deepEqual(page.states(3), [false, false, false, true], 'The right column restores its own layers');
-
-  // Move a manually edited chapter to the opposite column, then back.
-  page.folds(3)[0].open = true;
-  page.sections[2].emit('pointerdown');
-  page.click(page.links[4]);
-  page.assertPair(4, 3);
-  page.click(page.links[5]);
-  page.sections[3].emit('pointerdown');
-  page.click(page.links[6]);
-  page.sections[5].emit('pointerdown');
-  page.click(page.links[3]);
-  page.assertPair(3, 6);
-  assert.deepEqual(page.states(3), [false, true, false, false], 'The same chapter has a separate left-column fold cache');
-  page.click(page.links[5]);
-  page.sections[6].emit('pointerdown');
-  page.click(page.links[3]);
-  page.assertPair(5, 3);
-  assert.deepEqual(page.states(3), [true, false, false, true], 'Returning to the right restores its manual fold');
-  return 'per-column layers, manual fold cache per chapter and column, Story/All presets, foldcolumns storage and back/forward';
+  assert.deepEqual(page.states(3), [true, false, false, false], 'Back restores the arrangement, not old layer choices');
+  page.click(page.control('full'));
+  page.layers(['dead-end']);
+  assert.ok(page.sections.every((_, index) => JSON.stringify(page.states(index)) === '[false,false,false,true]'),
+    'In All chapters an option acts on every chapter');
+  return 'options on every chapter, both columns, pinned and All chapters; saved fold clicks; replaced states; All switch';
 }
 
-function checkStoredProfiles() {
+// An author can make a fold start open. A saved state for a fold wins on the
+// next visit; the saved states stay bounded.
+function checkAuthorOpenAndSavedFolds() {
+  const authorOpen = [[0, 'code'], [2, 'math']];
+  const page = bootReader('', {authorOpen});
+  const statesKey = 'foldstates:' + page.location.pathname;
+  const layersKey = 'foldlayers:' + page.location.pathname;
+  assert.deepEqual(page.states(0), [false, false, true, false], 'An author-open fold starts open');
+  page.click(page.links[2]);
+  assert.deepEqual(page.states(2), [true, false, false, false], 'An author-open fold is open when its chapter is shown');
+  page.layers(['math']);
+  page.layers([]);
+  assert.deepEqual(page.states(2), [false, false, false, false], 'Switching its kind off closes an author-open fold');
+  assert.deepEqual(JSON.parse(page.storage.get(statesKey)), [['model|math|Details', false]],
+    'An author-open fold that an option closed keeps that state');
+  page.toggleFold(2, 1);
+  const stored = {[statesKey]: page.storage.get(statesKey), [layersKey]: page.storage.get(layersKey)};
+  const again = bootReader('#model', {authorOpen, stored});
+  assert.deepEqual(again.states(2), [false, true, false, false],
+    "After a reload the reader's saved states win over the author's open and the closed default");
+  assert.deepEqual(again.states(0), [false, false, true, false], 'Other author-open folds still start open');
+  again.click(again.links[0]);
+  again.toggleFold(0, 2);
+  again.click(again.links[2]);
+  again.click(again.links[0]);
+  assert.deepEqual(again.states(0), [false, false, false, false], 'A click closing an author-open fold is kept');
+
+  const many = Array.from({length: 250}, (_, index) => ['old|math|' + index, true]);
+  const bounded = bootReader('', {stored: {[statesKey]: JSON.stringify(many)}});
+  bounded.toggleFold(0, 1);
+  const kept = JSON.parse(bounded.storage.get(statesKey));
+  assert.equal(kept.length, 200, 'Saved fold states are bounded');
+  assert.deepEqual(kept.at(-1), ['overview|experiment|Details', true], 'The newest click is kept');
+  assert.equal(kept[0][0], 'old|math|51', 'The oldest saved states leave first');
+  return 'author-open folds, option closing them, saved states across a reload, bounded storage';
+}
+
+function checkStoredLayers() {
   const pathname = bootReader('', {runReader: false}).location.pathname;
   const legacyKey = 'foldmode:' + pathname;
-  const profileKey = 'foldcolumns:' + pathname;
+  const columnsKey = 'foldcolumns:' + pathname;
+  const layersKey = 'foldlayers:' + pathname;
   for (const mode of ['all', 'math', 'experiment', 'code', 'dead-end', 'none']) {
     const page = bootReader('', {stored: {[legacyKey]: mode}});
     page.click(page.control('pair'));
     const expected = ['math', 'experiment', 'code', 'dead-end'].map(kind => mode === 'all' || mode === kind);
-    assert.deepEqual(page.states(0), expected, `A legacy foldmode "${mode}" migrates to the left column`);
-    assert.deepEqual(page.states(1), expected, `A legacy foldmode "${mode}" migrates to the right column`);
+    assert.deepEqual(page.states(0), expected, `A legacy foldmode "${mode}" opens its kinds (left)`);
+    assert.deepEqual(page.states(1), expected, `A legacy foldmode "${mode}" opens its kinds (right)`);
   }
-  const saved = bootReader('', {stored: {[profileKey]: JSON.stringify([['math'], ['experiment', 'code']]), [legacyKey]: 'all'}});
-  saved.click(saved.control('pair'));
-  assert.deepEqual(saved.states(0), [true, false, false, false], 'A stored column profile wins over the legacy mode (left)');
-  assert.deepEqual(saved.states(1), [false, true, true, false], 'A stored column profile wins over the legacy mode (right)');
-  const corrupt = bootReader('', {stored: {[profileKey]: 'broken JSON', [legacyKey]: 'math'}});
-  assert.deepEqual(corrupt.states(0), [true, false, false, false], 'A corrupt stored profile falls back to the legacy mode');
+  const columns = bootReader('', {stored: {[columnsKey]: JSON.stringify([['math'], ['experiment', 'code']]), [legacyKey]: 'all'}});
+  columns.click(columns.control('pair'));
+  assert.deepEqual(columns.states(0), [true, false, false, false], 'A returning reader keeps what the first column had (left)');
+  assert.deepEqual(columns.states(1), [true, false, false, false], 'A returning reader keeps what the first column had (right)');
+  const saved = bootReader('', {stored: {[layersKey]: JSON.stringify(['code']), [columnsKey]: JSON.stringify([['math'], []])}});
+  assert.deepEqual(saved.states(0), [false, false, true, false], 'The page-wide choice wins over an older saved form');
+  const corrupt = bootReader('', {stored: {[layersKey]: 'broken JSON', [legacyKey]: 'math'}});
+  assert.deepEqual(corrupt.states(0), [true, false, false, false], 'A corrupt stored choice falls back to the older form');
 
   const page = bootReader('');
   page.click(page.control('pair'));
   const kinds = ['math', 'experiment', 'code', 'dead-end'];
-  for (const side of [0, 1]) {
-    for (let mask = 0; mask < 16; mask++) {
-      const other = page.states(1 - side);
-      const chosen = kinds.filter((_, bit) => mask & (1 << bit));
-      page.read(side); page.layers(chosen);
-      assert.deepEqual(page.states(side), kinds.map(kind => chosen.includes(kind)),
-        `Layers [${chosen}] open exactly those folds`);
-      assert.deepEqual(page.states(1 - side), other, 'Every layer combination leaves the other column untouched');
+  for (let mask = 0; mask < 16; mask++) {
+    const chosen = kinds.filter((_, bit) => mask & (1 << bit));
+    page.layers(chosen);
+    for (const side of [0, 1]) {
+      assert.deepEqual(page.states(side), kinds.map(kind => chosen.includes(kind)), `Layers [${chosen}] open exactly those folds`);
     }
   }
-  return 'legacy foldmode migration, stored and corrupt column profiles, all 16 layer combinations per column';
+  return 'legacy foldmode and first-column foldcolumns migration, page-wide foldlayers, corrupt storage, all 16 combinations';
 }
 
 function checkDrawerFocusAndSelection() {
   const drawer = bootReader('');
   drawer.click(drawer.control('drawer'));
   const first = drawer.sidebar.querySelector('.reader-home');
-  const last = drawer.sidebar.querySelectorAll('.toc a.xpage').at(-1);
+  // Changed behaviour: the "Also show" options now end the drawer, after the site links.
+  const last = drawer.option('dead-end');
   last.focus({preventScroll: true});
-  assert.ok(drawer.key('Tab').defaultPrevented, 'Tab from the last drawer link is trapped');
+  assert.ok(drawer.key('Tab').defaultPrevented, 'Tab from the last option is trapped');
   assert.equal(drawer.document.activeElement, first, 'Tab wraps to the first drawer control');
   assert.ok(drawer.key('Tab', {shiftKey: true}).defaultPrevented, 'Shift-Tab from the first drawer control is trapped');
-  assert.equal(drawer.document.activeElement, last, 'Shift-Tab wraps to the last drawer link');
+  assert.equal(drawer.document.activeElement, last, 'Shift-Tab wraps to the last option');
   assert.equal(drawer.sidebar.querySelectorAll('[role="tab"]').length, 0, 'Site pages and chapters share one tree, without tabs');
   assert.ok(!drawer.key('ArrowRight', {target: last}).defaultPrevented, 'Site links keep their arrow keys');
   assert.equal(drawer.sidebar.querySelector('#reader-chapter-list').hidden, false, 'The chapter list is shown in the drawer');
@@ -307,7 +339,7 @@ function checkDrawerFocusAndSelection() {
   page.back();
   page.assertPair(1, 2);
   assert.ok(page.sections[2].classes.has('topic-active'), 'The restored right column stays active');
-  page.read(2); page.layers(['code']);
+  page.layers(['code']);
   page.click(page.control('single'));
   assert.deepEqual(page.visible(), ids([2]), 'Back keeps the selected right column even when the URL names the left');
   assert.equal(page.bodies[2].scrollTop, 630, 'The selected column keeps its position');
@@ -322,12 +354,12 @@ function checkViewportAnchor() {
   const below = offset => FIXTURE.bodyTop + offset - body.scrollTop; // viewport top of a body offset
   const paragraph = page.document.getElementById('story-0');
   const math = page.folds(0)[0];
-  page.read(0); page.layers(['math']);
+  page.layers(['math']);
   // The paragraph sits below the Math fold, further down while it is open.
   paragraph.rectFn = () => rect(below(math.open ? 400 : 200), 0, 200, 100);
   body.scrollTop = 388;
   const originalTop = paragraph.getBoundingClientRect().top;
-  page.read(0); page.layers([]);
+  page.layers([]);
   assert.equal(paragraph.getBoundingClientRect().top, originalTop, 'Closing a fold above the paragraph keeps it in place');
   paragraph.rectFn = () => rect(below(230), 0, 200, 100);
   page.flush();
@@ -336,11 +368,11 @@ function checkViewportAnchor() {
   paragraph.rectFn = () => rect(0, 0, 0, 0);
   const inside = math.querySelector('p');
   const summary = math.querySelector('summary');
-  page.read(0); page.layers(['math']);
+  page.layers(['math']);
   summary.rectFn = () => rect(below(200), 0, 200, 44);
   inside.rectFn = () => rect(below(270), 0, 200, 200);
   body.scrollTop = 300;
-  page.read(0); page.layers([]);
+  page.layers([]);
   const top = summary.getBoundingClientRect().top;
   assert.ok(top >= FIXTURE.bodyTop && top < FIXTURE.bodyTop + 620, 'Closing the fold being read keeps its summary in view');
   return 'viewport anchor kept on layer change and late reflow';
@@ -350,14 +382,14 @@ function checkFullPagePrintAndBoot() {
   const page = bootReader('#notation');
   page.click(page.control('pair'));
   page.sections[2].emit('pointerdown');
-  page.read(2); page.layers(['code']);
+  page.layers(['code']);
   page.bodies[1].scrollTop = 860;
   page.bodies[2].scrollTop = 420;
   page.click(page.control('full'));
   assert.equal(page.visible().length, N, 'Full page shows every chapter');
   assert.equal(page.history.scrollRestoration, 'auto', 'Full page returns scroll restoration to the browser');
   assert.ok(page.sections.every((_, index) => JSON.stringify(page.states(index)) === '[false,false,true,false]'),
-    'Full page applies the active column layers to every chapter');
+    'Full page shows the page layers in every chapter');
   assert.ok(!page.chapterKey('ArrowRight').defaultPrevented, 'Full page leaves arrow keys to the browser');
   page.bodies.forEach(body => { body.scrollTop = 0; });
   page.sections.forEach((section, index) => { section.top = index <= 4 ? -500 : 1000; });
@@ -502,9 +534,9 @@ function checkPageIdentities() {
       page.bodies[0].scrollTop = 375;
       page.click(page.control('pair'));
       page.assertPair(0, 1);
-      page.read(1); page.layers(['math', 'experiment']);
-      assert.deepEqual(page.states(0), [false, false, false, false], 'Right-column layers leave the left closed');
-      assert.deepEqual(page.states(1), [true, true, false, false], 'Right-column layers open the right chapter');
+      page.layers(['math', 'experiment']);
+      assert.deepEqual(page.states(0), [true, true, false, false], 'Options open the left column');
+      assert.deepEqual(page.states(1), [true, true, false, false], 'Options open the right column');
       page.pin(0);
       page.chapterKey('ArrowRight');
       page.assertPair(0, 2);
@@ -513,9 +545,9 @@ function checkPageIdentities() {
       assert.equal(page.visible().length, chapters.length, 'Full page shows every chapter of this page');
       page.click(page.control('single'));
       page.assertCentred(2);
-      const key = 'foldcolumns:/fixture-site/' + pageName + '.html';
+      const key = 'foldlayers:/fixture-site/' + pageName + '.html';
       assert.ok(page.storage.has(key), `Layer choices are stored under ${key}`);
-      storageKeys.add([...page.storage.keys()].find(name => name.startsWith('foldcolumns:')));
+      storageKeys.add([...page.storage.keys()].find(name => name.startsWith('foldlayers:')));
     }
   }
   assert.equal(storageKeys.size, pages.length, 'Each page stores layer choices under its own key');
@@ -558,7 +590,7 @@ function checkPageIdentities() {
   sections.assertPair(6, right, 'A subsection link moves the unpinned column to its section');
   assert.ok(sections.folds(6)[0].open, 'A subsection link opens the fold around it');
   assert.ok(sections.states(right).every(open => !open), 'The pinned section keeps its layer state');
-  return 'page titles, units, groups, site tree, page-scoped foldcolumns keys; section wording, pins and subsection links';
+  return 'page titles, units, groups, site tree, page-scoped foldlayers keys; section wording, pins and subsection links';
 }
 
 function checkSmallPagesAndRedirects() {
@@ -585,7 +617,7 @@ function checkSmallPagesAndRedirects() {
 }
 
 // Pages adapted by the build: chapters are marked sections with h2 headers,
-// nested cards stay subsections, chapters without folds hide their layer row.
+// nested cards stay subsections, the options offer only the kinds the page has.
 function checkAdaptedPages() {
   const chapters = CHAPTERS.slice(0, 4);
   const foldKinds = [[], ['math'], [], ['code', 'math']];
@@ -599,9 +631,9 @@ function checkAdaptedPages() {
     assert.equal(page.strip.children.length, chapters.length, 'Nested cards are not extra chapters');
     page.sections.forEach((section, index) => {
       assert.equal(section.getAttribute('aria-labelledby'), 'heading-' + index, 'An h2 header labels its chapter');
-      assert.equal(section.querySelector('.chapter-layers').hidden, !foldKinds[index].length,
-        'Only chapters with folds show layer buttons');
     });
+    assert.deepEqual(page.panel().querySelectorAll('[data-reader-layer]').map(node => node.dataset.readerLayer), ['math', 'code'],
+      'Only the kinds of fold the page has are offered, in the reader\'s order');
     page.bodies[0].scrollTop = 315;
     page.click(page.control('pair'));
     page.assertPair(0, 1);
@@ -622,7 +654,7 @@ function checkAdaptedPages() {
     page.window.emit('afterprint');
     page.flush();
   }
-  return 'h2 headers, nested cards, empty layer rows, pins, subsection links, full page and print';
+  return 'h2 headers, nested cards, present kinds only, pins, subsection links, full page and print';
 }
 
 // Subsection links are labelled jumps within a parent, not extra chapters.
@@ -663,10 +695,12 @@ function checkJumpGroups() {
   const single = bootReader('', {chapters: [{id: 'only', label: 'Only section'}], pageName: 'navigation-empty'});
   assert.equal(single.document.querySelectorAll('.reader-chapter-jumps').length, 0, 'No empty jump groups');
 
-  // The page is the last site page, so its jump disclosure ends the drawer.
-  const keyboard = bootReader('', {chapters: [{id: 'first', label: 'First section'}, {id: 'last', label: 'Last section'}],
+  // The page is the last site page and has no folds, so no options follow and
+  // its jump disclosure ends the drawer.
+  const keyboard = bootReader('', {chapters: [{id: 'first', label: 'First section'}, {id: 'last', label: 'Last section'}], foldKinds: [[], []],
     subsections: [{id: 'last-detail', label: 'Last detail', chapter: 1}],
     pageName: SITE_PAGES.at(-1).href.slice(0, -'.html'.length)});
+  assert.equal(keyboard.panel().hidden, true, 'A page without folds shows no options');
   keyboard.click(keyboard.control('drawer'));
   const disclosure = keyboard.document.querySelector('.reader-chapter-jumps summary');
   disclosure.focus({preventScroll: true});
@@ -689,29 +723,54 @@ function checkFoldControls() {
   assert.equal(reader.window.listenerCount('hashchange'), hashHandlers, 'The reader opt-in adds no hashchange handler');
   assert.equal(reader.document.head.querySelectorAll('style').length, 1, 'The reader opt-in keeps the fold styling');
 
-  // Other pages get the global bar with six presets.
-  const page = bootReader('', {runReader: false});
+  // Other pages get the "Also show" bar: only the kinds present, toggles and an
+  // All switch, with the reader's storage. Changed behaviour: it had six
+  // single-choice presets, Story among them.
+  const options = {runReader: false, foldKinds: [['math', 'code'], ['math'], [], ['code'], ['math'], [], [], []],
+    authorOpen: [[1, 'math']]};
+  const page = bootReader('', options);
   page.nav.dataset.foldControls = 'default';
   const legacyKey = 'foldmode:' + page.location.pathname;
-  const storage = new Map([[legacyKey, 'math']]);
-  runFoldControls(page, {getItem: key => storage.get(key) ?? null, setItem: (key, value) => storage.set(key, value)});
-  const states = index => page.sections[index].querySelectorAll('details.fold').map(fold => fold.open);
+  const layersKey = 'foldlayers:' + page.location.pathname;
+  const statesKey = 'foldstates:' + page.location.pathname;
+  const storage = new Map([[legacyKey, 'code']]);
+  const local = {getItem: key => storage.get(key) ?? null, setItem: (key, value) => storage.set(key, value)};
+  runFoldControls(page, local);
+  const states = (target, index) => target.sections[index].querySelectorAll('details.fold').map(fold => fold.open);
   const bar = page.document.querySelector('.fold-bar');
-  assert.ok(bar, 'Pages without the reader get the global fold bar');
+  assert.ok(bar, 'Pages without the reader get the fold bar');
   const buttons = bar.querySelectorAll('button');
-  assert.equal(buttons.length, 6, 'The fold bar offers six presets');
-  assert.deepEqual(states(0), [true, false, false, false], 'The saved foldmode opens its kind at load');
-  buttons[5].emit('click');
-  assert.deepEqual(states(0), [true, true, true, true], 'The last preset opens every fold');
-  assert.equal(storage.get(legacyKey), 'all', 'A preset choice is saved under the foldmode key');
+  assert.deepEqual(buttons.map(node => node.textContent), ['Math', 'Code', 'All'], 'The bar offers the kinds present and All');
+  assert.equal(buttons[2].getAttribute('role'), 'switch', 'All is a switch');
+  assert.deepEqual([states(page, 0), states(page, 1), states(page, 3)], [[false, true], [true], [true]],
+    'The saved foldmode opens its kind; an author-open fold starts open');
   buttons[0].emit('click');
-  assert.deepEqual(states(0), [false, false, false, false], 'The story preset closes every fold');
-  assert.equal(storage.get(legacyKey), 'none', 'The story preset is saved');
+  assert.deepEqual(states(page, 0), [true, true], 'A kind switched on opens its folds');
+  assert.equal(buttons[2].getAttribute('aria-checked'), 'true', 'All shows on when every kind is on');
+  assert.deepEqual(JSON.parse(storage.get(layersKey)), ['code', 'math'], 'The kinds are saved under the foldlayers key');
+  buttons[2].emit('click');
+  assert.deepEqual([states(page, 0), states(page, 1), states(page, 3)], [[false, false], [false], [false]], 'All off closes every fold');
+  assert.deepEqual(JSON.parse(storage.get(statesKey)), [['notation|math|Details', false]],
+    'An author-open fold closed by an option keeps that state');
+  const summary = page.sections[3].querySelector('summary');
+  const event = summary.emit('click', {preventDefault() { this.defaultPrevented = true; }});
+  if (!event.defaultPrevented) summary.parentElement.open = !summary.parentElement.open;
+  assert.deepEqual(JSON.parse(storage.get(statesKey)).at(-1), ['solver|code|Details', true], 'A fold click is saved');
+  const again = bootReader('', options);
+  again.nav.dataset.foldControls = 'default';
+  runFoldControls(again, local);
+  assert.deepEqual([states(again, 0), states(again, 1), states(again, 3)], [[false, false], [false], [true]],
+    'Saved states win on the next visit');
   page.location.hash = '#' + FIXTURE.deepTarget;
   page.window.emit('hashchange');
   assert.equal(page.sections[FIXTURE.deepChapter].querySelectorAll('details.fold')[0].open, true,
     'A hash change opens the fold around its target');
-  return 'reader opt-in installs no bar or hash handler; default bar has six presets, foldmode persistence and hash deep links';
+  const none = bootReader('', {runReader: false, foldKinds: CHAPTERS.map(() => [])});
+  none.nav.dataset.foldControls = 'default';
+  runFoldControls(none, local);
+  assert.equal(none.document.querySelector('.fold-bar'), null, 'A page without folds gets no bar');
+  return 'reader opt-in installs no bar or hash handler; the bar offers present kinds and All, author-open folds, '
+    + 'saved clicks, foldmode migration and hash deep links';
 }
 
 function checkSourceRules() {
@@ -724,8 +783,9 @@ function checkSourceRules() {
 const checks = [
   ['Reader navigation', checkNavigationAndPins],
   ['Reader folds, keys and dialogs', checkFoldsKeysAndDrawer],
-  ['Reader column layers', checkColumnLayers],
-  ['Reader stored profiles', checkStoredProfiles],
+  ['Reader page layers', checkPageLayers],
+  ['Reader author-open and saved folds', checkAuthorOpenAndSavedFolds],
+  ['Reader stored layers', checkStoredLayers],
   ['Reader drawer focus', checkDrawerFocusAndSelection],
   ['Reader viewport anchor', checkViewportAnchor],
   ['Reader full page and print', checkFullPagePrintAndBoot],
