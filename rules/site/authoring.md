@@ -102,10 +102,10 @@ The short name is the page's `[[nav]]` label when an entry lists the page,
 otherwise the page's title; Reference pages, automatically listed files and the
 Reference index use their titles. The home page's tab shows `title` alone,
 since its label would only repeat that it is the start. A deck from `slides`
-shows "`title` · deck title", and a lock page from `publish` shows
-"`title` · Locked" and nothing of the page it locks. A site without `title`
-keeps the page title alone, and a lock page "Locked page". The heading and the
-title in the page's top bar stay the page's own title.
+shows "`title` · deck title". A lock page from `publish`, `404.html`
+included, keeps "Locked page": it shows nothing of the page it locks, not even
+the site's title. A site without `title` keeps the page title alone. The
+heading and the title in the page's top bar stay the page's own title.
 
 Navigation groups take their colour from `--g`. A `[group_colors]` table in
 `site.toml` sets it for the whole site, one hex colour per group, such as
@@ -540,20 +540,33 @@ block edges, the steps of the sidebar text and the controls that scripts draw
 (the lightbox, carousel arrows and dots, plot-toggle chips and the lock page's
 notice), are derived: each is a mix of two base colours, listed in
 `tooling/theme_colors.py`. The six tones that navigation groups without a
-`[group_colors]` colour take in order, and the reader's chapter parts, are
-lighter steps of `accent`, `secondary`, `orange`, `blue`, `red` and `green`.
+`[group_colors]` colour take in order, and the reader's chapter parts, follow
+`accent`, `secondary`, `orange`, `blue`, `red` and `green`: the fourth is
+`blue` itself, the others lighter steps of their colour.
 A derived colour keeps the kit's exact value until the project sets one of the
 two colours it mixes, so a table that sets only `accent` changes the accent and
-the first group tone. The table sets base colours only.
+the first group tone. Setting a key recomputes the colours derived from it even
+when the value is the kit's own: `accent = "#39d2c0"` moves the first group
+tone from `#6ee7c5` to `#74e0d3`. The table sets base colours only.
+
+The table recolours the theme, not a project's content: colours written as
+literals in a project's own SVG, HTML or page CSS stay as written, and so do
+figures until their generator runs again ([generated figures](#generated-figures)).
+Two parts of the kit stay as they were too: the bar of fold controls that
+`fold-controls.js` draws, which is still navy, and the fold-type hues. They
+follow in a later release, tracked in the kit's
+[open work](../../docs/open/reader-release-colour-follow-ups.md).
 
 The build checks that the colours keep text readable, with the ratios of the
 [figure palettes](#generated-figures): 4.5:1 for text and 3:1 for marks. It
 checks the text colours on the page, panel and card surfaces, the accent
-colours on the page and on cards, the sidebar text on the sidebar, the
+colours on the page and on cards, code comments in a code block, the sidebar
+text and group tones on the sidebar, the
 `is-alert` and `is-held` slide tones on a slide tile, and the dark figure
 palette on the project's surfaces. A table that fails stops the build and lint
-and names each failing pair with its colours and its ratio. The reader is dark,
-so a light `bg` fails these checks.
+and names, in one error, each bad key and each failing pair with its colours
+and its ratio, cut to two decimals so a ratio just below the floor never reads
+as passing. The reader is dark, so a light `bg` fails these checks.
 
 ### Generated figures
 

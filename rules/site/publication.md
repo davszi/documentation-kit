@@ -157,9 +157,9 @@ guessing. Give the passwords to readers through a separate channel.
 ### What is locked
 
 - Every HTML file in the bundle, whole: text, sidebar, inline figures and
-  embedded data. A lock page with the tab title "`title` · Locked", from
-  `site.toml`, or "Locked page" without one, and a `noindex` robots tag is
-  served at its address instead. The reference password is
+  embedded data. A lock page with the title "Locked page" and a `noindex`
+  robots tag is served at its address instead; it names neither the page nor
+  the site. The reference password is
   needed for every page the build records as a Reference page: a route in
   `source_pages` of `site-build.json`, which includes the
   [automatically listed](authoring.md#automatic-reference-listing) files, the

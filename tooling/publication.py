@@ -274,7 +274,7 @@ def publish_project(root: Path, destination: Path, *, kit: Path, plain_copy: Pat
     config = tomllib.loads((root / 'docs/site/site.toml').read_text())
     options = _publication_options(config)
     # The optional page lock checks its dependency and passwords before building.
-    lock = prepare_lock(options, site_title=config.get('title', ''))
+    lock = prepare_lock(options)
     pages = [_name(page) for page in options.get('pages', [])]
     suffixes = tuple(options.get('private_suffixes', []))
     prefixes = tuple(options.get('private_prefixes', []))

@@ -29,8 +29,11 @@ shows the new warnings.
 ## Unreleased
 
 The version number is set when this is released. These changes add to the
-stable interfaces and change no default; a project needs no migration step
-and builds as before.
+stable interfaces, and a project needs no migration step. Without
+`[theme_colors]` the pages look as before; the tab title changes on every
+site that sets `title`. A project whose own browser checks read
+`document.title` or a page's `<title>` must expect the new tab text: the
+kit's own tests changed in four files for it.
 
 ### A project's own site colours
 
@@ -55,9 +58,11 @@ on the kit's navy background.
   colours, and keep the kit's exact value until a project sets one of the
   two. The controls that scripts draw (lightbox, carousel, plot-toggle chips,
   the lock page's notice) read the same properties, and the six group tones
-  and the sidebar's glows are lighter steps of the hue colours. Syntax
-  colours, the fold hues, the tinted edges of diagram boxes, print colours and
-  the light backdrop of site-map pictures stay as they were.
+  and the sidebar's glows follow the hue colours. Syntax colours, the fold
+  hues, the bar of fold controls that `fold-controls.js` draws (still navy),
+  the tinted edges of diagram boxes, print colours and the light backdrop of
+  site-map pictures stay as they were. Colours written in a project's own SVG
+  or HTML stay as written.
 - **Figures on the project's background.** `figure_themes.palette("dark")`,
   and with it `write_both`, `matplotlib_rc` and the `svg_figures` colours,
   takes its surfaces and text from the project's table; the series and alert
@@ -70,25 +75,26 @@ project's reader, record, listed, Reference index, home and lock pages at
 1600 and 390 px are pixel-identical, and every rule of the eight theme
 stylesheets resolves to the colours it had. The bytes of `base.css`,
 `chapter-reader.css`, `slide-face.css`, `slide-deck.css`, `page-lock.css`,
-`panel-switcher.css`, `home.css` and `build-sheet.css` change, so each page
-gets new `?v=` queries for them, as for any theme change.
+`panel-switcher.css`, `home.css`, `build-sheet.css`, `carousel.js`,
+`lightbox.js`, `nav.js`, `plot-toggles.js` and `page-lock.js` change, so each
+page gets new `?v=` queries for them, as for any theme change.
 
 ### Browser tabs name the site first
 
-A tab showed the page's title alone, often a long sentence, and a lock page
-only "Locked page". Each tab now starts with the site's `title`:
+A tab showed the page's title alone, often a long sentence. Each tab now
+starts with the site's `title`:
 
 - **Pages.** "`title` · short name": the page's `[[nav]]` label, or, for a
   page without an entry, such as a Reference page, a listed file or the
   Reference index, its title. The home page shows `title` alone.
-- **Lock pages and decks.** A lock page from `publish` shows
-  "`title` · Locked" and still nothing of the page it locks; a deck from
-  `slides` shows "`title` · deck title".
+- **Decks.** A deck from `slides` shows "`title` · deck title".
 - **Unchanged.** The page's heading and the title in its top bar stay the
-  page's own. A site without `title` keeps today's tab titles. See
+  page's own. A lock page from `publish`, `404.html` included, keeps
+  "Locked page" and names neither the page nor the site. A site without
+  `title` keeps today's tab titles. See
   [authoring paths](../../../rules/site/authoring.md#authoring-paths).
 
-Every built page changes in its `<title>` element.
+Every built page of a site with `title` changes in its `<title>` element.
 
 ## 5.6.1 — the showcase pictures retaken, and a line on what each shows
 

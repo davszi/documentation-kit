@@ -97,12 +97,12 @@ def problems(p: Palette) -> list[str]:
             ratio = theme_colors.contrast(getattr(p, role), back)
             if ratio < TEXT_CONTRAST:
                 found.append(f"{p.name} figures: text {role} {getattr(p, role)} on {surface} {back} "
-                             f"has contrast {ratio:.2f}:1; text needs at least {TEXT_CONTRAST}:1")
+                             f"has contrast {theme_colors.shown_ratio(ratio)}:1; text needs at least {TEXT_CONTRAST}:1")
         for role in ("accent", "violet", "warm", "blue", "alert"):
             ratio = theme_colors.contrast(getattr(p, role), back)
             if ratio < MARK_CONTRAST:
                 found.append(f"{p.name} figures: mark {role} {getattr(p, role)} on {surface} {back} "
-                             f"has contrast {ratio:.2f}:1; marks need at least {MARK_CONTRAST}:1")
+                             f"has contrast {theme_colors.shown_ratio(ratio)}:1; marks need at least {MARK_CONTRAST}:1")
     return found
 
 

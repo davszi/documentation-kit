@@ -134,6 +134,7 @@ TEXT_PAIRS = (
     *[(text, "sidebar-bg") for text in ("nav-group", "nav-chapter", "reader-chapter", "nav-text-soft",
                                         "nav-text", "nav-text-strong", "nav-hover")],
     ("nav-number", "bg2"),
+    ("faint", "bg2"),                     # code comments in a code block
     ("diagram-label", "panel"),
     ("reader-text", "bg"), ("reader-strong", "bg"), ("sheet-text", "panel"),
     *[(f"group-tone-{n}", "sidebar-bg") for n in range(1, 7)],   # group labels in the sidebar
@@ -220,6 +221,11 @@ def contrast(first: str, second: str) -> float:
     return (lum[0] + 0.05) / (lum[1] + 0.05)
 
 
+def shown_ratio(ratio: float) -> str:
+    """A ratio cut, not rounded, to two decimals: 4.497 shows as 4.49, never as a passing 4.50."""
+    return f"{int(ratio * 100) / 100:.2f}"
+
+
 def contrast_problems(table: dict | None = None) -> list[str]:
     """Each text or mark colour that would be hard to read on its surface with these colours."""
     colors = resolve(table)
@@ -229,7 +235,7 @@ def contrast_problems(table: dict | None = None) -> list[str]:
             ratio = contrast(colors[fg], colors[surface])
             if ratio < floor:
                 found.append(f"{TABLE}: {kind} colour {fg} {colors[fg]} on {surface} {colors[surface]} "
-                             f"has contrast {ratio:.2f}:1; {kind} needs at least {floor}:1")
+                             f"has contrast {shown_ratio(ratio)}:1; {kind} needs at least {floor}:1")
     return found
 
 

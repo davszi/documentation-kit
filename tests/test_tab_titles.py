@@ -13,7 +13,6 @@ sys.path.insert(0, str(KIT / 'tooling'))
 sys.path.insert(0, str(KIT / 'tests'))
 
 import page_lock_fixture  # noqa: E402
-from page_lock import lock_title  # noqa: E402
 
 HAS_CRYPTOGRAPHY = importlib.util.find_spec('cryptography') is not None
 
@@ -90,24 +89,21 @@ class TabTitles(unittest.TestCase):
         self.assertEqual(tab(deck), 'Lock fixture · Talk &amp; demo')
         self.assertIn('<strong>Talk &amp; demo</strong>', deck)
 
-    def test_the_lock_title(self):
-        self.assertEqual(lock_title('Lock fixture'), 'Lock fixture · Locked')
-        self.assertEqual(lock_title(''), 'Locked page')
-        self.assertEqual(lock_title('  '), 'Locked page')
-
     @unittest.skipUnless(HAS_CRYPTOGRAPHY, 'cryptography is not installed; pip install -r requirements-lock.txt')
-    def test_a_lock_page_names_the_site_and_no_page(self):
+    def test_a_lock_page_reveals_nothing_not_even_the_site_title(self):
+        # deivid's decision: a lock page shows "Locked page" and no name of the site or the page.
         out = self.folder / 'site'
         env = dict(os.environ, DOCSITE_GENERAL_PASSWORD='general secret', DOCSITE_REFERENCE_PASSWORD='reference secret')
         result = docsite('publish', '--project', self.root, '--out', out, env=env)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        for name in ('index.html', 'guide.html', 'rule.html', 'reference.index.html'):
-            page = (out / name).read_text()
-            self.assertIn('id="page-lock-data"', page, name)
-            self.assertEqual(tab(page), 'Lock fixture · Locked', name)
-            for leak in ('Guide', 'Shared rule', 'Widgets', 'Reference', *page_lock_fixture.MARKERS.values()):
-                self.assertNotIn(leak, page.replace('id="page-lock', ''), f'{leak} in {name}')
-
+        locked = sorted(path for path in out.rglob('*.html') if b'id="page-lock-data"' in path.read_bytes())
+        self.assertLessEqual({'index.html', 'guide.html', 'rule.html', 'reference.index.html', '404.html'},
+                             {path.relative_to(out).as_posix() for path in locked})
+        for path in locked:
+            page = path.read_text()
+            self.assertEqual(tab(page), 'Locked page', path.name)
+            for leak in ('Lock fixture', 'Guide', 'Shared rule', 'Widgets', *page_lock_fixture.MARKERS.values()):
+                self.assertNotIn(leak, page, f'{leak} in {path.name}')
 
 if __name__ == '__main__':
     unittest.main()

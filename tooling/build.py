@@ -1199,8 +1199,10 @@ def main() -> int:
             ap.error(f"site.toml: group_colors gives group {name!r} the colour {color!r}; "
                      "use a hex colour such as \"#6ee7c5\"")
     from figure_themes import problems as figure_problems, project_dark
-    for problem in theme_colors.problems(site.get(theme_colors.TABLE, {})):
-        ap.error(f"site.toml: {problem}")
+    invalid = theme_colors.problems(site.get(theme_colors.TABLE, {}))
+    if invalid:
+        # Every bad key at once, so a project fixes the table in one pass.
+        ap.error("site.toml: " + "\n  ".join(invalid))
     unreadable = [*theme_colors.contrast_problems(site.get(theme_colors.TABLE)),
                   *figure_problems(project_dark(site.get(theme_colors.TABLE, {})))]
     if unreadable:

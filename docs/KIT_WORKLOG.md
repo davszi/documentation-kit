@@ -2,6 +2,28 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-26 — Review fixes for `[theme_colors]` and tab titles; lock pages keep "Locked page"
+
+- An independent review of branch `site-palette` said "ready after fixes".
+  Fixed: the release note no longer says no default changes, since tab
+  titles change on every site with `title`, and it warns projects whose
+  browser checks read the title; it names the fold-control bar as still
+  navy and lists the five scripts whose bytes change; the guide says that
+  setting a key recomputes its derived colours even at the kit's value
+  (`accent = "#39d2c0"` moves the first group tone to `#74e0d3`), that a
+  project's own literal colours stay as written, and that the fourth group
+  tone is `blue` itself.
+- The build names every bad `[theme_colors]` key in one error instead of
+  stopping at the first; code comments (`faint` on `bg2`) join the contrast
+  pairs; a failing ratio is cut, not rounded, so 4.497 shows as 4.49.
+- deivid decided that a lock page reveals nothing, not even the site's
+  title: lock pages and `404.html` keep "Locked page". The site title is no
+  longer passed to the lock, `page_lock.py`, `publication.py`,
+  `page-lock.html` and two tests are back to their state before the tab
+  titles, and a test checks that no lock page holds the site's title.
+- New open work: [two theme-colour follow-ups for the reader release](open/reader-release-colour-follow-ups.md),
+  the fold controls and the redone colour commit of `chapter-reader.css`.
+
 ## 2026-11-26 — Scripts and group tones follow `[theme_colors]`
 
 - Asked by the coordinator before the independent review: the owner wants

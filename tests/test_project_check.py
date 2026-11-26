@@ -151,7 +151,6 @@ class Check(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         page = self.seen()[1]
         self.assertNotIn('Locked page', page)
-        self.assertNotIn('· Locked</title>', page)
         self.assertNotIn('page-lock-data', page)
         self.assertIn('class="sidebar', page)
 

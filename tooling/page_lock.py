@@ -378,14 +378,8 @@ def open_tree(data: bytes, keys: Mapping[int, bytes]) -> bytes:
     return unseal(keys[2], base64.b64decode(found[1]), file_context(TREE_SCRIPT)).rstrip(b' ')
 
 
-def lock_title(site_title: str = '') -> str:
-    """The lock page's tab title: the site's title and "Locked", never the page's own."""
-    site_title = site_title.strip() if isinstance(site_title, str) else ''
-    return f'{site_title} · Locked' if site_title else 'Locked page'
-
-
 def lock_page(name: str, level: int, data: bytes, keyring: Keyring, versions: Mapping[str, str],
-              section_at: int | None = None, *, size: int | None = None, site_title: str = '') -> bytes:
+              section_at: int | None = None, *, size: int | None = None) -> bytes:
     """The lock page served at ``name`` instead of the page itself.
 
     ``section_at`` is the byte offset in ``data`` where a reference-password
@@ -406,8 +400,7 @@ def lock_page(name: str, level: int, data: bytes, keyring: Keyring, versions: Ma
     base = ''.join(f'<link rel="stylesheet" href="{asset(sheet)}">\n'
                    for sheet in ('assets/base.css', THEME_COLORS) if sheet in versions)
     header = json.dumps(keyring.header, sort_keys=True, separators=(',', ':')).replace('<', '\\u003c')
-    values = {'{{TITLE}}': html.escape(lock_title(site_title)),
-              '{{ROOT}}': html.escape(prefix or './', quote=True), '{{LEVEL}}': str(level),
+    values = {'{{ROOT}}': html.escape(prefix or './', quote=True), '{{LEVEL}}': str(level),
               '{{ATTRIBUTES}}': ('' if section_at is None else f' data-section-at="{section_at}"')
                                 + (' data-not-found' if name == NOT_FOUND else ''),
               '{{BASE_CSS}}': base, '{{LOCK_CSS}}': asset('assets/page-lock.css'),
@@ -515,7 +508,6 @@ def _counts(counter: Counter) -> str:
 class PageLock:
     passwords: dict[int, str]
     iterations: int = ITERATIONS
-    site_title: str = ''   # site.toml `title`, the start of each lock page's tab title
 
     def __repr__(self) -> str:  # never show the passwords, even in a traceback
         return f'PageLock(iterations={self.iterations})'
@@ -591,7 +583,7 @@ class PageLock:
             if name in pages:
                 level, data, at = pages[name]
                 path.write_bytes(lock_page(name, level, data, keyring, versions, at,
-                                           size=size if name == index else None, site_title=self.site_title))
+                                           size=size if name == index else None))
                 sealed[name] = (level, data, at)
                 locked[level][suffix] += 1
             elif name.lower().endswith(MARKDOWN_SUFFIXES):
@@ -661,15 +653,12 @@ class PageLock:
             raise ValueError(failure.format(TREE_SCRIPT))
 
 
-def prepare_lock(options: Mapping, environ: Mapping[str, str] | None = None, *,
-                 site_title: str = '') -> PageLock | None:
+def prepare_lock(options: Mapping, environ: Mapping[str, str] | None = None) -> PageLock | None:
     """Return the lock for ``[publication]`` options, or None when it is off.
 
     Checks the dependency and both passwords before anything is built.
-    ``site_title`` is site.toml's `title`, for the lock pages' tab title.
     """
     if not lock_requested(options):
         return None
     _aesgcm()
-    return PageLock(read_passwords(os.environ if environ is None else environ),
-                    site_title=site_title if isinstance(site_title, str) else '')
+    return PageLock(read_passwords(os.environ if environ is None else environ))

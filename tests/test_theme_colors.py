@@ -182,6 +182,16 @@ class Contrast(unittest.TestCase):
         self.assertIn('text colour bright #e6edf3 on bg #ffffff', found)
         self.assertIn('text colour accent #39d2c0 on bg #ffffff', found)
 
+    def test_code_comments_keep_their_contrast(self):
+        self.assertIn(('faint', 'bg2'), theme_colors.TEXT_PAIRS)
+        found = '\n'.join(theme_colors.contrast_problems({'bg2': '#4a4f55'}))
+        self.assertIn('text colour faint #768390 on bg2 #4a4f55', found)
+
+    def test_a_ratio_just_below_the_floor_never_reads_as_passing(self):
+        self.assertEqual(theme_colors.shown_ratio(4.4995), '4.49')
+        self.assertEqual(theme_colors.shown_ratio(4.5), '4.50')
+        self.assertEqual(theme_colors.shown_ratio(12.268), '12.26')
+
     def test_the_slide_tones_keep_their_contrast(self):
         # is-held is a dashed outline on the slide; is-alert is red text and outline on a tile.
         found = '\n'.join(theme_colors.contrast_problems({'panel2': '#5a5a5a', 'muted': '#5a5a5a'}))
@@ -330,6 +340,13 @@ class Site(unittest.TestCase):
             page = (out / name).read_text()
             self.assertIn('id="page-lock-data"', page, name)
             self.assertEqual(stylesheets(page), ['base.css', 'theme-colors.css', 'page-lock.css'], name)
+
+    def test_every_bad_key_is_named_in_one_error(self):
+        result = self.build('\n[theme_colors]\npage = "#000000"\nbg = "navy"\n')
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.stderr.count('error:'), 1, result.stderr)
+        self.assertIn("theme_colors sets 'page', which is not a theme colour", result.stderr)
+        self.assertIn("theme_colors gives 'bg' the value 'navy'", result.stderr)
 
     def test_a_bad_table_stops_the_build_and_lint_with_the_reason(self):
         for table, message in (
