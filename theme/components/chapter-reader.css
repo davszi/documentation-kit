@@ -427,7 +427,7 @@ body.topic-deck {overflow:hidden;}
 /* "Also show": one set of reading layers for the page, at the bottom of the
    navigation, acting on every chapter and both columns. Each option is a 44 px
    target; its visible pill is the padding box inside a transparent border. */
-.reader-layers {flex:none;margin:8px -10px -24px;padding:10px 14px 14px;border-top:1px solid var(--border);background:rgba(8,11,16,.55);}
+.reader-layers {flex:none;margin:8px -10px -24px;padding:10px 14px 14px;border-top:1px solid var(--border);background:rgba(var(--sidebar-bg-rgb),.55);}
 .reader-layers-head {display:flex;align-items:center;justify-content:space-between;gap:8px;padding-left:2px;}
 .reader-layers-label {font-size:11px;font-weight:600;line-height:1;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
 .reader-layers-row {display:flex;flex-wrap:wrap;gap:0 6px;}
@@ -444,7 +444,7 @@ body.topic-deck {overflow:hidden;}
 .reader-enabled .reader-layer-all {display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 4px 0 8px;border:0;border-radius:8px;background:transparent;color:var(--muted);font-size:11px;font-weight:600;line-height:1;letter-spacing:.08em;text-transform:uppercase;}
 .reader-enabled .reader-layer-all:hover {color:var(--bright);}
 .reader-switch {position:relative;flex:none;width:28px;height:16px;border-radius:999px;background:rgba(255,255,255,.16);transition:background .15s;}
-.reader-switch::after {content:'';position:absolute;left:2px;top:2px;width:12px;height:12px;border-radius:50%;background:#9aa4b2;transition:transform .15s,background .15s;}
+.reader-switch::after {content:'';position:absolute;left:2px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--caption);transition:transform .15s,background .15s;}
 .reader-layer-all[aria-checked="true"] .reader-switch {background:color-mix(in srgb,var(--accent) 40%,transparent);}
 .reader-layer-all[aria-checked="true"] .reader-switch::after {transform:translateX(12px);background:var(--accent);}
 @media (prefers-reduced-motion:reduce) {.reader-enabled *::after {transition:none!important;animation:none!important;}}
@@ -466,16 +466,16 @@ body.reader-enabled.reader-nav-docked {--reader-header:0px;}
 .reader-tool .reader-tool-fill {fill:currentColor;stroke:none;}
 .reader-tool-info {box-shadow:inset 1px 0 0 var(--border);}
 .reader-enabled .reader-tool:hover:not(:disabled) {color:var(--bright);background:rgba(255,255,255,.06);}
-.reader-enabled .reader-tool[aria-pressed="true"] {color:var(--accent);background:rgba(57,210,192,.14);}
+.reader-enabled .reader-tool[aria-pressed="true"] {color:var(--accent);background:rgba(var(--accent-rgb),.14);}
 .reader-enabled .reader-tool:focus-visible {outline-offset:-3px;}
 
 /* The stepper: a floating island at the bottom centre of the stage. It steps
    back while a chapter scrolls and returns when the scrolling stops. */
-.reader-island {position:absolute;z-index:7;left:50%;bottom:16px;display:flex;align-items:center;gap:2px;padding:4px;border:1px solid rgba(148,178,214,.22);border-radius:999px;background:rgba(13,18,25,.8);-webkit-backdrop-filter:blur(12px) saturate(1.2);backdrop-filter:blur(12px) saturate(1.2);box-shadow:0 12px 34px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.06);transform:translateX(-50%);transition:opacity .25s ease,transform .25s ease;}
+.reader-island {position:absolute;z-index:7;left:50%;bottom:16px;display:flex;align-items:center;gap:2px;padding:4px;border:1px solid rgba(var(--rule-rgb),.22);border-radius:999px;background:rgba(var(--bg-rgb),.8);-webkit-backdrop-filter:blur(12px) saturate(1.2);backdrop-filter:blur(12px) saturate(1.2);box-shadow:0 12px 34px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.06);transform:translateX(-50%);transition:opacity .25s ease,transform .25s ease;}
 .reader-island.reader-island-away {opacity:.28;transform:translate(-50%,6px);}
 .reader-island:is(:hover,:focus-within) {opacity:1;transform:translateX(-50%);}
 .reader-enabled .reader-island .reader-icon {width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:var(--text);font-size:18px!important;transition:background .15s,color .15s;}
-.reader-enabled .reader-island .reader-icon:hover:not(:disabled) {background:rgba(57,210,192,.14);color:var(--accent);}
+.reader-enabled .reader-island .reader-icon:hover:not(:disabled) {background:rgba(var(--accent-rgb),.14);color:var(--accent);}
 .reader-place {min-width:64px;padding:0 8px;text-align:center;font-size:13px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;}
 .reader-place b {color:var(--bright);font-weight:600;}
 /* All chapters is one long document: the island rides the window's bottom edge. */
@@ -537,5 +537,5 @@ body.reader-enabled.reader-nav-docked {--reader-header:0px;}
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] {bottom:76px;justify-content:center;}
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead]::before,
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] :is(.slide-bridge-pill,.slide-bridge-meta) {display:none;}
-  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] .slide-bridge-button {margin:0 auto;background:color-mix(in srgb,var(--accent,#39d2c0) 10%,rgba(13,18,25,.92));}
+  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] .slide-bridge-button {margin:0 auto;background:color-mix(in srgb,var(--accent,#39d2c0) 10%,rgba(var(--bg-rgb),.92));}
 }
