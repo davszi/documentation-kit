@@ -19,12 +19,14 @@ import html
 import math
 import re
 
-from figure_themes import DARK
+from figure_themes import palette
 
-# The dark palette, which pages show. For the light file a generator passes the colours of
+# The dark palette, which pages show, on the project's [theme_colors] surfaces when it sets them
+# (read from the working directory's project at import). For the light file a generator passes the colours of
 # `figure_themes.palette("light")` to `text`, `panel` and `arrow`; `figure_themes.write_both` writes both files.
-INK, SUB, DIM, LINE, PANEL, BG = DARK.ink, DARK.sub, DARK.dim, DARK.line, DARK.panel, DARK.bg
-ACCENT, WARM, VIOLET, BLUE, ALERT = DARK.accent, DARK.warm, DARK.violet, DARK.blue, DARK.alert
+COLORS = palette("dark")
+INK, SUB, DIM, LINE, PANEL, BG = COLORS.ink, COLORS.sub, COLORS.dim, COLORS.line, COLORS.panel, COLORS.bg
+ACCENT, WARM, VIOLET, BLUE, ALERT = COLORS.accent, COLORS.warm, COLORS.violet, COLORS.blue, COLORS.alert
 SANS, MONO = "'IBM Plex Sans',system-ui,sans-serif", "'IBM Plex Mono',ui-monospace,monospace"
 
 

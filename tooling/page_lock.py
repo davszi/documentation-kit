@@ -52,6 +52,7 @@ from urllib.parse import unquote, urlsplit
 
 from chapter_layout import Structure
 from source_tree import TREE_GLOBAL, TREE_SCRIPT
+from theme_colors import ASSET as THEME_COLORS
 
 FORMAT = 'docsite-lock/1'
 # OWASP Password Storage Cheat Sheet: 600,000 iterations for PBKDF2-HMAC-SHA256.
@@ -395,8 +396,9 @@ def lock_page(name: str, level: int, data: bytes, keyring: Keyring, versions: Ma
     def asset(target):
         return html.escape(prefix + target + ('?v=' + versions[target] if target in versions else ''), quote=True)
 
-    base = (f'<link rel="stylesheet" href="{asset("assets/base.css")}">\n'
-            if 'assets/base.css' in versions else '')
+    # The project's [theme_colors] stylesheet follows base.css, as on every built page.
+    base = ''.join(f'<link rel="stylesheet" href="{asset(sheet)}">\n'
+                   for sheet in ('assets/base.css', THEME_COLORS) if sheet in versions)
     header = json.dumps(keyring.header, sort_keys=True, separators=(',', ':')).replace('<', '\\u003c')
     values = {'{{ROOT}}': html.escape(prefix or './', quote=True), '{{LEVEL}}': str(level),
               '{{ATTRIBUTES}}': ('' if section_at is None else f' data-section-at="{section_at}"')
@@ -532,8 +534,9 @@ class PageLock:
                  if path.is_file() or path.is_symlink()}
         assets = {target: (_COMPONENTS / source).read_bytes() for target, source in LOCK_ASSETS.items()}
         versions = {target: hashlib.sha256(data).hexdigest()[:10] for target, data in assets.items()}
-        if 'assets/base.css' in files:
-            versions['assets/base.css'] = hashlib.sha256(files['assets/base.css'].read_bytes()).hexdigest()[:10]
+        for sheet in ('assets/base.css', THEME_COLORS):
+            if sheet in files:
+                versions[sheet] = hashlib.sha256(files[sheet].read_bytes()).hexdigest()[:10]
 
         texts = {}
         for name, path in files.items():

@@ -2,6 +2,30 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-26 — A project's own site colours: `[theme_colors]`
+
+- Asked for by the embodied-safety-gates project through the coordinator: its
+  whole site in a warm dark brown instead of the kit's navy. Built on branch
+  `site-palette` for the next release, which has no number yet.
+- Two commits before this one move every navy and grey literal of the theme
+  CSS to custom properties on `:root`; `chapter-reader.css` has a commit of
+  its own so that the reader branch can redo it on its restructured file.
+  Colours used see-through read `--<name>-rgb` channels in `rgba()`: a first
+  try with `color-mix()` moved gradients to Oklab and differed from the old
+  pages by up to 5 of 255 in a channel, and by 1 after forcing sRGB.
+- Default look unchanged, checked two ways: screenshots of the page-lock
+  fixture's reader, reader-free, record, listed, Reference index, home and
+  lock pages at 1600 and 390 px, viewport and full page, are pixel-identical
+  to `origin/main`; resolving every `:root` property in the old and new
+  stylesheets gives the same text for all eight files. Diagrams and slide
+  faces read copies of base colours that the reader's print style does not
+  turn light, as their literals did.
+- This commit adds `tooling/theme_colors.py`, the stylesheet and its links,
+  the contrast checks, the dark figure palette on the project's colours,
+  `tests/test_theme_colors.py`, the guide section and the release note. The
+  tests of the touched files pass, and the kit's own site builds and lints
+  strictly clean; the full check script runs on the final commit.
+
 ## 2026-11-25 — Release 5.6.1
 
 - deivid gave the go: "Yes, release 5.6.1". The ask named what the go

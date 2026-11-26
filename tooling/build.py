@@ -53,6 +53,7 @@ except ImportError:  # pragma: no cover
 from site_paths import DOCS, REPO, SITE as SRC, TOPICS as PAGES, HTML as OUT, OUTPUT_ROOT, KIT_SITE, topic_pages
 from site_bundle import SiteBundle, validate_resources
 import page_source
+import theme_colors  # `[theme_colors]` becomes theme_colors.ASSET, linked right after base.css
 from page_source import INCLUDE_DEPTH, INCLUDE_RE, PAGE_END  # noqa: F401  (names this module has always had)
 from worklog_entries import fenced_spans, links_checked_from
 
@@ -928,8 +929,10 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
         listed = any(entry.get("file") == fname and not entry.get("hidden") for entry in nav_entries)
         crossnav += "\n" + tree_html(tree, fname, listed=listed, script=site.get("_repository_tree_script"))
 
+    # Right after base.css, so its colours replace the kit's before any other stylesheet reads them.
+    head_extra = f'<link rel="stylesheet" href="{theme_colors.ASSET}">\n' if site.get(theme_colors.TABLE) else ""
     # Before every other stylesheet but base.css, so a page's own CSS can still set --g.
-    head_extra = f'<link rel="stylesheet" href="{GROUP_COLORS_ASSET}">\n' if site.get("group_colors") else ""
+    head_extra += f'<link rel="stylesheet" href="{GROUP_COLORS_ASSET}">\n' if site.get("group_colors") else ""
     if meta.get("math"):
         if not (KATEX_SRC / "katex.min.js").is_file():
             err(f"{name}: math=true but vendored KaTeX missing at {KATEX_SRC}")
@@ -1034,6 +1037,8 @@ def gather_assets(site: dict, *, origins: dict[str, str] | None = None) -> dict[
     assets["assets/documentation-kit/LICENSE"] = (KIT_SITE.parent / "LICENSE").read_bytes()
     if site.get("group_colors"):
         assets[GROUP_COLORS_ASSET] = group_colors_css(site["group_colors"])
+    if site.get(theme_colors.TABLE):
+        assets[theme_colors.ASSET] = theme_colors.stylesheet(site[theme_colors.TABLE])
     extra = site.get('extra_assets', {})
     if not isinstance(extra, dict):
         raise ValueError('extra_assets must map asset names to project files')
@@ -1174,6 +1179,13 @@ def main() -> int:
         if not isinstance(color, str) or not GROUP_COLOR.fullmatch(color):
             ap.error(f"site.toml: group_colors gives group {name!r} the colour {color!r}; "
                      "use a hex colour such as \"#6ee7c5\"")
+    from figure_themes import problems as figure_problems, project_dark
+    for problem in theme_colors.problems(site.get(theme_colors.TABLE, {})):
+        ap.error(f"site.toml: {problem}")
+    unreadable = [*theme_colors.contrast_problems(site.get(theme_colors.TABLE)),
+                  *figure_problems(project_dark(site.get(theme_colors.TABLE, {})))]
+    if unreadable:
+        ap.error("site.toml: [theme_colors] makes text or marks hard to read:\n  " + "\n  ".join(unreadable))
     labels = site.get("plot_toggle_labels", {})
     if not isinstance(labels, dict):
         ap.error('site.toml: plot_toggle_labels must be a [plot_toggle_labels] table mapping plot group keys '

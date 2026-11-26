@@ -497,6 +497,50 @@ Markdown file of the project is an error, and so is `record_roots_exclude`
 without `record_roots`. A root without tracked Markdown and an exclusion that
 leaves nothing out are notes.
 
+### Theme colours
+
+A `[theme_colors]` table in `site.toml` gives the whole site a project's own
+colours. Each key is one of the reader's fifteen base colours and each value a
+3 or 6 digit hex colour:
+
+```toml
+[theme_colors]
+bg = "#2b211b"      # the page
+bg2 = "#30251e"     # code blocks and panels
+panel = "#3a2c23"   # cards
+panel2 = "#44342a"  # raised cards
+border = "#59493a"
+text = "#e6dccd"
+bright = "#f2e9dc"  # headings and strong text
+muted = "#b3a593"
+```
+
+The keys are `bg`, `bg2`, `panel`, `panel2`, `border`, `text`, `bright`,
+`muted`, `accent`, `secondary`, `blue`, `link`, `orange`, `red` and `green`; a
+key left out keeps the kit's colour. The build writes
+`assets/theme-colors.css`, which sets those colours on `:root`, and links it
+right after `base.css` on every page: topic pages with and without the reader,
+registered and automatically listed Reference pages and the Reference index.
+The lock page that `publish` writes and the decks of `slides` link it too.
+Without the table, or with an empty one, nothing is written and the site
+builds as before.
+
+The theme's other colours, such as the sidebar, the slide faces, the code
+block edges and the steps of the sidebar text, are derived: each is a mix of
+two base colours, listed in `tooling/theme_colors.py`. A derived colour keeps
+the kit's exact value until the project sets one of the two colours it mixes,
+so a table that sets only `accent` changes only the accent. The table sets base
+colours only.
+
+The build checks that the colours keep text readable, with the ratios of the
+[figure palettes](#generated-figures): 4.5:1 for text and 3:1 for marks. It
+checks the text colours on the page, panel and card surfaces, the accent
+colours on the page and on cards, the sidebar text on the sidebar, the
+`is-alert` and `is-held` slide tones on a slide tile, and the dark figure
+palette on the project's surfaces. A table that fails stops the build and lint
+and names each failing pair with its colours and its ratio. The reader is dark,
+so a light `bg` fails these checks.
+
 ### Generated figures
 
 A figure generator reads tracked data, asserts the values its page states and
@@ -534,6 +578,18 @@ the local build output copies all of `docs/figures/`, light files included.
 In the dark palette violet and blue, the second and fourth series, are close
 for a reader with a colour deficiency: label the lines of a chart that shows
 both.
+
+A project with [theme colours](#theme-colours) gets dark figures on its own
+surfaces: `palette("dark")`, `matplotlib_rc("dark")`, `write_both` and the
+`svg_figures` colours take the background, panel, lines and text from the
+project's colours. They read `docs/site/site.toml` of the project at
+`DOCSITE_PROJECT_ROOT`, or of the working directory, so run a generator from
+the project root. The series and alert colours stay the kit's.
+`figure_themes.problems` runs the contrast checks above on a palette, and a
+project palette that fails them raises an error before any file is written.
+`figure_themes.DARK` stays the kit's palette, and the light palette does not
+change. After changing the table, run the generators again; until then their
+`--check` reports the figures drawn in the old colours.
 
 ### Slide faces and decks
 

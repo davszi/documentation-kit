@@ -26,6 +26,50 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## Unreleased
+
+The version number is set when this is released. These changes add to the
+stable interfaces and change no default; a project needs no migration step
+and builds as before.
+
+### A project's own site colours
+
+A consuming project asked for its whole site in its own colours, a warm dark
+brown instead of the kit's navy. The base colours lived in `base.css`, many
+theme rules wrote navy and grey colours directly, and generated figures drew
+on the kit's navy background.
+
+- **The `[theme_colors]` table.** A project sets any of the fifteen base
+  colours in `site.toml`. The build writes `assets/theme-colors.css` and
+  links it right after `base.css` on every page, the lock page of `publish`
+  and the decks of `slides`. It refuses an unknown key, naming the keys there
+  are, and a value that is not a 3 or 6 digit hex colour. See
+  [theme colours](../../../rules/site/authoring.md#theme-colours).
+- **Readable text is checked.** The build and lint fail when the colours
+  leave text below 4.5:1 or a mark below 3:1 on its surface, naming each
+  pair: text on the page and card surfaces, the sidebar text, the `is-alert`
+  and `is-held` slide tones and the dark figure palette.
+- **Every theme colour follows the table.** Each navy or grey colour the
+  theme CSS wrote directly now reads a custom property on `:root`. Those
+  without a base colour of their own are derived, each a mix of two base
+  colours, and keep the kit's exact value until a project sets one of the
+  two. Syntax colours, the fold and chapter-group hues, print colours and the
+  light backdrop of site-map pictures stay as they were.
+- **Figures on the project's background.** `figure_themes.palette("dark")`,
+  and with it `write_both`, `matplotlib_rc` and the `svg_figures` colours,
+  takes its surfaces and text from the project's table; the series and alert
+  colours stay. A palette that fails the figure contrast checks raises an
+  error before a file is written. See
+  [generated figures](../../../rules/site/authoring.md#generated-figures).
+
+Without the table the pages look exactly as before: screenshots of a
+project's reader, record, listed, Reference index, home and lock pages at
+1600 and 390 px are pixel-identical, and every rule of the eight theme
+stylesheets resolves to the colours it had. The bytes of `base.css`,
+`chapter-reader.css`, `slide-face.css`, `slide-deck.css`, `page-lock.css`,
+`panel-switcher.css`, `home.css` and `build-sheet.css` change, so each page
+gets new `?v=` queries for them, as for any theme change.
+
 ## 5.6.1 — the showcase pictures retaken, and a line on what each shows
 
 5.6.1 is a patch release under
