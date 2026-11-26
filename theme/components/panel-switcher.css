@@ -3,7 +3,7 @@
 [data-panel-ready] > .panel-switcher-controls {display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;}
 .panel-switcher-controls button {min-height:44px;min-width:44px;padding:8px 14px;border:1px solid var(--border);border-radius:9px;color:var(--muted);background:var(--bg2);font:inherit;font-size:13px;cursor:pointer;transition:color .2s,border-color .2s,background .2s,box-shadow .2s;}
 .panel-switcher-controls button:hover,.panel-switcher-controls button:focus-visible {color:var(--bright);border-color:var(--accent);}
-.panel-switcher-controls button[aria-pressed="true"] {color:var(--accent);border-color:var(--accent);background:rgba(57,210,192,.08);box-shadow:inset 0 -2px 0 var(--accent);}
+.panel-switcher-controls button[aria-pressed="true"] {color:var(--accent);border-color:var(--accent);background:rgba(var(--accent-rgb),.08);box-shadow:inset 0 -2px 0 var(--accent);}
 .panel-switcher [data-panel][hidden] {display:none;}
 [data-panel-ready] > [data-panel]:not([hidden]) {animation:panel-switcher-in .22s ease-out;}
 @keyframes panel-switcher-in {from {opacity:.4;transform:translateY(4px);}to {opacity:1;transform:none;}}

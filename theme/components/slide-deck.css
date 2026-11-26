@@ -1,18 +1,18 @@
 /* Extracted slide deck: overview list, single-slide presentation and one-slide-per-page print. */
-html,body.slide-deck-page {background:#05080c;margin:0;}
-.slide-deck-page {color:#e6edf3;font-family:"IBM Plex Sans",system-ui,sans-serif;}
-.deck-bar {position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 16px;background:rgba(5,8,12,.92);backdrop-filter:blur(10px);border-bottom:1px solid #1e2a36;}
+html,body.slide-deck-page {background:var(--deck-bg);margin:0;}
+.slide-deck-page {color:var(--figure-ink);font-family:"IBM Plex Sans",system-ui,sans-serif;}
+.deck-bar {position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 16px;background:rgba(var(--deck-bg-rgb),.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--deck-line);}
 .deck-bar strong {font-weight:600;}
-.deck-count {font:12px "IBM Plex Mono",monospace;color:#7d8896;margin-right:auto;}
-.deck-bar button {min-height:44px;padding:0 14px;border:1px solid #2f3b4a;border-radius:10px;background:transparent;color:#a9b4c2;font:13px "IBM Plex Sans",sans-serif;cursor:pointer;}
-.deck-bar button:hover {color:#39d2c0;border-color:rgba(57,210,192,.45);}
-.deck-bar kbd {font:11px "IBM Plex Mono",monospace;padding:1px 5px;border:1px solid #2f3b4a;border-radius:4px;margin-left:4px;}
+.deck-count {font:12px "IBM Plex Mono",monospace;color:var(--figure-dim);margin-right:auto;}
+.deck-bar button {min-height:44px;padding:0 14px;border:1px solid var(--figure-line);border-radius:10px;background:transparent;color:var(--figure-sub);font:13px "IBM Plex Sans",sans-serif;cursor:pointer;}
+.deck-bar button:hover {color:var(--accent);border-color:rgba(var(--accent-rgb),.45);}
+.deck-bar kbd {font:11px "IBM Plex Mono",monospace;padding:1px 5px;border:1px solid var(--figure-line);border-radius:4px;margin-left:4px;}
 .slide-deck {display:flex;flex-direction:column;align-items:center;gap:28px;padding:28px 16px 80px;}
 .deck-frame {position:relative;flex:none;width:min(1280px,100%);}
 .deck-frame > .slide-face {margin:0;}
 .deck-frame .slide-canvas {border-radius:12px!important;box-shadow:0 12px 40px rgba(0,0,0,.4);}
-.deck-source {display:inline-block;margin-top:6px;font:12px "IBM Plex Mono",monospace;color:#7d8896;}
-.deck-source:hover {color:#39d2c0;}
+.deck-source {display:inline-block;margin-top:6px;font:12px "IBM Plex Mono",monospace;color:var(--figure-dim);}
+.deck-source:hover {color:var(--accent);}
 /* Presentation: one slide, as large as the viewport allows */
 .deck-presenting {overflow:hidden;}
 .deck-presenting .deck-bar {display:none;}

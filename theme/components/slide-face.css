@@ -3,8 +3,8 @@
    every size inside .slide-canvas is a container unit of it, so the layout is
    identical at any width and in an extracted deck. Below 720px a pure-CSS
    container query stacks the canvas, so narrow reading needs no JavaScript. */
-.slide-face {--sf-ink:#e6edf3!important;--sf-sub:#a9b4c2!important;--sf-dim:#7d8896!important;--sf-line:#2f3b4a!important;--sf-tile:#121a24!important;--sf-tile2:#162130!important;--sf-accent:var(--accent,#39d2c0)!important;--sf-alt:var(--secondary,#bc8cff)!important;--sf-warm:var(--orange,#ffa657)!important;--sf-held:#5b6b80!important;--sf-alert:var(--red,#f47067)!important;position:relative!important;container-type:inline-size!important;margin:0 0 4px!important;}
-.slide-canvas {display:flex!important;flex-direction:column!important;gap:.65cqi!important;aspect-ratio:16/9!important;min-height:0!important;overflow:hidden!important;padding:2.4cqi 3.4cqi 1.8cqi!important;border:1px solid var(--sf-line)!important;border-radius:14px!important;background:radial-gradient(ellipse at 85% 0%,color-mix(in srgb,var(--sf-accent) 7%,transparent),transparent 55%),linear-gradient(180deg,#0f1620,#0d1117)!important;font-family:"IBM Plex Sans",system-ui,sans-serif!important;color:var(--sf-ink)!important;}
+.slide-face {--sf-ink:var(--figure-ink,#e6edf3)!important;--sf-sub:var(--figure-sub,#a9b4c2)!important;--sf-dim:var(--figure-dim,#7d8896)!important;--sf-line:var(--figure-line,#2f3b4a)!important;--sf-tile:var(--figure-panel,#121a24)!important;--sf-tile2:var(--figure-panel2,#162130)!important;--sf-accent:var(--accent,#39d2c0)!important;--sf-alt:var(--secondary,#bc8cff)!important;--sf-warm:var(--orange,#ffa657)!important;--sf-held:var(--figure-held,#5b6b80)!important;--sf-alert:var(--red,#f47067)!important;position:relative!important;container-type:inline-size!important;margin:0 0 4px!important;}
+.slide-canvas {display:flex!important;flex-direction:column!important;gap:.65cqi!important;aspect-ratio:16/9!important;min-height:0!important;overflow:hidden!important;padding:2.4cqi 3.4cqi 1.8cqi!important;border:1px solid var(--sf-line)!important;border-radius:14px!important;background:radial-gradient(ellipse at 85% 0%,color-mix(in srgb,var(--sf-accent) 7%,transparent),transparent 55%),linear-gradient(180deg,var(--slide-top,#0f1620),var(--figure-bg,#0d1117))!important;font-family:"IBM Plex Sans",system-ui,sans-serif!important;color:var(--sf-ink)!important;}
 .chapter-body > .slide-face:first-child,.chapter-body > :first-child > .slide-face:first-child {margin:-16px -22px 0!important;}
 /* The bleed matches the chapter body's padding, which is 14px in a narrow chapter (chapter-reader.css);
    a wider bleed reaches past the scrolling body, which then scrolls sideways and cuts the face's edges. */
@@ -60,7 +60,7 @@
 /* Figure beside headline numbers */
 .slide-split {display:grid!important;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr)!important;gap:2.4cqi!important;align-items:center!important;}
 .slide-split.is-wide-side {grid-template-columns:minmax(0,1fr) 22cqi!important;}
-.slide-figure {background:#0b1016!important;border:1px solid var(--sf-line)!important;border-radius:12px!important;padding:1cqi!important;}
+.slide-figure {background:var(--slide-figure-bg,#0b1016)!important;border:1px solid var(--sf-line)!important;border-radius:12px!important;padding:1cqi!important;}
 .slide-figure img,.slide-figure svg {width:100%!important;height:auto!important;display:block!important;}
 .slide-figure figcaption {margin-top:.6cqi!important;font-size:.9cqi!important;color:var(--sf-dim)!important;}
 .slide-stats {display:flex!important;flex-direction:column!important;gap:1cqi!important;}

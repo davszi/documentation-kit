@@ -5,7 +5,7 @@ body.page-lock{margin:0;min-height:100vh;display:flex;align-items:center;justify
 .page-lock-panel{width:100%;max-width:28rem;box-sizing:border-box;padding:28px 28px 22px;
   background:linear-gradient(160deg,var(--panel,#161b22),var(--bg2,#0f141b));
   border:1px solid var(--border,#2d333c);border-top:3px solid var(--accent,#39d2c0);border-radius:14px;
-  box-shadow:0 18px 50px rgba(0,0,0,.45),0 0 0 1px rgba(57,210,192,.06)}
+  box-shadow:0 18px 50px rgba(0,0,0,.45),0 0 0 1px rgba(var(--accent-rgb,57,210,192),.06)}
 .page-lock-panel h1{margin:0 0 10px;font-size:1.45rem;line-height:1.25;color:var(--bright,#e6edf3)}
 .page-lock-text{margin:0 0 16px}
 .page-lock-form{display:grid;gap:10px}
@@ -15,13 +15,13 @@ body.page-lock{margin:0;min-height:100vh;display:flex;align-items:center;justify
   color:var(--bright,#e6edf3);background:var(--bg,#0d1117);border:1px solid var(--border,#2d333c);border-radius:8px;
   transition:border-color .15s,box-shadow .15s}
 .page-lock-form input[type=password]:focus{outline:none;border-color:var(--accent,#39d2c0);
-  box-shadow:0 0 0 3px rgba(57,210,192,.22)}
+  box-shadow:0 0 0 3px rgba(var(--accent-rgb,57,210,192),.22)}
 .page-lock-form .page-lock-remember{display:flex;align-items:center;gap:8px;font-weight:400;color:var(--text,#c9d1d9)}
 .page-lock-remember input{width:18px;height:18px;margin:0;accent-color:var(--accent,#39d2c0)}
 .page-lock-form button{justify-self:start;min-height:44px;padding:8px 22px;font:inherit;font-weight:700;
-  color:#0d1117;background:var(--accent,#39d2c0);border:0;border-radius:8px;cursor:pointer;
+  color:var(--bg,#0d1117);background:var(--accent,#39d2c0);border:0;border-radius:8px;cursor:pointer;
   transition:filter .15s,box-shadow .15s}
-.page-lock-form button:hover{filter:brightness(1.1);box-shadow:0 0 18px rgba(57,210,192,.35)}
+.page-lock-form button:hover{filter:brightness(1.1);box-shadow:0 0 18px rgba(var(--accent-rgb,57,210,192),.35)}
 .page-lock-form button:focus-visible{outline:2px solid var(--bright,#e6edf3);outline-offset:2px}
 .page-lock-form button:disabled{opacity:.6;cursor:progress}
 .page-lock-status{margin:12px 0 0;color:var(--orange,#f0883e)}
