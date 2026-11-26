@@ -2,6 +2,22 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-26 — Release 5.7.0
+
+- deivid gave the go: "Yes, release 5.7.0". The ask named what the go
+  covers: moving `main` to the release commit, the tag `v5.7.0` and the
+  push, which publishes the kit's own site with the new reader. It gave the
+  size against 5.6.1 at `011b0a2`: 56 files, 3,233 lines added, 643
+  removed, and the result of the full check script there: exit 0, 501
+  tests.
+- The message with the ask named what is not verified: the commits that fix
+  the review findings not reviewed again; no real phone, Firefox or Safari;
+  the swipe exemptions and pinch zoom not run in a browser; the palette's
+  author not having seen the change to its series check.
+- 5.7.0 holds the changes of the entries below, down to the two on 5.6.2.
+- This commit adds only this entry. The full check script runs on it before
+  the tag; the Pages workflow runs it again on the push.
+
 ## 2026-11-26 — Review of 5.7.0: not fit to tag, then fixed
 
 - One independent review read the whole branch against `v5.6.1`, with no
