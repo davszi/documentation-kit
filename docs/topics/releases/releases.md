@@ -65,8 +65,9 @@ tried each step in a browser before it was built into the kit.
   of the stage, where it took 88%; the neighbours are drawn at 90% of their
   size and dimmer. The click zone of a neighbour is exactly the strip of it
   that shows. A sideways swipe turns the chapter too; a drag that starts on
-  a control, a figure, a table or anything that scrolls sideways is left
-  alone, and so is any drag while the page is zoomed.
+  a control, a link, an inline SVG figure, a canvas or anything that scrolls
+  sideways, such as a wide table, is left alone, and so is any drag while
+  the page is zoomed. A drag on a picture or on plain text turns the chapter.
 - **One set of section options for the page.** Under "Also show" at the
   bottom of the sidebar, an option opens every fold of one kind in every
   chapter and in both columns. A page offers only the kinds of fold it has.

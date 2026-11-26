@@ -928,6 +928,12 @@ function checkFoldControls() {
   none.nav.dataset.foldControls = 'default';
   runFoldControls(none, local);
   assert.equal(none.document.querySelector('.fold-bar'), null, 'A page without folds gets no bar');
+  // A lone All switch would show as on and do nothing.
+  const unknown = bootReader('', {runReader: false, foldKinds: CHAPTERS.map(() => ['note'])});
+  unknown.nav.dataset.foldControls = 'default';
+  runFoldControls(unknown, local);
+  assert.ok(unknown.document.querySelectorAll('details.fold').length > 0, 'The fixture has folds of an unknown kind');
+  assert.equal(!!unknown.document.querySelector('.fold-bar'), false, 'Folds of no known kind get no bar');
   return 'reader opt-in installs no bar or hash handler; the bar offers present kinds and All, author-open folds, '
     + 'saved clicks, foldmode migration and hash deep links';
 }

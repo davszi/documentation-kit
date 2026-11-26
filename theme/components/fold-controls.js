@@ -164,6 +164,8 @@
   all.addEventListener("click", () => setKinds(present.map(([kind]) => kind), all.getAttribute("aria-checked") !== "true"));
   bar.appendChild(all);
   sync();
+  // Folds of no known kind have nothing to offer here: no bar, only the deep links below.
+  if (!present.length) bar.parentNode?.removeChild(bar);
 
   // deep links: opening a hash inside a closed fold expands the chain
   function openHash() {
