@@ -70,6 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
       .filter(node => !node.closest('[data-slide-face], button, summary, a') && !node.parentElement.closest('figure, svg')).length;
     const bridge = document.createElement('div');
     bridge.className = 'slide-bridge';
+    // The bridge after a chapter's first face leads into the full chapter; the
+    // One chapter view docks it to the bottom of the chapter while at its top.
+    if (chapter.querySelector('[data-slide-face]') === face) bridge.dataset.slideBridgeLead = '';
     bridge.innerHTML = '<span class="slide-bridge-pill">Full chapter</span>' +
       `<span class="slide-bridge-meta">≈ ${Math.max(1, Math.round(words / 220))} min read · ${figures} ${figures === 1 ? 'figure' : 'figures'}</span>`;
     const button = document.createElement('button');
@@ -82,6 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const topIn = (element, scroller) => scroller
       ? element.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop
       : element.getBoundingClientRect().top + window.scrollY;
+    // A docked bridge is out of the flow: the full chapter then starts at the
+    // element after it, and that is where "Continue reading" goes.
+    const flowMark = () => getComputedStyle(bridge).position === 'absolute' ? bridge.nextElementSibling || bridge : bridge;
     let arrived = null;
     const sync = () => {
       const scroller = scrollerOf(face);
@@ -90,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
         : document.documentElement.scrollHeight - window.innerHeight;
       // "Arrived" once the bridge reaches the top of the visible area, or the
       // chapter is too short for that and is scrolled as far as it goes.
-      const now = position >= Math.min(topIn(bridge, scroller), furthest) - 48 && position > 8;
+      const now = position >= Math.min(topIn(flowMark(), scroller), furthest) - 48 && position > 8;
       if (now === arrived) return;
       arrived = now;
       button.innerHTML = now ? 'Back to slide <span aria-hidden="true">↑</span>' : 'Continue reading <span aria-hidden="true">↓</span>';
@@ -102,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     sync();
     button.addEventListener('click', () => {
       const scroller = scrollerOf(face);
-      const target = arrived ? topIn(face, scroller) - 8 : topIn(bridge, scroller) - 4;
+      const target = arrived ? topIn(face, scroller) - 8 : topIn(flowMark(), scroller) - 4;
       (scroller || window).scrollTo({top: Math.max(0, target), behavior: reduce() ? 'auto' : 'smooth'});
     });
   });

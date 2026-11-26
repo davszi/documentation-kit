@@ -37,6 +37,7 @@ async function presentState(page) {
     return {cardShown: !!titleCard?.getClientRects().length, headingTop: card?.querySelector('.chapter-headline')?.getBoundingClientRect().top,view: document.querySelector('main.content').dataset.topicView, active: card?.id, scroll: body?.scrollTop,
       search: location.search, hash: location.hash, bar: !!document.querySelector('.present-bar:not([hidden])'),
       toolbar: getComputedStyle(document.getElementById('chapter-reader')).display,
+      island: getComputedStyle(document.querySelector('.reader-island')).display,
       sidebar: getComputedStyle(document.getElementById('sidebar')).display,
       snap: body && [getComputedStyle(body).scrollSnapType, slide && getComputedStyle(slide).scrollSnapAlign],
       slide: box && {face: slide.hasAttribute('data-slide-face'), titleCard: slide.classList.contains('present-title-card'),
@@ -63,10 +64,19 @@ function assertSlideFills(state, viewport, what) {
   assert.ok(Math.abs(slide.top - (viewport.height - slide.height) / 2) < 1 && Math.abs(slide.left - (viewport.width - slide.width) / 2) < 1,
     what + ': slide is letterboxed in the centre ' + JSON.stringify(slide));
 }
+// Clicks a control of the navigation; a closed overlay navigation is opened first.
+async function clickInNavigation(page, selector) {
+  const control = page.locator(selector);
+  if (!await control.isVisible()) {
+    await page.click('.reader-mobile-menu');
+    await control.waitFor({state: 'visible', timeout: 5000});
+  }
+  await control.click();
+}
 async function reviewPresentation(page, origin, viewport, failures) {
   const url = `${origin}/html/${PRESENT_PAGE}.html`;
   const checked = [];
-  const select = viewport.width < 900, narrow = viewport.width < 720;
+  const overlay = viewport.width <= 900, narrow = viewport.width < 720;
   const built = await fs.readFile(path.join(root, `html/${PRESENT_PAGE}.html`), 'utf8');
   assert.ok(!built.includes('present-title-card') && !built.includes('present-slide'), 'title cards exist only at run time');
 
@@ -79,7 +89,7 @@ async function reviewPresentation(page, origin, viewport, failures) {
   assert.equal(state.scroll, 0, 'Presentation opens the chapter on its slide');
   assert.equal(state.search, '?view=present', 'the address names the view');
   assert.equal(state.hash, '#' + PLAIN_CHAPTERS[0], 'the address names the chapter');
-  assert.ok(state.bar && state.toolbar === 'none' && state.sidebar === 'none', 'only the presentation controls show: ' + JSON.stringify(state));
+  assert.ok(state.bar && state.toolbar === 'none' && state.island === 'none' && state.sidebar === 'none', 'only the presentation controls show: ' + JSON.stringify(state));
   assert.equal(state.focus, PLAIN_CHAPTERS[0], 'focus moves to the presented chapter');
   // Proximity is the initial strictness, so the computed value may serialize as plain "y".
   assert.ok(/^y( proximity)?$/.test(state.snap[0]) && state.snap[1] === 'start', 'the chapter snaps back to its slide near the top: ' + state.snap);
@@ -185,32 +195,34 @@ async function reviewPresentation(page, origin, viewport, failures) {
       : document.querySelector('main.content').dataset.topicView === view, view);
     state = await presentState(page);
     assert.equal(state.active, before, `leaving returns to ${view} on the presented chapter`);
-    assert.ok(state.toolbar !== 'none' && !state.bar, 'the reader toolbar returns');
+    assert.ok(state.island !== 'none' && !state.bar, 'the reader stepper returns');
   }
   checked.push('exit restores Two chapters and All chapters');
 
-  // From start begins at the first chapter; focus returns to the starting control.
+  // Changed behaviour: "From start" is gone; Presentation starts at the current chapter.
+  // Focus returns to the Presentation icon, or to the chapter where the overlay navigation closed.
   await setView(page, 'single');
   await page.waitForFunction(() => document.querySelector('[data-reader-chapter].topic-active')?.id === 'the-reader');
-  if (select) await page.selectOption('[data-reader-view-select]', 'present-start');
-  else await page.click('[data-reader-present-start]');
-  state = await waitPresent(page, FACE_CHAPTER);
-  assert.equal(state.scroll, 0, 'From start opens the first slide');
+  assert.equal(await page.locator('[data-reader-present-start], [data-reader-view-select]').count(), 0, 'no From start control or view menu');
+  await setView(page, 'present');
+  state = await waitPresent(page, 'the-reader');
+  assert.equal(state.scroll, 0, 'Presentation opens the current chapter on its slide');
   await page.keyboard.press('Shift+Tab');
   const close = await page.evaluate(() => ({inBar: !!document.activeElement?.closest('.present-bar'),
     outline: getComputedStyle(document.activeElement).outlineStyle}));
   assert.ok(close.inBar && close.outline !== 'none', 'Shift+Tab reaches the visible presentation controls: ' + JSON.stringify(close));
   await page.keyboard.press('Escape');
-  state = await waitPresent(page, FACE_CHAPTER, 'single');
-  const returned = await page.evaluate(select => {
+  state = await waitPresent(page, 'the-reader', 'single');
+  const returned = await page.evaluate(overlay => {
     const node = document.activeElement;
-    return select ? !!node?.closest('[data-reader-view-select], [data-reader-chapter].topic-active') : !!node?.matches('[data-reader-present-start]');
-  }, select);
-  assert.ok(returned, 'focus returns to the starting control, or to the chapter when the menu started it');
-  checked.push('From start', 'focus on enter and exit');
+    return overlay ? !!node?.closest('[data-reader-chapter].topic-active') : !!node?.matches('[data-reader-view="present"]');
+  }, overlay);
+  assert.ok(returned, 'focus returns to the Presentation icon, or to the chapter when the overlay navigation started it');
+  checked.push('Presentation at the current chapter', 'focus on enter and exit');
 
   // The controls fade when idle and return on pointer movement; fullscreen is optional.
-  if (!select) {
+  if (!overlay) {
+    await page.goto(`${url}#${FACE_CHAPTER}`, {waitUntil: 'networkidle'});
     await setView(page, 'present');
     await waitPresent(page, FACE_CHAPTER);
     await page.mouse.move(20, 20);
@@ -247,7 +259,7 @@ async function reviewPresentation(page, origin, viewport, failures) {
   await page.emulateMedia({media: 'print'});
   assert.equal((await faces()).face, 'none', 'print follows the switch (off)');
   await page.emulateMedia({media: 'screen'});
-  await page.click('[data-reader-slides]');
+  await clickInNavigation(page, '[data-reader-slides]');
   shown = await faces();
   assert.deepEqual([shown.face !== 'none', shown.bridge !== 'none', shown.pressed], [true, true, 'true'], 'the switch shows slides');
   await page.emulateMedia({media: 'print'});
@@ -257,19 +269,172 @@ async function reviewPresentation(page, origin, viewport, failures) {
   await setView(page, 'full');
   shown = await faces();
   assert.deepEqual([shown.face !== 'none', shown.pressed], [true, 'true'], 'the switch is remembered for the page');
-  await page.click('[data-reader-slides]');
+  await clickInNavigation(page, '[data-reader-slides]');
   assert.equal((await faces()).face, 'none', 'the switch hides slides again');
   checked.push('Slides switch off by default, on after the click, remembered, print');
 
   // A page without slide faces offers neither Presentation nor Slides.
   await page.goto(`${origin}/html/experiments.html?view=present`, {waitUntil: 'networkidle'});
   await setView(page, 'full');
-  const plain = await page.evaluate(() => ({controls: [...document.querySelectorAll('[data-reader-view="present"], [data-reader-present-start], [data-reader-slides]')].filter(node => node.getClientRects().length).length,
-    options: document.querySelectorAll('[data-reader-view-select] option[value^="present"]').length, view: document.querySelector('main.content').dataset.topicView,
+  const plain = await page.evaluate(() => ({controls: [...document.querySelectorAll('[data-reader-view="present"], [data-reader-slides]')].filter(node => node.getClientRects().length).length,
+    view: document.querySelector('main.content').dataset.topicView,
     bar: document.querySelectorAll('.present-bar').length, search: location.search}));
-  assert.deepEqual(plain, {controls: 0, options: 0, view: 'single', bar: 0, search: ''}, 'no Presentation without slide faces');
+  assert.deepEqual(plain, {controls: 0, view: 'single', bar: 0, search: ''}, 'no Presentation without slide faces');
   checked.push('pages without faces');
   assert.deepEqual(failures, [], 'browser errors during presentation checks at ' + viewport.width);
+  return checked;
+}
+
+// The reader's frame on build-a-site, whose first chapter opens with a slide face.
+// Wide: no top bar, the icon row under the site name, the stepper island at the
+// bottom centre over a fade, the "Full chapter" row docked on the island's line at
+// three window heights and gone once the chapter scrolls, click zones equal to the
+// visible strips of the neighbours. Narrow: the bar with menu and page name, the
+// row and options inside the drawer, "Continue reading" above the island, swipe.
+async function frameState(page) {
+  return page.evaluate(() => {
+    const box = node => { if (!node) return null; const r = node.getBoundingClientRect(); return {left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height}; };
+    const card = document.querySelector('[data-reader-chapter].topic-active'), row = card.querySelector('.slide-bridge[data-slide-bridge-lead]');
+    const style = node => node && getComputedStyle(node);
+    return {active: card.id, card: box(card), stage: box(document.querySelector('.topic-stage')), island: box(document.querySelector('.reader-island')),
+      place: document.querySelector('.reader-place').textContent, away: document.querySelector('.reader-island').classList.contains('reader-island-away'),
+      bar: style(document.getElementById('chapter-reader')).display, scroll: card.querySelector('.chapter-body').scrollTop,
+      row: row && {box: box(row), shown: style(row).visibility !== 'hidden' && Number(style(row).opacity) > 0, pill: box(row.querySelector('.slide-bridge-pill')),
+        pillShown: style(row.querySelector('.slide-bridge-pill')).display !== 'none', meta: style(row.querySelector('.slide-bridge-meta')).display !== 'none',
+        button: box(row.querySelector('.slide-bridge-button')), text: row.querySelector('.slide-bridge-button').textContent.trim()},
+      fade: style(card, '::after') && getComputedStyle(card, '::after').backgroundImage,
+      header: style(card.querySelector('.chapter-header')).display, headline: parseFloat(style(card.querySelector('.chapter-headline')).fontSize)};
+  });
+}
+async function reviewFrame(browser, origin) {
+  const url = `${origin}/html/${PRESENT_PAGE}.html#${FACE_CHAPTER}`;
+  const checked = [];
+  const context = await browser.newContext({viewport: {width: 1600, height: 900}, reducedMotion: 'reduce'});
+  const page = await context.newPage();
+  await page.goto(url, {waitUntil: 'networkidle'});
+  await settle(page);
+  let state = await frameState(page);
+  assert.equal(state.bar, 'none', 'wide windows with docked navigation have no top bar');
+  const sidebar = await page.evaluate(() => {
+    const box = node => node.getBoundingClientRect();
+    const head = box(document.querySelector('#sidebar .reader-drawer-head')), row = box(document.querySelector('#sidebar .reader-tools')), toc = box(document.getElementById('toc'));
+    const icons = [...document.querySelectorAll('#sidebar .reader-tools button')].filter(node => node.getClientRects().length).map(node => {
+      const r = box(node); return {name: node.getAttribute('aria-label'), tip: node.title, width: r.width, height: r.height}; });
+    return {gapToList: toc.top - row.bottom, underHead: row.top >= head.bottom - 1, rowWidth: row.width, sidebar: box(document.getElementById('sidebar')).width, icons};
+  });
+  assert.ok(sidebar.underHead && Math.abs(sidebar.gapToList - 4) <= 1, 'the icon row sits under the site name, 4 px above the page list: ' + JSON.stringify(sidebar));
+  assert.deepEqual(sidebar.icons.map(icon => icon.name), ['One chapter', 'Two chapters', 'All chapters', 'Presentation', 'About this page', 'Reader help'],
+    'six named icons in one row');
+  assert.ok(sidebar.icons.every(icon => icon.tip === icon.name && icon.height >= 44 && icon.width >= 43.5 && Math.abs(icon.width - sidebar.icons[0].width) < 1),
+    'each icon has a tooltip, a 44 px target and an equal share of the row: ' + JSON.stringify(sidebar.icons));
+  assert.ok(Math.abs((state.island.left + state.island.right) / 2 - (state.stage.left + state.stage.right) / 2) <= 1
+    && state.island.bottom <= state.stage.bottom && state.stage.bottom - state.island.bottom < 40, 'the island sits at the bottom centre of the stage: ' + JSON.stringify(state.island));
+  const chapters = await page.locator('[data-reader-chapter]').count();
+  assert.equal(state.place, `1 of ${chapters}`, 'the island says where the reader is');
+  assert.ok(/gradient/.test(state.fade), 'a fade layer lies under the bottom line: ' + state.fade);
+  assert.equal(state.header, 'none', 'One chapter shows no chapter strip');
+  assert.ok(state.headline >= 32 && state.headline <= 50, 'the chapter name is the large headline: ' + state.headline);
+  checked.push('no bar', 'icon row', 'island at the bottom centre', 'fade', 'headline');
+
+  // The "Full chapter" row at three window heights: inside the window, docked on the island's line,
+  // its label at the far left and "Continue reading" at the far right; gone after a scroll.
+  for (const height of [900, 680, 560]) {
+    await page.setViewportSize({width: 1600, height});
+    await settle(page);
+    state = await frameState(page);
+    const {row, island, card} = state;
+    assert.ok(row && row.shown && row.box.top >= 0 && row.box.bottom <= height, `the row shows inside the window at ${height} px: ` + JSON.stringify(row));
+    assert.ok(Math.abs((row.box.top + row.box.bottom) / 2 - (island.top + island.bottom) / 2) <= 4, `the row is on the island's line at ${height} px`);
+    assert.ok(row.pill.left - card.left < 40 && card.right - row.button.right < 40 && row.pill.right < island.left && row.button.left > island.right,
+      `label at the far left, Continue reading at the far right at ${height} px: ` + JSON.stringify(state));
+    await page.locator('[data-reader-chapter].topic-active .chapter-body').evaluate(node => { node.scrollTop = 200; });
+    await page.waitForFunction(() => !!document.querySelector('[data-reader-chapter].topic-active.topic-scrolled'));
+    state = await frameState(page);
+    assert.equal(state.row.shown, false, `the row leaves once the chapter scrolls at ${height} px`);
+    assert.ok(state.away, 'the island steps back while the chapter scrolls');
+    await page.waitForFunction(() => !document.querySelector('.reader-island').classList.contains('reader-island-away'), null, {timeout: 3000});
+    await page.locator('[data-reader-chapter].topic-active .chapter-body').evaluate(node => { node.scrollTop = 0; });
+    await page.waitForFunction(() => !document.querySelector('[data-reader-chapter].topic-active.topic-scrolled'));
+    await page.waitForFunction(() => !document.querySelector('.reader-island').classList.contains('reader-island-away'), null, {timeout: 3000});
+  }
+  await page.setViewportSize({width: 1600, height: 900});
+  await settle(page);
+  await page.click('[data-reader-chapter].topic-active .slide-bridge-button');
+  await page.waitForFunction(() => document.querySelector('[data-reader-chapter].topic-active .chapter-body').scrollTop > 100);
+  const landed = await page.evaluate(() => {
+    const card = document.querySelector('[data-reader-chapter].topic-active');
+    return card.querySelector('.chapter-headline').getBoundingClientRect().top - card.querySelector('.chapter-body').getBoundingClientRect().top;
+  });
+  assert.ok(landed > -40 && landed < 120, 'Continue reading brings the full chapter to the top: ' + landed);
+  checked.push('Full chapter row at 900, 680 and 560 px', 'row leaves after a scroll', 'island steps back', 'Continue reading');
+
+  // Click zones: each covers exactly the strip of its neighbour that shows.
+  await page.goto(`${origin}/html/${PRESENT_PAGE}.html#${PLAIN_CHAPTERS[1]}`, {waitUntil: 'networkidle'});
+  await settle(page);
+  const zones = await page.evaluate(() => {
+    const stage = document.querySelector('.topic-stage').getBoundingClientRect(), active = document.querySelector('[data-reader-chapter].topic-active');
+    return ['prev', 'next'].map(side => {
+      const zone = document.querySelector('.topic-peek-' + side).getBoundingClientRect();
+      const card = (side === 'prev' ? active.previousElementSibling : active.nextElementSibling).getBoundingClientRect();
+      const strip = {left: Math.max(card.left, stage.left), right: Math.min(card.right, stage.right), top: card.top, bottom: card.bottom};
+      return {side, offBy: Math.max(...['left', 'right', 'top', 'bottom'].map(edge => Math.abs(zone[edge] - strip[edge]))), zone: [zone.left, zone.right, zone.top, zone.bottom], strip};
+    });
+  });
+  assert.ok(zones.every(zone => zone.offBy <= 1.5), 'each click zone covers exactly its visible strip: ' + JSON.stringify(zones));
+  await page.locator('.topic-peek-next').hover();
+  const lit = await page.evaluate(() => document.querySelector('[data-reader-chapter].topic-active').nextElementSibling.classList.contains('topic-preview-hover'));
+  assert.ok(lit, 'the neighbour brightens under the pointer');
+  await page.click('.topic-peek-next');
+  await waitPresent(page, PLAIN_CHAPTERS[2], 'single');
+  await page.click('.topic-peek-prev');
+  await waitPresent(page, PLAIN_CHAPTERS[1], 'single');
+  await page.click('.reader-island [data-topic-next]');
+  await waitPresent(page, PLAIN_CHAPTERS[2], 'single');
+  assert.equal((await frameState(page)).place, `4 of ${chapters}`, 'the island counts the step');
+  await page.click('.reader-island [data-topic-prev]');
+  await waitPresent(page, PLAIN_CHAPTERS[1], 'single');
+  checked.push('click zones equal the visible strips', 'neighbour hover', 'island arrows');
+  await context.close();
+
+  // Narrow, with touch.
+  const phone = await browser.newContext({viewport: {width: 390, height: 844}, reducedMotion: 'reduce', hasTouch: true, isMobile: true});
+  const narrow = await phone.newPage();
+  await narrow.goto(url, {waitUntil: 'networkidle'});
+  await settle(narrow);
+  state = await frameState(narrow);
+  const bar = await narrow.evaluate(() => [...document.getElementById('chapter-reader').children]
+    .filter(node => node.getClientRects().length).map(node => node.className));
+  assert.deepEqual(bar, ['reader-icon reader-mobile-menu', 'reader-title'], 'the narrow bar holds the menu button and the page name');
+  assert.ok(Math.abs((state.island.left + state.island.right) / 2 - 195) <= 2, 'the island is at the bottom centre: ' + JSON.stringify(state.island));
+  assert.ok(state.row.shown && !state.row.pillShown && !state.row.meta, 'narrow: the label and reading time are not shown');
+  assert.ok(state.row.button.bottom <= state.island.top && state.island.top - state.row.button.bottom < 24,
+    '"Continue reading" sits just above the island: ' + JSON.stringify([state.row.button, state.island]));
+  const swipe = (from, to) => narrow.evaluate(([from, to]) => {
+    const target = document.elementFromPoint(from, 420);
+    const touch = x => new Touch({identifier: 1, target, clientX: x, clientY: 420});
+    target.dispatchEvent(new TouchEvent('touchstart', {bubbles: true, touches: [touch(from)], changedTouches: [touch(from)]}));
+    target.dispatchEvent(new TouchEvent('touchend', {bubbles: true, touches: [], changedTouches: [touch(to)]}));
+  }, [from, to]);
+  await swipe(300, 120);
+  await waitPresent(narrow, PLAIN_CHAPTERS[0], 'single');
+  await swipe(120, 160);
+  await narrow.waitForTimeout(300);
+  assert.equal((await frameState(narrow)).active, PLAIN_CHAPTERS[0], 'a drag under 70 px does not turn the chapter');
+  await swipe(100, 300);
+  await waitPresent(narrow, FACE_CHAPTER, 'single');
+  checked.push('narrow bar', 'Continue reading above the island', 'swipe');
+  await narrow.click('.reader-mobile-menu');
+  await narrow.locator('#sidebar .reader-tools').waitFor({state: 'visible'});
+  const drawer = await narrow.evaluate(() => ['.reader-tools', '.reader-layers'].map(selector => {
+    const node = document.querySelector('#sidebar ' + selector); if (!node || node.hidden) return {selector, absent: true};
+    const r = node.getBoundingClientRect(); return {selector, inView: r.left >= 0 && r.right <= innerWidth && r.top >= 0 && r.bottom <= innerHeight && r.width > 0};
+  }));
+  assert.ok(drawer.every(item => item.inView || item.absent) && !drawer[0].absent, 'the icon row and the options are inside the open drawer: ' + JSON.stringify(drawer));
+  await narrow.screenshot({path: path.join(output, '390-drawer.png')});
+  await narrow.click('#sidebar [data-reader-view="pair"]');
+  await narrow.waitForFunction(() => document.querySelector('main.content').dataset.topicView === 'pair' && !document.body.classList.contains('reader-nav-open'));
+  checked.push('controls inside the drawer at 390 px', 'a view choice closes the drawer');
+  await phone.close();
   return checked;
 }
 
@@ -474,6 +639,8 @@ async function reviewPresentation(page, origin, viewport, failures) {
       await context.close();
     }
 
+    results.frame = await reviewFrame(browser, origin);
+
     // Without JavaScript: content, every adoption route and the source line stay readable.
     const context = await browser.newContext({viewport:{width:390,height:844}, javaScriptEnabled:false});
     const page = await context.newPage();
@@ -493,5 +660,5 @@ async function reviewPresentation(page, origin, viewport, failures) {
     server.close();
   }
   await fs.writeFile(path.join(output, 'results.json'), JSON.stringify(results, null, 2) + '\n');
-  console.log(`Own site: ${results.pages} pages contained with visible media at 1600 and 390; slide faces fit at 1600 and stack cleanly at 390; deep links, panel hash, keyboard paths, reader chapters, sidebar repository tree, views, docking, pinning and carousel, Presentation and the Slides switch, narrow menu/tree/table scrolling, print and no-JavaScript reading pass.`);
+  console.log(`Own site: ${results.pages} pages contained with visible media at 1600 and 390; slide faces fit at 1600 and stack cleanly at 390; deep links, panel hash, keyboard paths, reader chapters, sidebar repository tree, views, docking, pinning and carousel, Presentation and the Slides switch, the reader frame (icon row, island, Full chapter row at three heights, click zones, swipe, drawer at 390), narrow menu/tree/table scrolling, print and no-JavaScript reading pass.`);
 })().catch(error => { console.error(error); process.exitCode = 1; server.close(); });

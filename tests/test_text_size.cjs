@@ -49,7 +49,7 @@ const HOST = 'build-a-site.html';
       for (const name of names) {
         await page.goto(`${origin}/html/${name}`, {waitUntil: 'load'});
         // A drawing counts only while it is rendered: show every chapter and open every fold.
-        if (await page.locator('[data-reader-view="full"], [data-reader-view-select]').count()) {
+        if (await page.locator('[data-reader-view="full"]').count()) {
           await setView(page, 'full');
           readerPages.add(name);
         }

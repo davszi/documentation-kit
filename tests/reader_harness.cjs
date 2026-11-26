@@ -279,7 +279,8 @@ function parseFragment(html, doc) {
 const TOOLBAR_HOOKS = [
   '.reader-title strong', '[data-reader-drawer]', '[data-reader-pagination]', '[data-topic-prev]',
   '[data-topic-next]', '[data-topic-count]', '[data-reader-view="single"]', '[data-reader-view="pair"]',
-  '[data-reader-view="full"]', '[data-reader-view-select]', '[data-reader-about]', '[data-reader-help]',
+  '[data-reader-view="full"]', '[data-reader-about]', '[data-reader-help]', '.reader-tools', '.reader-place',
+  '[data-reader-layers]',
 ];
 
 // ---- Page builder -------------------------------------------------------------
@@ -424,7 +425,16 @@ function bootReader(hash = '', options = {}) {
     },
   };
   const frames = [];
-  const flush = () => { while (frames.length) frames.shift()(); };
+  // Timers run when the test flushes, after the animation frames.
+  const timers = new Map();
+  let timerId = 0;
+  const flush = () => {
+    while (frames.length || timers.size) {
+      while (frames.length) frames.shift()();
+      const [id, callback] = timers.entries().next().value || [];
+      if (id !== undefined) { timers.delete(id); callback(); }
+    }
+  };
 
   const page = {document, window, location, history, storage, content, sidebar, toc, nav, overview,
     backdrop, sections, links, redirected, flush};
@@ -432,6 +442,8 @@ function bootReader(hash = '', options = {}) {
   vm.runInNewContext(readComponent('chapter-reader.js'), {
     document, window, location, history, localStorage, URL,
     requestAnimationFrame: callback => frames.push(callback),
+    setTimeout: callback => { timers.set(++timerId, callback); return timerId; },
+    clearTimeout: id => timers.delete(id),
     Event: class { constructor(type) { this.type = type; } },
   });
   document.emit('DOMContentLoaded');
@@ -460,9 +472,11 @@ function readerControls(page, {stage, chapters, width, gap, back}) {
     prev: '[data-topic-prev]', next: '[data-topic-next]', count: '[data-topic-count]',
     single: '[data-reader-view="single"]', pair: '[data-reader-view="pair"]', full: '[data-reader-view="full"]',
     about: '[data-reader-about]', help: '[data-reader-help]', drawer: '[data-reader-drawer]',
+    present: '[data-reader-view="present"]', island: '[data-reader-pagination]', place: '.reader-place',
+    tools: '.reader-tools', slides: '[data-reader-slides]',
   };
   const control = name => {
-    const node = nav.querySelector(controlSelectors[name]);
+    const node = document.querySelector(controlSelectors[name]);
     assert.ok(node, `chapter-reader.html provides the ${name} control`);
     return node;
   };
@@ -490,6 +504,10 @@ function readerControls(page, {stage, chapters, width, gap, back}) {
     panel().querySelectorAll('[data-reader-layer]').forEach(node => {
       if ((node.getAttribute('aria-pressed') === 'true') !== kinds.includes(node.dataset.readerLayer)) click(node);
     });
+  };
+  const swipe = (x0, y0, x1, y1, target = sections.find(section => section.classes.has('topic-active'))) => {
+    stage.emit('touchstart', {target, touches: [{clientX: x0, clientY: y0}]});
+    stage.emit('touchend', {target, touches: [], changedTouches: [{clientX: x1, clientY: y1}]});
   };
   const folds = index => sections[index].querySelectorAll('details.fold');
   const states = index => folds(index).map(fold => fold.open);
@@ -531,7 +549,7 @@ function readerControls(page, {stage, chapters, width, gap, back}) {
     });
   };
   return {stage, strip, bodies, control, click, key, chapterKey, visible, panel, option, layers, folds, states,
-    toggleFold, pin, back, assertCentred, assertPair};
+    toggleFold, swipe, pin, back, assertCentred, assertPair};
 }
 
 // Run fold-controls.js on a booted page, with its own storage.

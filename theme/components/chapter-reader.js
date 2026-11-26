@@ -19,7 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const menuButton = nav.querySelector('[data-reader-drawer]');
   menuButton?.setAttribute('aria-label', 'Open ' + plural);
   nav.querySelector('.reader-views')?.setAttribute('aria-label', unitTitle + ' layout');
-  nav.querySelector('[data-reader-view-select]')?.setAttribute('aria-label', unitTitle + ' layout');
+  // The bar keeps the menu button and the page name. The reading controls move
+  // to the navigation (a row of icons under the site name) and the stepper to
+  // the stage (an island at the bottom centre); both are moved, not cloned.
+  const tools = nav.querySelector('.reader-tools');
+  const viewNames = {single: 'One ' + unit, pair: 'Two ' + plural, full: 'All ' + plural, present: 'Presentation'};
   function redirectMoved(target) {
     if (!target?.dataset.readerRedirect) return false;
     location.replace(target.href); return true;
@@ -40,15 +44,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const prev = nav.querySelector('[data-topic-prev]');
   const next = nav.querySelector('[data-topic-next]');
   const count = nav.querySelector('[data-topic-count]');
-  const pagination = nav.querySelector('[data-reader-pagination]');
+  const island = nav.querySelector('[data-reader-pagination]');
+  const place = island.querySelector('.reader-place');
+  island.setAttribute('aria-label', unitTitle + ' stepper');
   const viewButtons = [...nav.querySelectorAll('[data-reader-view]')];
-  const viewSelect = nav.querySelector('[data-reader-view-select]');
+  viewButtons.forEach(node => { const name = viewNames[node.dataset.readerView]; node.setAttribute('aria-label', name); node.title = name; });
+  // The icons are drawn at run time, so the built page holds no extra SVG figure.
+  const toolIcon = paths => `<svg viewBox="0 0 20 20" width="19" height="19" aria-hidden="true" focusable="false">${paths}</svg>`;
+  const toolDrawings = {
+    single:'<rect x="5" y="3.5" width="10" height="13" rx="1.6"/>',
+    pair:'<rect x="2.5" y="3.5" width="6.5" height="13" rx="1.4"/><rect x="11" y="3.5" width="6.5" height="13" rx="1.4"/>',
+    full:'<rect x="4" y="2.5" width="12" height="4" rx="1.2"/><rect x="4" y="8" width="12" height="4" rx="1.2"/><rect x="4" y="13.5" width="12" height="4" rx="1.2"/>',
+    present:'<path class="reader-tool-fill" d="M7 4.5v11l9-5.5z"/>',
+    about:'<circle cx="10" cy="10" r="7.5"/><path d="M10 9v5M10 6.3v.2"/>',
+    help:'<circle cx="10" cy="10" r="7.5"/><path d="M7.9 7.9a2.2 2.2 0 1 1 3 2c-.6.3-.9.8-.9 1.4v.3M10 14.1v.2"/>',
+  };
+  viewButtons.forEach(node => { node.innerHTML = toolIcon(toolDrawings[node.dataset.readerView]); });
+  tools.querySelector('[data-reader-about]').innerHTML = toolIcon(toolDrawings.about);
+  tools.querySelector('[data-reader-help]').innerHTML = toolIcon(toolDrawings.help);
   // Presentation and the Slides switch exist only on pages with a slide face.
   const presentable = !!document.querySelector('[data-slide-face]');
-  const presentStart = nav.querySelector('[data-reader-present-start]');
   const slidesButton = nav.querySelector('[data-reader-slides]');
-  [nav.querySelector('[data-reader-view="present"]'), presentStart].forEach(node => { if (node) node.hidden = !presentable; });
-  if (!presentable) viewSelect?.querySelectorAll('option[value^="present"]').forEach(option => option.parentNode.removeChild(option));
+  const presentButton = nav.querySelector('[data-reader-view="present"]');
+  if (presentButton) presentButton.hidden = !presentable;
   const overview = document.querySelector('.topic-overview');
   const stage = make('div', 'topic-stage');
   stage.setAttribute('role', 'region');
@@ -190,6 +208,27 @@ document.addEventListener('DOMContentLoaded', () => {
     node.addEventListener('blur', () => topics.forEach(topic => topic.section.classList.remove('topic-preview-hover')));
     node.addEventListener('click', () => move(step)); stage.appendChild(node); return node;
   });
+  stage.appendChild(island);
+  // A mostly sideways swipe of 70 px or more turns the chapter. A drag that
+  // starts inside something that scrolls sideways itself is left to it.
+  let swipeStart = null;
+  const scrollsSideways = node => {
+    for (let current = node; current && current !== stage; current = current.parentElement) {
+      if (current.scrollWidth > current.clientWidth + 4 && /auto|scroll/.test(window.getComputedStyle(current).overflowX)) return true;
+    }
+    return false;
+  };
+  stage.addEventListener('touchstart', event => {
+    const touch = event.touches[0];
+    swipeStart = event.touches.length === 1 && !full && !presenting && !scrollsSideways(event.target) ? {x:touch.clientX, y:touch.clientY} : null;
+  }, {passive:true});
+  stage.addEventListener('touchcancel', () => { swipeStart = null; }, {passive:true});
+  stage.addEventListener('touchend', event => {
+    if (!swipeStart) return;
+    const touch = event.changedTouches[0], dx = touch.clientX - swipeStart.x, dy = touch.clientY - swipeStart.y;
+    swipeStart = null;
+    if (Math.abs(dx) >= 70 && Math.abs(dx) >= 1.5 * Math.abs(dy)) move(dx < 0 ? 1 : -1);
+  }, {passive:true});
   const layout = content.parentElement;
   // One navigation tree: site groups and pages, with this page's chapters
   // nested under its own entry. The top-bar menu button is the only toggle.
@@ -244,6 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (currentPage) { currentPage.after(chapterList); if (currentPage.dataset.group) chapterList.dataset.group = currentPage.dataset.group; }
   else toc.prepend(chapterList);
   sidebar.insertBefore(drawerHead, toc);
+  sidebar.insertBefore(tools, toc);
   sidebar.setAttribute('aria-label', 'Documentation drawer'); sidebar.inert = true;
   // "Also show": one set of options for the page, at the bottom of the
   // navigation. Only the kinds of fold the page has are offered; with nothing
@@ -255,10 +295,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const layerButtons = presentKinds.map(([kind, label]) => {
     const node = button('reader-layer', label); node.dataset.readerLayer = kind; node.setAttribute('aria-pressed', 'false');
     node.addEventListener('click', () => setLayers([kind], !layers.has(kind)));
-    layerPanel.querySelector('.reader-layers-row').appendChild(node); return node;
+    layerPanel.querySelector('.reader-layers-row').insertBefore(node, slidesButton); return node;
   });
   allSwitch.addEventListener('click', () => setLayers(presentKinds.map(([kind]) => kind), allSwitch.getAttribute('aria-checked') !== 'true'));
-  layerPanel.hidden = !presentKinds.length;
+  allSwitch.hidden = !presentKinds.length;
   sidebar.appendChild(layerPanel);
   topics.forEach(topic => topic.folds.forEach(resolveFold));
   const backdrop = document.getElementById('backdrop');
@@ -288,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.remove('reader-nav-open');
     if (clearPin) { drawerPinned = false; persistDrawerPin(); }
     syncDrawer(); window.dispatchEvent(new Event('resize'));
-    if (returnFocus && drawerTrigger) drawerTrigger.focus({preventScroll:true});
+    if (returnFocus) (drawerTrigger || menuButton)?.focus({preventScroll:true});
   }
   setDrawerTab('chapters');
   function createDialog(cls, title) {
@@ -307,25 +347,29 @@ document.addEventListener('DOMContentLoaded', () => {
   if (overview) { overview.open = true; about.appendChild(overview); }
   const help = createDialog('reader-help', 'Using the reader');
   const helpItems = [
-    ['Move through chapters', 'Use the arrows or the left and right arrow keys. Each chapter resumes where you left it. Controls inside figures keep their own keys.'],
-    ['Compare two chapters', 'Two chapters shows two equal columns. Arrows move both until you pin one. Select an unpinned column before choosing its chapter from the navigation drawer.'],
+    ['Move through chapters', 'Use the arrows on the stepper at the bottom of the page, click a neighbouring chapter at its edge, swipe sideways on a touch screen, or press the left and right arrow keys. Each chapter resumes where you left it. Controls inside figures keep their own keys.'],
+    ['Choose the arrangement', 'The row of icons under the site name shows One chapter, Two chapters or All chapters' + (presentable ? ', starts the Presentation' : '') + ' and opens About this page and this help. On narrow screens the row is in the navigation menu.'],
+    ['Compare two chapters', 'Two chapters shows two equal columns. The stepper and the arrow keys move both until you pin one. Select an unpinned column before choosing its chapter from the navigation.'],
     ['Choose how much to read', 'With nothing switched on you read the story. Also show, at the bottom of the navigation, opens Math, Experiments, Code or Alternatives in every chapter and both columns at once; All switches every kind on or off. A fold you open or close yourself keeps that state on your next visit, until you choose its kind again.'],
     ['Hold a reference', 'Pin the button on a column header to hold that chapter while the other moves. Purple marks the pinned column; its own scrolling still works.'],
-    ['Keep navigation handy', 'On wide screens the navigation docks beside the page. Hide it with « and bring it back with ☰; the choice holds across the site. Reading stays interactive and chapter links keep the sidebar open. On narrow screens, navigation opens over the page and closes after choosing a chapter.']
+    ['Keep navigation handy', 'On wide screens the navigation docks beside the page. Hide it with « and bring it back with ☰ at the top of the page; the choice holds across the site. Reading stays interactive and chapter links keep the navigation open. On narrow screens, navigation opens over the page and closes after choosing a chapter or an arrangement.']
   ];
-  if (presentable) helpItems.push(['Present the slides', 'Presentation shows each chapter\'s slide across the window, starting at the current chapter; From start begins at the first. Left and right arrows or Page Up and Page Down change chapter, Home and End go to the first and last. Scroll, or use the up and down arrows and Space, to read the full chapter below its slide. F switches fullscreen; Escape leaves. All chapters hides the slides until you turn on Slides.']);
+  if (presentable) helpItems.push(['Present the slides', 'Presentation shows each chapter\'s slide across the window, starting at the current chapter. Left and right arrows or Page Up and Page Down change chapter, Home and End go to the first and last. Scroll, or use the up and down arrows and Space, to read the full chapter below its slide. F switches fullscreen; Escape leaves. All chapters hides the slides until you switch on Slides under Also show.']);
   const readerWords = text => text.replace(/chapters/g, plural).replace(/chapter/g, unit);
   helpItems.forEach(([title, text]) => { const card = make('div', 'reader-help-card'); card.appendChild(make('h4', '', readerWords(title))); card.appendChild(make('p', '', readerWords(text))); help.appendChild(card); });
-  const aboutHelp = button('reader-text-button', 'Reader help and shortcuts'); aboutHelp.addEventListener('click', () => { dismissDialog(about, false); showDialog(help, nav.querySelector('[data-reader-about]')); }); about.appendChild(aboutHelp);
+  const aboutHelp = button('reader-text-button', 'Reader help and shortcuts'); aboutHelp.addEventListener('click', () => { dismissDialog(about, false); showDialog(help, tools.querySelector('[data-reader-about]')); }); about.appendChild(aboutHelp);
   let dialogTrigger = null;
   function showDialog(dialog, trigger) {
     if (!drawerDocked()) closeDrawer(false, false); dialogTrigger = trigger; dialog.showModal();
   }
+  // A trigger inside the closed overlay navigation cannot take focus back; the
+  // menu button that opens the navigation does.
   function dismissDialog(dialog, returnFocus = true) {
-    dialog.close(); if (returnFocus && dialogTrigger?.isConnected) dialogTrigger.focus({preventScroll:true});
+    dialog.close();
+    if (returnFocus && dialogTrigger?.isConnected) (sidebar.contains(dialogTrigger) && sidebar.inert ? menuButton : dialogTrigger).focus({preventScroll:true});
   }
-  nav.querySelector('[data-reader-about]').addEventListener('click', event => showDialog(about, event.currentTarget));
-  nav.querySelector('[data-reader-help]').addEventListener('click', event => showDialog(help, event.currentTarget));
+  tools.querySelector('[data-reader-about]').addEventListener('click', event => showDialog(about, event.currentTarget));
+  tools.querySelector('[data-reader-help]').addEventListener('click', event => showDialog(help, event.currentTarget));
   function columnFor(index) { return !full && paired ? Math.max(0, pair.indexOf(index)) : activeColumn; }
   function shownIndices() { return full ? topics.map((_, index) => index) : paired ? pair : [active]; }
   // When a chapter is shown, each fold takes the reader's saved state for it;
@@ -346,7 +390,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Presentation always opens a chapter on its slide; it keeps no reading positions.
     if (!full && !presenting) shownIndices().forEach(index => { const topic = topics[index]; positions.set(topic.section.id, topic.body.scrollTop); });
   }
-  function restore() { topics.forEach((topic, index) => { topic.body.scrollTop = presenting && index === active ? 0 : positions.get(topic.section.id) || 0; }); }
+  function restore() {
+    topics.forEach((topic, index) => {
+      topic.body.scrollTop = presenting && index === active ? 0 : positions.get(topic.section.id) || 0;
+      topic.section.classList.toggle('topic-scrolled', topic.body.scrollTop > 24);
+    });
+  }
   function captureAnchor(topic, opensAfter) {
     const rect = topic.body.getBoundingClientRect();
     const top = full ? nav.getBoundingClientRect().bottom + topic.header.getBoundingClientRect().height + 12 : rect.top + 12;
@@ -479,8 +528,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // The previous/next targets cover exactly the visible sliver of each
       // neighbouring card, so their hover outline matches what the reader sees.
       const gap = parseFloat(window.getComputedStyle(stage).getPropertyValue('--topic-gap')) || 20;
-      const sliver = Math.max(24, (stage.clientWidth - section.offsetWidth) / 2 - gap);
-      peekButtons.forEach(node => { node.style.width = `${sliver}px`; });
+      const sliver = Math.max(0, (stage.clientWidth - section.offsetWidth) / 2 - gap);
+      peekButtons.forEach(node => { node.style.width = `${sliver}px`; node.style.display = sliver < 4 ? 'none' : ''; });
     }
   }
   function render(animate = true) {
@@ -510,13 +559,16 @@ document.addEventListener('DOMContentLoaded', () => {
     prev.disabled = navigation(-1) === null; next.disabled = navigation(1) === null;
     prev.setAttribute('aria-label', prev.disabled ? 'Start of ' + plural : paired && !full ? 'Previous ' + unit + ' in the unpinned columns' : `Previous ${unit}: ${topics[active - 1].label}`);
     next.setAttribute('aria-label', next.disabled ? 'End of ' + plural : paired && !full ? 'Next ' + unit + ' in the unpinned columns' : `Next ${unit}: ${topics[active + 1].label}`);
-    pagination.hidden = !paired && !full;
     peekButtons.forEach((node, i) => { const peer = i ? next : prev; node.hidden = peer.disabled || full || paired || presenting; node.setAttribute('aria-label', peer.getAttribute('aria-label')); node.title = peer.getAttribute('aria-label'); });
     count.textContent = !full && paired ? `${pluralTitle} ${pair[0] + 1} and ${pair[1] + 1} of ${topics.length}${pinned === null ? '' : '; ' + (pinned ? 'right' : 'left') + ' pinned'}` : `${unitTitle} ${active + 1} of ${topics.length}`;
+    place.replaceChildren(make('b', '', !full && paired ? `${pair[0] + 1}–${pair[1] + 1}` : String(active + 1)), make('span', '', ` of ${topics.length}`));
+    // The fade under the stepper takes the chapter's own background colour.
+    const paint = window.getComputedStyle(topics[active].section).backgroundColor;
+    if (paint && paint !== 'transparent' && !/^rgba\(.*,\s*0\)$/.test(paint)) stage.style.setProperty('--reader-card-bg', paint);
     const view = currentView();
-    viewButtons.forEach(node => { node.setAttribute('aria-pressed', String(node.dataset.readerView === view)); node.disabled = node.dataset.readerView === 'pair' && topics.length < 2; }); viewSelect.value = view;
-    const pairOption = viewSelect.querySelector('option[value="pair"]'); if (pairOption) pairOption.disabled = topics.length < 2;
+    viewButtons.forEach(node => { node.setAttribute('aria-pressed', String(node.dataset.readerView === view)); node.disabled = node.dataset.readerView === 'pair' && topics.length < 2; });
     if (slidesButton) slidesButton.hidden = !presentable || !full;
+    layerPanel.hidden = !presentKinds.length && (!slidesButton || slidesButton.hidden);
     syncLayerControls(); setOffset(); align(animate);
     syncPresentation();
   }
@@ -544,6 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (target === topic.section) topic.body.scrollTop = presenting ? 0 : positions.get(topic.section.id) || 0;
     else topic.body.scrollTop += target.getBoundingClientRect().top - topic.body.getBoundingClientRect().top - 12;
     if (!presenting) positions.set(topic.section.id, topic.body.scrollTop);
+    topic.section.classList.toggle('topic-scrolled', topic.body.scrollTop > 24);
   }
   function focusChapter(index = active) { topics[index].section.focus({preventScroll:true}); }
   function visit(target, writeHash = false, focus = false, animate = true) {
@@ -564,7 +617,9 @@ document.addEventListener('DOMContentLoaded', () => {
     else visit(topics[target].section, true, true);
   }
   function selectView(view) {
-    if (view === 'present' || view === 'present-start') { startPresentation(view === 'present' ? active : 0, document.activeElement); return; }
+    if (view === 'present') { startPresentation(active, document.activeElement); return; }
+    // A choice made in the overlay navigation closes it, so the chapter takes focus.
+    if (document.body.classList.contains('reader-nav-open') && !drawerDocked()) closeDrawer(false, false);
     if (topics.length < 2 && view === 'pair') view = 'single';
     const wasFull = full; remember(); presenting = false;
     if (view === 'full') full = true;
@@ -687,7 +742,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!presentable) return;
     if (!presenting) {
       presentReturn = {view:currentView(), pair:[...pair], pinned, activeColumn};
-      presentTrigger = trigger && nav.contains(trigger) ? trigger : null;
+      presentTrigger = trigger && tools.contains(trigger) ? trigger : null;
       if (!drawerDocked()) closeDrawer(false, false);
     }
     remember(); presenting = true; full = false; paired = false; pinned = null; activeColumn = 0; active = index;
@@ -732,10 +787,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (key === ' ') { event.preventDefault(); body.scrollBy({top:(event.shiftKey ? -1 : 1) * body.clientHeight * 0.85, behavior:smooth}); return; }
     if ((key === 'f' || key === 'F') && !event.shiftKey && !event.repeat) { event.preventDefault(); toggleFullscreen(); }
   }
-  presentStart?.addEventListener('click', event => startPresentation(0, event.currentTarget));
   // All chapters: the Slides switch shows or hides slide faces and their bridges.
   slidesButton?.addEventListener('click', () => {
-    const topic = topics[active], line = nav.getBoundingClientRect().bottom + 12;
+    const topic = topics[active], line = Math.max(0, nav.getBoundingClientRect().bottom) + 12;
     const anchor = [...topic.body.querySelectorAll('p, h2, h3, h4, li, figure, table, summary')]
       .filter(node => !node.closest('[data-slide-face], .slide-bridge, .present-title-card'))
       .find(node => { const box = node.getBoundingClientRect(); return box.height > 0 && box.bottom > line; }) || topic.section;
@@ -753,7 +807,6 @@ document.addEventListener('DOMContentLoaded', () => {
   syncSlidesButton();
   prev.addEventListener('click', () => move(-1)); next.addEventListener('click', () => move(1));
   viewButtons.forEach(node => node.addEventListener('click', () => selectView(node.dataset.readerView)));
-  viewSelect.addEventListener('change', () => selectView(viewSelect.value));
   document.addEventListener('keydown', event => {
     if (about.open || help.open) return;
     if (presenting) { wake(); presentKey(event); return; }
@@ -798,6 +851,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (target && visit(target)) { const hash = location.hash; routedHash = hash; requestAnimationFrame(() => { if (location.hash === hash) scrollToTarget(target); }); }
   }
+  let islandRest = 0;
+  document.addEventListener('scroll', event => {
+    const topic = topics.find(candidate => candidate.body === event.target);
+    if (topic) topic.section.classList.toggle('topic-scrolled', topic.body.scrollTop > 24);
+    if (topic ? !topic.section.classList.contains('topic-visible') : !full || event.target !== document) return;
+    island.classList.add('reader-island-away'); clearTimeout(islandRest);
+    islandRest = setTimeout(() => island.classList.remove('reader-island-away'), 900);
+  }, {capture:true, passive:true});
   window.addEventListener('hashchange', () => route()); window.addEventListener('popstate', () => route(true));
   window.addEventListener('resize', () => { syncDrawer(); setOffset(); align(false); });
   window.addEventListener('scroll', () => {

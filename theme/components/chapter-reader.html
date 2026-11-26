@@ -1,24 +1,24 @@
 <nav id="chapter-reader" class="reader-bar" aria-label="Chapter reader" data-fold-controls="columns" hidden>
   <button class="reader-icon reader-mobile-menu" type="button" data-reader-drawer="chapters" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">☰</button>
   <div class="reader-title"><span class="reader-mark" aria-hidden="true"></span><strong>Chapter reader</strong></div>
-  <div class="reader-pagination" data-reader-pagination>
+  <div class="reader-tools" role="group" aria-label="Reading controls">
+    <div class="reader-views" role="group" aria-label="Chapter layout">
+      <button class="reader-tool" type="button" data-reader-view="single" aria-pressed="true" aria-label="One chapter" title="One chapter"></button>
+      <button class="reader-tool" type="button" data-reader-view="pair" aria-pressed="false" aria-label="Two chapters" title="Two chapters"></button>
+      <button class="reader-tool" type="button" data-reader-view="full" aria-pressed="false" aria-label="All chapters" title="All chapters"></button>
+      <button class="reader-tool" type="button" data-reader-view="present" aria-pressed="false" aria-label="Presentation" title="Presentation" hidden></button>
+    </div>
+    <button class="reader-tool reader-tool-info" type="button" data-reader-about aria-label="About this page" title="About this page"></button>
+    <button class="reader-tool reader-help-button" type="button" data-reader-help aria-label="Reader help" title="Reader help"></button>
+  </div>
+  <div class="reader-island" role="group" aria-label="Chapter stepper" data-reader-pagination>
     <button class="reader-icon" type="button" data-topic-prev aria-label="Previous chapter">←</button>
+    <span class="reader-place" aria-hidden="true"></span>
     <button class="reader-icon" type="button" data-topic-next aria-label="Next chapter">→</button>
+    <span class="reader-status" data-topic-count role="status" aria-live="polite" aria-atomic="true"></span>
   </div>
-  <div class="reader-views" role="group" aria-label="Chapter layout">
-    <button type="button" data-reader-view="single" aria-pressed="true">One chapter</button>
-    <button type="button" data-reader-view="pair" aria-pressed="false">Two chapters</button>
-    <button type="button" data-reader-view="full" aria-pressed="false">All chapters</button>
-    <button type="button" data-reader-view="present" aria-pressed="false" hidden>Presentation</button>
-    <button type="button" data-reader-present-start aria-label="Presentation from the first chapter" title="Presentation from the first chapter" hidden>From start</button>
-  </div>
-  <select class="reader-view-select" data-reader-view-select aria-label="Chapter layout"><option value="single">One chapter</option><option value="pair">Two chapters</option><option value="full">All chapters</option><option value="present">Presentation</option><option value="present-start">Presentation from start</option></select>
-  <button class="reader-slides" type="button" data-reader-slides aria-pressed="false" hidden><span class="reader-slides-label">Slides</span></button>
-  <button class="reader-icon" type="button" data-reader-about aria-label="About this page" title="About this page">i</button>
-  <button class="reader-icon reader-help-button" type="button" data-reader-help aria-label="Reader help" title="Reader help">?</button>
-  <span class="reader-status" data-topic-count role="status" aria-live="polite" aria-atomic="true"></span>
   <div class="reader-layers" role="group" aria-label="Also show, in every chapter" data-reader-layers hidden>
     <div class="reader-layers-head"><span class="reader-layers-label" aria-hidden="true">Also show</span><button class="reader-layer-all" type="button" role="switch" aria-checked="false" data-reader-layer-all>All<span class="reader-switch" aria-hidden="true"></span></button></div>
-    <div class="reader-layers-row"></div>
+    <div class="reader-layers-row"><button class="reader-layer reader-slides" type="button" data-reader-slides aria-pressed="false" hidden>Slides</button></div>
   </div>
 </nav>

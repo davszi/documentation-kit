@@ -157,13 +157,18 @@ async function checkLayout(page) {
   return {images, overflow};
 }
 
+// Chooses an arrangement with its icon in the navigation. Where the navigation
+// is a closed overlay (narrow windows, or hidden on a wide one) the menu button
+// opens it first; the choice closes it again.
 async function setView(page, view) {
   const button = page.locator(`[data-reader-view="${view}"]`);
   if (await button.isVisible()) { await button.click(); return 'button'; }
-  const select = page.locator('[data-reader-view-select]');
-  assert.equal(await select.isVisible(), true, `No visible ${view} arrangement control`);
-  await select.selectOption(view);
-  return 'select';
+  const menu = page.locator('.reader-mobile-menu');
+  assert.equal(await menu.isVisible(), true, `No visible ${view} arrangement control or navigation menu`);
+  await menu.click();
+  await button.waitFor({state:'visible', timeout:5000});
+  await button.click();
+  return 'menu';
 }
 async function activeChapter(page) {
   return page.locator('[data-reader-chapter].topic-active').getAttribute('id');
@@ -202,7 +207,7 @@ async function readerChecks(page, {url, expectedChapters, check = async (_label,
     scope.chapterIds = chapterIds;
     assert.equal(chapterIds.length, expectedChapters);
     assert.equal(new Set(chapterIds).size, expectedChapters);
-    assert.equal(await page.locator('#chapter-reader').isVisible(), true);
+    assert.equal(await page.locator('.reader-island').isVisible(), true, 'The chapter stepper shows');
     assert.equal(await page.locator('.topic-stage').count(), 1);
     return {chapterIds, countText:await page.locator('[data-topic-count]').innerText()};
   });

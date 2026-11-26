@@ -163,7 +163,14 @@ function checkFoldsKeysAndDrawer() {
   page.click(about.querySelector('.reader-text-button'));
   assert.ok(help.open && !about.open, 'The about dialog hands over to the help dialog');
   help.emit('cancel');
-  assert.equal(page.document.activeElement, page.control('about'), 'Closing help returns focus to its trigger');
+  // Changed behaviour: About and help moved from the top bar into the navigation.
+  // When that navigation is a closed overlay, focus returns to the menu button.
+  assert.ok(page.document.activeElement === page.control('drawer'),
+    'Closing help returns focus to the menu button while the overlay navigation is closed');
+  const docked = bootReader('#notation', {width: 1200});
+  docked.click(docked.control('help'));
+  docked.document.querySelector('.reader-help').emit('cancel');
+  assert.ok(docked.document.activeElement === docked.control('help'), 'With docked navigation, focus returns to the trigger');
 
   // Changed behaviour: each chapter used to carry six option buttons under its
   // heading (Story, four kinds, All). One "Also show" set in the navigation replaces them.
@@ -499,6 +506,93 @@ function checkDockedNavigation() {
   return 'docked navigation threshold and reader-nav-pin persistence, neighbour peek hover and click';
 }
 
+// The frame: the bar keeps the menu button and the page name; the reading
+// controls are a row in the navigation, the stepper an island on the stage.
+// Changed behaviour: all of these sat in the top bar, with a view menu and a
+// "From start" button that are gone.
+function checkFrame() {
+  const page = bootReader('#notation');
+  assert.deepEqual(page.nav.children.map(node => node.className), ['reader-icon reader-mobile-menu', 'reader-title'],
+    'The bar keeps only the menu button and the page name');
+  const tools = page.control('tools');
+  assert.equal(page.sidebar.children.indexOf(tools), page.sidebar.children.indexOf(page.sidebar.querySelector('.reader-drawer-head')) + 1,
+    'The icon row sits directly under the site name');
+  const named = tools.querySelectorAll('button').filter(node => !node.hidden);
+  assert.deepEqual(named.map(node => node.getAttribute('aria-label')),
+    ['One chapter', 'Two chapters', 'All chapters', 'About this page', 'Reader help'], 'Each icon has a spoken name');
+  assert.ok(named.every(node => (node.title || node.getAttribute('title')) === node.getAttribute('aria-label')), 'Each icon has a tooltip');
+  assert.equal(page.control('present').hidden, true, 'A page without a slide face offers no Presentation');
+  assert.equal(page.document.querySelectorAll('[data-reader-view-select], [data-reader-present-start]').length, 0,
+    'The view menu and From start are gone');
+  const island = page.control('island');
+  assert.equal(island.parentElement, page.stage, 'The stepper is an island on the stage');
+  assert.equal(page.control('prev').hidden || island.hidden, false, 'One chapter shows the stepper');
+  assert.equal(page.control('place').textContent, '2 of 8', 'The island says where the reader is');
+  page.click(page.control('next'));
+  page.assertCentred(2, 'The island next arrow');
+  assert.equal(page.control('place').textContent, '3 of 8');
+  assert.equal(page.control('count').textContent, 'Chapter 3 of 8', 'The status speaks the full position');
+  page.click(page.control('prev'));
+  page.assertCentred(1, 'The island previous arrow');
+  page.click(page.control('pair'));
+  assert.equal(page.control('place').textContent, '2–3 of 8', 'In Two chapters the island names both');
+
+  // The island steps back while a chapter scrolls and returns when it stops;
+  // the "Full chapter" row belongs to the top of its chapter.
+  const single = bootReader('#notation');
+  single.bodies[1].scrollTop = 300;
+  single.document.emit('scroll', {target: single.bodies[1]});
+  assert.ok(single.control('island').classes.has('reader-island-away'), 'Scrolling sends the island back');
+  assert.ok(single.sections[1].classes.has('topic-scrolled'), 'A scrolled chapter is marked');
+  single.flush();
+  assert.ok(!single.control('island').classes.has('reader-island-away'), 'The island returns when scrolling stops');
+  single.bodies[1].scrollTop = 0;
+  single.document.emit('scroll', {target: single.bodies[1]});
+  assert.ok(!single.sections[1].classes.has('topic-scrolled'), 'Back at its top the chapter is unmarked');
+  single.bodies[1].scrollTop = 500;
+  single.chapterKey('ArrowRight');
+  single.chapterKey('ArrowLeft');
+  assert.ok(single.sections[1].classes.has('topic-scrolled'), 'A chapter resumed below its top is marked');
+
+  // Click zones cover the strip of each neighbour that shows: half the space
+  // beside the card, less the gap.
+  const zone = single.stage.querySelector('.topic-peek-next');
+  assert.equal(zone.style.width, (800 - 800 * FIXTURE.cardFraction) / 2 - 16 + 'px', 'A click zone is as wide as its visible strip');
+
+  // Swipe: 70 px or more, mostly sideways, turns the chapter; other drags do not.
+  const touch = bootReader('#notation', {width: 304, gap: 12});
+  touch.swipe(250, 400, 120, 420);
+  touch.assertCentred(2, 'A swipe to the left');
+  touch.swipe(100, 400, 200, 380);
+  touch.assertCentred(1, 'A swipe to the right');
+  touch.swipe(200, 400, 140, 400);
+  touch.assertCentred(1, 'A drag under 70 px');
+  touch.swipe(200, 300, 100, 480);
+  touch.assertCentred(1, 'A mostly upright drag');
+  const wide = touch.document.getElementById('depth-table').parentElement;
+  wide.scrollWidth = 900;
+  wide.clientWidth = 300;
+  const style = touch.window.getComputedStyle;
+  touch.window.getComputedStyle = node => ({...style(node), overflowX: node === wide ? 'auto' : 'visible'});
+  touch.swipe(250, 400, 100, 400, touch.document.getElementById('depth-table'));
+  touch.assertCentred(1, 'A drag that starts inside something that scrolls sideways');
+  wide.scrollWidth = 300;
+  touch.swipe(250, 400, 100, 400, touch.document.getElementById('depth-table'));
+  touch.assertCentred(2, 'The same drag once the box no longer scrolls sideways');
+
+  // Narrow windows: choices made in the overlay navigation close it.
+  const narrow = bootReader('#notation', {width: 744});
+  narrow.click(narrow.control('drawer'));
+  narrow.click(narrow.control('pair'));
+  assert.equal(narrow.content.inert, false, 'Choosing an arrangement closes the overlay navigation');
+  narrow.assertPair(1, 2);
+  const sections = bootReader('', {unit: 'section'});
+  assert.deepEqual(['single', 'pair', 'full'].map(name => sections.control(name).getAttribute('aria-label')),
+    ['One section', 'Two sections', 'All sections'], 'The icons are named in the page\'s unit');
+  return 'bar contents, icon row names and place, island position and place, island arrows, step-back on scroll, '
+    + 'scrolled marks, click zone width, swipe and its exceptions, overlay closing on a view choice, unit names';
+}
+
 // Pages with different titles, units, chapter counts and groups each get their
 // own identity and page-scoped storage.
 function checkPageIdentities() {
@@ -790,6 +884,7 @@ const checks = [
   ['Reader viewport anchor', checkViewportAnchor],
   ['Reader full page and print', checkFullPagePrintAndBoot],
   ['Reader docked navigation', checkDockedNavigation],
+  ['Reader frame', checkFrame],
   ['Reader page identities', checkPageIdentities],
   ['Reader small pages', checkSmallPagesAndRedirects],
   ['Reader adapted pages', checkAdaptedPages],
