@@ -620,7 +620,9 @@ lightness band (0.48 to 0.80 for the dark palette, 0.43 to 0.78 for the light
 one) with OKLCH chroma of at least 0.10; neighbours in the series order at
 least 15 apart in OKLab (x100) with full colour vision and 8 apart with
 protanopia, deuteranopia and tritanopia, simulated after Machado, Oliveira and
-Fernandes (2009); and the alert at least 10 apart from every series colour.
+Fernandes (2009); any two series colours that are not neighbours at least 10
+apart with full colour vision; and the alert at least 10 apart from every
+series colour.
 The method is that of a categorical chart palette; its dark band ends at 0.70,
 and the kit's own dark figures reach 0.80 on their darker background. The alert
 carries a label, so it has no colour-deficiency floor: the kit's light palette

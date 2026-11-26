@@ -120,10 +120,12 @@ on the kit's navy background.
   and with it `write_both`, `matplotlib_rc` and the `svg_figures` colours,
   takes its surfaces and text from the project's table, and its four series
   and its alert from `accent`, `secondary`, `orange`, `blue` and `red` when
-  the table sets them, in the fixed order accent, violet, warm, blue. The build checks the series as a categorical chart
-  palette: lightness band, chroma, neighbours apart with full colour vision
-  and with three colour deficiencies, the alert apart from every series, and
-  3:1 on both surfaces; a palette that fails stops the build and names the
+  the table sets them, in the fixed order accent, violet, warm, blue. The build checks the series
+  as a categorical chart palette: lightness band, chroma, neighbours apart
+  with full colour vision and with three colour deficiencies, any two series
+  apart, the alert apart from every series, and 3:1 on both surfaces. The
+  site's `accent` is always the first series, so it is held to the band too,
+  on a project without generated figures as well; a palette that fails stops the build and names the
   pair, and `write_both` writes no file. See
   [generated figures](../../../rules/site/authoring.md#generated-figures).
 

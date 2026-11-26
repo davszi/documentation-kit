@@ -1233,7 +1233,8 @@ def main() -> int:
     unreadable = [*theme_colors.contrast_problems(site.get(theme_colors.TABLE)),
                   *figure_problems(project_dark(site.get(theme_colors.TABLE, {})))]
     if unreadable:
-        ap.error("site.toml: [theme_colors] makes text or marks hard to read:\n  " + "\n  ".join(unreadable))
+        ap.error("site.toml: [theme_colors] fails a colour check. Text and marks must stay readable, and the figure "
+                 "series, of which accent is the first, must stay apart:\n  " + "\n  ".join(unreadable))
     labels = site.get("plot_toggle_labels", {})
     if not isinstance(labels, dict):
         ap.error('site.toml: plot_toggle_labels must be a [plot_toggle_labels] table mapping plot group keys '

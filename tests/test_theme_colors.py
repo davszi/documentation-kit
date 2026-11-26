@@ -253,6 +253,14 @@ class Series(unittest.TestCase):
         # Deuteranopia: a green beside an orange of the same lightness.
         self.assertIn('with deuteranopia; need 8.0', self.found(secondary='#7fa94a', orange='#c49a3c'))
 
+    def test_any_two_series_must_stand_apart(self):
+        # Only neighbours were compared: an amber accent passed beside the warm series, two places on,
+        # and a blue equal to the accent passed too.
+        self.assertIn('series accent #e8a33d and warm #ffa657 are 4.7 apart; need 10.0', self.found(accent='#e8a33d'))
+        self.assertIn('series accent #39d2c0 and blue #39d2c0 are 0.0 apart; need 10.0', self.found(blue='#39d2c0'))
+        # Two series with one colour are both named by their place.
+        self.assertIn('accent #79c0ff and blue #79c0ff', self.found(accent='#79c0ff'))
+
     def test_alert_must_stand_apart_from_every_series_colour(self):
         self.assertIn('alert #ffa05a and warm #ffa657 are', self.found(red='#ffa05a'))
 

@@ -93,6 +93,7 @@ BAND = {"dark": (0.48, 0.80), "light": (0.43, 0.78)}  # OKLCH lightness of a ser
 CHROMA_FLOOR = 0.10            # OKLCH chroma; below it a hue reads as grey
 APART = 15.0                   # neighbours in the series order, full colour vision
 APART_DEFICIENT = 8.0          # the same neighbours as seen with each colour deficiency
+PAIR_APART = 10.0              # any two series colours that are not neighbours, full colour vision
 ALERT_APART = 10.0             # alert against every series colour, full colour vision
 # Alert carries a label, so it is not held to the deficiency floor: the kit's own light
 # palette has alert and warm 3.4 apart for deuteranopia, and its dark one 7.8.
@@ -148,7 +149,9 @@ def series_problems(p: Palette) -> list[str]:
     """Series colours that sit outside the lightness band, read as grey or come too close."""
     found = []
     low, high = BAND[p.name] if p.name in BAND else BAND["dark"]
-    named = {color: role for role in ("accent", "violet", "warm", "blue", "alert") for color in [getattr(p, role)]}
+    # Named by place, not by colour: two series may share one colour, and the message must name both.
+    roles = ("accent", "violet", "warm", "blue")
+    series = list(zip(roles, p.series))
     for role in ("accent", "violet", "warm", "blue", "alert"):
         lightness, chroma = oklch(getattr(p, role))
         if not low <= lightness <= high:
@@ -157,8 +160,8 @@ def series_problems(p: Palette) -> list[str]:
         if chroma < CHROMA_FLOOR:
             found.append(f"{p.name} figures: {role} {getattr(p, role)} has OKLCH chroma {chroma:.3f}, "
                          f"below {CHROMA_FLOOR}; it reads as grey")
-    for first, second in zip(p.series, p.series[1:]):
-        pair = f"{named[first]} {first} and {named[second]} {second}"
+    for (one, first), (two, second) in zip(series, series[1:]):
+        pair = f"{one} {first} and {two} {second}"
         apart = distance(first, second)
         if apart < APART:
             found.append(f"{p.name} figures: neighbouring series {pair} are {apart:.1f} apart; need {APART}")
@@ -167,10 +170,17 @@ def series_problems(p: Palette) -> list[str]:
             if apart < APART_DEFICIENT:
                 found.append(f"{p.name} figures: neighbouring series {pair} are {apart:.1f} apart with "
                              f"{vision}; need {APART_DEFICIENT}")
-    for color in p.series:
+    # Series that are not neighbours in the order still share a chart: no two may read as one colour.
+    for index, (one, first) in enumerate(series):
+        for two, second in series[index + 2:]:
+            apart = distance(first, second)
+            if apart < PAIR_APART:
+                found.append(f"{p.name} figures: series {one} {first} and {two} {second} are {apart:.1f} apart; "
+                             f"need {PAIR_APART}")
+    for role, color in series:
         apart = distance(p.alert, color)
         if apart < ALERT_APART:
-            found.append(f"{p.name} figures: alert {p.alert} and {named[color]} {color} are {apart:.1f} apart; "
+            found.append(f"{p.name} figures: alert {p.alert} and {role} {color} are {apart:.1f} apart; "
                          f"need {ALERT_APART}")
     return found
 

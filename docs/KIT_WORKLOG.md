@@ -2,6 +2,36 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-26 — Review of 5.7.0: not fit to tag, then fixed
+
+- One independent review read the whole branch against `v5.6.1`, with no
+  browser, and ran builds and tests in a scratch clone. The full check
+  script had passed on `68684d1`: exit 0, 500 tests. Its verdict: not fit
+  to tag, for one finding in the figure-series check.
+- Fixed, medium, the blocker: the series check compared only neighbours in
+  the series order. An amber accent built although it was 4.7 from the warm
+  series, and a blue equal to the accent passed with no problem named.
+  Adding the check after the release would make a passing build fail,
+  which the version promise allows only in a major release. Any two series
+  that are not neighbours must now be 10 apart; the kit's palettes pass,
+  their closest pair is 12.7.
+- Fixed, low: two series with one colour were named by the wrong place.
+- Kept, medium, and now stated: the site's `accent` is always the first
+  figure series, so a light accent outside the band is refused on a project
+  without generated figures too. The build's message says that the series
+  check failed, and the release note says that accent is held to the band.
+  Relaxing it later is a patch.
+- Fixed, low, on the reader's side, in the commit before: a dead All switch
+  on a page without the reader whose folds have no known kind; a rule
+  sentence on the chapter strip; the release note's sentence on swipe.
+- Not fixed: the test for properties that the kit does not define scans
+  stylesheets only, not scripts.
+- The palette session could not be reached at its address after a restart
+  of the app, so the kit owner's session made the palette fix itself.
+- Confirmed by the review: no palette edit was lost in the join; a project
+  that built on `v5.6.1` builds and passes strict lint, and its pages differ
+  only in `<title>` and the `?v=` queries; no stable interface is removed.
+
 ## 2026-11-26 — 5.7.0 on one branch: the new reader joined with the site colours
 
 - One release, by deivid's decisions in order. On the id fix: "well maybe
