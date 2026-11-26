@@ -586,11 +586,19 @@ function checkFrame() {
   narrow.click(narrow.control('pair'));
   assert.equal(narrow.content.inert, false, 'Choosing an arrangement closes the overlay navigation');
   narrow.assertPair(1, 2);
+  // The help describes the reader as it now is.
+  const help = page.document.querySelector('.reader-help').textContent;
+  for (const phrase of ['stepper', 'swipe', 'row of icons', 'Also show', 'All switches every kind']) {
+    assert.ok(help.includes(phrase), `The help mentions ${phrase}`);
+  }
+  for (const gone of ['From start', 'layer buttons', 'independently for each column']) {
+    assert.ok(!help.includes(gone), `The help no longer mentions ${gone}`);
+  }
   const sections = bootReader('', {unit: 'section'});
   assert.deepEqual(['single', 'pair', 'full'].map(name => sections.control(name).getAttribute('aria-label')),
     ['One section', 'Two sections', 'All sections'], 'The icons are named in the page\'s unit');
   return 'bar contents, icon row names and place, island position and place, island arrows, step-back on scroll, '
-    + 'scrolled marks, click zone width, swipe and its exceptions, overlay closing on a view choice, unit names';
+    + 'scrolled marks, click zone width, swipe and its exceptions, overlay closing on a view choice, help text, unit names';
 }
 
 // Pages with different titles, units, chapter counts and groups each get their

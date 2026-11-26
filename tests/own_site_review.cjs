@@ -438,6 +438,104 @@ async function reviewFrame(browser, origin) {
   return checked;
 }
 
+// The other arrangements and the cross-cutting behaviour of the new controls.
+// Two chapters keeps its strip (the pin lives there), both columns and the
+// stepper; All chapters reads as one document with the options and Slides
+// under Also show; the options and a reader's own fold click survive a reload;
+// keyboard order, names, help text, print and reduced motion.
+async function reviewArrangements(browser, origin) {
+  const url = `${origin}/html/${PRESENT_PAGE}.html`;
+  const checked = [];
+  const context = await browser.newContext({viewport: {width: 1600, height: 900}, reducedMotion: 'reduce'});
+  const page = await context.newPage();
+  await page.goto(`${url}#${PLAIN_CHAPTERS[1]}`, {waitUntil: 'networkidle'});
+  await settle(page);
+  const chapters = await page.locator('[data-reader-chapter]').count();
+
+  await setView(page, 'pair');
+  await settle(page);
+  const pair = await page.evaluate(() => [...document.querySelectorAll('[data-reader-chapter].topic-visible')].map(card => ({
+    id: card.id, header: getComputedStyle(card.querySelector('.chapter-header')).display,
+    pin: card.querySelector('.chapter-pin').getClientRects().length > 0, fade: /gradient/.test(getComputedStyle(card, '::after').backgroundImage)})));
+  assert.ok(pair.length === 2 && pair.every(card => card.header !== 'none' && card.pin && card.fade),
+    'Two chapters keeps the chapter strip with its pin, and both columns fade under the stepper: ' + JSON.stringify(pair));
+  assert.equal(await page.locator('.reader-place').textContent(), `3–4 of ${chapters}`, 'the stepper names both columns');
+  await page.locator('[data-reader-chapter].topic-visible .chapter-pin').first().click();
+  await page.click('.reader-island [data-topic-next]');
+  await page.waitForFunction(() => [...document.querySelectorAll('[data-reader-chapter].topic-visible')].map(card => card.id).join() === 'the-reader,existing-markdown');
+  assert.equal(await page.locator('[data-reader-chapter].topic-pinned').getAttribute('id'), PLAIN_CHAPTERS[1], 'the pinned column holds while the stepper moves the other');
+  checked.push('Two chapters: strip, pin, both columns, stepper, fade');
+
+  // All chapters: the options act on every chapter; the Slides switch is under Also show.
+  await setView(page, 'full');
+  await settle(page);
+  const panel = await page.evaluate(() => [...document.querySelectorAll('#sidebar .reader-layers button')].filter(node => node.getClientRects().length).map(node => node.textContent.trim()));
+  assert.deepEqual(panel, ['All', 'Math', 'Code', 'Alternatives', 'Slides'], 'Also show offers the kinds present, All and, in All chapters, Slides');
+  const island = await page.evaluate(() => { const r = document.querySelector('.reader-island').getBoundingClientRect(); return r.bottom <= innerHeight && r.top > innerHeight / 2; });
+  assert.ok(island, 'in All chapters the stepper rides the bottom of the window');
+  const code = () => page.evaluate(() => [...document.querySelectorAll('details.fold[data-fold="code"]')].map(fold => fold.open));
+  assert.ok((await code()).every(open => !open), 'code folds start closed');
+  await page.click('#sidebar .reader-layer[data-reader-layer="code"]');
+  const opened = await code();
+  assert.ok(opened.length >= 3 && opened.every(Boolean), 'Code opens every code fold in every chapter: ' + opened);
+  await page.locator('details.fold[data-fold="code"] > summary').first().click();
+  assert.equal((await code())[0], false, 'a fold click closes that fold');
+  await page.goto(`${url}#${PLAIN_CHAPTERS[1]}`, {waitUntil: 'networkidle'});
+  await page.reload({waitUntil: 'networkidle'});
+  await setView(page, 'full');
+  await settle(page);
+  const after = await code();
+  assert.equal(await page.getAttribute('#sidebar .reader-layer[data-reader-layer="code"]', 'aria-pressed'), 'true', 'the options are remembered for the page');
+  assert.ok(after[0] === false && after.slice(1).every(Boolean), 'after a reload the clicked fold stays closed and the others open: ' + after);
+  await page.click('#sidebar .reader-layer-all');
+  await page.click('#sidebar .reader-layer-all');
+  assert.ok((await page.evaluate(() => [...document.querySelectorAll('details.fold')].every(fold => !fold.open))), 'All on then off closes every fold');
+  checked.push('All chapters: options on every chapter, Slides under Also show, stepper', 'options and a fold click survive a reload', 'All switch');
+
+  // Keyboard: the row follows the hide button, then the page list; the stepper follows the chapter.
+  await setView(page, 'single');
+  await settle(page);
+  await page.focus('#sidebar .reader-drawer-close');
+  const order = [];
+  for (let step = 0; step < 7; step++) {
+    await page.keyboard.press('Tab');
+    order.push(await page.evaluate(() => document.activeElement.getAttribute('aria-label') || document.activeElement.textContent.trim().slice(0, 30)));
+  }
+  assert.deepEqual(order.slice(0, 6), ['One chapter', 'Two chapters', 'All chapters', 'Presentation', 'About this page', 'Reader help'],
+    'Tab reaches every icon in order after the hide button: ' + order);
+  assert.ok(await page.evaluate(() => !!document.activeElement.closest('#toc')), 'then the page list');
+  await page.focus('.topic-peek-next');
+  await page.keyboard.press('Tab');
+  assert.ok(await page.evaluate(() => !!document.activeElement.closest('.reader-island')), 'Tab after the chapter reaches the stepper');
+  await page.focus('[data-reader-chapter].topic-active');
+  await page.keyboard.press('ArrowRight');
+  await waitPresent(page, PLAIN_CHAPTERS[2], 'single');
+  await page.keyboard.press('ArrowLeft');
+  await waitPresent(page, PLAIN_CHAPTERS[1], 'single');
+  await page.click('#sidebar [data-reader-help]');
+  const help = await page.locator('.reader-help').textContent();
+  assert.ok(/Also show/.test(help) && /row of icons/.test(help) && /stepper/.test(help) && /swipe/.test(help) && !/From start|layer buttons/.test(help),
+    'the help describes the reader as it now is');
+  await page.keyboard.press('Escape');
+  assert.equal(await page.evaluate(() => document.activeElement.getAttribute('data-reader-help') !== null), true, 'closing help returns focus to its icon');
+  checked.push('keyboard order and arrow keys', 'help text');
+
+  // Print hides the new controls; reduced motion stops every new transition.
+  await page.emulateMedia({media: 'print'});
+  const printed = await page.evaluate(() => ['.reader-island', '.reader-tools', '.reader-layers'].map(selector => getComputedStyle(document.querySelector(selector)).display));
+  assert.deepEqual(printed, ['none', 'none', 'none'], 'print shows none of the new controls');
+  await page.emulateMedia({media: 'screen'});
+  const motion = () => page.evaluate(() => [document.querySelector('.reader-island'), document.querySelector('.reader-tool'), document.querySelector('.reader-switch'),
+    document.querySelector('[data-reader-chapter].topic-active').nextElementSibling].map(node => getComputedStyle(node).transitionDuration)
+    .concat(getComputedStyle(document.querySelector('.reader-switch'), '::after').transitionDuration, getComputedStyle(document.querySelector('.topic-peek-next'), '::after').transitionDuration));
+  assert.ok((await motion()).every(value => /^0s(, 0s)*$/.test(value)), 'reduced motion stops the new transitions: ' + await motion());
+  await page.emulateMedia({reducedMotion: 'no-preference'});
+  assert.ok((await motion()).every(value => !/^0s(, 0s)*$/.test(value)), 'without that preference they move: ' + await motion());
+  checked.push('print', 'reduced motion');
+  await context.close();
+  return checked;
+}
+
 (async () => {
   await fs.mkdir(output,{recursive:true});
   const manifest = JSON.parse(await fs.readFile(path.join(root,'site-build.json'),'utf8'));
@@ -640,6 +738,7 @@ async function reviewFrame(browser, origin) {
     }
 
     results.frame = await reviewFrame(browser, origin);
+    results.arrangements = await reviewArrangements(browser, origin);
 
     // Without JavaScript: content, every adoption route and the source line stay readable.
     const context = await browser.newContext({viewport:{width:390,height:844}, javaScriptEnabled:false});
@@ -660,5 +759,5 @@ async function reviewFrame(browser, origin) {
     server.close();
   }
   await fs.writeFile(path.join(output, 'results.json'), JSON.stringify(results, null, 2) + '\n');
-  console.log(`Own site: ${results.pages} pages contained with visible media at 1600 and 390; slide faces fit at 1600 and stack cleanly at 390; deep links, panel hash, keyboard paths, reader chapters, sidebar repository tree, views, docking, pinning and carousel, Presentation and the Slides switch, the reader frame (icon row, island, Full chapter row at three heights, click zones, swipe, drawer at 390), narrow menu/tree/table scrolling, print and no-JavaScript reading pass.`);
+  console.log(`Own site: ${results.pages} pages contained with visible media at 1600 and 390; slide faces fit at 1600 and stack cleanly at 390; deep links, panel hash, keyboard paths, reader chapters, sidebar repository tree, views, docking, pinning and carousel, Presentation and the Slides switch, the reader frame (icon row, island, Full chapter row at three heights, click zones, swipe, drawer at 390), Two and All chapters, options and fold clicks across a reload, keyboard order, help text, print and reduced motion of the new controls, narrow menu/tree/table scrolling, print and no-JavaScript reading pass.`);
 })().catch(error => { console.error(error); process.exitCode = 1; server.close(); });

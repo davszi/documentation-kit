@@ -214,7 +214,7 @@ body.topic-deck {overflow:hidden;}
 @media print {
   body.reader-enabled,body.topic-deck {--bg:#fff;--bg2:#fff;--panel:#fff;--panel2:#f3f4f6;--border:#c9cdd2;--text:#202832;--bright:#111;--muted:#505963;--link:#175d9f;overflow:visible;background:white;color:var(--text);}
   .reader-enabled .layout,.reader-enabled.reader-nav-docked .layout {display:block;}
-  .reader-bar,.reader-rail,.reader-enabled .sidebar,.reader-dialog,.topic-peek,.reader-island,.chapter-tools,.chapter-number {display:none!important;}
+  .reader-bar,.reader-rail,.reader-enabled .sidebar,.reader-tools,.reader-layers,.reader-dialog,.topic-peek,.reader-island,.chapter-tools,.chapter-number {display:none!important;}
   .reader-enabled .content {display:block;height:auto;padding:0;overflow:visible;}
   .reader-enabled .topic-overview {border:0;padding:0;}
   .topic-stage,.content[data-topic-layout="full"] .topic-stage {overflow:visible;width:100%;margin:0;}
