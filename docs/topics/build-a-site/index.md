@@ -260,15 +260,15 @@ chapter_reader = true
 
 <!-- /fold -->
 
-<!-- fold: math How the progress bar counts -->
+<!-- fold: math How the stepper counts -->
 
-The bar under the site name shows the active chapter $k$ of the page's $n$ chapters:
+The stepper at the bottom of a chapter shows the active chapter $k$ of the page's $n$ chapters. As a share of the page:
 
 $$
 \text{progress} = \frac{k}{n}, \qquad 1 \le k \le n
 $$
 
-This page has $n = 10$ chapters, so this fourth chapter fills $4/10$ of the bar.
+This page has $n = 10$ chapters and this is the third, so the stepper reads "3 of 10" and the share is $3/10$.
 
 <!-- /fold -->
 
