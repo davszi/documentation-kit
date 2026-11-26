@@ -2,6 +2,50 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-26 — 5.7.0 on one branch: the new reader joined with the site colours
+
+- One release, by deivid's decisions in order. On the id fix: "well maybe
+  make it one relase not 2". On the order of reader and palette: "Palette
+  first". On releasing the id fix alone before both: "No, keep it with the
+  reader". On one release for palette and reader, owned by the kit owner's
+  session: "Yes, combine here". There is no 5.6.2 tag; its two entries below
+  describe the id fix that ships here.
+- The reader. deivid compared adaptation's home page with a chapter and
+  found the chapter's frame too busy. Four prototypes, laid over a built
+  page as styles, then a fifth from his choices, which he tried in a local
+  copy and changed step by step: views into the sidebar, the stepper as a
+  floating island, the Full chapter row on its line, the chapter's name as
+  headline, narrower and smaller neighbours with fitted click zones, swipe,
+  and the section options back as one set for the page at the bottom of the
+  sidebar, without "Story". "Yes, build 5.7.0."
+- Built by one implementer agent in three commits, with tests, from a
+  written brief and the prototype. An independent review, with no browser,
+  found it not fit to release: hidden click zones that still took clicks in
+  All chapters and on the first and last chapter, folds that closed again
+  on return, keyboard focus under the fade, swipes that fired on sliders,
+  and four smaller points. The implementer confirmed each in a browser and
+  fixed all in one commit with tests.
+- Joined. The palette session handed over branch `site-palette` at
+  `9584cb3` and stopped writing. The reader's eight commits were replayed
+  on it as branch `release-5.7.0`. Conflicts: three blocks in
+  `chapter-reader.css`, where the reader's structure and the palette's
+  colour were both kept, and the two records.
+- The reader's new parts and the bar of `fold-controls.js` read the theme
+  properties, and the three reader scripts are no longer exempt from the
+  script colour test. Without a table, a capture of a chapter before and
+  after differs by at most 2 of 255 in the island and the options panel,
+  where the nearest existing property was taken; nothing else differs. With
+  the brown palette of the first project, the reader's parts are brown.
+- Closed and removed: `docs/open/reader-release-colour-follow-ups.md` with
+  its route. Both of its items are done; the four fold hues are named as
+  kept in the authoring guide. The link to it in the entry of the review
+  fixes below is now plain text.
+- Rules: the reader rules describe the new reader, the explanation rules
+  the `(open)` word, and the home page is said to have the reader off.
+- Not checked: a real phone; swipe exemptions and pinch zoom in a browser;
+  the fold bar of a page without the reader under a project's colours.
+- Not pushed and not tagged. Release waits for deivid's go.
+
 ## 2026-11-26 — `accent` colours the first figure series
 
 - deivid decided against separate interface and content colours: `accent`
@@ -63,7 +107,7 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   longer passed to the lock, `page_lock.py`, `publication.py`,
   `page-lock.html` and two tests are back to their state before the tab
   titles, and a test checks that no lock page holds the site's title.
-- New open work: [two theme-colour follow-ups for the reader release](open/reader-release-colour-follow-ups.md),
+- New open work: two theme-colour follow-ups for the reader release (closed, and the record removed, in the 5.7.0 entry at the top),
   the fold controls and the redone colour commit of `chapter-reader.css`.
 
 ## 2026-11-26 — Scripts and group tones follow `[theme_colors]`

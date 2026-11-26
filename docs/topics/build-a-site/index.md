@@ -301,7 +301,7 @@ A single scroll is still available as **All chapters**, and it is what print and
 <img src="../topics/build-a-site/media/showcase/against-reference-face.webp" alt="Slide face from the adaptation project: a direct polynomial fit compared with the neural settings on six laws.">
 <img src="../topics/build-a-site/media/showcase/against-reference-reader.webp" alt="Its chapter in the reader: the mean error for each of six laws, the neural settings beside the direct fit.">
 </div>
-<figcaption><b>Figure 3.</b> Six chapters of the adaptation project in a carousel: each slide face, then its chapter in the reader, scrolled to its main figure. They are examples of what a project can build with the kit, not templates. They were captured from that project at its commit <code>d22ef36</code> on 2026-11-25 and are not maintained; the text and numbers are the project's. The carousel advances by itself and pauses on hover; click a picture to open it full screen, scroll to zoom, drag to pan, <kbd>Esc</kbd> to close.</figcaption>
+<figcaption><b>Figure 3.</b> Six chapters of the adaptation project in a carousel: each slide face, then its chapter in the reader, scrolled to its main figure. They are examples of what a project can build with the kit, not templates. They were captured from that project at its commit <code>d22ef36</code>, the slide faces on 2026-11-25 and the reader pictures again on 2026-11-26 with the reader of 5.7.0, and are not maintained; the text and numbers are the project's. The carousel advances by itself and pauses on hover; click a picture to open it full screen, scroll to zoom, drag to pan, <kbd>Esc</kbd> to close.</figcaption>
 </figure>
 
 What each example shows, in the order of the carousel:

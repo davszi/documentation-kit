@@ -158,7 +158,7 @@ class Colours(unittest.TestCase):
 
     def test_scripts_draw_their_controls_in_theme_colours(self):
         # Styles that scripts inject read the same properties, with the kit's value as fallback.
-        # The reader's own scripts are left for the reader branch; fold-controls.js stays literal.
+        # Every script is scanned, the reader's own and fold-controls.js included.
         for path in sorted((KIT / 'theme/components').glob('*.js')):
             text = re.sub(r'var\(--[\w-]+,\s*[^()]*\)', '', path.read_text())  # a property with its fallback
             literals = re.findall(r'#[0-9a-fA-F]{6}\b|#[0-9a-fA-F]{3}\b(?![\w-])', text)

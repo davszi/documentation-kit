@@ -26,14 +26,65 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
-## Unreleased
+## 5.7.0 — a calmer chapter reader, a project's own site colours, site names in browser tabs
 
-The version number is set when this is released. These changes add to the
-stable interfaces, and a project needs no migration step. Without
-`[theme_colors]` the pages look as before; the tab title changes on every
-site that sets `title`. A project whose own browser checks read
-`document.title` or a page's `<title>` must expect the new tab text: the
-kit's own tests changed in four files for it.
+5.7.0 is a minor release under
+[what a version number promises](#what-a-version-number-promises): it adds
+to the stable interfaces, changes how the reader looks and works, corrects
+one defect of the build, and removes nothing a project may rely on. It needs
+no migration step; a project moves its pin to `v5.7.0`. Three things change
+on a site without any action, and a project should look at them once: the
+chapter reader has a new frame, the browser tab names the site first, and a
+reader's choice of section options now holds for the whole page. A project
+whose own browser checks read `document.title` or a page's `<title>` must
+expect the new tab text: the kit's own tests changed in four files for it.
+
+### A calmer chapter reader
+
+deivid put adaptation's home page beside one of its chapters and found the
+chapter less inviting: the frame around a chapter competed with the chapter.
+Four prototypes and a fifth built from his choices led to this reader; he
+tried each step in a browser before it was built into the kit.
+
+- **No top bar while the sidebar is docked.** One row of icons under the
+  site name holds one chapter, two chapters, all chapters, Presentation on a
+  page with a slide face, About and Help. When the sidebar is hidden, or the
+  window is 900 px wide or narrower, a bar with the menu button and the page
+  name stays and the same controls are in the drawer.
+- **A floating stepper.** Previous, the position such as "4 of 6" and next
+  sit in one island at the bottom centre of the chapter. It steps back while
+  the chapter scrolls. The chapter's text fades out above that line.
+- **The Full chapter row sits on the stepper's line** while a chapter is at
+  its top: the label and the reading time at the left, Continue reading at
+  the right. It leaves when the chapter is scrolled. Where the chapter is
+  narrow, the reading time gives way first, then the label.
+- **A chapter's name is its headline.** In One chapter view the strip with
+  the number and the name is gone, and the headline that starts the full
+  chapter is large. A chapter without a headline of its own keeps the strip.
+- **The neighbouring chapters still peek.** The chapter in front takes 89.8%
+  of the stage, where it took 88%; the neighbours are drawn at 90% of their
+  size and dimmer. The click zone of a neighbour is exactly the strip of it
+  that shows. A sideways swipe turns the chapter too; a drag that starts on
+  a control, a figure, a table or anything that scrolls sideways is left
+  alone, and so is any drag while the page is zoomed.
+- **One set of section options for the page.** Under "Also show" at the
+  bottom of the sidebar, an option opens every fold of one kind in every
+  chapter and in both columns. A page offers only the kinds of fold it has.
+  "All" is a switch, and there is no "Story" button: with nothing switched
+  on, the story is what shows. The buttons under each chapter heading are
+  gone. A reader who returns keeps the choice the first column had. In All
+  chapters the Slides switch sits there as well.
+- **A fold can start open, and it remembers its reader.** An author writes
+  `<!-- fold: math (open) Title -->`; a fold written as HTML with `open`
+  counts the same. A reader's own click on a fold is saved for that fold, up
+  to 200 folds a page, and wins on the next visit until an option sets its
+  kind again. See [story and reading layers](../../../rules/writing/explanations.md#story-and-reading-layers).
+- **"From start" is gone.** The Presentation starts at the current chapter.
+- **Pages without the reader** get the same reduced set in their bar of fold
+  controls: no "Story", "All" as a switch, only the kinds the page has.
+- **The rules say that the home page has the reader off.** All four sites
+  already set `reader = false` there; see
+  [shared reading layout](../../../rules/site/reader.md#shared-reading-layout).
 
 ### A project's own site colours
 
@@ -59,9 +110,9 @@ on the kit's navy background.
   colours, and keep the kit's exact value until a project sets one of the
   two. The controls that scripts draw (lightbox, carousel, plot-toggle chips,
   the lock page's notice) read the same properties, and the six group tones
-  and the sidebar's glows follow the hue colours. Syntax colours, the fold
-  hues, the bar of fold controls that `fold-controls.js` draws (still navy),
-  the tinted edges of diagram boxes, print colours and the light backdrop of
+  and the sidebar's glows follow the hue colours. The new reader's parts and the bar of fold
+  controls that `fold-controls.js` draws follow the table as well. Syntax
+  colours, the four fold hues, the tinted edges of diagram boxes, print colours and the light backdrop of
   site-map pictures stay as they were. Colours written in a project's own SVG
   or HTML stay as written.
 - **Figures in the project's colours.** `figure_themes.palette("dark")`,
@@ -75,14 +126,12 @@ on the kit's navy background.
   pair, and `write_both` writes no file. See
   [generated figures](../../../rules/site/authoring.md#generated-figures).
 
-Without the table the pages look exactly as before: screenshots of a
-project's reader, record, listed, Reference index, home and lock pages at
-1600 and 390 px are pixel-identical, and every rule of the eight theme
-stylesheets resolves to the colours it had. The bytes of `base.css`,
-`chapter-reader.css`, `slide-face.css`, `slide-deck.css`, `page-lock.css`,
-`panel-switcher.css`, `home.css`, `build-sheet.css`, `carousel.js`,
-`lightbox.js`, `nav.js`, `plot-toggles.js` and `page-lock.js` change, so each
-page gets new `?v=` queries for them, as for any theme change.
+Without the table the colours are the kit's, as before: every rule of the
+eight theme stylesheets that 5.6.1 had resolves to the colour it had, and
+before the reader changed, screenshots of a project's reader, record, listed,
+Reference index, home and lock pages at 1600 and 390 px were pixel-identical.
+The bytes of the theme's stylesheets and scripts change, so each page gets
+new `?v=` queries for them, as for any theme change.
 
 ### Browser tabs name the site first
 
@@ -100,12 +149,10 @@ starts with the site's `title`:
   [authoring paths](../../../rules/site/authoring.md#authoring-paths).
 
 Every built page of a site with `title` changes in its `<title>` element.
-## 5.6.2 — figures inlined into a page without the reader no longer repeat ids
+### Figures inlined into a page without the reader no longer repeat ids
 
-5.6.2 is a patch release under
-[what a version number promises](#what-a-version-number-promises): it
-corrects one defect of the build and needs no migration step; a project
-moves its pin to `v5.6.2`. ADP reported it: its home page repeated 242 ids.
+ADP reported it: its home page repeated 242 ids. This correction was built
+as 5.6.2 and ships in 5.7.0; there is no separate 5.6.2.
 
 - **The defect.** The build inlines an SVG figure written as
   `<img src="../figures/name.svg">`. On a page with the chapter reader it
@@ -122,7 +169,7 @@ moves its pin to `v5.6.2`. ADP reported it: its home page repeated 242 ids.
   the id. The first figure with an id keeps it. A page with the reader is
   built as before.
 
-What a project can meet. On a page without the reader, an id inside the
+What a project can meet with this correction. On a page without the reader, an id inside the
 second or a later inlined figure changes when an earlier figure has the
 same id. A link from the page's text to such an id reached the first
 figure before and still does. A group of plot toggles keeps the start of
@@ -137,6 +184,32 @@ the first figure, as before. On a page with the reader, a `<style>` rule
 that selects an id is not rewritten; that is older than this release. The
 correction was run on fixtures and on 1,092 SVG files of local projects,
 not on ADP's built home page.
+
+### What a project can meet with the new reader
+
+- **Styles or checks of a project that reach into the reader.** These hooks
+  are gone: `[data-reader-view-select]`, `[data-reader-present-start]`,
+  `.chapter-layers` inside a chapter and `[data-reader-preset]`. The bar
+  `#chapter-reader` is not visible while the sidebar is docked. The reader's
+  class names are provisional interfaces; a project that styled or tested
+  them looks at its pages once.
+- **A fold title that starts with "(open) ".** It is now read as the word
+  that starts the fold open. "(Open)", "(open)" alone and a title with the
+  word elsewhere are titles as before.
+- **A fold written as HTML with `open`.** The reader closed it before; it
+  now starts open, as its author wrote.
+- **Two columns, one choice.** The Two chapters view no longer keeps a
+  choice of options for each column.
+
+### Not covered
+
+Chromium only, as before. No real phone was used: swipe, the drawer and the
+stepper at phone width were run in an emulated touch browser. The swipe
+exemptions for a slider and for a zoomed page are covered by logic tests,
+not in a browser. The bar of fold controls on a page without the reader was
+not looked at under a project's colours. The page types of 5.6.0 and the
+showcase are unchanged, except that the six reader pictures of the showcase
+are retaken with this reader.
 
 ## 5.6.1 — the showcase pictures retaken, and a line on what each shows
 

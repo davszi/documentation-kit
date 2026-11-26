@@ -552,10 +552,7 @@ tone from `#6ee7c5` to `#74e0d3`. The table sets base colours only.
 The table recolours the theme, not a project's content: colours written as
 literals in a project's own SVG, HTML or page CSS stay as written, and so do
 figures until their generator runs again ([generated figures](#generated-figures)).
-Two parts of the kit stay as they were too: the bar of fold controls that
-`fold-controls.js` draws, which is still navy, and the fold-type hues. They
-follow in a later release, tracked in the kit's
-[open work](../../docs/open/reader-release-colour-follow-ups.md).
+The four fold-type hues stay as they were too, under any table.
 
 The build checks that the colours keep text readable, with the ratios of the
 [figure palettes](#generated-figures): 4.5:1 for text and 3:1 for marks. It
