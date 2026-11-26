@@ -177,7 +177,24 @@ def inline_svg_figures(content: str, name: str, *, namespace_ids: bool = False) 
             remap = {key: renamed(key) for key in identifiers
                      if (key.startswith("tg-") and "--" in key) or not key.startswith(Path(fname).stem + "-")}
         else:
-            remap = {key: renamed(key) for key in identifiers if key in taken}
+            # A toggle group written without "--" keeps its "tg-<group>" start, and a new name that is
+            # itself taken gets a counter.
+            remap = {}
+            for key in dict.fromkeys(identifiers):
+                if key not in taken:
+                    continue
+                fresh = key + "--" + prefix if key.startswith("tg-") and "--" not in key else renamed(key)
+                base, number = fresh, 1
+                while fresh in taken or fresh in identifiers or fresh in remap.values():
+                    number += 1
+                    fresh = f"{base}-{number}"
+                remap[key] = fresh
+            if remap:
+                # A style rule inside the figure that selects a renamed id follows it. Only a "#name" in a
+                # selector is rewritten, that is one followed by "{" before any ";" or "}"; a colour is not.
+                svg = re.sub(r'(<style\b[^>]*>)(.*?)(</style>)', lambda block: block[1] + re.sub(
+                    r'#([A-Za-z_][\w-]*)(?=[^{};]*\{)', lambda match: '#' + remap.get(match[1], match[1]), block[2]) + block[3],
+                    svg, flags=re.S)
         if remap:
             svg = re.sub(r'\bid="([^"]+)"', lambda match: 'id="' + remap.get(match[1], match[1]) + '"', svg)
             svg = re.sub(r'url\(#([^)]*)\)', lambda match: 'url(#' + remap.get(match[1], match[1]) + ')', svg)

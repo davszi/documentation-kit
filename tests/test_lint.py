@@ -401,8 +401,9 @@ class InlinedFigureIds(unittest.TestCase):
     """SVG figures inlined into one page keep their ids apart, with the chapter reader and without it."""
 
     SVG = ('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 10 10">'
+           '<style>#mark, g #clip rect { stroke: #abc }</style>'
            '<defs><clipPath id="clip"><rect width="10" height="10"/></clipPath><path id="mark" d="M0 0h2"/></defs>'
-           '<g id="tg-series--a" clip-path="url(#clip)"><use xlink:href="#mark"/></g></svg>\n')
+           '<g id="tg-series--a" clip-path="url(#clip)"><use xlink:href="#mark"/></g><g id="tg-solo"/></svg>\n')
     BODY = ('<img src="../figures/one.svg" alt="one">\n\n<img src="../figures/two.svg" alt="two">\n\n'
             '<img src="../figures/one.svg" alt="one again">\n')
 
@@ -444,20 +445,25 @@ class InlinedFigureIds(unittest.TestCase):
         figures = self.figures(markup)
         self.assertEqual(len(figures), 3)
         # The first figure keeps its ids, so a link that reached one before still reaches it.
-        self.assertEqual(set(re.findall(r'\bid="([^"]+)"', figures[0])), {"clip", "mark", "tg-series--a"})
+        self.assertEqual(set(re.findall(r'\bid="([^"]+)"', figures[0])), {"clip", "mark", "tg-series--a", "tg-solo"})
         for figure in figures:
             with self.subTest(figure=figures.index(figure)):
                 ids = set(re.findall(r'\bid="([^"]+)"', figure))
                 # Every reference stays inside its own figure, and the toggle group keeps its "tg-<group>--" start.
                 self.assertLessEqual(set(re.findall(r'url\(#([^)]+)\)', figure)) | set(re.findall(r'href="#([^"]+)"', figure)), ids)
                 self.assertEqual(len([value for value in ids if value.startswith("tg-series--")]), 1)
+                self.assertEqual(len([value for value in ids if value == "tg-solo" or value.startswith("tg-solo--")]), 1)
+                # A style rule of the figure still selects the figure's own elements, and its colour is untouched.
+                style = re.search(r'<style>(.*?)</style>', figure, flags=re.S).group(1)
+                self.assertLessEqual(set(re.findall(r'#([A-Za-z_][\w-]*)(?=[^{};]*\{)', style)), ids)
+                self.assertIn("stroke: #abc", style)
 
     def test_a_reader_page_names_every_figure_id_as_before(self):
         import re
         markup = self.built()["readerfigures"]
         self.assertEqual(lint.repeated_ids(markup), [])
         ids = set(re.findall(r'\bid="([^"]+)"', self.figures(markup)[0]))
-        self.assertEqual(ids, {"figure-one-1-clip", "figure-one-1-mark", "tg-series--figure-one-1-a"})
+        self.assertEqual(ids, {"figure-one-1-clip", "figure-one-1-mark", "tg-series--figure-one-1-a", "figure-one-1-tg-solo"})
 
 if __name__ == "__main__":
     unittest.main()

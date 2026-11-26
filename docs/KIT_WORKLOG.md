@@ -122,6 +122,26 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   `tests/test_theme_colors.py`, the guide section and the release note. The
   tests of the touched files pass, and the kit's own site builds and lints
   strictly clean; the full check script runs on the final commit.
+## 2026-11-26 — Review of 5.6.2: fit to tag, four low points
+
+- One independent review read the commit on `v5.6.1`, read-only, and ran
+  the old and the new function side by side in a scratch clone. Its
+  verdict: fit to tag. The full check script had passed on the same
+  commit: exit 0, 454 tests.
+- Its evidence: on 1,092 SVG files of local projects, grouped into 137
+  pages of 8 figures, the reader path gave byte-identical output; without
+  the reader 112 pages repeated ids before and none after, and every
+  reference stayed inside its own figure.
+- Fixed, low: a rule of a figure's own `<style>` that selects a renamed id
+  now follows it; only a selector is rewritten, never a colour.
+- Fixed, low: a toggle group whose id has no `--` keeps its `tg-<group>`
+  start when renamed.
+- Fixed, low: a new name that is itself taken gets a counter.
+- Corrected, low: the release note named "the references" without saying
+  which forms, and said lint no longer warns without the limits. The entry
+  below overstated two points; both are corrected in place.
+- These fixes were not reviewed again. Each has a test or a direct run.
+
 ## 2026-11-26 — 5.6.2 built on a branch: inlined figures repeat no id
 
 - 5.6.1 is released: tag `v5.6.1` on `b176311`, pushed with `main`. The
@@ -136,10 +156,11 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   times each.
 - Fixed: on a page without the reader an id is renamed when an earlier
   figure of the page has it, with its references. The first figure keeps
-  its ids, so no link that worked changes its target. Reader pages take
-  the same path as before.
-- Checked: the new tests fail before the change and pass after it. The
-  kit's own 60 built pages are byte-identical with and without it.
+  its ids, so a link from the page's text keeps its target. Reader pages
+  take the same path as before.
+- Checked: the test for a page without the reader fails before the change
+  and passes after it; the test for a reader page passes before and after.
+  The kit's own 60 built pages are byte-identical with and without it.
 - Not checked: ADP's own home page. ADP's tracked files hold about 6.6 GB
   and nothing is written into its checkout from here.
 - Also in this session, not part of the release: four prototypes of a

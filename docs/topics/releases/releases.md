@@ -116,19 +116,27 @@ moves its pin to `v5.6.2`. ADP reported it: its home page repeated 242 ids.
   figure could bind to another figure, and from 5.5.0 strict lint warned
   about a repeated id that no project could remove.
 - **The correction.** On a page without the reader, the build now renames
-  an id that an earlier figure of the same page already has, together with
-  the references to it inside that figure. The first figure with an id
-  keeps it. A page with the reader is built as before.
+  an id that an earlier figure of the same page already has. Inside that
+  figure it rewrites the references written as `url(#id)`, `href="#id"` and
+  `xlink:href="#id"`, and a rule of the figure's own `<style>` that selects
+  the id. The first figure with an id keeps it. A page with the reader is
+  built as before.
 
 What a project can meet. On a page without the reader, an id inside the
 second or a later inlined figure changes when an earlier figure has the
-same id. A link to such an id reached the first figure before and still
-does. A group of plot toggles keeps the start of its id, `tg-<group>--`.
-Strict lint no longer warns about these ids.
+same id. A link from the page's text to such an id reached the first
+figure before and still does. A group of plot toggles keeps the start of
+its id, `tg-<group>`. Strict lint no longer warns about an id that two
+figures share.
 
 Not covered. An id of a figure that repeats an id of the page's own text,
-such as a heading, is not renamed; lint warns. The correction was run on a
-fixture with three figures, not on ADP's home page.
+such as a heading, is not renamed, and neither is an id that one figure
+file holds twice; lint warns. A reference in another form, such as
+`url('#id')` with quotes or `aria-labelledby`, is not rewritten and reaches
+the first figure, as before. On a page with the reader, a `<style>` rule
+that selects an id is not rewritten; that is older than this release. The
+correction was run on fixtures and on 1,092 SVG files of local projects,
+not on ADP's built home page.
 
 ## 5.6.1 — the showcase pictures retaken, and a line on what each shows
 
