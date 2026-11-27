@@ -23,10 +23,12 @@
 .hs-shots{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
 .hs-shots img{display:block;width:100%;height:auto;border:1px solid var(--border);border-radius:10px;cursor:zoom-in;transition:border-color .2s,box-shadow .2s}
 .hs-shots img:hover{border-color:rgba(var(--accent-rgb),.45);box-shadow:0 0 24px rgba(var(--accent-rgb),.14)}
-.hs-sec .bs-grid.g3{margin:0}
+.hs-sec .bs-grid.g3,.hs-sec .bs-grid.g4{margin:0}
 .hs-routes{margin-top:8px}
 .hs-routes>.hs-kicker{margin-bottom:16px}
 .hs-routes .map-grid{grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr))}
+/* Five practice cards: one row where they fit, not four and one. */
+.hs-routes .map-group[data-group="practices"] .map-grid{grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr))}
 .hs-routes .map-text span{-webkit-line-clamp:unset;display:block}
 #fig-kit-pin .inline-fig{max-width:640px;margin:0 auto}
 @media (max-width:1100px){
@@ -35,4 +37,6 @@
   .hs-sec.is-flip>.hs-text{order:0}
   .hs-sec{margin-bottom:48px}
 }
-@media (max-width:640px){.hs-shots{grid-template-columns:minmax(0,1fr)}.hs-text p{font-size:15.5px}}
+@media (max-width:640px){.hs-shots{grid-template-columns:minmax(0,1fr)}.hs-text p{font-size:15.5px}
+  /* Four practice columns are too narrow to read side by side on a phone. */
+  .hs-sec .bs-grid.g4{grid-template-columns:minmax(0,1fr)}}
