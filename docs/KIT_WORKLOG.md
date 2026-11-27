@@ -2,6 +2,28 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-28 — Release 5.10.0
+
+- The owner gave the go: "Yes, release 5.10.0". The ask named what the go
+  covers: this commit, the full check script on it, the tag `v5.10.0` and
+  its push, with the tag only if the check exits 0.
+- State before this entry: `main` at `7ec3865`, pushed after the full
+  check script passed there, exit 0, 551 tests. An earlier entry says
+  commit `e3ad7f1` was made with one check failing; `7ec3865` corrected
+  it.
+- Three independent reviews read the release. The first two each found a
+  blocking fault, which was fixed; the third found it fit to tag as a
+  minor release after rerunning the failing case on a scratch clone of
+  adaptation.
+- 5.10.0 holds the changes of the entries below, down to "5.9.0 published;
+  a button that copies a record's Markdown".
+- Not verified, as told to the owner: the owner has not said whether the
+  pages look right to him; Chromium only, no Firefox, Safari or real
+  phone; the copy button in Safari; a lint run on ADP itself; the last
+  small fixes after the third review were not reviewed again.
+- This commit adds only this entry. The full check script runs on it
+  before the tag; the Pages workflow runs it again on the push.
+
 ## 2026-11-28 — Third review of 5.10.0: fit to tag
 
 - Pushed `main` at `738d826` after the full check script passed there:
