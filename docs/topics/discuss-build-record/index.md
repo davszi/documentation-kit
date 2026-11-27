@@ -221,7 +221,7 @@ The fork after the yes scales the paperwork to the work. A change that one sessi
 
 [Figure 4](#fig-build-close) covers the second half of the path. Routine work inside the agreed scope needs no further approval; the owner finishes it, checks included ([owner responsibility](delivery.html#owner-responsibility)). The crossed way back is what the owner does not decide alone: a change to the agreed goal, design, scope or acceptance requirements is escalated ([decisions and blockers](delivery.html#decisions-and-blockers)).
 
-Each step has its own page with the reasons and examples: [Engineering](engineering-practices.html#delivery) for ownership, decisions and [commits](engineering-practices.html#git), and Documentation and writing for [the record written first](writing-practices.html#record-first) and [finished work that moves to its subject](writing-practices.html#open-to-topic).
+Each step has its own page with the reasons and examples: [Engineering](engineering-practices.html#delivery) for ownership, decisions and [commits](engineering-practices.html#git), and Records and documents for [the record written first](documentation-practices.html#record-first) and [finished work that moves to its subject](documentation-practices.html#open-to-topic).
 
 </section>
 

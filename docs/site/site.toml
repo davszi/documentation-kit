@@ -55,7 +55,12 @@ file = "engineering-practices.html"
 group = "practices"
 
 [[nav]]
-label = "Documentation and writing"
+label = "Records and documents"
+file = "documentation-practices.html"
+group = "practices"
+
+[[nav]]
+label = "Writing pages"
 file = "writing-practices.html"
 group = "practices"
 
@@ -65,7 +70,7 @@ file = "experiments.html"
 group = "practices"
 
 # A measured case that shows why several practice rules exist; it follows the
-# three practice pages it draws on.
+# practice pages it draws on.
 [[nav]]
 label = "Approval that failed open"
 file = "approval-failed-open.html"

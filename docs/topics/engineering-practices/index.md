@@ -32,7 +32,7 @@ page_only = "Explains the engineering guides; they are the records, in rules/eng
 
 </div>
 
-These are the engineering rows of the router that `init` writes into a project's `AGENTS.md`, in its words; the rows for experiments and records lead to [Experiments](experiments.html) and [Documentation and writing](writing-practices.html). The guides state shared principles, and each project adds its own controls, workloads, thresholds and records. Each chapter below says why a guide asks for something and shows how it works; the linked guide keeps the exact wording.
+These are the engineering rows of the router that `init` writes into a project's `AGENTS.md`, in its words; the rows for experiments, records and pages lead to [Experiments](experiments.html), [Records and documents](documentation-practices.html) and [Writing pages](writing-practices.html). The guides state shared principles, and each project adds its own controls, workloads, thresholds and records. Each chapter below says why a guide asks for something and shows how it works; the linked guide keeps the exact wording.
 
 </section>
 
@@ -245,7 +245,7 @@ A feature, an experiment or a change of direction begins earlier, with a discuss
 
 A vague assignment leaves the owner guessing where the work stops and where the result goes, and leaves parallel owners guessing whose files are whose. The brief on the left of [Figure 8](#fig-delivery) settles that up front, scaled to the work: a small, self-contained task can use a short brief. In return the owner needs no separate approval for routine work inside the scope, so the coordinator above stays free for what one owner cannot settle alone. A brief that says only “have a look at the failing export and fix whatever you find” names no scope, no completion condition and no return channel.
 
-Page work for people is one recurring assignment. Where the runtime supports delegation, page work larger than a small sync goes to a separate page agent once the record is finished. Its brief also names the guides to read, because a delegated agent knows only its brief, and the delegating agent looks at the captures itself before calling the page done. [Delegating a page for people](delivery.html#delegating-a-page-for-people) lists the brief; [record first](writing-practices.html#record-first) shows where it sits among the documentation steps.
+Page work for people is one recurring assignment. Where the runtime supports delegation, page work larger than a small sync goes to a separate page agent once the record is finished. Its brief also names the guides to read, because a delegated agent knows only its brief, and the delegating agent looks at the captures itself before calling the page done. [Delegating a page for people](delivery.html#delegating-a-page-for-people) lists the brief; [record first](documentation-practices.html#record-first) shows where it sits among the documentation steps.
 
 Guide: [Discussion before the work](delivery.html#discussion-before-the-work) · [Assigning work](delivery.html#assigning-work) · [Owner responsibility](delivery.html#owner-responsibility) · [Delegating a page for people](delivery.html#delegating-a-page-for-people) · [Coordination and integration](delivery.html#coordination-and-integration)
 

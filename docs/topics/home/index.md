@@ -144,10 +144,10 @@ toc = []
 <section class="hs-sec is-wide" id="practice-areas" style="--g:#ffb35c" aria-labelledby="practice-areas-title">
 <div class="hs-text">
 <p class="hs-kicker">Practices</p>
-<h2 id="practice-areas-title">Three practice areas, each explained on its own page</h2>
+<h2 id="practice-areas-title">Four practice areas, each explained on its own page</h2>
 <p>Each page explains its guides with reasons and examples and starts with the router rows for its guides, ready to copy into your <code>AGENTS.md</code>. The guides stay the exact reference.</p>
 </div>
-<div class="bs-grid g3">
+<div class="bs-grid g4">
 <div class="bs-part bs-teal"><span class="bs-label">Code, runs and delivery</span><h3><a href="engineering-practices.html">Engineering</a></h3><ul>
 <li>consumed output is an interface; generated files change at their source</li>
 <li>efficient by default; a performance claim names its workload and path</li>
@@ -156,14 +156,16 @@ toc = []
 <li>reports lead with the outcome and say how each claim is known</li>
 <li>one commit per logical deliverable, reviewed as a whole</li>
 </ul><p><b>Read before:</b> changing code, running heavy jobs, handing off, committing.</p></div>
-<div class="bs-part bs-violet"><span class="bs-label">Records and pages</span><h3><a href="writing-practices.html">Documentation and writing</a></h3><ul>
+<div class="bs-part bs-violet"><span class="bs-label">Records for agents</span><h3><a href="documentation-practices.html">Records and documents</a></h3><ul>
 <li>every fact has one home; finished work moves to its subject</li>
 <li>the record is written first; a new page only when a person asks</li>
 <li>a record names each object once; a measured number carries its provenance</li>
-<li>each section states its takeaway before the evidence</li>
+</ul><p><b>Read before:</b> creating or moving a document, writing a record.</p></div>
+<div class="bs-part bs-blue"><span class="bs-label">Pages for people</span><h3><a href="writing-practices.html">Writing pages</a></h3><ul>
+<li>each chapter carries one claim and states it before the evidence</li>
 <li>one visible story; optional depth in typed folds</li>
 <li>figures, mathematics and code excerpts follow shared conventions</li>
-</ul><p><b>Read before:</b> creating or moving a document, writing a record, making or updating a page.</p></div>
+</ul><p><b>Read before:</b> making or updating a page.</p></div>
 <div class="bs-part bs-orange"><span class="bs-label">Investigations and qualifications</span><h3><a href="experiments.html">Experiments</a></h3><ul>
 <li>start with the smallest experiment that can change a decision</li>
 <li>classify by what the result decides: investigation or qualification</li>
@@ -185,7 +187,8 @@ toc = []
 </div></section>
 <section class="map-group" data-group="practices"><h2>Practices</h2><div class="map-grid">
 <a class="map-card" href="engineering-practices.html"><span class="map-text"><strong>Engineering</strong><span>Why the six engineering guides exist, what each requires and what following them looks like.</span></span></a>
-<a class="map-card" href="writing-practices.html"><span class="map-text"><strong>Documentation and writing</strong><span>Where each document lives, the record before the page, and how pages are written for people.</span></span></a>
+<a class="map-card" href="documentation-practices.html"><span class="map-text"><strong>Records and documents</strong><span>Where each document lives, why the record comes before any page, and what a record says about claims and numbers.</span></span></a>
+<a class="map-card" href="writing-practices.html"><span class="map-text"><strong>Writing pages</strong><span>How a page for people explains its record: one claim per chapter, folds, figures, math and code.</span></span></a>
 <a class="map-card" href="experiments.html"><span class="map-text"><strong>Experiments</strong><span>Keep experiments small, choose their purpose, state their content and match verification to the claim.</span></span></a>
 <a class="map-card" href="approval-failed-open.html"><span class="map-text"><strong>Approval that failed open</strong><span>A measured case: how supporting code piled up in the project the kit was extracted from, and the rules that answer it.</span></span></a>
 </div></section>

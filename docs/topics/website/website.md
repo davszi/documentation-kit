@@ -21,12 +21,13 @@ tables give the navigation and `[[source_pages]]` tables map records to routes.
 
 | Page for people | Source | Explains |
 |---|---|---|
-| Home | [`home/index.md`](../home/index.md) | The kit's story in figures: one kit shared by many projects, a rule read before its action, record, page and chapter, the path of work, a finished chapter, the three practice areas, and route cards to every page |
+| Home | [`home/index.md`](../home/index.md) | The kit's story in figures: one kit shared by many projects, a rule read before its action, record, page and chapter, the path of work, a finished chapter, the four practice areas, and route cards to every page |
 | Discuss, build, record | [`discuss-build-record/index.md`](../discuss-build-record/index.md) | What a record, a page and a chapter are, and the path of work from discussion through the person's yes, the build and the record to the closed open item, with an experiment's extra gates |
 | Get started | [`getting-started/index.md`](../getting-started/index.md) | Setup in three commands, the files the starter writes and the adoption routes |
 | Build a site | [`build-a-site/index.md`](../build-a-site/index.md) | How the build works, writing a topic page, the reader, figures and slides, publishing existing Markdown, and every command from build to upgrade |
 | Engineering | [`engineering-practices/index.md`](../engineering-practices/index.md) | The six engineering guides |
-| Documentation and writing | [`writing-practices/index.md`](../writing-practices/index.md) | The documentation system and the writing guides |
+| Records and documents | [`documentation-practices/index.md`](../documentation-practices/index.md) | The documentation system and writing records |
+| Writing pages | [`writing-practices/index.md`](../writing-practices/index.md) | The page guides: page design, explanations, figures, math and code |
 | Experiments | [`experiments/index.md`](../experiments/index.md) | The experiment workflow and verification guides |
 | Approval that failed open | [`approval-failed-open/index.md`](../approval-failed-open/index.md) | Its record: how supporting code piled up in ADP and which kit rules answer each pile |
 

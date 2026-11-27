@@ -1,0 +1,103 @@
+/* Page "Records and documents": the figures written in its source.
+   Each is HTML laid out by grid or flex, so it reflows at narrow widths
+   instead of scaling; small SVG glyphs carry no text. Every text size is
+   11px or more, at every width. Tones come from the theme variables. */
+
+.wp-fig { container-type: inline-size; position: relative; margin: 0; padding: 18px; border: 1px solid var(--border); border-radius: 14px;
+  background: radial-gradient(ellipse at 0 0, rgba(var(--accent-rgb), .06), transparent 55%), var(--bg2);
+  transition: border-color .25s, box-shadow .25s; }
+.wp-fig:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  box-shadow: 0 0 26px color-mix(in srgb, var(--accent) 12%, transparent); }
+.wp-tag { display: block; margin-bottom: 8px; font: 600 11.5px/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--tone, var(--muted)); }
+.wp-tag code { padding: 0; background: none; font: inherit; text-transform: none; letter-spacing: .02em; color: var(--bright); }
+.wp-note { display: block; margin-top: 8px; font: 500 12px/1.4 var(--mono); color: var(--muted); }
+.wp-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.wp-chips li { padding: 3px 10px; border: 1px solid color-mix(in srgb, var(--tone, var(--muted)) 45%, transparent); border-radius: 999px;
+  font: 500 12.5px/1.5 var(--mono); color: var(--text); background: color-mix(in srgb, var(--tone, var(--muted)) 8%, transparent); }
+.wp-chips li.wp-hot { color: var(--bright); border-color: var(--orange); background: rgba(var(--orange-rgb), .14); }
+@media (prefers-reduced-motion: reduce) { .wp-fig, .wp-file { transition: none; } }
+@media (max-width: 520px) { .wp-fig { padding: 12px; } }
+
+/* Figure 1: copies against one home. */
+.wp-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.wp-panel { min-width: 0; padding: 14px 16px; border: 1px solid var(--border); border-top: 3px solid var(--tone); border-radius: 10px; background: var(--panel); }
+.wp-bad { --tone: var(--red); } .wp-good { --tone: var(--accent); }
+.wp-head { display: block; margin-bottom: 10px; font: 700 16px/1.3 var(--sans); color: var(--bright); }
+.wp-file { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 7px 0;
+  border-top: 1px solid rgba(var(--rule-rgb), .1); font-size: 13.5px; transition: background .15s; }
+.wp-file:hover { background: color-mix(in srgb, var(--tone) 6%, transparent); }
+.wp-file > code { padding: 0; background: none; font: 500 12.5px var(--mono); color: var(--bright); overflow-wrap: anywhere; }
+.wp-file > span { color: var(--text); overflow-wrap: anywhere; }
+.wp-file > span code { font-size: 12.5px; }
+.wp-file > em { font: 600 11.5px/1.5 var(--mono); font-style: normal; letter-spacing: .06em; text-transform: uppercase; padding: 0 8px;
+  border-radius: 999px; color: var(--muted); border: 1px solid var(--border); }
+.wp-file > em.wp-ok { color: var(--green); border-color: rgba(var(--green-rgb), .5); }
+.wp-file > em.wp-no { color: var(--red); border-color: rgba(var(--red-rgb), .5); }
+.wp-file > em.wp-held { color: var(--orange); border-color: rgba(var(--orange-rgb), .5); }
+.wp-home > code { color: var(--accent); }
+.wp-link > span::before { content: "\2192\00a0"; color: var(--accent); }
+.wp-foot { margin: 10px 0 0; font-size: 14px; color: var(--muted); }
+@container (max-width: 640px) {
+  .wp-pair { grid-template-columns: 1fr; }
+}
+@container (max-width: 460px) {
+  .wp-file { grid-template-columns: minmax(0, 1fr) auto; row-gap: 2px; }
+  .wp-file > span { grid-column: 1 / -1; grid-row: 2; }
+}
+
+/* Figure 7: gates, one landing commit, the worklog. */
+.wp-landing { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, .9fr) minmax(0, 1.4fr); gap: 14px; align-items: stretch; }
+.wp-gates, .wp-commit, .wp-log { min-width: 0; padding: 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--panel); }
+.wp-gates { --tone: var(--red); border-top: 3px solid var(--red); }
+.wp-commit { --tone: var(--secondary); border-top: 3px solid var(--secondary); position: relative; }
+.wp-log { --tone: var(--orange); border-top: 3px solid var(--orange); }
+.wp-gate { padding: 7px 0; border-top: 1px solid rgba(var(--rule-rgb), .1); font-size: 13.5px; line-height: 1.45; }
+.wp-gate b, .wp-entry b { display: block; color: var(--bright); font-size: 14px; }
+.wp-gate span, .wp-entry span { color: var(--text); }
+.wp-entry { margin-top: 7px; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 13.5px; line-height: 1.45; }
+.wp-entry.wp-new { border-color: var(--orange); background: rgba(var(--orange-rgb), .08); }
+.wp-entry.wp-old { opacity: .72; border-style: dashed; }
+.wp-entry.wp-probe code { font-size: 12px; overflow-wrap: anywhere; }
+.wp-gates::after, .wp-commit::after { content: "\2192"; position: absolute; z-index: 1; right: -7px; top: 50%; transform: translate(50%, -50%);
+  font: 700 18px/1 var(--sans); color: var(--muted); }
+.wp-gates { position: relative; }
+@container (max-width: 760px) {
+  .wp-landing { grid-template-columns: 1fr; gap: 22px; }
+  .wp-gates::after, .wp-commit::after { content: "\2193"; right: 50%; top: auto; bottom: -11px; transform: translate(50%, 50%); }
+}
+
+/* Figure 8: one check against five kinds of claim. */
+.wp-claims { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.4fr); gap: 14px 18px; }
+.wp-evidence { --tone: var(--accent); padding: 14px; border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 10px; background: var(--panel); }
+.wp-evidence b { display: block; font: 700 17px/1.3 var(--sans); color: var(--bright); }
+.wp-evidence > span:last-child { display: block; margin-top: 4px; font-size: 14px; color: var(--text); }
+.wp-claimlist { margin: 0; padding: 0; list-style: none; }
+.wp-claimlist li { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; padding: 7px 10px; border-top: 1px solid rgba(var(--rule-rgb), .1); font-size: 14px; }
+.wp-claimlist b { color: var(--text); font-weight: 500; }
+.wp-claimlist em { font: 600 11.5px/1.5 var(--mono); font-style: normal; letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
+  padding: 0 8px; border: 1px dashed var(--border); border-radius: 999px; white-space: nowrap; }
+.wp-claimlist li.wp-yes { border-radius: 8px; background: rgba(var(--accent-rgb), .1); }
+.wp-claimlist li.wp-yes b { color: var(--bright); font-weight: 700; }
+.wp-claimlist li.wp-yes em { color: var(--accent); border: 1px solid rgba(var(--accent-rgb), .6); }
+.wp-labels { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border); }
+.wp-labels .wp-tag { margin: 0 6px 0 0; }
+.wp-labels > span:not(.wp-tag) { padding: 3px 10px; border-radius: 6px; font-size: 13.5px; color: var(--text); background: var(--panel2); border: 1px solid var(--border); }
+@container (max-width: 640px) {
+  .wp-claims { grid-template-columns: 1fr; }
+  .wp-claimlist em { white-space: normal; text-align: right; }
+}
+
+/* Figure 9: a number and its provenance. */
+.wp-prov { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px; }
+.wp-number { --tone: var(--accent); padding: 14px 16px; border: 1px solid var(--border); border-top: 3px solid var(--accent); border-radius: 10px; background: var(--panel); }
+.wp-value { display: block; margin: 2px 0 12px; font: 700 30px/1.1 var(--display); text-transform: uppercase; color: var(--bright); }
+.wp-value small { font: 500 13px var(--mono); text-transform: none; color: var(--muted); }
+.wp-stale { --tone: var(--orange); padding: 14px 16px; border: 1px solid var(--border); border-top: 3px solid var(--orange); border-radius: 10px; background: var(--panel); }
+.wp-steps { margin: 0; padding: 0; list-style: none; counter-reset: wp-step; }
+.wp-steps li { counter-increment: wp-step; position: relative; padding: 6px 0 6px 34px; font-size: 14px; line-height: 1.45; color: var(--text); }
+.wp-steps li::before { content: counter(wp-step); position: absolute; left: 0; top: 6px; width: 22px; height: 22px; border-radius: 50%;
+  display: grid; place-items: center; font: 700 12px var(--mono); color: var(--on-fill); background: var(--orange); }
+.wp-steps li b { color: var(--bright); }
+@container (max-width: 640px) {
+  .wp-prov { grid-template-columns: 1fr; }
+}
