@@ -6,7 +6,7 @@ A consuming project pins an exact commit or tag and upgrades deliberately, follo
 release changes for consumers and how to move to it. Chronology stays in the
 [worklog](../../KIT_WORKLOG.md); consumer adoption status stays in each consuming project.
 
-The kit keeps one migration guide, [for the current version](migrations/5.10.0.md). The
+The kit keeps one [migration guide](migration.md), at a fixed address. The
 guides of earlier versions, which the notes below name, are in the kit's
 repository at the tag `v5.9.0`, under `docs/topics/releases/migrations/`.
 
@@ -34,9 +34,24 @@ shows the new warnings.
 
 5.10.0 is a minor release under
 [what a version number promises](#what-a-version-number-promises): it adds two
-settings and one fixed entry to every site's menu. No rule text changes, no lint message is added, and a project that
-passed before still passes. The [migration guide](migrations/5.10.0.md) has no
-new step for a project on 5.9.0.
+settings and one fixed entry to every site's menu. No lint error or warning
+is added, and a project that passed before still passes. Two site guides
+change their text: [site authoring](../../../rules/site/authoring.md) gains the
+Open work entry and `copy_raw`, and one sentence of
+[resources](../../../rules/site/resources.md) names the tag that keeps an old
+guide. The [migration guide](migration.md) has two small steps for every
+project: a changed router row, and links to the removed guides.
+
+What a project meets after moving its pin:
+
+- The menu of every page starts with "Open work" and a number. It is the
+  first element inside `div.toc`. A changed list makes every page stale for
+  `build --check` until the next build.
+- On a locked site the entry is off unless the project asks for it.
+- A link from the project's own files to a migration guide of an earlier
+  version shows as a lint note, not as an error.
+- The starter router's row for upgrading names the guide's new, fixed
+  address.
 
 ### Open work at the top of every menu
 
@@ -64,16 +79,19 @@ names the setting.
 The kit carried a guide for every version since 1.1.0. Every project that
 uses the kit pins 5.7.0 or later, so the eleven guides for 1.1.0 to 5.8.0
 are deleted, 15,671 words; they stay in the repository at the tag `v5.9.0`.
-One guide remains, named for the current version. It holds every step from
-5.7.0 and says for each step which versions need it. Build messages that
+One guide remains, at a fixed address, `docs/topics/releases/migration.md`.
+It holds every step from 5.7.0 and says for each step which versions need
+it. A project's link to a removed guide is a lint note, so strict lint still
+passes. Build messages that
 pointed a project to an old guide name that tag.
 
 ### The kit's own pages follow the kit's rules
 
 The rules moved on for many releases and the pages that explain them stayed
-behind: the Engineering page did not mention the capability map, 10 of 28
-numbered figures were cited nowhere, and about 23 of 53 chapters held text
-boxes only. Each page was held against its rule sections chapter by chapter.
+behind: the Engineering page did not mention the capability map, and a
+review of the seven pages for people at 5.8.0 counted 10 of 28 numbered
+figures without a sentence that cites them and about 23 of 53 chapters with
+text boxes only. Each page was held against its rule sections chapter by chapter.
 
 | Page | Chapters | Numbered figures, before → after | Source words, before → after |
 |---|---|---|---|
@@ -108,7 +126,7 @@ pages; the Two chapters view of the reworked pages.
 [what a version number promises](#what-a-version-number-promises): it adds
 rule text and one setting and changes how the shared theme looks. No rule
 anchor is removed or renamed, no lint message is added, and a project that
-passed before still passes. The [migration guide](migrations/5.10.0.md#add-the-router-row)
+passed before still passes. The [migration guide](migration.md#add-the-router-row)
 holds its one step, a new row in the router.
 
 What a project meets after moving its pin:
@@ -282,7 +300,7 @@ page; a window up to about 350 px wide, where the fallback applies.
 5.8.0 is a minor release under
 [what a version number promises](#what-a-version-number-promises): it changes
 how the reader lays out a page and adds one lint warning, which fails
-`--strict`. The [5.9.0 migration guide](migrations/5.10.0.md#decide-about-the-text-before-each-first-chapter) gives the step
+`--strict`. The [migration guide](migration.md#decide-about-the-text-before-each-first-chapter) gives the step
 for it.
 
 deivid asked why pages had an Introduction chapter at all: it gave him small

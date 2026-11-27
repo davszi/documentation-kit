@@ -1,10 +1,10 @@
-# Migrate to kit 5.10.0
+# Migrate to the current version
 
-This guide applies the [5.10.0 release notes](../releases.md#5100--the-kits-pages-brought-up-to-its-rules-one-migration-guide-a-button-that-copies-a-record)
-to an existing consumer on 5.7.0, 5.8.0 or 5.9.0. It is the only migration
-guide the kit keeps, and it holds every step from 5.7.0; each step says which
-versions it is for. A project on an older version reads the guides of its
-versions in the kit's repository at the tag `v5.9.0`, under
+This is the kit's one migration guide. The current version is 5.10.0; the
+[release notes](releases.md) say what each version changed. The guide holds
+every step from 5.7.0 on, and each step says which versions it is for. A
+project on a version before 5.7.0 reads the guides of its versions in the
+kit's repository at the tag `v5.9.0`, under
 `docs/topics/releases/migrations/`, oldest first, and then this one.
 
 ## Prepare the upgrade
@@ -13,7 +13,7 @@ Record the old kit commit, the intended new commit, the state of the
 project's own sources and the checks that apply to it. Keep a baseline build
 to compare against. Protect unrelated edits and active jobs: use a worktree
 when the checkout is shared. Follow
-[shared Git practices](../../../../rules/engineering/git.md) and the project's
+[shared Git practices](../../../rules/engineering/git.md) and the project's
 own permissions and staging workflow. An upgrade does not authorize unrelated
 removals.
 
@@ -50,7 +50,9 @@ removals.
 3. In a fresh clone or worktree whose recorded pin cannot be fetched,
    `git submodule update --init` stops with `not our ref`. In the case a
    consumer reported, it still left a clone of the kit in `.docs-kit`, and the
-   two commands of step 1 worked in it.
+   two commands of step 1 worked in it. When the submodule's `origin` is a local
+   path that has moved, correct the URL in `.gitmodules` and run
+   `git submodule sync` first.
 
 Done when `git -C .docs-kit describe --tags` prints `v5.10.0` and the build
 passes. Lint fails while the pinned commit is on none of the kit's remote
@@ -70,7 +72,7 @@ For each page the warning names, look at the built page and choose:
 
 - **Move it.** The text explains something the page needs: give it a chapter
   with a heading that states its point, or put it into the chapter it belongs
-  to. The [page types](../../../../rules/writing/pages.md#page-types) say what
+  to. The [page types](../../../rules/writing/pages.md#page-types) say what
   a page of each type starts with.
 - **Remove it.** The text only repeats what the first chapter says. Removing
   content needs the approval the project's rules ask for.
@@ -81,6 +83,27 @@ For each page the warning names, look at the built page and choose:
 A link to `#reader-introduction` still lands on the text. The page has one
 chapter fewer, so a check of the project that counts chapters sees the new
 count. Records shown as pages get no warning.
+
+## Repoint links to the removed guides
+
+For a project that links a migration guide of an earlier version; 5.10.0
+removed those files.
+
+Until 5.9.0 the kit had one guide per version, under
+`.docs-kit/docs/topics/releases/migrations/`. A link from a project's own file
+to one of them no longer finds its target. Lint reports each such link as a
+note, not as an error, so strict lint still passes. Change a link in a current
+document to this guide or to plain words that name the tag `v5.9.0`; leave a
+link in a worklog entry as it is.
+
+## Update the router row for upgrades
+
+For every project. The starter router's row for upgrading the pin named
+`.docs-kit/docs/topics/releases/migrations/<version>.md`. It now reads:
+
+```markdown
+| Upgrading the kit pin or taking over the repository | The kit's migration guide, `.docs-kit/docs/topics/releases/migration.md`, then `.docs-kit/rules/conformance.md` |
+```
 
 ## Add the router row
 
@@ -93,7 +116,7 @@ before the row for assigning work:
 | Discussing a feature, an experiment or a change of direction before work starts | **Discussion before the work** in `.docs-kit/rules/engineering/delivery.md` |
 ```
 
-[Conformance](../../../../rules/conformance.md#checklist) asks for every
+[Conformance](../../../rules/conformance.md#checklist) asks for every
 starter row that applies to the project. Lint does not check the row.
 
 ## Look at three things
@@ -105,7 +128,7 @@ Only for a project that comes from 5.7.0 or 5.8.0; 5.9.0 brought these.
   the kit, names its version and shows when the site was last built. A
   project that does not want the kit line writes `kit_link = false` in
   `site.toml`; the site then publishes no build time. On a
-  [locked site](../../../../rules/site/publication.md) the sidebar is sealed
+  [locked site](../../../rules/site/publication.md) the sidebar is sealed
   with its page; only `html/build-info.js`, the build time, stays readable
   without a password.
 - **The built site's files.** The build writes `html/build-info.js`. A check
@@ -118,13 +141,23 @@ Only for a project that comes from 5.7.0 or 5.8.0; 5.9.0 brought these.
 
 ## New in 5.10.0
 
-Nothing a project must do. The menu of every page now starts with "Open
+Beyond the two steps above, nothing a project must do. The menu of every page now starts with "Open
 work" and the number of lines in the project's open-work list; a project
 that does not want the entry writes `open_work_entry = false` in `site.toml`.
 A long list shows as a large number: this is a good moment to delete
-finished lines. A record page can offer its Markdown to the
+finished lines. Three things follow from the entry:
+
+- The number stands on every page, so a changed list makes every page stale
+  for `build --check` until the next build, and a `--page` build leaves the
+  old number on the other pages.
+- The entry is the first element inside the menu, `a.open-work` in `div.toc`.
+  Project styles or checks that take the menu's first element have to follow.
+- On a [locked site](../../../rules/site/publication.md) the entry is off
+  unless the project writes `open_work_entry = true`: pages opened with the
+  general password would otherwise show that a list exists and how long it
+  is. A record page can offer its Markdown to the
 clipboard: `copy_raw = true` on its `[[source_pages]]` table
-([registered source pages](../../../../rules/site/authoring.md#registered-source-pages)).
+([registered source pages](../../../rules/site/authoring.md#registered-source-pages)).
 Links from a project's own files into the kit's site that named a chapter of
 "Documentation and writing" may need the new page; the release notes list
 which chapters moved.
@@ -133,7 +166,7 @@ which chapters moved.
 
 `.docs-kit/examples/global-agent-context.md` is renewed. A person who added
 the earlier copy to their own global agent file replaces that part with the
-new copy; [the README](../../../../README.md#optional-the-owners-global-agent-instructions)
+new copy; [the README](../../../README.md#optional-the-owners-global-agent-instructions)
 has the commands. It gains "Gates" and "Decisions with me".
 
 ## What needs no step
@@ -145,8 +178,11 @@ changes to a chapter's first view need nothing from a project.
 
 ## Land the upgrade
 
-Commit the moved pin together with the changes above. Record the old and new
+Run the checks in a fresh clone before landing: a link to a file that exists
+on one machine but is not tracked passes lint there and fails elsewhere. A
+project whose run tooling refuses to start while paths are uncommitted commits
+the moved pin first and runs the checks on that commit. Commit the moved pin together with the changes above. Record the old and new
 kit commits and the checks in the project's worklog, then run the
-[project conformance check](../../../../rules/conformance.md) and report its
+[project conformance check](../../../rules/conformance.md) and report its
 findings with the decisions that are the owner's.
-[Pin and upgrade](../../../../README.md#pin-and-upgrade) has the commands.
+[Pin and upgrade](../../../README.md#pin-and-upgrade) has the commands.

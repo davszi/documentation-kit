@@ -21,7 +21,7 @@ page_only = "Explains the documentation system and writing records; they are the
 | Before… | Read… | Explained here |
 |---|---|---|
 | Creating, moving, splitting or retiring a document | [Documentation system](documentation-system.html) | [One home](#homes), [Record first](#record-first), [Open to topic](#open-to-topic), [Records and pages](#records-and-pages), [Changes](#changes-and-publishing) |
-| Upgrading the kit pin or taking over a repository | [Project conformance check](conformance.html) | [Topics](#topics), [In step](#page-and-record-in-step) |
+| Upgrading the kit pin or taking over a repository | The [migration guide](migrate.html), then the [project conformance check](conformance.html) | [Topics](#topics), [In step](#page-and-record-in-step) |
 | Writing or changing a record: a guide, topic record, plan, worklog or open-work entry | [Writing records](records.html), plus the [documentation system](documentation-system.html#record-first-page-on-request) from Record first through the change rules | [Topics](#topics), [Records and pages](#records-and-pages), [Honest claims](#honest-claims), [Evidence](#evidence) |
 | Making a new page for people, once a person asked for one, or page work on an existing page beyond a small sync | [Record first, page on request](documentation-system.html#record-first-page-on-request) and [rendered pages are for people](documentation-system.html#rendered-pages-are-for-people-records-stay-markdown) | [Record first](#record-first), [In step](#page-and-record-in-step) |
 

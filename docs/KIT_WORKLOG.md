@@ -2,6 +2,49 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — Review of 5.10.0: not fit to tag; the blocking finding and the rest answered
+
+- Pushed `main` at `690dd4e`, with the Open work entry, after the full check
+  script passed there: exit 0, 535 tests. No tag. The entry below says "not
+  on `main`"; that was true when it was written.
+- One independent review read everything since `v5.9.0` in its own
+  worktrees and ran builds, lint, exports and unit tests there, and lint on
+  a scratch clone of adaptation. Verdict: not fit to tag.
+- High, fixed: a project that links a deleted migration guide failed strict
+  lint after the upgrade. Run on the adaptation clone: lint exit 0 at its
+  pin, exit 1 at `690dd4e`, with two dead links into
+  `.docs-kit/docs/topics/releases/migrations/`; ADP has ten such links. The
+  release note said a project that passed before still passes. Lint now
+  reports a link to a removed guide of the kit as a note; any other missing
+  file there is still an error.
+- The review also showed that a guide named for the current version breaks
+  every link to it at each release. The one guide now has a fixed address,
+  `docs/topics/releases/migration.md`, and the context record says how it
+  is kept. The starter router's row for upgrades names it; the guide has a
+  step for that row and one for links to removed guides. This overrides my
+  choice of a few hours earlier to name the guide for the version.
+- Medium, fixed: on a locked site the pages a general password opens kept
+  the Open work entry, with the list's count and a link to a page that
+  password cannot open; adaptation and ADP are locked. The entry is now off
+  on a locked site unless the project writes `open_work_entry = true`, and
+  the publication guide lists what that shows.
+- Medium, fixed: the release note said no rule text changes, and neither it
+  nor the guide said that a changed list makes every page stale or that
+  the menu has a new first element.
+- Low, fixed: a list path written with `./` got no entry; the reader could
+  place its chapter list above the entry on a page with no current menu
+  entry; the copy button's older way ran outside the click, where browsers
+  refuse it; three general points of the old guides were missing from the
+  kept one; wording that still spoke of a guide per version; the counts
+  quoted from the 5.8.0 review did not name their page set.
+- The review's view on the schematic plots: the one on Writing pages does
+  not read as a measurement; the left panel of Figure 4 on Experiments is
+  close to the line, because invented points carried the label "measured".
+  The label now reads "measured values go here". Whether a stamped
+  schematic may stand at all is the owner's decision and is open.
+- Not checked by the review or by me: a lint run on ADP itself; a browser
+  on the published site; Firefox and Safari.
+
 ## 2026-11-27 — Pushed for the owner to look; "Open work" at the top of every menu
 
 - The full check script failed twice on the joined branch, exit 1 both

@@ -665,7 +665,7 @@ Reuse a running server only after confirming who owns it and which checkout it s
 
 <figure id="fig-upgrade">
 <div class="bs-flow" role="img" aria-label="Read the release notes between your pinned version and the target. Move the .docs-kit submodule to the reviewed commit or tag. Rebuild and lint, run the project conformance check, review the changed pages at wide and narrow widths, then commit the pin together with any consumer changes.">
-<div class="bs-node bs-teal"><span class="bs-label">Read</span><b>Release notes</b><ul><li>changes since your pin</li><li>the migration guide of each version</li></ul></div>
+<div class="bs-node bs-teal"><span class="bs-label">Read</span><b>Release notes</b><ul><li>changes since your pin</li><li>the migration guide, for the steps since your pin</li></ul></div>
 <div class="bs-arrow"><span>move</span></div>
 <div class="bs-node bs-violet"><span class="bs-label"><code>.docs-kit</code></span><b>Check out the target</b><ul><li>a reviewed commit or tag</li></ul></div>
 <div class="bs-arrow"><span>verify</span></div>

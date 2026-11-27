@@ -61,6 +61,24 @@ class OpenWorkEntry(unittest.TestCase):
         project.build()
         self.assertNotIn('class="open-work', project.html("index"))
 
+    def test_a_locked_site_shows_the_entry_only_when_the_project_asks(self):
+        # Pages a general password opens would show that the list exists and how long it is.
+        lock = '\n[publication]\npages = ["guide.html"]\nlock = true\n'
+        project = StarterProject(self)
+        project.configure(last=lock)
+        project.build()
+        self.assertNotIn('class="open-work', project.html("guide"))
+        asked = StarterProject(self)
+        asked.configure(first="open_work_entry = true\n", last=lock)
+        asked.build()
+        self.assertIsNotNone(ENTRY.search(asked.html("guide")))
+
+    def test_the_list_is_found_however_its_path_is_written(self):
+        project = StarterProject(self)
+        project.configure(first='open_work = "./docs/open/OPEN.md"\n')
+        project.build()
+        self.assertIsNotNone(ENTRY.search(project.html("index")))
+
     def test_the_setting_takes_only_true_or_false(self):
         project = StarterProject(self)
         project.configure(first='open_work_entry = "no"\n')

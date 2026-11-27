@@ -63,20 +63,21 @@
     timer = setTimeout(function(){ button.textContent = label; }, 1800);
   }
   function byHand(text){
-    // For a page opened from disk, where the clipboard interface is not offered.
+    // The older way, which browsers allow only inside the click itself.
     var area = document.createElement('textarea');
     area.value = text; area.setAttribute('readonly', ''); area.style.position = 'fixed'; area.style.opacity = '0';
     document.body.appendChild(area); area.select();
     var done = false;
     try { done = document.execCommand('copy'); } catch (e) {}
     area.remove(); button.focus();
-    say(done ? 'Copied' : 'Copy failed');
+    return done;
   }
   button.addEventListener('click', function(){
     var text = '';
     try { text = JSON.parse(held.textContent); } catch (e) { say('Copy failed'); return; }
+    if (byHand(text)) { say('Copied'); return; }
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(function(){ say('Copied'); }, function(){ byHand(text); });
-    } else byHand(text);
+      navigator.clipboard.writeText(text).then(function(){ say('Copied'); }, function(){ say('Copy failed'); });
+    } else say('Copy failed');
   });
 })();

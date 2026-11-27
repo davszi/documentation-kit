@@ -170,13 +170,13 @@ git add .docs-kit
 Run `python` as the project's documentation interpreter: the environment that
 has `.docs-kit/requirements.txt` installed, `.build/docs-env/bin/python` in a
 checkout set up as above. A fresh clone or worktree has none until it is
-created; the [migration guide](docs/topics/releases/migrations/5.10.0.md#move-the-pin)
+created; the [migration guide](docs/topics/releases/migration.md#move-the-pin)
 says how to check and create it.
 
 The kit is versioned in `VERSION` and tagged `v<version>`. [Releases and
 upgrades](docs/topics/releases/releases.md) lists what each version changes for
 consumers and the migration steps; 1.0.0 is the first stable version.
-The current release is 5.10.0; its [migration guide](docs/topics/releases/migrations/5.10.0.md) is the only one the kit keeps and holds every step from 5.7.0. The guides of earlier versions are in the repository at the tag `v5.9.0`.
+The current release is 5.10.0. The kit keeps one [migration guide](docs/topics/releases/migration.md), at a fixed address, which holds every step from 5.7.0. The guides of earlier versions are in the repository at the tag `v5.9.0`.
 
 Then run the [project conformance check](rules/conformance.md) and report its
 findings. Review changed human pages at wide and narrow widths before committing the

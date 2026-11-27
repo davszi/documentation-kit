@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   const currentPage = toc.querySelector('a.xpage.current') || toc.querySelector('.repo-tree a[aria-current="page"]');
   if (currentPage) { currentPage.after(chapterList); if (currentPage.dataset.group) chapterList.dataset.group = currentPage.dataset.group; }
-  else toc.prepend(chapterList);
+  else { const openWork = toc.querySelector(':scope > a.open-work'); if (openWork) openWork.after(chapterList); else toc.prepend(chapterList); }
   sidebar.insertBefore(drawerHead, toc);
   sidebar.insertBefore(tools, toc);
   sidebar.setAttribute('aria-label', 'Documentation drawer'); sidebar.inert = true;

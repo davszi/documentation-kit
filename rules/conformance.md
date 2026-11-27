@@ -2,7 +2,7 @@
 
 Run this check when you move a project's kit pin, and when you take over a
 repository that uses the kit. It finds where the project has drifted from the
-shared rules. Release-specific steps stay in each version's migration guide;
+shared rules. Release-specific steps stay in the kit's migration guide;
 this list applies to every upgrade.
 
 Lint covers the items marked **(lint)**. Check the others by reading the

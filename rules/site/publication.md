@@ -295,6 +295,10 @@ authenticated data. `tooling/page_lock.py` encrypts;
   carries the repository's address.
 - `build-info.js` stays readable: it holds the day and hour of the last
   build. `kit_link = false` removes it together with the sidebar's kit line.
+- The menu's Open work entry is off on a locked site. A project that writes
+  `open_work_entry = true` shows it on every page, also to a reader with the
+  general password: that reader sees that the list exists and how many lines
+  it has, and the entry leads to a page only the reference password opens.
 - A lock page shows the size of the page it holds and which password it
   needs. The salt changes exactly when a password changes, so anyone can see
   that it changed.

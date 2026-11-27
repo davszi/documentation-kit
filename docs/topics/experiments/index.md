@@ -109,7 +109,7 @@ An investigation set aside before its question is answered is [shelved](records.
 <circle class="xpt" cx="105" cy="192" r="7"/><circle class="xpt" cx="165" cy="138" r="7"/><circle class="xpt" cx="225" cy="110" r="7"/><circle class="xpt" cx="285" cy="100" r="7"/>
 <circle class="xopen" cx="350" cy="100" r="9"/>
 <text class="xtn" x="350" y="76" text-anchor="middle">not run</text>
-<text class="xtm" x="72" y="228">measured · script, output tracked</text>
+<text class="xtm" x="72" y="228">measured values go here · script tracked</text>
 <text class="xtm" x="105" y="263" text-anchor="middle">c1</text><text class="xtm" x="165" y="263" text-anchor="middle">c2</text><text class="xtm" x="225" y="263" text-anchor="middle">c3</text><text class="xtm" x="285" y="263" text-anchor="middle">c4</text><text class="xtm" x="350" y="263" text-anchor="middle">c5</text>
 <text class="xt" x="228" y="292" text-anchor="middle">candidate value of the setting →</text>
 </svg>
