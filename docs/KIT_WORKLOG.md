@@ -2,6 +2,35 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — 5.8.1 built: a slide face alone in the first view
+
+- Two reports. A subagent that upgraded Tempo to 5.8.0 captured its lessons
+  page at 390 px: Continue reading covered the last lines of a face. deivid
+  then reported from a 16:10 laptop that the chapter's title shows under the
+  slide without scrolling and that the horizontal line cuts the words.
+- Measured on a copy of Tempo's built lessons page, 5.8.0 reader, at 1600 by
+  1000, 1440 by 900 and 1280 by 800: the face is 16:9 and ended 333, 314 and
+  295 px above the chapter's lower edge; the headline started 28 px under
+  the face each time. At 390 by 844 the face was 955 px tall in a 770 px
+  window and the button lay on it from 712 to 756 px.
+- Built on branch `fix-reader-first-view`: the reader script measures the
+  room a leading face leaves and gives it to the face's margins through two
+  custom properties; the fade layer is solid from the row's rule down; at a
+  window where the sidebar is not docked the button is a round arrow beside
+  the stepper. After the change the headline starts at the chapter's lower
+  edge at all three wide sizes (987, 887 and 788 px against 987, 887 and
+  787 px).
+- First attempt failed and is kept here: the margins were set in the reader's
+  stylesheet and had no effect, because the face's own rule sets its margins
+  with `!important`. The two properties moved into that rule.
+- The browser review gained the first-view checks and its narrow check
+  changed: the button beside the stepper, not above it. That expectation
+  encoded the 5.7.0 placement, which is the defect corrected here; deivid
+  asked for the fix. The changed review fails on the 5.8.0 code, in a
+  throwaway worktree: "the headline starts below the first view at 900 px".
+- deivid has the before and after captures at 1440 by 900 and 390 by 844.
+  He has not yet said whether the look is right. Not released.
+
 ## 2026-11-27 — Release 5.8.0
 
 - deivid gave the go: "Yes, release 5.8.0". The ask named what the go

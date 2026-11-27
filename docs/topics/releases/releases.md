@@ -26,6 +26,51 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## 5.8.1 — a slide face stands alone in a chapter's first view
+
+5.8.1 is a patch release under
+[what a version number promises](#what-a-version-number-promises): it
+corrects two defects of the 5.7.0 reader. No rule section, command, lint
+message or configuration key changes, and no migration step exists.
+
+Both defects are in the one-chapter view of a chapter that opens with a
+[slide face](../../../rules/site/authoring.md#slide-faces-and-decks).
+
+- **Wide windows.** A face is 16:9. In a 16:10 window about a quarter of the
+  chapter's height stayed free under it, so the headline and the first lines
+  of the full chapter showed there, and the rule of the Full chapter row ran
+  through a line of text. deivid saw this on a 16:10 laptop. Measured on
+  Tempo's lessons page at 1440 by 900: the face ended at 573 px, the
+  headline started at 601 px and the row's rule sat at 819 px, inside the
+  text.
+- **Narrow windows.** Continue reading sat above the stepper and covered the
+  last lines of a face taller than the window. On the same page at 390 by
+  844 it covered the fourth of four lessons.
+
+What the reader does now:
+
+- The script measures the room a leading face leaves in the chapter's
+  window and puts it above and below the face. The face stands in the middle
+  of the room above the row, drawn as a band with a rule above and below,
+  and the headline starts at the fold. At 1440 by 900 the headline now
+  starts at 887 px, the lower edge of the chapter's window. A face taller
+  than the window gets no room and scrolls as before.
+- The layer that fades text out above the bottom controls is solid from the
+  row's rule down, so no line shows through the rule or the controls.
+- Where the sidebar is not docked, Continue reading is a round arrow button
+  at the right end of the stepper's line. It keeps its words as its
+  accessible name. A chapter under 300 px wide keeps the button above the
+  stepper, because the two do not fit on one line there.
+
+Paper is not affected: print drops the measured room.
+
+The browser review of the kit's own site checks both at three window
+heights and at 390 px. Run against the 5.8.0 code it fails with "the
+headline starts below the first view at 900 px".
+
+Not verified: Firefox and Safari; a real phone; a window under 330 px wide,
+where the fallback applies.
+
 ## 5.8.0 — no Introduction chapter: a page's opening joins its first chapter
 
 5.8.0 is a minor release under

@@ -486,11 +486,21 @@ body.reader-enabled.reader-nav-docked {--reader-header:0px;}
 @media screen {
   /* A layer in the chapter's own colour fades the text out under the bottom
      line of controls, so no readable line sits under the island. It is a layer
-     over the text, not a mask on it, so the "Full chapter" row above it shows. */
+     over the text, not a mask on it, so the "Full chapter" row above it shows.
+     The layer is solid from the row's rule down (the lowest 72px): a line of
+     text never shows through the rule or the controls. */
   .content[data-topic-layout="deck"]:is([data-topic-view="single"],[data-topic-view="pair"]) .chapter-body {padding-bottom:150px;scroll-padding-bottom:130px;}
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-strip > .topic-card {position:relative;}
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-strip > .topic-active::after,
-  .content[data-topic-layout="deck"][data-topic-view="pair"] .topic-strip > .topic-visible::after {content:'';position:absolute;z-index:5;left:0;right:0;bottom:0;height:120px;border-radius:0 0 11px 11px;pointer-events:none;background:linear-gradient(to bottom,transparent,var(--reader-card-bg,var(--panel)) 55%);}
+  .content[data-topic-layout="deck"][data-topic-view="pair"] .topic-strip > .topic-visible::after {content:'';position:absolute;z-index:5;left:0;right:0;bottom:0;height:120px;border-radius:0 0 11px 11px;pointer-events:none;background:linear-gradient(to bottom,transparent,var(--reader-card-bg,var(--panel)) 40%);}
+
+  /* A chapter that opens with a slide face shows the face alone in its first
+     view. The script measures the room the face leaves in the chapter's window
+     and gives it back as space above and below the face, so the face stands in
+     the middle and the headline starts the full chapter below the fold.
+     `--reader-dock` is the height kept for the bottom line of controls. The
+     face's own margin rule in slide-face.css adds the two measured values. */
+  .content[data-topic-layout="deck"][data-topic-view="single"] .chapter-body {--reader-dock:88px;}
 
   /* One chapter: no chapter strip; the chapter's name is the large headline
      that starts the full chapter. */
@@ -531,11 +541,22 @@ body.reader-enabled.reader-nav-docked {--reader-header:0px;}
   }
 }
 @media screen and (max-width:900px) {
-  /* No room for three things on one line: "Continue reading" sits just above the island. */
-  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active::after {height:150px;}
-  .content[data-topic-layout="deck"][data-topic-view="single"] .chapter-body {scroll-padding-bottom:160px;}
-  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] {bottom:76px;justify-content:center;}
+  /* No room for the row's words beside the island: "Continue reading" is a
+     round arrow button at the right end of the island's line. Nothing stands
+     above that line, so the controls cover no more of a tall face than the
+     island does. The button keeps its words as its accessible name. */
+  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] {left:12px;right:12px;}
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead]::before,
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] :is(.slide-bridge-pill,.slide-bridge-meta) {display:none;}
-  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] .slide-bridge-button {margin:0 auto;background:color-mix(in srgb,var(--accent,#39d2c0) 10%,rgba(var(--bg-rgb),.92));}
+  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] .slide-bridge-button {margin:0 0 0 auto;width:44px;min-width:44px;height:44px;padding:0;gap:0;justify-content:center;font-size:0;background:color-mix(in srgb,var(--accent,#39d2c0) 10%,rgba(var(--bg-rgb),.92));}
+  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] .slide-bridge-button span {font-size:17px;}
+}
+@media screen and (max-width:900px) {
+  /* A chapter too narrow for the island and the arrow on one line: the arrow
+     sits above the island, and more room is kept for the two lines. */
+  @container chapter (max-width:300px) {
+    .content[data-topic-layout="deck"][data-topic-view="single"] .chapter-body {--reader-dock:140px;scroll-padding-bottom:160px;}
+    .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] {bottom:76px;justify-content:center;}
+    .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] .slide-bridge-button {margin:0 auto;}
+  }
 }

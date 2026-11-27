@@ -528,6 +528,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const index = active + step; return index >= 0 && index < topics.length ? index : null;
   }
   function setOffset() { content.style.setProperty('--topic-scroll-offset', (nav.getBoundingClientRect().height + 12) + 'px'); }
+  // A chapter that opens with a slide face shows the face alone in its first
+  // view. `faceRoom` splits the height the face leaves in the chapter's window:
+  // `lift` above the face and `drop` below it, so the face stands in the middle
+  // of what the bottom controls leave free and the next line starts below the
+  // fold. A face taller than the window gets no space; it scrolls.
+  function faceRoom(view, top, height, dock) {
+    const free = Math.ceil(view - top - height);
+    if (!(free > 0)) return {lift: 0, drop: 0};
+    const lift = Math.max(0, Math.floor((free - dock) / 2));
+    return {lift, drop: free - lift};
+  }
+  const fittedFaces = new Map();
+  const faceWatch = typeof ResizeObserver === 'function' ? new ResizeObserver(() => fitFaces()) : null;
+  function fitFaces() {
+    topics.forEach(topic => {
+      const face = topic.body.querySelector('[data-slide-face]');
+      if (!face) return;
+      if (faceWatch && !fittedFaces.has(face)) { faceWatch.observe(face); faceWatch.observe(topic.body); }
+      const was = fittedFaces.get(face) || {lift: 0, drop: 0};
+      let room = {lift: 0, drop: 0};
+      // Only a face that opens the chapter, in the one-chapter view, is fitted:
+      // one that starts within 64px of the chapter's top.
+      if (!full && !paired && !presenting && topic.body.clientHeight > 0 && topic.section.offsetWidth > 0) {
+        // Neighbouring chapters are drawn smaller; measure in the chapter's own pixels.
+        const scale = topic.section.getBoundingClientRect().width / topic.section.offsetWidth || 1;
+        const top = (face.getBoundingClientRect().top - topic.body.getBoundingClientRect().top) / scale + topic.body.scrollTop - was.lift;
+        const dock = parseFloat(window.getComputedStyle(topic.body).getPropertyValue('--reader-dock')) || 0;
+        if (top <= 64) room = faceRoom(topic.body.clientHeight, top, face.offsetHeight, dock);
+      }
+      fittedFaces.set(face, room);
+      if (room.lift === was.lift && room.drop === was.drop) return;
+      face.style.setProperty('--reader-face-lift', room.lift + 'px');
+      face.toggleAttribute('data-reader-face-lifted', room.lift > 0);
+      face.style.setProperty('--reader-face-drop', room.drop + 'px');
+    });
+  }
   function align(animate = true) {
     if (full) return;
     strip.classList.toggle('topic-animate', animate && !reducedMotion?.matches);
@@ -583,7 +619,7 @@ document.addEventListener('DOMContentLoaded', () => {
     viewButtons.forEach(node => { node.setAttribute('aria-pressed', String(node.dataset.readerView === view)); node.disabled = node.dataset.readerView === 'pair' && topics.length < 2; });
     if (slidesButton) slidesButton.hidden = !presentable || !full;
     layerPanel.hidden = !presentKinds.length && (!slidesButton || slidesButton.hidden);
-    syncLayerControls(); setOffset(); align(animate);
+    syncLayerControls(); setOffset(); align(animate); fitFaces();
     syncPresentation();
   }
   function currentView() { return presenting ? 'present' : full ? 'full' : paired ? 'pair' : 'single'; }
@@ -874,7 +910,8 @@ document.addEventListener('DOMContentLoaded', () => {
     islandRest = setTimeout(() => island.classList.remove('reader-island-away'), 900);
   }, {capture:true, passive:true});
   window.addEventListener('hashchange', () => route()); window.addEventListener('popstate', () => route(true));
-  window.addEventListener('resize', () => { syncDrawer(); setOffset(); align(false); });
+  window.addEventListener('resize', () => { syncDrawer(); setOffset(); align(false); fitFaces(); });
+  window.addEventListener('load', fitFaces);
   window.addEventListener('scroll', () => {
     if (!full) return;
     const line = nav.getBoundingClientRect().height + 80; let index = 0;

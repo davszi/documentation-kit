@@ -5,11 +5,15 @@
    container query stacks the canvas, so narrow reading needs no JavaScript. */
 .slide-face {--sf-ink:var(--figure-ink,#e6edf3)!important;--sf-sub:var(--figure-sub,#a9b4c2)!important;--sf-dim:var(--figure-dim,#7d8896)!important;--sf-line:var(--figure-line,#2f3b4a)!important;--sf-tile:var(--figure-panel,#121a24)!important;--sf-tile2:var(--figure-panel2,#162130)!important;--sf-accent:var(--accent,#39d2c0)!important;--sf-alt:var(--secondary,#bc8cff)!important;--sf-warm:var(--orange,#ffa657)!important;--sf-held:var(--figure-held,#5b6b80)!important;--sf-alert:var(--red,#f47067)!important;position:relative!important;container-type:inline-size!important;margin:0 0 4px!important;}
 .slide-canvas {display:flex!important;flex-direction:column!important;gap:.65cqi!important;aspect-ratio:16/9!important;min-height:0!important;overflow:hidden!important;padding:2.4cqi 3.4cqi 1.8cqi!important;border:1px solid var(--sf-line)!important;border-radius:14px!important;background:radial-gradient(ellipse at 85% 0%,color-mix(in srgb,var(--sf-accent) 7%,transparent),transparent 55%),linear-gradient(180deg,var(--slide-top,#0f1620),var(--figure-bg,#0d1117))!important;font-family:"IBM Plex Sans",system-ui,sans-serif!important;color:var(--sf-ink)!important;}
-.chapter-body > .slide-face:first-child,.chapter-body > :first-child > .slide-face:first-child {margin:-16px -22px 0!important;}
+/* In the reader's one-chapter view the script adds the room the face leaves in
+   the chapter's window: `--reader-face-lift` above, `--reader-face-drop` below. */
+.chapter-body > .slide-face:first-child,.chapter-body > :first-child > .slide-face:first-child {margin:calc(-16px + var(--reader-face-lift,0px)) -22px var(--reader-face-drop,0px)!important;}
 /* The bleed matches the chapter body's padding, which is 14px in a narrow chapter (chapter-reader.css);
    a wider bleed reaches past the scrolling body, which then scrolls sideways and cuts the face's edges. */
-@container chapter (max-width:520px) {.chapter-body > .slide-face:first-child,.chapter-body > :first-child > .slide-face:first-child {margin:-14px -14px 0!important;}}
+@container chapter (max-width:520px) {.chapter-body > .slide-face:first-child,.chapter-body > :first-child > .slide-face:first-child {margin:calc(-14px + var(--reader-face-lift,0px)) -14px var(--reader-face-drop,0px)!important;}}
 .chapter-body > .slide-face:first-child > .slide-canvas,.chapter-body > :first-child > .slide-face:first-child > .slide-canvas {border-width:0 0 1px!important;border-radius:0 0 14px 14px!important;}
+/* A face the reader has moved down from the chapter's top is a band across the chapter: a rule above and below, square corners. */
+.chapter-body > .slide-face[data-reader-face-lifted]:first-child > .slide-canvas,.chapter-body > :first-child > .slide-face[data-reader-face-lifted]:first-child > .slide-canvas {border-width:1px 0!important;border-radius:0!important;}
 /* Authoring aid: the deck, and pages opened with ?slide-check, outline faces that do not fit. */
 :is(.slide-deck-page,[data-slide-check]) .slide-face[data-slide-overflow] > .slide-canvas {outline:3px solid var(--red,#f47067);outline-offset:-3px;}
 .slide-face :is(p,h4,dl,dd,figure) {margin:0!important;}
@@ -169,6 +173,8 @@
 @media (prefers-reduced-motion: reduce) {.slide-face *,.slide-bridge-button,.slide-bridge-button span {transition:none!important;}}
 /* Print keeps the slide's own dark palette, independent of the page's print ink. */
 @media print {
+  /* Paper has no chapter window: the room the reader measured for a leading face is dropped. */
+  [data-slide-face] {--reader-face-lift:0px!important;--reader-face-drop:0px!important;}
   .slide-face {break-inside:avoid;}
   .slide-canvas {-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;animation:none!important;opacity:1!important;transform:none!important;filter:none!important;}
   .slide-bridge-button {display:none;}

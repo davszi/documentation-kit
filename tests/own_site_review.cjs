@@ -290,7 +290,7 @@ async function reviewPresentation(page, origin, viewport, failures) {
 // bottom centre over a fade, the "Full chapter" row docked on the island's line at
 // three window heights and gone once the chapter scrolls, click zones equal to the
 // visible strips of the neighbours. Narrow: the bar with menu and page name, the
-// row and options inside the drawer, "Continue reading" above the island, swipe.
+// row and options inside the drawer, "Continue reading" as a round button beside the island, swipe.
 async function frameState(page) {
   return page.evaluate(() => {
     const box = node => { if (!node) return null; const r = node.getBoundingClientRect(); return {left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height}; };
@@ -303,7 +303,8 @@ async function frameState(page) {
         pillShown: style(row.querySelector('.slide-bridge-pill')).display !== 'none', meta: style(row.querySelector('.slide-bridge-meta')).display !== 'none',
         button: box(row.querySelector('.slide-bridge-button')), text: row.querySelector('.slide-bridge-button').textContent.trim()},
       fade: style(card, '::after') && getComputedStyle(card, '::after').backgroundImage,
-      header: style(card.querySelector('.chapter-header')).display, headline: parseFloat(style(card.querySelector('.chapter-headline')).fontSize)};
+      header: style(card.querySelector('.chapter-header')).display, headline: parseFloat(style(card.querySelector('.chapter-headline')).fontSize),
+      body: box(card.querySelector('.chapter-body')), face: box(card.querySelector('[data-slide-face]')), headlineBox: box(card.querySelector('.chapter-headline'))};
   });
 }
 async function reviewFrame(browser, origin) {
@@ -391,6 +392,11 @@ async function reviewFrame(browser, origin) {
     assert.ok(Math.abs((row.box.top + row.box.bottom) / 2 - (island.top + island.bottom) / 2) <= 4, `the row is on the island's line at ${height} px`);
     assert.ok(row.pill.left - card.left < 40 && card.right - row.button.right < 40 && row.pill.right < island.left && row.button.left > island.right,
       `label at the far left, Continue reading at the far right at ${height} px: ` + JSON.stringify(state));
+    // The face stands alone in the first view: the headline starts at the fold or below it, so no
+    // line of text lies under the row's rule; a face that fits stands clear of the row, with room above it.
+    assert.ok(state.headlineBox.top >= state.body.bottom - 1, `the headline starts below the first view at ${height} px: ` + JSON.stringify([state.headlineBox, state.body]));
+    if (state.face.height + 88 <= state.body.height) assert.ok(state.face.top > state.body.top + 4 && state.face.bottom <= row.box.top,
+      `a face that fits stands between the chapter's top and the row at ${height} px: ` + JSON.stringify([state.face, state.body, row.box]));
     await page.locator('[data-reader-chapter].topic-active .chapter-body').evaluate(node => { node.scrollTop = 200; });
     await page.waitForFunction(() => !!document.querySelector('[data-reader-chapter].topic-active.topic-scrolled'));
     state = await frameState(page);
@@ -414,7 +420,7 @@ async function reviewFrame(browser, origin) {
     return card.querySelector('.chapter-headline').getBoundingClientRect().top - card.querySelector('.chapter-body').getBoundingClientRect().top;
   });
   assert.ok(landed > -40 && landed < 120, 'Continue reading brings the full chapter to the top: ' + landed);
-  checked.push('Full chapter row at 900, 680 and 560 px', 'row leaves after a scroll', 'island steps back', 'Continue reading');
+  checked.push('Full chapter row at 900, 680 and 560 px', 'face alone in the first view', 'row leaves after a scroll', 'island steps back', 'Continue reading');
 
   // Click zones: each covers exactly the strip of its neighbour that shows.
   await page.goto(`${origin}/html/${PRESENT_PAGE}.html#${PLAIN_CHAPTERS[1]}`, {waitUntil: 'networkidle'});
@@ -455,8 +461,12 @@ async function reviewFrame(browser, origin) {
   assert.deepEqual(bar, ['reader-icon reader-mobile-menu', 'reader-title'], 'the narrow bar holds the menu button and the page name');
   assert.ok(Math.abs((state.island.left + state.island.right) / 2 - 195) <= 2, 'the island is at the bottom centre: ' + JSON.stringify(state.island));
   assert.ok(state.row.shown && !state.row.pillShown && !state.row.meta, 'narrow: the label and reading time are not shown');
-  assert.ok(state.row.button.bottom <= state.island.top && state.island.top - state.row.button.bottom < 24,
-    '"Continue reading" sits just above the island: ' + JSON.stringify([state.row.button, state.island]));
+  // 5.8.1: the button no longer sits above the island, where it covered the last lines of a tall
+  // face. It is a round arrow at the right end of the island's line and keeps its words as its name.
+  assert.ok(Math.abs((state.row.button.top + state.row.button.bottom) / 2 - (state.island.top + state.island.bottom) / 2) <= 4
+    && state.row.button.left >= state.island.right + 4 && state.row.button.right <= state.card.right && state.row.button.width <= 48,
+    '"Continue reading" is a round button beside the island, on its line: ' + JSON.stringify([state.row.button, state.island, state.card]));
+  assert.ok(/^Continue reading/.test(state.row.text), 'the round button keeps its words as its name: ' + state.row.text);
   // A drag starts on a line of text, or on a drawing, which keeps its own drags.
   const swipe = (from, to, on = 'p') => narrow.evaluate(([from, to, on]) => {
     const target = [...document.querySelectorAll(`[data-reader-chapter].topic-active .chapter-body ${on}`)]
@@ -475,7 +485,7 @@ async function reviewFrame(browser, origin) {
   assert.equal((await frameState(narrow)).active, PLAIN_CHAPTERS[0], 'a drag under 70 px does not turn the chapter');
   await swipe(100, 300);
   await waitPresent(narrow, FACE_CHAPTER, 'single');
-  checked.push('narrow bar', 'Continue reading above the island', 'swipe');
+  checked.push('narrow bar', 'Continue reading beside the island', 'swipe');
   await narrow.click('.reader-mobile-menu');
   await narrow.locator('#sidebar .reader-tools').waitFor({state: 'visible'});
   const drawer = await narrow.evaluate(() => ['.reader-tools', '.reader-layers'].map(selector => {
