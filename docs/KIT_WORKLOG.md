@@ -2,6 +2,35 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — One reader for the headings of Markdown source
+
+- Maintenance debt, measured first: five tools read ATX headings with
+  their own loop and regex (lint's anchor list, the changed record
+  sections, the record notes' chapter index, a source page's title and
+  the worklog entries), and `build.py` and `lint.py` each kept a
+  `slugify`.
+- `tooling/page_source.py`, which already numbered repeated heading ids,
+  now owns `slugify` and `markdown_headings`, and every reader calls
+  them. Where the readers differ, a keyword keeps each one's rule:
+  heading syntax, fence rule, line breaks, frontmatter, how the `{#id}`
+  end is cut off, and the ids already taken. Whether to unify them is
+  left open. The build keeps mistune and passes its rendered text
+  through `html.unescape` before `slugify`, as its own copy did.
+- No output changed. Old and new tooling over 20,016 generated Markdown
+  texts: 0 differences in anchors, sections, chapter events, titles,
+  entry dates, unchecked spans and rendered build HTML. The kit's site
+  (172 files) and a starter made by `init` (91 files) build byte for
+  byte as before; the kit's site differs only in the capability-map
+  page, whose record changed, and is identical with the old map text.
+  Strict lint of both: exit 0, same output. Unit tests: 509 before,
+  518 after with 9 new ones, all pass.
+- The seven tooling files went from 4,116 lines to 4,162. The new tests
+  in `tests/test_page_source.py` show each difference between readers
+  and three inputs where the build gives another id than lint: a heading
+  with a link, a character reference, and a non-ASCII `{#id}`.
+- Not run: `tests/run_checks.sh` and the browser suites. On branch
+  `debt-headings`, not on `main`.
+
 ## 2026-11-27 — One helper for the projects that tests build
 
 - deivid chose maintenance debt as the next work. Measured on 5.8.0 first:
