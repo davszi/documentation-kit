@@ -4,7 +4,7 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
 ## 2026-11-27 — Pages: the kit's story, "Discuss, build, record", setup-only Get started
 
-- Built the three pages of the outline deivid agreed after the rule
+- Built the three pages of the outline the owner agreed after the rule
   "Discussion before the work". The rule files are the records; no rule
   changed.
 - Home tells the kit's story in five numbered figures, one per section: two
