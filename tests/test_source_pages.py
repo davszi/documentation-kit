@@ -325,6 +325,26 @@ pages = ["shared-rule.html", "other-rule.html"]
         home = self.page('index')
         self.assertEqual(home.count(' open data-nav-default>'), 1)
 
+    def test_a_page_offers_its_raw_markdown_only_when_asked(self):
+        tricky = '# Take me\n\nA `</script>` in the text, a <!-- comment --> and a "quote".\n'
+        self.write('notes/take.md', tricky)
+        self.register('notes/take.md', 'take', nav=False, copy_raw=True)
+        self.assertEqual(self.build().returncode, 0)
+        page = self.page('take')
+        self.assertIn('<button type="button" class="source-origin-copy" data-copy-raw>Copy raw Markdown</button>', page)
+        held = page[page.index('<script type="application/json" data-raw-source>'):]
+        held = held[held.index('>') + 1:held.index('</script>')]
+        self.assertEqual(json.loads(held), tricky, 'the page carries the file\'s text exactly')
+        self.assertNotIn('<', held, 'no tag or comment can start inside the script element')
+        # A page that did not ask carries neither the button nor a second copy of its text.
+        other = self.page('shared-rule')
+        self.assertNotIn('data-copy-raw', other)
+        self.assertNotIn('data-raw-source', other)
+
+    def test_copy_raw_takes_only_true_or_false(self):
+        self.register('notes/record.md', 'record', nav=False, copy_raw='yes')
+        self.assertNotEqual(self.build().returncode, 0)
+
     def test_flat_navigation_stays_the_default(self):
         self.assertEqual(self.build().returncode, 0)
         page = self.page('shared-rule')

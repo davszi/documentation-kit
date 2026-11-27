@@ -24,6 +24,7 @@ from __future__ import annotations
 from bisect import bisect
 from collections import Counter
 from dataclasses import dataclass
+import json
 import hashlib
 import html
 import os
@@ -36,7 +37,7 @@ from page_source import LAST_ID_SUFFIX, TITLE_HEADING, markdown_headings
 from topic_structure import is_topic_page, topic_group_folders
 from worklog_entries import HTML_HEADING, unchecked_spans, within
 
-SOURCE_KEYS = {"source", "slug", "title", "description", "math", "reader", "pinned"}
+SOURCE_KEYS = {"source", "slug", "title", "description", "math", "reader", "pinned", "copy_raw"}
 _SLUG = re.compile(r"[a-z0-9][a-z0-9-]*")
 _TAG = re.compile(r"<(a|img|video|audio|source|iframe)\b[^>]*>", re.I)
 _ATTR = re.compile(r'(?<![\w-])(href|src|poster)="([^"]*)"')
@@ -53,6 +54,7 @@ class SourcePage:
     reader: bool
     pinned: bool         # listed first in the sidebar's repository section
     automatic: bool = False  # listed by `reference_listing`, not by a [[source_pages]] table
+    copy_raw: bool = False   # the page offers its Markdown source to the clipboard
 
     @property
     def route(self) -> str:
@@ -75,7 +77,7 @@ def load_registry(site: dict, root: Path, tracked: frozenset[Path]) -> tuple[lis
             problems.append(f"site.toml [[source_pages]] {label}: unknown keys {unknown} or missing source/slug")
             continue
         types = {"source": str, "slug": str, "title": str, "description": str, "math": bool, "reader": bool,
-                 "pinned": bool}
+                 "pinned": bool, "copy_raw": bool}
         wrong = sorted(key for key, value in entry.items() if not isinstance(value, types[key]))
         if wrong:
             problems.append(f"site.toml [[source_pages]] {label}: wrong value types for {wrong}")
@@ -111,7 +113,8 @@ def load_registry(site: dict, root: Path, tracked: frozenset[Path]) -> tuple[lis
             continue
         seen_sources[source] = slug
         pages.append(SourcePage(source, slug, entry.get("title"), entry.get("description"),
-                                entry.get("math", False), entry.get("reader", False), entry.get("pinned", False)))
+                                entry.get("math", False), entry.get("reader", False), entry.get("pinned", False),
+                                copy_raw=entry.get("copy_raw", False)))
     return pages, problems
 
 
@@ -771,16 +774,25 @@ def table_of_contents(markup: str) -> list[list[str]]:
     return entries
 
 
-def origin_banner(page: SourcePage, repository: str, edit_ref: str) -> str:
-    """Name the canonical source and offer its edit page; the source link is rewritten by the bundle."""
+def origin_banner(page: SourcePage, repository: str, edit_ref: str, raw: str | None = None) -> str:
+    """Name the canonical source and offer its edit page; the source link is rewritten by the bundle.
+
+    With `raw`, the file's text as tracked, the line also offers that text to the clipboard. The text
+    travels in the page as JSON, so the button works without a request and on a page opened from disk.
+    """
     logical = quote(posixpath.relpath(page.source, "docs/html"), safe="/-_.~")
     links = [f'<a class="source-origin-path" href="{logical}"><code>{html.escape(page.source)}</code></a>']
     if repository:
         edit = (repository.rstrip("/") + "/edit/" + quote(edit_ref, safe="") + "/"
                 + quote(page.source, safe="/-_.~"))
         links.append(f'<a class="source-origin-edit" href="{html.escape(edit, quote=True)}">Edit source</a>')
+    held = ""
+    if raw is not None:
+        links.append('<button type="button" class="source-origin-copy" data-copy-raw>Copy raw Markdown</button>')
+        held = ('<script type="application/json" data-raw-source>'
+                + json.dumps(raw).replace("<", "\\u003c") + "</script>\n")
     return ('<p class="source-origin" data-source-page="' + html.escape(page.source, quote=True) + '">'
-            '<span class="source-origin-label">Canonical source</span> ' + " · ".join(links) + "</p>\n")
+            '<span class="source-origin-label">Canonical source</span> ' + " · ".join(links) + "</p>\n" + held)
 
 
 _H1 = re.compile(r"<h1\b[^>]*>.*?</h1>\s*", re.S)

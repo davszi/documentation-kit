@@ -49,3 +49,34 @@
     });
   });
 })();
+
+// A record page may offer its Markdown source to the clipboard (`copy_raw` on
+// its [[source_pages]] table). The text is in the page, so nothing is fetched.
+(function(){
+  var button = document.querySelector('[data-copy-raw]');
+  var held = document.querySelector('script[data-raw-source]');
+  if (!button || !held) return;
+  var label = button.textContent, timer = 0;
+  function say(text){
+    button.textContent = text;
+    clearTimeout(timer);
+    timer = setTimeout(function(){ button.textContent = label; }, 1800);
+  }
+  function byHand(text){
+    // For a page opened from disk, where the clipboard interface is not offered.
+    var area = document.createElement('textarea');
+    area.value = text; area.setAttribute('readonly', ''); area.style.position = 'fixed'; area.style.opacity = '0';
+    document.body.appendChild(area); area.select();
+    var done = false;
+    try { done = document.execCommand('copy'); } catch (e) {}
+    area.remove(); button.focus();
+    say(done ? 'Copied' : 'Copy failed');
+  }
+  button.addEventListener('click', function(){
+    var text = '';
+    try { text = JSON.parse(held.textContent); } catch (e) { say('Copy failed'); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){ say('Copied'); }, function(){ byHand(text); });
+    } else byHand(text);
+  });
+})();

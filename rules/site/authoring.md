@@ -295,6 +295,8 @@ pinned = true                        # optional: list first in the sidebar
 
 `title` defaults to the file's first level-one heading. `description` supplies
 the site-map card text and the sidebar tooltip. `math = true` enables formulas.
+`copy_raw = true` adds a button that copies the file's Markdown, for a file a
+reader is meant to take, such as instructions to paste elsewhere.
 `reader = true` uses the chapter reader when the site enables it; otherwise the
 page scrolls. In the
 reader, the opening of a registered file joins the first chapter together with

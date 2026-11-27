@@ -2,6 +2,35 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — 5.9.0 published; a button that copies a record's Markdown
+
+- 5.9.0 is out: `main` and the tag `v5.9.0` at `038e006`. The full check
+  script failed once on that commit, exit 1: one browser suite reported
+  "Failed to load resource: net::ERR_NETWORK_CHANGED" at 1600 px, the
+  machine's network changing during the run; the 527 unit tests passed. The
+  second run on the same commit passed, exit 0, and the tag followed it.
+  The Pages workflow, run 46057425921, succeeded.
+- Checked on the published site over HTTP: the home page, "Discuss, build,
+  record", Get started, the owner's global agent instructions, the 5.9.0
+  migration guide and `build-info.js` answer 200; the home page holds the
+  new headline, "Source on GitHub" and "Built with the documentation kit
+  5.9.0"; the build time reads 2026-11-27T19:35Z.
+- The owner asked for a button on the page of his global agent
+  instructions that copies the raw file. Built as a setting for any record
+  page, `copy_raw = true` on its `[[source_pages]]` table: the source line
+  gains "Copy raw Markdown", and the page carries the file's text as JSON,
+  so nothing is fetched and a page opened from disk works. Every "<" in
+  that text is written as a JSON escape, so no tag can start inside it.
+- First attempt failed and is kept here: the text escaped "<!--" with a
+  backslash, which is not valid JSON; the test for a tricky file caught it.
+- Checked in a browser at 1600 and 390 px: after a click the clipboard
+  equals the file, 14,608 characters; the button says "Copied" and returns
+  to its label; it is 24 px tall with 13 px type; no overflow.
+- Started on the owner's word: the catch-up of the kit's four older pages,
+  one page author per page in its own working copy.
+- On branch `copy-raw`, not on `main`. A new setting makes the next release
+  a minor one.
+
 ## 2026-11-27 — Release 5.9.0
 
 - The owner gave the go in two messages: "release first, catch up after",

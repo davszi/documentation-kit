@@ -142,6 +142,7 @@ group = "releases"
 [[source_pages]]
 source = "examples/global-agent-context.md"
 slug = "global-agent-instructions"
+copy_raw = true
 title = "The owner's global agent instructions"
 description = "A copy of the kit owner's global agent instructions, without personal details: gates, delegation, reporting, decisions with the person, commits and fact-checking. Optional to adopt."
 

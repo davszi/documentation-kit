@@ -909,7 +909,8 @@ def build_source_page(page, routes: dict[str, str], site: dict, shell: str,
         content = quiet_text(content)
     for problem in problems:
         report(problem)
-    banner = origin_banner(page, site.get("gh_repo", ""), site.get("_edit_ref", site.get("gh_ref", "main")))
+    banner = origin_banner(page, site.get("gh_repo", ""), site.get("_edit_ref", site.get("gh_ref", "main")),
+                           raw=(REPO / page.source).read_text() if page.copy_raw else None)
     content = banner + content
     comps = ["toc", "nav", "code", "filelinks"]
     if page.reader and site.get("chapter_reader"):

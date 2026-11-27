@@ -360,6 +360,10 @@ body:not(.reader-enabled) .toc a.xpage.current{color:#fff;font-weight:700;backgr
 .source-origin a:hover,.source-origin a:focus-visible{color:var(--bright);text-decoration:underline}
 .source-origin code{white-space:normal;overflow-wrap:anywhere}
 .source-origin-edit::before{content:"✎ ";color:var(--accent)}
+.source-origin-copy{min-height:24px;padding:0 10px;border:1px solid var(--border);border-radius:999px;background:transparent;color:var(--text);font:inherit;line-height:22px;cursor:pointer}
+.source-origin-copy::before{content:"⧉ ";color:var(--accent)}
+.source-origin-copy:hover,.source-origin-copy:focus-visible{color:var(--bright);border-color:var(--accent)}
+@media print{.source-origin-copy{display:none}}
 @media print{.source-origin-edit{display:none}}
 /* A link in an old worklog entry whose target is gone: its text, unlinked, marked by a dotted underline. */
 .link-gone{text-decoration:underline dotted 1px;text-decoration-color:var(--muted);text-underline-offset:3px;cursor:help}
