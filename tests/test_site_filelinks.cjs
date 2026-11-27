@@ -56,7 +56,7 @@ for(const protocol of ['http:','file:']){
   ];
   const before=links.map(link=>({...link.attrs}));
   vm.runInNewContext(noRemoteScript,{location:{protocol,pathname:'/preview/index.html'},
-    document:{querySelectorAll(selector){return selector==='a[href]'?links:[];}}});
+    document:{querySelector(){return null;},querySelectorAll(selector){return selector==='a[href]'?links:[];}}});
   assert.deepEqual(links.map(link=>link.attrs),before);
   assert.ok(links.every(link=>link.title===undefined));
 }
@@ -73,7 +73,7 @@ for(const protocol of ['https:','file:']){
     new Link({href:'../../tools/other.py'})
   ];
   vm.runInNewContext(remoteScript,{location:{protocol,pathname:'/site/guide.html'},
-    document:{querySelectorAll(selector){return selector==='a[href]'?links:[];}}});
+    document:{querySelector(){return null;},querySelectorAll(selector){return selector==='a[href]'?links:[];}}});
   assert.equal(links[0].attrs.href,'tools/fit.py');
   assert.equal(links[1].attrs.href,'notes/record.md#kept');
   assert.equal(links[0].title,undefined);
