@@ -18,6 +18,26 @@ class ChapterLayoutTests(unittest.TestCase):
         self.assertIn('<details class="fold fold-code" data-fold="code">\n', markup)
         self.assertNotIn('(open)', markup)
 
+    def test_fold_without_a_kind_has_no_badge(self):
+        source = ('<!-- fold: detail Math of the old layout -->\nText.\n<!-- /fold -->\n\n'
+                  '<!-- fold: detail (open) Notes -->\nMore.\n<!-- /fold -->\n')
+        errors = len(build._errors)
+        markup = build.folds_to_html(source, 'fixture')
+        self.assertEqual(len(build._errors), errors)
+        # A title that starts with a kind's name stays the title.
+        self.assertIn('<details class="fold fold-detail" data-fold="detail">\n'
+                      '<summary>Math of the old layout</summary>', markup)
+        self.assertIn('<details class="fold fold-detail" data-fold="detail" open>\n<summary>Notes</summary>', markup)
+        self.assertNotIn('fold-tag', markup)
+
+    def test_unknown_fold_kind_is_an_error(self):
+        errors = len(build._errors)
+        try:
+            build.folds_to_html('<!-- fold: note Aside -->\nText.\n<!-- /fold -->\n', 'fixture')
+            self.assertEqual(build._errors[errors:], ['fixture: unbalanced fold markers (0 open, 1 close)'])
+        finally:
+            del build._errors[errors:]
+
     def test_source_offsets_count_only_lf_inside_opaque_scripts(self):
         for separator in ('\u2028', '\r', '\f'):
             with self.subTest(separator=repr(separator)):

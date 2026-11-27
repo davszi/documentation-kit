@@ -289,7 +289,7 @@ toc = []
 
 [Figure 3](#fig-reader) answers two ways long pages fail readers: the point scrolls away under detail, or a definition disappears while you read its use. One chapter keeps one claim on the stage. **Two chapters** holds a definition beside its use: choose it, press `⌖` on this chapter's strip, then <kbd>→</kbd>. **All chapters** reads as one document, its slide faces hidden until **Slides** shows them. **Presentation** fills the window with each chapter's slide, or with a title card from its headline and lead.
 
-Depth lives in typed folds that start closed: a switch under Also show opens every fold of its kind, a reader's own click on a fold is remembered, and printing opens them all. A `[theme_colors]` table gives the reader a project's own colours; the build refuses colours below 4.5:1 for text or 3:1 for marks ([theme colours](authoring.html#theme-colours)). [Shared reading layout](reader.html#shared-reading-layout) owns all of it.
+Depth lives in folds that start closed: a switch under Also show opens every fold of its kind, All opens every fold, those of no kind too, a reader's own click on a fold is remembered, and printing opens them all. A `[theme_colors]` table gives the reader a project's own colours; the build refuses colours below 4.5:1 for text or 3:1 for marks ([theme colours](authoring.html#theme-colours)). [Shared reading layout](reader.html#shared-reading-layout) owns all of it.
 
 <!-- fold: code The settings and fold markers behind it -->
 

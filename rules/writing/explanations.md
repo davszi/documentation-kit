@@ -12,7 +12,16 @@ Supporting derivation.
 <!-- /fold -->
 ```
 
-Use `math`, `experiment`, `code` and `dead-end` (displayed as Alternatives). A fold starts closed. For one that should start open, write `(open)` after the kind: `<!-- fold: math (open) Title -->`. Use it for depth that most readers of the chapter need. The complete argument, narrative figures, comparison cases and verdict remain intelligible with every fold closed. Optional layers deepen that argument; they do not hide a separate required argument. A fold title is already its heading; do not repeat it inside. Preserve deep-link anchors when consolidating.
+Choose the kind by what the fold holds:
+
+- `math`: a derivation or proof.
+- `experiment`: a measurement, run or comparison behind a claim.
+- `code`: code or configuration.
+- `dead-end`, shown as Alternatives: an approach that was considered or tried and not taken, with the reason.
+
+Optional detail that is none of these is a fold of no kind: `<!-- fold: detail Title -->`. It has no option of its own; All opens every fold, these included.
+
+A fold starts closed. For one that should start open, write `(open)` after the kind or after `detail`: `<!-- fold: math (open) Title -->`. Use it for depth that most readers of the chapter need. The complete argument, narrative figures, comparison cases and verdict remain intelligible with every fold closed. Optional layers deepen that argument; they do not hide a separate required argument. A fold title is already its heading; do not repeat it inside. Preserve deep-link anchors when consolidating.
 
 Choose by narrative weight, not element type: a table or equation may carry the Story; a plot may be supporting detail. Default to visible figures and folded reference density. Keep competing formulations together, with assumptions and verdict explicit. Add a new layer only for recurring content and follow the [maintenance procedure](../site/reader.md#extending-reading-layers).
 

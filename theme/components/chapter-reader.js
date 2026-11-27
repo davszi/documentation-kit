@@ -86,7 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const browserScrollMode = history.scrollRestoration;
   const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
   const kinds = [['math', 'Math'], ['experiment', 'Experiments'], ['code', 'Code'], ['dead-end', 'Alternatives']];
-  const validKinds = new Set(kinds.map(([kind]) => kind));
+  // A fold of no kind (`fold: detail`) is a layer without an option of its own:
+  // only All opens it with the others, and it is stored like a kind.
+  const detailLayer = 'detail';
+  const validKinds = new Set([...kinds.map(([kind]) => kind), detailLayer]);
   // One set of reading layers for the whole page, in every chapter and column.
   // A returning reader keeps what the first column had (foldcolumns) or the
   // single mode of the plain fold bar (foldmode).
@@ -163,10 +166,11 @@ document.addEventListener('DOMContentLoaded', () => {
       foldKeyCount.set(base, seen);
       foldInfo.set(fold, {key: seen > 1 ? base + '#' + seen : base, authored: fold.open === true});
       summary?.addEventListener('click', event => { if (!event.defaultPrevented) rememberFold(fold, !fold.open); });
-      if (!summary || !tag) return;
-      tag.textContent = kinds.find(([kind]) => kind === fold.dataset.fold)?.[1] || fold.dataset.fold;
+      const detail = fold.dataset.fold === detailLayer;
+      if (!summary || (!tag && !detail)) return;
+      if (tag) tag.textContent = kinds.find(([kind]) => kind === fold.dataset.fold)?.[1] || fold.dataset.fold;
       const titleNode = make('span', 'fold-title', title);
-      summary.replaceChildren(tag, titleNode);
+      summary.replaceChildren(...(tag ? [tag] : []), titleNode);
       const panel = make('div', 'fold-content');
       [...fold.childNodes].filter(node => node !== summary).forEach(node => panel.appendChild(node));
       fold.appendChild(panel);
@@ -301,8 +305,11 @@ document.addEventListener('DOMContentLoaded', () => {
   sidebar.setAttribute('aria-label', 'Documentation drawer'); sidebar.inert = true;
   // "Also show": one set of options for the page, at the bottom of the
   // navigation. Only the kinds of fold the page has are offered; with nothing
-  // switched on the reader is in the story. All is a switch over every kind.
-  const presentKinds = kinds.filter(([kind]) => topics.some(topic => topic.folds.some(fold => fold.dataset.fold === kind)));
+  // switched on the reader is in the story. All is a switch over every fold,
+  // including the folds of no kind, which have no option of their own.
+  const pageHas = kind => topics.some(topic => topic.folds.some(fold => fold.dataset.fold === kind));
+  const presentKinds = kinds.filter(([kind]) => pageHas(kind));
+  const presentLayers = [...presentKinds.map(([kind]) => kind), ...(pageHas(detailLayer) ? [detailLayer] : [])];
   const layerPanel = nav.querySelector('[data-reader-layers]');
   const allSwitch = layerPanel.querySelector('[data-reader-layer-all]');
   layerPanel.setAttribute('aria-label', 'Also show, in every ' + unit);
@@ -311,8 +318,8 @@ document.addEventListener('DOMContentLoaded', () => {
     node.addEventListener('click', () => setLayers([kind], !layers.has(kind)));
     layerPanel.querySelector('.reader-layers-row').insertBefore(node, slidesButton); return node;
   });
-  allSwitch.addEventListener('click', () => setLayers(presentKinds.map(([kind]) => kind), allSwitch.getAttribute('aria-checked') !== 'true'));
-  allSwitch.hidden = !presentKinds.length;
+  allSwitch.addEventListener('click', () => setLayers(presentLayers, allSwitch.getAttribute('aria-checked') !== 'true'));
+  allSwitch.hidden = !presentLayers.length;
   sidebar.appendChild(layerPanel);
   const kitLine = sidebar.querySelector('.kit-line'); if (kitLine) sidebar.appendChild(kitLine);
   topics.forEach(topic => topic.folds.forEach(resolveFold));
@@ -365,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ['Move through chapters', 'Use the arrows on the stepper at the bottom of the page, click a neighbouring chapter at its edge, swipe sideways on a touch screen, or press the left and right arrow keys. Each chapter resumes where you left it. Controls inside figures keep their own keys.'],
     ['Choose the arrangement', 'The row of icons under the site name shows One chapter, Two chapters or All chapters' + (presentable ? ', starts the Presentation' : '') + ' and opens About this page and this help. On narrow screens the row is in the navigation menu.'],
     ['Compare two chapters', 'Two chapters shows two equal columns. The stepper and the arrow keys move both until you pin one. Select an unpinned column before choosing its chapter from the navigation.'],
-    ['Choose how much to read', 'With nothing switched on you read the story. Also show, at the bottom of the navigation, opens Math, Experiments, Code or Alternatives in every chapter and both columns at once; All switches every kind on or off. A fold you open or close yourself keeps that state on your next visit, until you choose its kind again.'],
+    ['Choose how much to read', 'With nothing switched on you read the story. Also show, at the bottom of the navigation, opens Math, Experiments, Code or Alternatives in every chapter and both columns at once; All opens or closes every fold. A fold you open or close yourself keeps that state on your next visit, until you choose its kind again.'],
     ['Hold a reference', 'Pin the button on a column header to hold that chapter while the other moves. Purple marks the pinned column; its own scrolling still works.'],
     ['Keep navigation handy', 'On wide screens the navigation docks beside the page. Hide it with « and bring it back with ☰ at the top of the page; the choice holds across the site. Reading stays interactive and chapter links keep the navigation open. On narrow screens, navigation opens over the page and closes after choosing a chapter or an arrangement.']
   ];
@@ -465,7 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
     remember();
   }
   function syncLayerControls() {
-    const allOn = presentKinds.length > 0 && presentKinds.every(([kind]) => layers.has(kind));
+    const allOn = presentLayers.length > 0 && presentLayers.every(kind => layers.has(kind));
     layerButtons.forEach(node => {
       const kind = node.dataset.readerLayer, on = layers.has(kind), label = kinds.find(([key]) => key === kind)[1];
       node.setAttribute('aria-pressed', String(on));
@@ -622,7 +629,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const view = currentView();
     viewButtons.forEach(node => { node.setAttribute('aria-pressed', String(node.dataset.readerView === view)); node.disabled = node.dataset.readerView === 'pair' && topics.length < 2; });
     if (slidesButton) slidesButton.hidden = !presentable || !full;
-    layerPanel.hidden = !presentKinds.length && (!slidesButton || slidesButton.hidden);
+    layerPanel.hidden = !presentLayers.length && (!slidesButton || slidesButton.hidden);
     syncLayerControls(); setOffset(); align(animate); fitFaces();
     syncPresentation();
   }

@@ -358,7 +358,8 @@ function bootReader(hash = '', options = {}) {
       // An author-open fold: `<!-- fold: math (open) ... -->` or raw HTML with `open`.
       fold.open = authorOpen.some(([chapter, open]) => chapter === index && open === kind);
       const summary = make('summary', {parent: fold});
-      make('span', {cls: 'fold-tag', parent: summary, text: kind});
+      // A fold of no kind (`fold: detail`) is built without a badge.
+      if (kind !== 'detail') make('span', {cls: 'fold-tag', parent: summary, text: kind});
       make('span', {parent: summary, text: 'Details'});
       const deep = index === FIXTURE.deepChapter && kind === 'math';
       const id = deep ? FIXTURE.deepTarget : `depth-${index}-${kind}`;

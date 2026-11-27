@@ -102,21 +102,27 @@ FOLD_TYPES = ("math", "experiment", "code", "dead-end")
 _FOLD_OPEN_RE = re.compile(
     r"^<!--\s*fold:\s*(" + "|".join(FOLD_TYPES) + r")\s+(\(open\)\s+)?(.+?)\s*-->[ \t]*$", re.M)
 _FOLD_CLOSE_RE = re.compile(r"^<!--\s*/fold\s*-->[ \t]*$", re.M)
+# A fold of none of these kinds holds optional detail: `<!-- fold: detail Title -->`.
+# It is not a kind: it has no badge and no option of its own, and All opens it.
+# The word keeps a title that starts with a kind's name unambiguous.
+FOLD_DETAIL = "detail"
+_FOLD_DETAIL_OPEN_RE = re.compile(
+    r"^<!--\s*fold:\s*(" + FOLD_DETAIL + r")\s+(\(open\)\s+)?(.+?)\s*-->[ \t]*$", re.M)
 
 
 def folds_to_html(chunk: str, name: str) -> str:
-    n_open = len(_FOLD_OPEN_RE.findall(chunk))
+    n_open = len(_FOLD_OPEN_RE.findall(chunk)) + len(_FOLD_DETAIL_OPEN_RE.findall(chunk))
     n_close = len(_FOLD_CLOSE_RE.findall(chunk))
     if n_open != n_close:
         err(f"{name}: unbalanced fold markers ({n_open} open, {n_close} close)")
 
     def open_sub(m: re.Match) -> str:
         kind, opened, title = m.group(1), m.group(2), m.group(3)
+        tag = "" if kind == FOLD_DETAIL else f'<span class="fold-tag">{kind}</span> '
         return (f'<details class="fold fold-{kind}" data-fold="{kind}"{" open" if opened else ""}>\n'
-                f'<summary><span class="fold-tag">{kind}</span> '
-                f"{html.escape(title)}</summary>\n")
+                f"<summary>{tag}{html.escape(title)}</summary>\n")
 
-    chunk = _FOLD_OPEN_RE.sub(open_sub, chunk)
+    chunk = _FOLD_DETAIL_OPEN_RE.sub(open_sub, _FOLD_OPEN_RE.sub(open_sub, chunk))
     # The newline after the closing tag ends the HTML block, so the next line is
     # read as Markdown even when the author left no blank line after the marker.
     return _FOLD_CLOSE_RE.sub("</details>\n", chunk)
