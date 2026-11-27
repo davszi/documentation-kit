@@ -140,19 +140,31 @@ Full guide: [story and reading layers](explanations.html#story-and-reading-layer
 <div class="wp-form wp-hot"><svg viewBox="0 0 64 40" aria-hidden="true"><path d="M6 4v32h54"/><path d="M10 30 L24 22 L38 16 L54 8"/><circle cx="24" cy="22" r="2.5"/><circle cx="38" cy="16" r="2.5"/></svg><b>Plot</b><span>values compared, ranked or changing over a setting</span></div>
 <div class="wp-form"><svg viewBox="0 0 64 40" aria-hidden="true"><path d="M4 6h56M4 18h56M4 30h56M28 6v28"/></svg><b>Text or table</b><span>a single value or an exact lookup; a table may sit beside a figure</span></div>
 </div>
-<div class="wp-schematic"><span class="wp-tag">Numbers on a page · schematic, no data</span>
-<svg viewBox="0 0 240 120" aria-hidden="true"><path class="wp-axis" d="M24 8v96h208"/><path class="wp-line" d="M40 88 L84 70 L128 52"/><circle cx="40" cy="88" r="4"/><circle cx="84" cy="70" r="4"/><circle cx="128" cy="52" r="4"/><circle class="wp-gap" cx="172" cy="36" r="9"/><path class="wp-dash" d="M128 52 L172 36"/></svg>
-<ul class="wp-keys"><li><b>x</b> the setting that changes the value</li><li><b>y</b> in the unit of the claim</li><li><b class="wp-gapkey">○</b> not run, where its point would stand</li></ul>
+<div class="wp-numbers"><span class="wp-tag">Numbers on a page · invented values</span>
+<svg viewBox="0 0 280 196" role="img" aria-label="Example plot with invented values. Accuracy in percent, from 60 to 90, over training steps: 71 at 10k steps, 78 at 20k and 82 at 40k, joined by a line. The column for 80k steps holds no point and is labelled not run.">
+<text class="wp-tx" x="2" y="16">↑ accuracy, %</text>
+<path class="wp-grid" d="M40 109H276M40 71H276"/>
+<path class="wp-axis" d="M40 34V146H276"/>
+<rect class="wp-gap" x="222" y="48" width="28" height="98" rx="4"/>
+<text class="wp-gaplabel" x="236" y="42" text-anchor="middle">not run</text>
+<polyline class="wp-line" points="70,105 120,79 170,64"/>
+<circle class="wp-pt" cx="70" cy="105" r="4.5"/><circle class="wp-pt" cx="120" cy="79" r="4.5"/><circle class="wp-pt" cx="170" cy="64" r="4.5"/>
+<text class="wp-val" x="70" y="127" text-anchor="middle">71</text><text class="wp-val" x="120" y="101" text-anchor="middle">78</text><text class="wp-val" x="170" y="86" text-anchor="middle">82</text>
+<text class="wp-tick" x="34" y="151" text-anchor="end">60</text><text class="wp-tick" x="34" y="114" text-anchor="end">70</text><text class="wp-tick" x="34" y="76" text-anchor="end">80</text><text class="wp-tick" x="34" y="39" text-anchor="end">90</text>
+<text class="wp-tick" x="70" y="166" text-anchor="middle">10k</text><text class="wp-tick" x="120" y="166" text-anchor="middle">20k</text><text class="wp-tick" x="170" y="166" text-anchor="middle">40k</text><text class="wp-tick" x="236" y="166" text-anchor="middle">80k</text>
+<text class="wp-tx" x="158" y="190" text-anchor="middle">training steps →</text>
+</svg>
+<ul class="wp-keys"><li><b>x</b> the setting that changes the value</li><li><b>y</b> in the unit of the claim</li><li><b class="wp-gapkey" aria-hidden="true"></b> not run, where its point would stand</li></ul>
 </div>
 </div>
-<figcaption><b>Figure 3.</b> What the claim shows decides its form; a value that depends on a setting is drawn over that setting. This illustrative diagram is authored in the page source; the plot is a schematic and carries no data.</figcaption>
+<figcaption><b>Figure 3.</b> What the claim shows decides its form; a value that depends on a setting is drawn over that setting. The diagram and the example plot are authored in the page source; the plot's values are example values, invented for this page, and no measurement.</figcaption>
 </figure>
 
-Prose alone leaves each reader to build the picture, and different readers build different ones; a visual that only repeats the text has not earned its place either. The four tiles of [Figure 3](#fig-forms) show the choice: what the claim shows sets the form, and a table is for reading off single values, not for comparing them. Within that, aim for the most telling picture the claim allows, and vary the forms across a page; this page uses flows, a matrix, tiles beside a schematic and a real excerpt.
+Prose alone leaves each reader to build the picture, and different readers build different ones; a visual that only repeats the text has not earned its place either. The four tiles of [Figure 3](#fig-forms) show the choice: what the claim shows sets the form, and a table is for reading off single values, not for comparing them. Within that, aim for the most telling picture the claim allows, and vary the forms across a page; this page uses flows, a matrix, tiles beside an example plot and a real excerpt.
 
-The schematic beside them applies the same idea to numbers. A value shown at one setting alone hides how it depends on that setting, so it becomes a plot over the settings that change it. The axis stays in the unit of the claim: a claim about accuracy is not restated in seconds. A setting that has not run is named as not run in the place its result would take, and a result that carries no pass or fail says so in its heading.
+The example plot beside them applies the same idea to numbers: accuracy over training steps, in percent, with the longest training named as not run. A value shown at one setting alone hides how it depends on that setting, so it becomes a plot over the settings that change it. The axis stays in the unit of the claim: a claim about accuracy is not restated in seconds. A setting that has not run is named as not run in the place its result would take, and a result that carries no pass or fail says so in its heading.
 
-A missing figure is work to do. The page author makes it from what exists, measured data for a plot, code and configuration for a flow, geometry for a picture, records its generator and inputs, and puts any number it computes into the record first. A claim stays without its figure only when nothing true can be drawn, and the completion report then says which figure is missing and what it would take. Invented data is never drawn, and a sketch never reads as a measurement; the schematic above has no numbers for that reason.
+A missing figure is work to do. The page author makes it from what exists, measured data for a plot, code and configuration for a flow, geometry for a picture, records its generator and inputs, and puts any number it computes into the record first. A claim stays without its figure only when nothing true can be drawn, and the completion report then says which figure is missing and what it would take. A page that reports results never draws invented data, and a sketch there never reads as a measurement. The kit's own pages explain rules and report no results, so an example there may use invented values, as the plot above does, and its caption says that the values are invented.
 
 Every figure has a stable anchor, a numbered caption, a prose reference like the one above that links its number and says what to notice, a named source and useful alternative text; an image that only shows appearance gets a caption and no number. Chart labels stay at 11 px or more, controls are at least 44 px as touch targets, and nothing overflows the page at any width.
 
