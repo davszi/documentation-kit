@@ -37,7 +37,7 @@ adaptation removes its two settings at its upgrade to 5.0.0, and
 `docs/site/layout_paths.py` once a search finds no other user (its own tests
 import it), deletes the frozen copies its owner approves, and repoints or
 removes the links that needed the adapter, following the
-[migration step](../topics/releases/migrations/5.0.0.md#remove-the-adapter-hooks).
+migration step of 5.0.0, in the repository at the tag `v5.9.0`.
 The size of that cleanup, measured on a clone, is in the worklog entry of
 2026-11-15 on the HTML link check: 42 of adaptation's 78 HTML links to
 repository files fail once its path adapter is gone.

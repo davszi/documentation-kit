@@ -623,7 +623,7 @@ async function reviewArrangements(browser, origin) {
   await fs.mkdir(output,{recursive:true});
   const manifest = JSON.parse(await fs.readFile(path.join(root,'site-build.json'),'utf8'));
   const pages = manifest.public_pages.filter(name => /^html\/[^/]+\.html$/.test(name)).map(name => name.slice(5, -5));
-  for (const required of ['git', 'documentation-system', 'authoring', 'reader', 'panel-switcher', 'releases', 'migrate-1-1-0'])
+  for (const required of ['git', 'documentation-system', 'authoring', 'reader', 'panel-switcher', 'releases', 'migrate-5-9-0'])
     assert.ok(pages.includes(required), 'missing required page ' + required);
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
   const origin = `http://127.0.0.1:${server.address().port}`;
@@ -707,7 +707,7 @@ async function reviewArrangements(browser, origin) {
       // "Browse by folder" disclosure, closed on pages for people and pinned records,
       // open to an unpinned record.
       const pinnedRoutes = ['readme.html'];
-      const releaseRoutes = ['releases.html', 'migrate-5-9-0.html', 'migrate-5-8-0.html', 'migrate-5-5-0.html', 'migrate-5-2-0.html', 'migrate-5-1-0.html', 'migrate-5-0-0.html', 'migrate-4-0-0.html', 'migrate-3-2-0.html', 'migrate-3-1-0.html', 'migrate-3-0-0.html', 'migrate-2-0-0.html', 'migrate-1-1-0.html'];
+      const releaseRoutes = ['releases.html', 'migrate-5-9-0.html'];
       for (const [slug, open, folders] of [['index', false, []], ['getting-started', false, []],
                                            ['releases', false, ['docs/', 'topics/', 'releases/']],
                                            ['git', true, ['rules/', 'engineering/']]]) {

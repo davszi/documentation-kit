@@ -21,7 +21,7 @@ class Snapshot(unittest.TestCase):
         self.assertIn(f'\n## {SECTION}\n', (KIT / 'README.md').read_text())
 
     def test_the_starter_and_the_readme_name_the_file(self):
-        for path in ('examples/starter/AGENTS.md.tmpl', 'README.md', 'docs/topics/releases/migrations/5.1.0.md'):
+        for path in ('examples/starter/AGENTS.md.tmpl', 'README.md', 'docs/topics/releases/migrations/5.9.0.md'):
             self.assertIn('examples/global-agent-context.md', ' '.join((KIT / path).read_text().split()), path)
 
 

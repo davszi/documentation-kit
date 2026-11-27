@@ -2,6 +2,37 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — One migration guide: the eleven older ones are deleted
+
+- The owner asked to stop maintaining migration guides for versions nobody
+  is on, and on my question which to keep said: "remove all we can and move
+  the parts that matter into the newest ones if needed". He does not mind
+  that someone may have cloned an older version.
+- Checked before: the four projects on this machine pin 5.7.0 (adaptation,
+  ADP, safety gates) and 5.8.0 (Tempo); the repository has no fork, star or
+  watcher. A statement of mine from earlier the same day, that ADP is on
+  5.0.0, was wrong.
+- Deleted, all tracked by Git and all kept at the tag `v5.9.0`: the guides
+  for 1.1.0, 2.0.0, 3.0.0, 3.1.0, 3.2.0, 4.0.0, 5.0.0, 5.1.0, 5.2.0, 5.5.0
+  and 5.8.0 under `docs/topics/releases/migrations/`, 15,671 words. Samples
+  of 2.0.0, 5.2.0 and 5.8.0 were read first.
+- The 5.9.0 guide took over what the others held for a project on 5.7.0 or
+  later: preparing the upgrade (from 1.1.0), moving the pin and finding the
+  documentation interpreter (from 4.0.0 and 5.0.0), the decision about text
+  before a first chapter (from 5.8.0) and landing the upgrade (from 5.0.0).
+  It is 957 words.
+- Followed everywhere the old guides were named: 11 menu entries and 11
+  page registrations; 20 links in the release notes, now plain words, with
+  one sentence saying where the old guides are; the README, context and
+  index; one rule sentence in `rules/site/resources.md`; two open records;
+  three build messages, which now name the tag; three tests.
+- The release group of the menu has 2 entries, where it had 13, and no
+  longer starts folded.
+- An older worklog entry links a deleted guide. Entries are not rewritten:
+  `worklog_links_checked_from` moves to 2026-11-27, the setting made for
+  this.
+- On branch `after-5.9.0`, not on `main`.
+
 ## 2026-11-27 — 5.9.0 published; a button that copies a record's Markdown
 
 - 5.9.0 is out: `main` and the tag `v5.9.0` at `038e006`. The full check

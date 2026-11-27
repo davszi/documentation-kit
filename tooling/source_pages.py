@@ -125,7 +125,7 @@ ROOTS_ERROR = ('site.toml: reference_roots must list distinct folders or Markdow
 EXCLUDE_REMOVED = ('site.toml: reference_exclude was removed in kit 5.1.0; the Reference section now lists only '
                    'what reference_roots names, by default ["docs"]. Delete the setting. To keep a file of a '
                    'listed folder off the site, name it in [publication] private_prefixes. See "Name the '
-                   'folders the Reference section lists" in the kit\'s docs/topics/releases/migrations/5.1.0.md')
+                   'folders the Reference section lists" in docs/topics/releases/migrations/5.1.0.md at the kit\'s tag v5.9.0')
 
 
 def reference_settings(site: dict) -> tuple[bool, tuple[str, ...]]:

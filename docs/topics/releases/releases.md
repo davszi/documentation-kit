@@ -6,6 +6,10 @@ A consuming project pins an exact commit or tag and upgrades deliberately, follo
 release changes for consumers and how to move to it. Chronology stays in the
 [worklog](../../KIT_WORKLOG.md); consumer adoption status stays in each consuming project.
 
+The kit keeps one migration guide, [for the current version](migrations/5.9.0.md). The
+guides of earlier versions, which the notes below name, are in the kit's
+repository at the tag `v5.9.0`, under `docs/topics/releases/migrations/`.
+
 ## What a version number promises
 
 The [stable and provisional interfaces](#100--first-stable-version) list what a
@@ -206,7 +210,7 @@ page; a window up to about 350 px wide, where the fallback applies.
 5.8.0 is a minor release under
 [what a version number promises](#what-a-version-number-promises): it changes
 how the reader lays out a page and adds one lint warning, which fails
-`--strict`. The [5.8.0 migration guide](migrations/5.8.0.md) gives the step
+`--strict`. The [5.9.0 migration guide](migrations/5.9.0.md#decide-about-the-text-before-each-first-chapter) gives the step
 for it.
 
 deivid asked why pages had an Introduction chapter at all: it gave him small
@@ -524,7 +528,7 @@ only.
 [what a version number promises](#what-a-version-number-promises): it
 corrects three defects and needs no migration step; a project moves its pin
 to `v5.5.2`, and a project that follows the
-[5.5.0 migration guide](migrations/5.5.0.md) uses this tag in its place. The
+5.5.0 migration guide uses this tag in its place. The
 three were open points of the kit's own list after 5.5.1.
 
 - **A locked page opened from a saved key runs its scripts.** A reader whose
@@ -600,7 +604,7 @@ points.
 [what a version number promises](#what-a-version-number-promises): it
 corrects one defect and needs no migration step; a project moves its pin to
 `v5.5.1`, and a project that follows the
-[5.5.0 migration guide](migrations/5.5.0.md) uses this tag in its place.
+5.5.0 migration guide uses this tag in its place.
 adaptation reported the defect on 24 November 2026; it is as old as the
 Reference pages.
 
@@ -633,7 +637,7 @@ widens it was not measured, and the
 two settings and two browser checks, adds one lint warning and changes how
 small labels of the shared theme look. It closes the two findings of
 adaptation's review of 23 November 2026 that 5.4.1 left open. The
-[5.5.0 migration guide](migrations/5.5.0.md) has the steps.
+5.5.0 migration guide has the steps.
 
 - **All text of a page is 11 px or more.**
   [Page design](../../../rules/writing/pages.md#page-design) now states the
@@ -888,7 +892,7 @@ and it removes nothing. All three changes were asked for from adaptation.
   A project that loads `svg_figures.py` by file path, or keeps a copy of it,
   now also needs `figure_themes.py` beside it.
 
-The [5.2.0 migration guide](migrations/5.2.0.md) has the steps.
+The 5.2.0 migration guide has the steps.
 
 ## 5.1.0 — the Reference section lists named folders only
 
@@ -924,7 +928,7 @@ What changes for a project:
 
 No other command, flag, configuration key or marker changes, and no section
 anchor under `rules/` is removed or renamed. The
-[5.1.0 migration guide](migrations/5.1.0.md) has one content step and says
+5.1.0 migration guide has one content step and says
 how a project on 4.0.0 combines it with the 5.0.0 guide.
 
 ## 5.0.0 — Reference section by default, page lock and Presentation view
@@ -942,7 +946,7 @@ reasons:
   [automatic reference listing](../../../rules/site/authoring.md#automatic-reference-listing)
   keeps it out. **A private repository with a public site publishes these
   files at its next publish, unless it excludes them or turns the listing
-  off.** The first step of the [5.0.0 migration guide](migrations/5.0.0.md)
+  off.** The first step of the 5.0.0 migration guide
   settles the list before the moved pin reaches a branch that publishes.
 - **`publish` refuses a private source page.** `publish` now fails when a
   `[[source_pages]]` table registers a file that the project's own
@@ -1100,7 +1104,7 @@ signature is removed. The new `build --check-reader` flag and the new
 `site.toml` settings `worklog_links_checked_from`, `[group_colors]` and
 `[plot_toggle_labels]` join the stable interfaces. A project that already
 used one of these three names as a top-level `site.toml` key for something
-else fails the build until it renames its own key. Follow the [4.0.0 migration guide](migrations/4.0.0.md).
+else fails the build until it renames its own key. Follow the 4.0.0 migration guide.
 
 Removed or renamed interfaces, with their status under the
 [stable and provisional interfaces](#100--first-stable-version):
@@ -1208,7 +1212,7 @@ rule text, changes no tooling, and needs no migration step.
 [what a version number promises](#what-a-version-number-promises): it adds two
 optional settings to the stable interfaces, and a project that sets neither
 builds the same pages, addresses and sidebar as before. The
-[3.2.0 migration guide](migrations/3.2.0.md) gives the steps.
+3.2.0 migration guide gives the steps.
 
 - `topic_group_folders = ["parked"]` in `docs/site/site.toml` lets topic
   folders live one level deeper, at `docs/topics/<group>/<topic>/index.md`.
@@ -1243,7 +1247,7 @@ ones in the source tree and in the sidebar.
 [what a version number promises](#what-a-version-number-promises): the header
 change alters how the shared theme looks, every key still parses and no project
 that built before fails. One stable key loses its effect, as the first item
-says. The [3.1.0 migration guide](migrations/3.1.0.md) gives the steps.
+says. The 3.1.0 migration guide gives the steps.
 
 - The sidebar header shows the site's name on every page: `home_label`, or
   `title` when `home_label` is not set or blank. Up to 2.0.0 a page with the
@@ -1270,10 +1274,10 @@ says. The [3.1.0 migration guide](migrations/3.1.0.md) gives the steps.
   that a landing records its commit stays in
   [rules for changes and chronology](../../../rules/documentation.md#rules-for-changes-and-chronology).
 - Two migration guides gain an instruction that ADP's upgrade showed was
-  missing. The [2.0.0 guide](migrations/2.0.0.md#experiment-guides) tells a
+  missing. The 2.0.0 guide tells a
   project to add the router rows for the two experiment guides and to compare
   its router with the starter's. The
-  [3.0.0 guide](migrations/3.0.0.md#router-anchors) says that a link about the
+  3.0.0 guide says that a link about the
   experiment floor goes to the experiment workflow guide, not to the figures
   guide that the anchor table names.
 
@@ -1292,7 +1296,7 @@ reason: it removes section anchors under `rules/`. `rules/writing.md` and
 location until the project repoints it; links written as HTML `<a href>` are
 not checked. No command, configuration key, marker or adapter signature is
 removed.
-Follow the [3.0.0 migration guide](migrations/3.0.0.md).
+Follow the 3.0.0 migration guide.
 One check can fail a strict lint run: a topic page without a record
 must add one or declare `page_only`. Two provisional tooling modules that no
 known consumer imported are removed. A project that wants to keep the
@@ -1312,13 +1316,13 @@ chips, and code keeps its case inside uppercase titles.
 | Reader rule | The sidebar docks by default on screens wider than 900 px; the guide now states the value the shared reader already used | [Shared reading layout](../../../rules/site/reader.md#shared-reading-layout) |
 | Conformance | New guide: the project conformance check to run when a kit pin moves or a repository changes hands; the starter router routes to it | [Project conformance check](../../../rules/conformance.md) |
 | Configuration | A registered source page no longer needs a `[[nav]]` entry; topic pages still do. `[[source_pages]]` accepts optional `pinned = true` | [Registered source pages](../../../rules/site/authoring.md#registered-source-pages) |
-| Rules | Removed: the stub headings in `rules/writing.md` and `rules/maintenance.md`, which only forwarded old links. Both files are now plain indexes of the focused guides. A link to one of their former anchors must point at the focused guide's own section; links to the files without an anchor still work | [Router anchors](migrations/3.0.0.md#router-anchors) |
-| Rules | Records and pages are documented in a fixed order: the working agent writes the record first, and a page for people is made on request, by a separate agent where the runtime supports delegation. New guide `rules/records.md` gathers what a record needs; `rules/writing/` now covers pages; its rules about what a code excerpt, a formula or an experiment visual may claim still apply to records. `rules/writing/evidence.md` is removed and six sections moved, so links to them must be repointed. The starter router has three documentation rows in place of two | [Record first, page on request](../../../rules/documentation.md#record-first-page-on-request), [sections that moved](migrations/3.0.0.md#sections-that-moved) |
+| Rules | Removed: the stub headings in `rules/writing.md` and `rules/maintenance.md`, which only forwarded old links. Both files are now plain indexes of the focused guides. A link to one of their former anchors must point at the focused guide's own section; links to the files without an anchor still work | Router anchors |
+| Rules | Records and pages are documented in a fixed order: the working agent writes the record first, and a page for people is made on request, by a separate agent where the runtime supports delegation. New guide `rules/records.md` gathers what a record needs; `rules/writing/` now covers pages; its rules about what a code excerpt, a formula or an experiment visual may claim still apply to records. `rules/writing/evidence.md` is removed and six sections moved, so links to them must be repointed. The starter router has three documentation rows in place of two | [Record first, page on request](../../../rules/documentation.md#record-first-page-on-request), sections that moved |
 | Theme | Sidebar groups are toned sections, wrapped in `div.nav-section` in the built HTML. The home hero (`.home-hero`) lays out in two columns with a larger headline. Numbered steps in build-sheet boxes show their number in the box's tone | [Shared reading layout](../../../rules/site/reader.md#shared-reading-layout) |
 | Rules | The Git guide now says what the pin check always did: it counts the kit's remote branches, not tags | [The shared kit submodule](../../../rules/engineering/git.md#the-shared-kit-submodule) |
 | Rules | Every visual change is reviewed by eye before it is reported done, from whole-element captures at each supported width and reader view | [Validation and review](../../../rules/site/validation.md#validation-and-review) |
 | Rules | A worklog entry and its commit message cover the same landing on purpose and are written in the same step. `OPEN.md` format, which lint already checked, is now stated | [Rules for changes and chronology](../../../rules/documentation.md#rules-for-changes-and-chronology), [open work](../../../rules/documentation.md#from-open-work-to-subject-knowledge) |
-| Starter | The home page links `../PROJECT_CONTEXT.md`; the 2.0.0 starter linked a file that does not exist. The reading index has three documentation rows in place of two | [Starter home link](migrations/3.0.0.md#starter-home-link), [reading index](migrations/3.0.0.md#reading-index) |
+| Starter | The home page links `../PROJECT_CONTEXT.md`; the 2.0.0 starter linked a file that does not exist. The reading index has three documentation rows in place of two | Starter home link, reading index |
 | Build fix | A paragraph that follows a fold now renders as Markdown, with or without a blank line after the closing marker. Before, the paragraph, typically a "Full guide" line with links, appeared as raw text. Pages with such paragraphs change in the built output | [Story and reading layers](../../../rules/writing/explanations.md#story-and-reading-layers) |
 | License | The kit's own rules, tooling, theme and starter are under the MIT License; bundled fonts and KaTeX keep their own licenses. Earlier versions granted no license. Every built site gains one file, `html/assets/documentation-kit/LICENSE`; a project asset with that output name fails the build | [License](../../../README.md#license) |
 | Tooling | Removed: `tooling/number_ledger.py` and `tooling/verbatim_blocks.py`, both provisional since 1.0.0. The rule that a redesign records number sources in a ledger and locks kept blocks stays; each project keeps its own ledger format and checks. `tooling/svg_figures.py` stays | [Numbers and staleness](../../../rules/records.md#numbers-and-staleness) |
@@ -1331,7 +1335,7 @@ the exporter no longer renames or relocates files, and the old local-artifact
 manifest location is no longer read. `docsite.py lint` also fails a project
 whose pinned kit commit is on no remote branch of the kit. Everything else adds
 to the 1.x surface. Every consumer follows the
-[2.0.0 migration guide](migrations/2.0.0.md); a consumer that uses neither
+2.0.0 migration guide; a consumer that uses neither
 removed form only adds one router row. The 1.0.0 stable and provisional
 interfaces below still apply to 2.x, apart from these removals.
 
@@ -1368,7 +1372,7 @@ byte. Validation is recorded in the
 
 1.1.0 adds compatible policy routes and optional evidence configuration to the
 1.0.0 stable surface. Existing commands, configuration and adapter signatures
-remain available. Follow the [1.1.0 migration guide](migrations/1.1.0.md); adopting
+remain available. Follow the 1.1.0 migration guide; adopting
 the kit does not require moving an existing consumer's documentation layout.
 
 | Area | Consumer change | Owning contract |
@@ -1377,7 +1381,7 @@ the kit does not require moving an existing consumer's documentation layout.
 | Contributor entrypoints | One task-triggered `AGENTS.md` router, with a bare `@AGENTS.md` import for Claude; revised starter orientation and reading index | [Agent entrypoints](../../../rules/documentation.md#agent-entrypoints-import-versus-point) |
 | Writing and site ownership | Focused `rules/writing/` and `rules/site/` guides; original writing/maintenance routes and their anchors remain available (the anchors until 3.0.0) | [Writing](../../../rules/writing.md), [site](../../../rules/maintenance.md) |
 | Visual and evidence guidance | Figures lead mechanism/geometric explanations; scope stays beside evidence; representation follows the question; failed attempts and original settings remain with their evidence | [Page design](../../../rules/writing/pages.md#page-design), [figures](../../../rules/writing/figures.md#figures-and-comparisons), [evidence](../../../rules/records.md#numbers-and-staleness) |
-| Optional project layout | New starter uses `docs/PROJECT_CONTEXT.md` and `docs/index.md`; existing project destinations and historical routes stay project-owned | [Canonical homes](../../../rules/documentation.md#canonical-homes), [optional layout migration](migrations/1.1.0.md#optional-project-layout-migration) |
+| Optional project layout | New starter uses `docs/PROJECT_CONTEXT.md` and `docs/index.md`; existing project destinations and historical routes stay project-owned | [Canonical homes](../../../rules/documentation.md#canonical-homes), optional layout migration |
 | Local media inventories | Optional `local_artifacts_manifest` selects the inventory path; omitted settings retain the legacy fallback and explicitly missing configured files fail | [Resources](../../../rules/site/resources.md#resource-closure-and-evidence) |
 | Exact source snapshots | Optional evidence-adapter `document_origin(path, *, root)` preserves registered snapshot origins, with containment checks and all link/anchor/snippet validation retained | [Evidence adapter](../../../rules/site/resources.md#resource-closure-and-evidence) |
 
@@ -1428,7 +1432,7 @@ migration steps.
 Do this as one reviewed deliverable in the consuming project, on its own branch.
 Run the commands with the project's documentation interpreter, written `python`
 below: the Python environment that has `.docs-kit/requirements.txt` installed.
-The [4.0.0 guide](migrations/4.0.0.md#move-the-pin) says how to find or create
+The 4.0.0 guide says how to find or create
 it.
 
 1. **Record where you start.** Note the current pin (`git -C .docs-kit rev-parse HEAD`)

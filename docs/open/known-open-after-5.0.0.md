@@ -50,7 +50,7 @@ does, and this record with its route when the last one goes.
   the default lists `docs/` only; ADP's 230 experiment records are listed
   when it names `experiments`. Closes at ADP's upgrade, which starts with
   the first step of the
-  [5.1.0 migration guide](../topics/releases/migrations/5.1.0.md).
+  5.1.0 migration guide, in the repository at the tag `v5.9.0`.
 
 ## Known limits, not fixed
 

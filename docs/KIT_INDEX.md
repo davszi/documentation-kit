@@ -49,26 +49,8 @@ shared independent-comparison component.
 
 [Releases and upgrades](topics/releases/releases.md) owns version changes,
 stable interfaces and what a version number promises. The
-[5.8.0 migration guide](topics/releases/migrations/5.8.0.md) moves 5.5.0 to
-5.7.0 consumers to 5.8.0, and the
-[5.9.0 migration guide](topics/releases/migrations/5.9.0.md) moves 5.8.0
-consumers to the current 5.9.0. The
-[5.5.0 migration guide](topics/releases/migrations/5.5.0.md) moves 5.2.0 to
-5.4.1 consumers to 5.5.0. The
-[5.2.0 migration guide](topics/releases/migrations/5.2.0.md)
-moves 5.1.0 consumers to 5.2.0. The
-[5.1.0 guide](topics/releases/migrations/5.1.0.md) moves 5.0.0 consumers to
-5.1.0. The
-[5.0.0 guide](topics/releases/migrations/5.0.0.md) moves 4.0.0 consumers to
-5.0.0. The
-[4.0.0 guide](topics/releases/migrations/4.0.0.md) moves 3.2.1 consumers to
-4.0.0. The
-[3.2.0 guide](topics/releases/migrations/3.2.0.md) moves 3.1.0 consumers to
-3.2.0, and the patch release 3.2.1 needed no further step; the
-[3.1.0 guide](topics/releases/migrations/3.1.0.md), the
-[3.0.0 guide](topics/releases/migrations/3.0.0.md), the
-[2.0.0 guide](topics/releases/migrations/2.0.0.md) and the
-[1.1.0 guide](topics/releases/migrations/1.1.0.md) cover the earlier steps.
+[5.9.0 migration guide](topics/releases/migrations/5.9.0.md) moves 5.7.0 and
+5.8.0 consumers to the current 5.9.0; it is the only guide the kit keeps.
 
 The extraction record, policy map, source hashes and initial receipts remain at
 the [`v1.1.0` tag](https://github.com/davszi/documentation-kit/tree/v1.1.0).

@@ -33,7 +33,7 @@ working document is now deleted and cited from Git, as
 so a link names a current file or a file at its commit. Links in old worklog
 entries that name a moved or deleted file stop being checked through
 `worklog_links_checked_from`, described below. The
-[5.0.0 migration guide](../../docs/topics/releases/migrations/5.0.0.md#remove-the-adapter-hooks) gives
+5.0.0 migration guide, in the kit's repository at the tag `v5.9.0`, gives
 the steps for a project that named one of them.
 
 For generated or sealed content formats, `content_transform` may name a tracked

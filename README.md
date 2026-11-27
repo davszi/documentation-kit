@@ -170,13 +170,13 @@ git add .docs-kit
 Run `python` as the project's documentation interpreter: the environment that
 has `.docs-kit/requirements.txt` installed, `.build/docs-env/bin/python` in a
 checkout set up as above. A fresh clone or worktree has none until it is
-created; the [4.0.0 guide](docs/topics/releases/migrations/4.0.0.md#move-the-pin)
+created; the [migration guide](docs/topics/releases/migrations/5.9.0.md#move-the-pin)
 says how to check and create it.
 
 The kit is versioned in `VERSION` and tagged `v<version>`. [Releases and
 upgrades](docs/topics/releases/releases.md) lists what each version changes for
 consumers and the migration steps; 1.0.0 is the first stable version.
-The current release is 5.9.0; its [migration guide](docs/topics/releases/migrations/5.9.0.md) covers the new router row and the sidebar's foot. The [5.8.0 migration guide](docs/topics/releases/migrations/5.8.0.md) covers the lint warning for text before a page's first chapter. The [5.5.0 migration guide](docs/topics/releases/migrations/5.5.0.md) covers the lint warning for a repeated id and the larger small labels. The [5.2.0 migration guide](docs/topics/releases/migrations/5.2.0.md) covers generated figures in two themes and the lint warning for untracked tooling; the [5.1.0 guide](docs/topics/releases/migrations/5.1.0.md) starts with which folders the Reference section lists, a decision a private repository with a public site makes before it moves the pin; the [5.0.0 guide](docs/topics/releases/migrations/5.0.0.md), the [4.0.0 guide](docs/topics/releases/migrations/4.0.0.md), the [3.2.0 guide](docs/topics/releases/migrations/3.2.0.md), the [3.1.0 guide](docs/topics/releases/migrations/3.1.0.md), the [3.0.0 guide](docs/topics/releases/migrations/3.0.0.md), the [2.0.0 guide](docs/topics/releases/migrations/2.0.0.md) and the [1.1.0 guide](docs/topics/releases/migrations/1.1.0.md) cover the earlier steps.
+The current release is 5.9.0; its [migration guide](docs/topics/releases/migrations/5.9.0.md) is the only one the kit keeps and holds every step from 5.7.0. The guides of earlier versions are in the repository at the tag `v5.9.0`.
 
 Then run the [project conformance check](rules/conformance.md) and report its
 findings. Review changed human pages at wide and narrow widths before committing the

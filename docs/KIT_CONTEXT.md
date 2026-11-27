@@ -35,33 +35,9 @@ owns the shared panel switcher's authoring, behavior and extraction checks.
 [Releases and upgrades](topics/releases/releases.md) owns version notes and
 consumer migration steps; `VERSION` holds the current version.
 The current release is 5.9.0. Its
-[migration guide](topics/releases/migrations/5.9.0.md) covers the new router
-row and the sidebar's foot. The
-[5.8.0 migration guide](topics/releases/migrations/5.8.0.md) covers the lint warning
-for text before a page's first chapter. The
-[5.5.0 migration guide](topics/releases/migrations/5.5.0.md) covers the
-warning for a repeated id and the larger small labels. The
-[5.2.0 migration guide](topics/releases/migrations/5.2.0.md) covers
-generated figures in a dark and a light theme and the lint warning for
-untracked tooling. The [5.1.0 guide](topics/releases/migrations/5.1.0.md)
-covers the Reference section, which lists only `docs/`, or the folders a
-project names in `reference_roots` instead. The [5.0.0 guide](topics/releases/migrations/5.0.0.md)
-covers the automatic Reference listing, private source pages that `publish` now refuses, the removed path
-and evidence adapters and kept-copy settings, the new lint error for HTML links to repository files,
-the slide-face review and the optional page lock. The
-[4.0.0 guide](topics/releases/migrations/4.0.0.md) covers the removed `rules/records.md` anchor and finished working documents,
-the renamed theme variables and classes, `[group_colors]`,
-`[plot_toggle_labels]`, `build --check-reader` and the rules no check enforces. The 3.2.1 patch needed
-no migration step. The [3.2.0 guide](topics/releases/migrations/3.2.0.md)
-covers topic group folders and folded navigation groups. The
-[3.1.0 guide](topics/releases/migrations/3.1.0.md) covers one site name in the
-sidebar header and two relaxed lint warnings. The [3.0.0 guide](topics/releases/migrations/3.0.0.md) covers the
-removed router anchors, the new `rules/records.md` with record first and page
-on request, topic records, the sidebar mark and the removed ledger modules. The
-[2.0.0 guide](topics/releases/migrations/2.0.0.md) covers the removed
-compatibility forms, configured publication and the kit-pin check; the
-[1.1.0 guide](topics/releases/migrations/1.1.0.md) covers focused policy owners,
-optional project layout changes and adapters.
+[migration guide](topics/releases/migrations/5.9.0.md) is the only one the kit
+keeps: it holds every step from 5.7.0. The guides of earlier versions are in
+the repository at the tag `v5.9.0`.
 
 The [website record](topics/website/website.md) owns the kit's own site.
 Build it from the kit root with `python docsite.py build --project .`.

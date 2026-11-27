@@ -5,8 +5,6 @@ title = "Documentation kit"
 gh_repo = "https://github.com/davszi/documentation-kit"
 gh_ref = "main"
 chapter_reader = true
-# Twelve release pages: the group starts closed unless it holds the current page.
-folded_groups = ["releases"]
 brand_mark = "docs/site/brand-mark.svg"
 # Lint notes for page numbers that no linked record states.
 page_number_notes = true
@@ -14,7 +12,9 @@ page_number_notes = true
 # mistaken for a consuming project's docs/worklog.md or docs/open/OPEN.md.
 worklog = "docs/KIT_WORKLOG.md"
 # Older entries link files that were deleted later; entries are never rewritten.
-worklog_links_checked_from = "2026-11-15"
+# Entries before this day may name the migration guides of versions up to 5.8.0,
+# deleted on 27 November 2026; they are in the repository at the tag v5.9.0.
+worklog_links_checked_from = "2026-11-27"
 open_work = "docs/open/KIT_OPEN.md"
 # The Reference section lists the tracked Markdown files under docs/ and the
 # two root files named here; the rule files are registered below. CLAUDE.md
@@ -79,61 +79,6 @@ group = "releases"
 [[nav]]
 label = "Migrate to 5.9.0"
 file = "migrate-5-9-0.html"
-group = "releases"
-
-[[nav]]
-label = "Migrate to 5.8.0"
-file = "migrate-5-8-0.html"
-group = "releases"
-
-[[nav]]
-label = "Migrate to 5.5.0"
-file = "migrate-5-5-0.html"
-group = "releases"
-
-[[nav]]
-label = "Migrate to 5.2.0"
-file = "migrate-5-2-0.html"
-group = "releases"
-
-[[nav]]
-label = "Migrate to 5.1.0"
-file = "migrate-5-1-0.html"
-group = "releases"
-
-[[nav]]
-label = "Migrate to 5.0.0"
-file = "migrate-5-0-0.html"
-group = "releases"
-
-[[nav]]
-label = "Migrate to 4.0.0"
-file = "migrate-4-0-0.html"
-group = "releases"
-
-[[nav]]
-label = "Migrate to 3.2.0"
-file = "migrate-3-2-0.html"
-group = "releases"
-
-[[nav]]
-label = "Migrate to 3.1.0"
-file = "migrate-3-1-0.html"
-group = "releases"
-
-[[nav]]
-label = "Migrate to 3.0.0"
-file = "migrate-3-0-0.html"
-group = "releases"
-
-[[nav]]
-label = "Migrate to 2.0.0"
-file = "migrate-2-0-0.html"
-group = "releases"
-
-[[nav]]
-label = "Migrate to 1.1.0"
-file = "migrate-1-1-0.html"
 group = "releases"
 
 # ── Source registry: canonical Markdown rendered as whole-file pages ───
@@ -281,75 +226,10 @@ title = "Release notes"
 description = "What each version changes for consumers and what stays stable within a major version."
 
 [[source_pages]]
-source = "docs/topics/releases/migrations/1.1.0.md"
-slug = "migrate-1-1-0"
-description = "Move an existing consumer from 1.0.0 to 1.1.0."
-
-[[source_pages]]
-source = "docs/topics/releases/migrations/2.0.0.md"
-slug = "migrate-2-0-0"
-title = "Migrate to 2.0.0"
-description = "Move an existing consumer from 1.1.0 to 2.0.0."
-
-[[source_pages]]
-source = "docs/topics/releases/migrations/3.0.0.md"
-slug = "migrate-3-0-0"
-title = "Migrate to 3.0.0"
-description = "Move an existing consumer from 2.0.0 to 3.0.0."
-
-[[source_pages]]
-source = "docs/topics/releases/migrations/3.1.0.md"
-slug = "migrate-3-1-0"
-title = "Migrate to 3.1.0"
-description = "Move an existing consumer from 3.0.0 to 3.1.0."
-
-[[source_pages]]
-source = "docs/topics/releases/migrations/3.2.0.md"
-slug = "migrate-3-2-0"
-title = "Migrate to 3.2.0"
-description = "Move an existing consumer from 3.1.0 to 3.2.0."
-
-[[source_pages]]
 source = "docs/topics/releases/migrations/5.9.0.md"
 slug = "migrate-5-9-0"
 title = "Migrate to 5.9.0"
-description = "Move an existing consumer from 5.8.0 to 5.9.0."
-
-[[source_pages]]
-source = "docs/topics/releases/migrations/5.8.0.md"
-slug = "migrate-5-8-0"
-title = "Migrate to 5.8.0"
-description = "Move an existing consumer from 5.5.0 to 5.7.0 to 5.8.0."
-
-[[source_pages]]
-source = "docs/topics/releases/migrations/5.5.0.md"
-slug = "migrate-5-5-0"
-title = "Migrate to 5.5.0"
-description = "Move an existing consumer from 5.2.0 to 5.4.1 to 5.5.0."
-
-[[source_pages]]
-source = "docs/topics/releases/migrations/5.2.0.md"
-slug = "migrate-5-2-0"
-title = "Migrate to 5.2.0"
-description = "Move an existing consumer from 5.1.0 to 5.2.0."
-
-[[source_pages]]
-source = "docs/topics/releases/migrations/5.1.0.md"
-slug = "migrate-5-1-0"
-title = "Migrate to 5.1.0"
-description = "Move an existing consumer from 5.0.0 to 5.1.0."
-
-[[source_pages]]
-source = "docs/topics/releases/migrations/5.0.0.md"
-slug = "migrate-5-0-0"
-title = "Migrate to 5.0.0"
-description = "Move an existing consumer from 4.0.0 to 5.0.0."
-
-[[source_pages]]
-source = "docs/topics/releases/migrations/4.0.0.md"
-slug = "migrate-4-0-0"
-title = "Migrate to 4.0.0"
-description = "Move an existing consumer from 3.2.1 to 4.0.0."
+description = "Move an existing consumer from 5.7.0 or 5.8.0 to 5.9.0: every step the kit still keeps."
 
 [[source_pages]]
 source = "docs/topics/website/website.md"

@@ -1210,12 +1210,12 @@ def main() -> int:
     for key in REMOVED_HOOKS:
         if key in site:
             ap.error(f"site.toml: {key} was removed in kit 5.0.0; the kit no longer loads a project adapter. "
-                     "Follow \"Remove the adapter hooks\" in the kit's docs/topics/releases/migrations/5.0.0.md, "
+                     "Follow \"Remove the adapter hooks\" in docs/topics/releases/migrations/5.0.0.md at the kit's tag v5.9.0, "
                      f"then delete the {key} setting")
     for key in REMOVED_COPY_SETTINGS:
         if key in site:
             ap.error(f"site.toml: {key} was removed in kit 5.0.0; the kit no longer keeps or maps copies of old documents. "
-                     "Follow \"Remove the adapter hooks\" in the kit's docs/topics/releases/migrations/5.0.0.md, "
+                     "Follow \"Remove the adapter hooks\" in docs/topics/releases/migrations/5.0.0.md at the kit's tag v5.9.0, "
                      f"then delete the {key} setting")
     if "formula_check_required" in site and not isinstance(site["formula_check_required"], bool):
         ap.error("site.toml: formula_check_required must be true or false")
