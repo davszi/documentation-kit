@@ -531,6 +531,6 @@ body:not(.reader-enabled) .sidebar .brand small{padding-left:41px}
 .kit-line {margin:10px 0 0;padding:8px 12px 2px;border-top:1px solid var(--border);font:11.5px/1.55 var(--sans);color:var(--muted);}
 .kit-line a {color:var(--accent);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--accent) 45%,transparent);text-underline-offset:3px;}
 .kit-line a:hover,.kit-line a:focus-visible {color:var(--bright);text-decoration-color:currentColor;}
-.kit-line .kit-built {display:block;}
+.kit-line a,.kit-line .kit-built {display:block;width:max-content;max-width:100%;}
 .kit-line .kit-built[hidden] {display:none;}
 @media print {.kit-line {display:none;}}

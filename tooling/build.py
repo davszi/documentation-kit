@@ -276,6 +276,8 @@ KIT_SITE_URL = "https://davszi.github.io/documentation-kit/"
 # alone: no page links it with a version, the asset digest leaves it out, and
 # `--check` does not compare it. The navigation script loads it.
 BUILD_INFO = "html/build-info.js"
+# The repository address `docsite.py init` writes until the project sets its own.
+STARTER_REPOSITORY = "https://github.com/example/project"
 
 
 def kit_line_shown(site: dict) -> bool:
@@ -288,12 +290,19 @@ def kit_line_shown(site: dict) -> bool:
 
 
 def kit_line(site: dict) -> str:
-    """The sidebar's last line: a link to the kit with the pinned version, and the place for the build time."""
-    if not site.get("_kit_line", True):
-        return ""
-    version = (KIT_SITE.parent / "VERSION").read_text().strip()
-    return (f'<p class="kit-line"><a href="{KIT_SITE_URL}">Built with the documentation kit {html.escape(version)}<span aria-hidden="true"> ↗</span></a>'
-            '<span class="kit-built" data-kit-built hidden></span></p>\n')
+    """The sidebar's foot: a link to the project's repository when `gh_repo` names one, then the kit
+    with its pinned version and the place for the build time unless `kit_link` is false."""
+    parts = []
+    repo = site.get("gh_repo", "")
+    # A real address only: the starter's placeholder would send readers to a repository that is not the project's.
+    if repo.startswith(("https://", "http://")) and repo != STARTER_REPOSITORY:
+        host = "GitHub" if "github.com" in repo else "the repository host"
+        parts.append(f'<a class="kit-source" href="{html.escape(repo, quote=True)}">Source on {host}<span aria-hidden="true"> ↗</span></a>')
+    if site.get("_kit_line", True):
+        version = (KIT_SITE.parent / "VERSION").read_text().strip()
+        parts.append(f'<a href="{KIT_SITE_URL}">Built with the documentation kit {html.escape(version)}<span aria-hidden="true"> ↗</span></a>'
+                     '<span class="kit-built" data-kit-built hidden></span>')
+    return '<p class="kit-line">' + "".join(parts) + "</p>\n" if parts else ""
 
 
 def write_build_info() -> None:

@@ -2,6 +2,23 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — A link to the repository in every sidebar and on the kit's home page
+
+- The owner opened the published kit site and said it should link its
+  GitHub repository in the sidebar, and probably on the main page. Checked:
+  the home page source held no such link.
+- The sidebar's foot now starts with "Source on GitHub", built from
+  `gh_repo`, on every project's site that sets it. It publishes nothing
+  new: each page's source line already links into that repository. The
+  starter's placeholder address gets no link, and an address that is not a
+  web address gets none.
+- The kit's home page gained a fourth button, "GitHub repository", and a
+  card in its routes.
+- Checked at 1600 and 390 px: the foot is three lines, 64 px, 11.5 px type,
+  no overflow; the four buttons wrap onto two rows at both widths.
+- The full check script passed on the commit before, `bf70169`: exit 0,
+  524 tests.
+
 ## 2026-11-27 — Review of 5.9.0: not fit to tag as it stood, then fixed
 
 - The full check script failed on the sidebar commit, `a1ac65a`: exit 1,

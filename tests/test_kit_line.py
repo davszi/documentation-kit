@@ -70,5 +70,29 @@ class KitLine(unittest.TestCase):
         self.assertTrue(info.is_file())
 
 
+    def test_a_site_with_a_repository_links_it_and_one_without_does_not(self):
+        project = StarterProject(self)
+        text = project.config.read_text()
+        self.assertNotIn("https://example.org/owner/project", text)
+        import re
+        project.config.write_text(re.sub(r'(?m)^gh_repo\s*=.*$', 'gh_repo = "https://github.com/owner/project"', text)
+                                  if re.search(r'(?m)^gh_repo\s*=', text) else 'gh_repo = "https://github.com/owner/project"\n' + text)
+        project.build()
+        source = '<a class="kit-source" href="https://github.com/owner/project">Source on GitHub<span aria-hidden="true"> ↗</span></a>'
+        page = project.html("guide")
+        self.assertIn(source, page)
+        self.assertLess(page.index(source), page.index(LINK), "the repository link stands above the kit line")
+        # Without the kit line the repository link stays, and no build time is published.
+        project.configure(first="kit_link = false\n")
+        project.build()
+        page = project.html("guide")
+        self.assertIn(source, page)
+        self.assertNotIn("data-kit-built", page)
+        # No repository, no kit line: the sidebar has no foot.
+        project.config.write_text(re.sub(r'(?m)^gh_repo\s*=.*$', 'gh_repo = ""', project.config.read_text()))
+        project.build()
+        self.assertNotIn("kit-line", project.html("guide"))
+
+
 if __name__ == "__main__":
     unittest.main()

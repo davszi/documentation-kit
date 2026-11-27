@@ -18,6 +18,7 @@ toc = []
 <a href="discuss-build-record.html">Discuss, build, record</a>
 <a class="alt" href="getting-started.html">Get started</a>
 <a class="alt" href="build-a-site.html">Build a site</a>
+<a class="alt" href="https://github.com/davszi/documentation-kit">GitHub repository ↗</a>
 </div>
 <nav class="hs-jump" aria-label="The story on this page">
 <a href="#what-the-kit-provides">One kit</a><a href="#how-it-works">Read before acting</a><a href="#three-words">Three words</a><a href="#the-path">The path</a><a href="#finished-page">A finished page</a><a href="#practice-areas">Practices</a><a href="#routes">Every page</a>
@@ -187,7 +188,8 @@ toc = []
 <a class="map-card" href="experiments.html"><span class="map-text"><strong>Experiments</strong><span>Keep experiments small, choose their purpose, state their content and match verification to the claim.</span></span></a>
 <a class="map-card" href="approval-failed-open.html"><span class="map-text"><strong>Approval that failed open</strong><span>A measured case: how supporting code piled up in the project the kit was extracted from, and the rules that answer it.</span></span></a>
 </div></section>
-<section class="map-group" data-group="releases"><h2>Releases</h2><div class="map-grid">
+<section class="map-group" data-group="releases"><h2>Releases and source</h2><div class="map-grid">
+<a class="map-card" href="https://github.com/davszi/documentation-kit"><span class="map-text"><strong>Repository on GitHub</strong><span>The kit's source: the rules, the site tooling, the reader theme and the starter, with every released version as a tag.</span></span></a>
 <a class="map-card" href="releases.html"><span class="map-text"><strong>Release notes and migration guides</strong><span>What each version changes for consumers, and the steps to move a project from one version to the next.</span></span></a>
 </div></section>
 </section>

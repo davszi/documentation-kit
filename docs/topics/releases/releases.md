@@ -38,6 +38,7 @@ What a project meets after moving its pin:
 
 - Every page's sidebar ends with a line that links the kit and shows when
   the site was last built. `kit_link = false` in `site.toml` leaves it out.
+  A site with `gh_repo` set also shows a link to its repository there.
 - The build writes one more file, `html/build-info.js`, which holds the day
   and hour of the last build and nothing else. A site therefore publishes
   two things it did not publish before: that it is built with the kit, with
@@ -99,6 +100,11 @@ navigation script loads that file afresh on each visit, and `build --check`
 does not compare it. An export into an existing publication replaces the
 older copy of the file without it being named. [Site authoring](../../../rules/site/authoring.md)
 names the setting.
+
+Above that line stands "Source on GitHub", a link to the project's own
+repository, on every site whose `gh_repo` names one. The address is the one
+each page's source line already links into. The starter's placeholder
+address gets no link. The kit's home page links its repository as well.
 
 ### A shorter sidebar foot and menu groups that close
 
