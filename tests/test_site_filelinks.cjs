@@ -21,7 +21,7 @@ function run(protocol,pathname){
     new Link({href:'../topics/guide/index.md#detail'})
   ];
   const media=new Link({'data-local-src':'experiments/capture.mp4'});
-  vm.runInNewContext(script,{location:{protocol,pathname},document:{querySelectorAll(selector){return selector==='a[href]'?links:[media];}}});
+  vm.runInNewContext(script,{location:{protocol,pathname},document:{querySelector(){return null;},querySelectorAll(selector){return selector==='a[href]'?links:[media];}}});
   return {links,media};
 }
 const local=run('file:','/home/a%20name/project/.build/docs/html/guide.html');
