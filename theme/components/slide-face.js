@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const now = position >= Math.min(topIn(flowMark(), scroller), furthest) - 48 && position > 8;
       if (now === arrived) return;
       arrived = now;
-      button.innerHTML = now ? 'Back to slide <span aria-hidden="true">↑</span>' : 'Continue reading <span aria-hidden="true">↓</span>';
+      button.innerHTML = now ? '<span class="slide-bridge-words">Back to slide</span> <span aria-hidden="true">↑</span>' : '<span class="slide-bridge-words">Continue reading</span> <span aria-hidden="true">↓</span>';
       button.classList.toggle('is-back', now);
     };
     // Scroll events do not bubble; capture catches the card body as well as the window.

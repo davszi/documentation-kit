@@ -395,7 +395,7 @@ async function reviewFrame(browser, origin) {
     // The face stands alone in the first view: the headline starts at the fold or below it, so no
     // line of text lies under the row's rule; a face that fits stands clear of the row, with room above it.
     assert.ok(state.headlineBox.top >= state.body.bottom - 1, `the headline starts below the first view at ${height} px: ` + JSON.stringify([state.headlineBox, state.body]));
-    if (state.face.height + 88 <= state.body.height) assert.ok(state.face.top > state.body.top + 4 && state.face.bottom <= row.box.top,
+    if (state.body.height - state.face.height - 88 >= 10) assert.ok(state.face.top > state.body.top + 4 && state.face.bottom <= row.box.top,
       `a face that fits stands between the chapter's top and the row at ${height} px: ` + JSON.stringify([state.face, state.body, row.box]));
     await page.locator('[data-reader-chapter].topic-active .chapter-body').evaluate(node => { node.scrollTop = 200; });
     await page.waitForFunction(() => !!document.querySelector('[data-reader-chapter].topic-active.topic-scrolled'));
@@ -466,7 +466,8 @@ async function reviewFrame(browser, origin) {
   assert.ok(Math.abs((state.row.button.top + state.row.button.bottom) / 2 - (state.island.top + state.island.bottom) / 2) <= 4
     && state.row.button.left >= state.island.right + 4 && state.row.button.right <= state.card.right && state.row.button.width <= 48,
     '"Continue reading" is a round button beside the island, on its line: ' + JSON.stringify([state.row.button, state.island, state.card]));
-  assert.ok(/^Continue reading/.test(state.row.text), 'the round button keeps its words as its name: ' + state.row.text);
+  assert.equal(await narrow.locator('[data-reader-chapter].topic-active').getByRole('button', {name: /^Continue reading/}).count(), 1,
+    'the round button keeps its words as its accessible name: ' + state.row.text);
   // A drag starts on a line of text, or on a drawing, which keeps its own drags.
   const swipe = (from, to, on = 'p') => narrow.evaluate(([from, to, on]) => {
     const target = [...document.querySelectorAll(`[data-reader-chapter].topic-active .chapter-body ${on}`)]

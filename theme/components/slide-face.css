@@ -12,8 +12,8 @@
    a wider bleed reaches past the scrolling body, which then scrolls sideways and cuts the face's edges. */
 @container chapter (max-width:520px) {.chapter-body > .slide-face:first-child,.chapter-body > :first-child > .slide-face:first-child {margin:calc(-14px + var(--reader-face-lift,0px)) -14px var(--reader-face-drop,0px)!important;}}
 .chapter-body > .slide-face:first-child > .slide-canvas,.chapter-body > :first-child > .slide-face:first-child > .slide-canvas {border-width:0 0 1px!important;border-radius:0 0 14px 14px!important;}
-/* A face the reader has moved down from the chapter's top is a band across the chapter: a rule above and below, square corners. */
-.chapter-body > .slide-face[data-reader-face-lifted]:first-child > .slide-canvas,.chapter-body > :first-child > .slide-face[data-reader-face-lifted]:first-child > .slide-canvas {border-width:1px 0!important;border-radius:0!important;}
+/* A face the reader has moved down from the chapter's top is a band across the chapter: a rule above and below, square corners. On screen only. */
+@media screen {.chapter-body > .slide-face[data-reader-face-lifted]:first-child > .slide-canvas,.chapter-body > :first-child > .slide-face[data-reader-face-lifted]:first-child > .slide-canvas {border-width:1px 0!important;border-radius:0!important;}}
 /* Authoring aid: the deck, and pages opened with ?slide-check, outline faces that do not fit. */
 :is(.slide-deck-page,[data-slide-check]) .slide-face[data-slide-overflow] > .slide-canvas {outline:3px solid var(--red,#f47067);outline-offset:-3px;}
 .slide-face :is(p,h4,dl,dd,figure) {margin:0!important;}
@@ -148,11 +148,11 @@
 .slide-bridge-meta {font:12px "IBM Plex Mono",monospace;color:var(--muted,#8b949e);}
 .slide-bridge-button {margin-left:auto;display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 16px;border:1px solid color-mix(in srgb,var(--accent,#39d2c0) 35%,transparent);border-radius:999px;background:color-mix(in srgb,var(--accent,#39d2c0) 7%,transparent);color:var(--accent,#39d2c0);font:600 13px "IBM Plex Sans",sans-serif;cursor:pointer;transition:background .2s,box-shadow .2s;}
 .slide-bridge-button:hover {background:color-mix(in srgb,var(--accent,#39d2c0) 14%,transparent);box-shadow:0 0 18px color-mix(in srgb,var(--accent,#39d2c0) 18%,transparent);}
-.slide-bridge-button span {display:inline-block;transition:transform .2s;}
-.slide-bridge-button:hover span {transform:translateY(3px);}
+.slide-bridge-button span[aria-hidden] {display:inline-block;transition:transform .2s;}
+.slide-bridge-button:hover span[aria-hidden] {transform:translateY(3px);}
 .slide-bridge-button.is-back {color:var(--secondary,#bc8cff);border-color:color-mix(in srgb,var(--secondary,#bc8cff) 40%,transparent);background:color-mix(in srgb,var(--secondary,#bc8cff) 7%,transparent);}
 .slide-bridge-button.is-back:hover {background:color-mix(in srgb,var(--secondary,#bc8cff) 14%,transparent);box-shadow:0 0 18px color-mix(in srgb,var(--secondary,#bc8cff) 18%,transparent);}
-.slide-bridge-button.is-back:hover span {transform:translateY(-3px);}
+.slide-bridge-button.is-back:hover span[aria-hidden] {transform:translateY(-3px);}
 .slide-bridged-eyebrow {position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
 
 /* The full chapter follows the slide's calmer sentence-case headings */

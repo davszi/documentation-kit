@@ -539,6 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const lift = Math.max(0, Math.floor((free - dock) / 2));
     return {lift, drop: free - lift};
   }
+  const leadingFace = '.chapter-body > .slide-face:first-child, .chapter-body > :first-child > .slide-face:first-child';
   const fittedFaces = new Map();
   const faceWatch = typeof ResizeObserver === 'function' ? new ResizeObserver(() => fitFaces()) : null;
   function fitFaces() {
@@ -549,18 +550,20 @@ document.addEventListener('DOMContentLoaded', () => {
       const was = fittedFaces.get(face) || {lift: 0, drop: 0};
       let room = {lift: 0, drop: 0};
       // Only a face that opens the chapter, in the one-chapter view, is fitted:
-      // one that starts within 64px of the chapter's top.
-      if (!full && !paired && !presenting && topic.body.clientHeight > 0 && topic.section.offsetWidth > 0) {
+      // the same faces the margin rule in slide-face.css names.
+      if (!full && !paired && !presenting && topic.body.clientHeight > 0 && topic.section.offsetWidth > 0 && face.matches(leadingFace)) {
         // Neighbouring chapters are drawn smaller; measure in the chapter's own pixels.
         const scale = topic.section.getBoundingClientRect().width / topic.section.offsetWidth || 1;
         const top = (face.getBoundingClientRect().top - topic.body.getBoundingClientRect().top) / scale + topic.body.scrollTop - was.lift;
         const dock = parseFloat(window.getComputedStyle(topic.body).getPropertyValue('--reader-dock')) || 0;
-        if (top <= 64) room = faceRoom(topic.body.clientHeight, top, face.offsetHeight, dock);
+        room = faceRoom(topic.body.clientHeight, top, face.offsetHeight, dock);
       }
       fittedFaces.set(face, room);
       if (room.lift === was.lift && room.drop === was.drop) return;
       face.style.setProperty('--reader-face-lift', room.lift + 'px');
       face.toggleAttribute('data-reader-face-lifted', room.lift > 0);
+      // A reader who is past the face keeps their line when the room changes.
+      if (topic.body.scrollTop > 24) topic.body.scrollTop += room.lift + room.drop - was.lift - was.drop;
       face.style.setProperty('--reader-face-drop', room.drop + 'px');
     });
   }

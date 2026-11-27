@@ -548,8 +548,9 @@ body.reader-enabled.reader-nav-docked {--reader-header:0px;}
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] {left:12px;right:12px;}
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead]::before,
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] :is(.slide-bridge-pill,.slide-bridge-meta) {display:none;}
-  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] .slide-bridge-button {margin:0 0 0 auto;width:44px;min-width:44px;height:44px;padding:0;gap:0;justify-content:center;font-size:0;background:color-mix(in srgb,var(--accent,#39d2c0) 10%,rgba(var(--bg-rgb),.92));}
-  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] .slide-bridge-button span {font-size:17px;}
+  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] .slide-bridge-button {position:relative;margin:0 0 0 auto;width:44px;min-width:44px;height:44px;padding:0;gap:0;justify-content:center;background:color-mix(in srgb,var(--accent,#39d2c0) 10%,rgba(var(--bg-rgb),.92));}
+  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] .slide-bridge-words {position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
+  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-active .slide-bridge[data-slide-bridge-lead] .slide-bridge-button span[aria-hidden] {font-size:17px;}
 }
 @media screen and (max-width:900px) {
   /* A chapter too narrow for the island and the arrow on one line: the arrow

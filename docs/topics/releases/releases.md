@@ -30,8 +30,9 @@ shows the new warnings.
 
 5.8.1 is a patch release under
 [what a version number promises](#what-a-version-number-promises): it
-corrects two defects of the 5.7.0 reader. No rule section, command, lint
-message or configuration key changes, and no migration step exists.
+corrects two defects of the 5.7.0 reader. No rule anchor, command, lint
+message or configuration key changes, and no migration step exists. The
+correction changes how three things look; they are listed below.
 
 Both defects are in the one-chapter view of a chapter that opens with a
 [slide face](../../../rules/site/authoring.md#slide-faces-and-decks).
@@ -57,19 +58,24 @@ What the reader does now:
   than the window gets no room and scrolls as before.
 - The layer that fades text out above the bottom controls is solid from the
   row's rule down, so no line shows through the rule or the controls.
-- Where the sidebar is not docked, Continue reading is a round arrow button
-  at the right end of the stepper's line. It keeps its words as its
-  accessible name. A chapter under 300 px wide keeps the button above the
-  stepper, because the two do not fit on one line there.
+- In a window up to 900 px wide, Continue reading is a round arrow button
+  at the right end of the stepper's line. Its words stay in the button,
+  hidden from sight, as its accessible name. A chapter under 300 px wide,
+  which is a window up to about 350 px, keeps the button above the stepper,
+  because the two do not fit on one line there.
+- Two chapters shares the fade layer: its solid part grows from about 54 px
+  to 72 px. Nothing else changes there.
+- A reader who is past the face keeps their line when the window's height
+  changes.
 
-Paper is not affected: print drops the measured room.
+Paper is not affected: print drops the measured room, and the band with its two rules is drawn on screen only.
 
 The browser review of the kit's own site checks both at three window
 heights and at 390 px. Run against the 5.8.0 code it fails with "the
 headline starts below the first view at 900 px".
 
-Not verified: Firefox and Safari; a real phone; a window under 330 px wide,
-where the fallback applies.
+Not verified: Firefox and Safari; a real phone; a screen reader; a printed
+page; a window up to about 350 px wide, where the fallback applies.
 
 ## 5.8.0 — no Introduction chapter: a page's opening joins its first chapter
 

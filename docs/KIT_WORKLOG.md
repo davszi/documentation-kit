@@ -2,6 +2,40 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — Review of 5.8.1: not fit to tag, then fixed
+
+- The full check script failed on the first commit, `07741c9`: exit 1. The
+  text-size test reported "Theme labels below 11 px at 390 px" for the
+  narrow button, whose words were hidden with `font-size:0`. Fixed: the
+  slide-face script wraps the words in a span, and the narrow rule hides
+  that span by clipping it.
+- One independent review read the same commit, with no browser. Verdict:
+  not fit to tag. It found no loop and no stale state in the fitting.
+- Fixed, medium: the rule, the release note and the entry below said the
+  round button shows "where the sidebar is not docked". The style rule is
+  keyed on a window up to 900 px wide; a 1200 px window with the sidebar
+  closed keeps the wide button. The rule and the note now say the width.
+  The entry below stays as written and is corrected here.
+- Fixed, medium: the note gave "under 330 px" for the fallback. From the
+  card's width rule it applies up to about 350 px.
+- Fixed, medium: the band's rules and square corners would have printed.
+  The band rule is now inside `@media screen`.
+- Fixed, low: the script named a leading face by its distance from the
+  chapter's top, the style rule by its place in the markup; where they
+  disagreed the stored value grew on each run without effect. The script
+  now uses the style rule's selector.
+- Fixed, low: a reader past the face lost their line when the room changed;
+  the scroll position now moves by the same amount.
+- Fixed, low: the note did not name the wider solid fade in Two chapters;
+  the review's first-view check could fail on a face that fits by under
+  10 px; the narrow check now asks for the button by its accessible name.
+- Not changed, reported: the review's strongest case against "patch" is
+  that the correction changes looks (a band, an arrow button, the fade in
+  Two chapters), which the version promise lists under a minor release.
+  The note names the three look changes. deivid decides the number.
+- Not verified by the review or by me: a screen reader, a printed page,
+  Firefox, Safari, a real phone.
+
 ## 2026-11-27 — 5.8.1 built: a slide face alone in the first view
 
 - Two reports. A subagent that upgraded Tempo to 5.8.0 captured its lessons
