@@ -187,7 +187,7 @@ An agent reads the orientation and the rules every task needs at the start; ever
 
 <!-- /fold -->
 
-<!-- fold: dead-end When a removed page still has dated links -->
+<!-- fold: detail When a removed page still has dated links -->
 
 Removing a page from navigation or publication passes the deletion gate. Dated links to it, such as those in old worklog entries, keep resolving in one of two ways the owner chooses: a hidden stub with the former anchors, which also keeps the published address, or a later `worklog_links_checked_from` date, which stops lint checking the entries before it and lets the address go. Lint rejects a dated link that neither covers.
 
@@ -259,7 +259,7 @@ Documentation loses information in quiet ways: a deleted figure, a rewritten log
 
 The worklog entry and the commit message say much the same, on purpose: the worklog reads without Git, survives squashed history and holds what no commit carries, such as probes and decisions that belong to no single commit. Both are written in the same step, so they agree. An entry written before its commit exists may say the landing commit assigns the hash; nobody goes back to fill it in. When later moves break links in old entries, a project sets [`worklog_links_checked_from`](resources.html#resource-closure-and-evidence) instead of rewriting them.
 
-<!-- fold: code Marked statements and drafts below the page end -->
+<!-- fold: detail Marked statements and drafts below the page end -->
 
 A page may show a project invariant as a marked statement: an unindented paragraph that starts with `**INVARIANT:**` for a constraint that must survive edits or `**DON'T-REDO:**` for a settled decision, followed by a blank line. The build renders it as a labelled card and `lint --registry` lists it. Inside a sentence, a list item or a quote the raw label would show, and inside a code span or fence it stays an example. The invariant itself lives in its owning record.
 
@@ -330,13 +330,13 @@ A number without its conditions cannot be checked, and a number whose inputs cha
 
 A new reading of saved results is a result too: a breakdown the record does not give, a count across settings, a pattern found while drawing a figure. Before a page shows it, the record that owns the results gets a dated addition with the reading, how it is computed and its scope, and says so when it reruns nothing.
 
-<!-- fold: experiment What stays with the producing work -->
+<!-- fold: detail What stays with the producing work -->
 
 The work that produced a result keeps its protocol, failed attempts, changed settings, actual outcomes, the reviews actually performed and the uncertainty that matters. An experiment directory also keeps the producing code, inputs, full result tables, source pins and its run output: the raw data, summaries and logs a person needs to check a claim again, tracked before the experiment is reported complete. A claim that rests on output in an untracked folder is not measured. Keeping run output outside Git is the person's decision, asked with the size and the options. A source pin may stand for producing code under the conditions the guide lists. The page explains what these results establish; the worklog records the landing without copying tables.
 
 <!-- /fold -->
 
-<!-- fold: experiment Number ledgers for redesigns -->
+<!-- fold: detail Number ledgers for redesigns -->
 
 A redesign restates numbers in new prose, redrawn figures and slides, and each restatement is a chance to change one by accident. A ledger records the source of every number a redesigned chapter shows, figure labels included, and evidence blocks kept word for word are locked. The project owns both and their checks; the kit's lint checks only that a slide face shows no number its chapter lacks. A presentation-only edit may reuse captured results after checking that identities, numbers and treatments are intact.
 

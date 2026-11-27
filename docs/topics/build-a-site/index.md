@@ -162,7 +162,7 @@ page_only = "Explains building a site; its records are the site guides in rules/
 
 [Figure 1](#fig-build) is the whole pipeline. Generated output can always be deleted and rebuilt, so a reviewer only looks at sources. Only tracked files are read, so what you publish is what is in Git: a stray local file cannot leak onto the site, and a file you forgot to add fails the build instead of leaving a broken image. No web framework or JavaScript install is needed; the reader, theme, fonts and math come from the pinned kit ([tooling and ownership](authoring.html#tooling-and-ownership)).
 
-<!-- fold: code How links are rewritten -->
+<!-- fold: detail How links are rewritten -->
 
 A page body links from the generated page: `records.html#numbers-and-staleness` reaches a page, `../topics/guide/guide.md` a record. A link to another repository file becomes a source link on `gh_repo`; with `gh_repo = ""` it keeps its local path. A link, include or image that leaves the project fails the build, and lint checks every link to a repository file, in Markdown or an HTML `href` ([authoring paths](authoring.html#authoring-paths)).
 
