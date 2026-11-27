@@ -173,3 +173,21 @@
   });
 })();
 
+// The sidebar's last line names the kit; here it gains the day and hour of the
+// last build, in the reader's own time zone. The time comes from build-info.js,
+// which the build writes beside the pages. It is asked for afresh on each
+// load, so a cached page cannot show an older site as newly built.
+(function(){
+  var slot = document.querySelector('[data-kit-built]');
+  if (!slot) return;
+  var info = document.createElement('script');
+  info.src = 'build-info.js?' + Date.now();
+  info.onload = function(){
+    var built = new Date(window.docsSiteBuilt || '');
+    if (isNaN(built)) return;
+    slot.textContent = 'Site built ' + built.toLocaleString(undefined, {day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'});
+    slot.title = window.docsSiteBuilt + ' (UTC)';
+    slot.hidden = false;
+  };
+  document.head.appendChild(info);
+})();

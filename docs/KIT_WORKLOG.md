@@ -2,6 +2,34 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — A kit line and the build time on every site; the release is 5.9.0
+
+- The owner asked for two things: every project site links the kit's site,
+  and the day and hour of the last build is shown somewhere. Checked first:
+  a built site had no link to the kit, only its licence file in
+  `assets/documentation-kit/`.
+- Built: the page shell's sidebar ends with a line that links the kit's
+  site and names the pinned version. `kit_link = false` leaves it out.
+- The build time cannot stand in the pages. `build --check` compares the
+  built bytes, strict lint runs it, and a time in every page would make
+  every project's site stale at once. The build writes the time to
+  `html/build-info.js` when it changed the site or the file is missing; the
+  file is left out of the asset digest and of the comparison; the
+  navigation script loads it with a fresh address and shows the time in the
+  reader's time zone.
+- Checked on the kit's site at 1600 and 390 px, home page and a reader
+  page: the line is the sidebar's last element, 11.5 px, no overflow; text
+  "Built with the documentation kit 5.8.1" and "Site built 27 Nov 2026,
+  19:39" for the UTC time 18:39. In the reader the line stays at the
+  sidebar's foot; on a page without the reader it ends the scrolling list.
+- A mistake of mine, kept here: I edited theme and build files while the
+  full check script ran on the previous commit. That run was stopped and
+  counts for nothing.
+- The owner set the release as a minor one. The release note section
+  written as 5.8.1 is now the last part of 5.9.0.
+- Not verified: a locked site, where the sidebar shows before unlocking;
+  Firefox and Safari; a page opened from disk without a server.
+
 ## 2026-11-27 — Rules: questions, reports, settings and numbers on a page
 
 - A proposal from a session on a consumer project's experiment, pasted in

@@ -26,13 +26,87 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
-## 5.8.1 — a slide face stands alone in a chapter's first view
+## 5.9.0 — the path of work, rules for decisions, a kit line on every site
 
-5.8.1 is a patch release under
-[what a version number promises](#what-a-version-number-promises): it
-corrects two defects of the 5.7.0 reader. No rule anchor, command, lint
-message or configuration key changes, and no migration step exists. The
-correction changes how three things look; they are listed below.
+5.9.0 is a minor release under
+[what a version number promises](#what-a-version-number-promises): it adds
+rule text and one setting and changes how the shared theme looks. No rule
+anchor is removed or renamed, no lint message is added, and a project that
+passed before still passes. No migration step exists.
+
+What a project meets after moving its pin:
+
+- Every page's sidebar ends with a line that links the kit and shows when
+  the site was last built. `kit_link = false` in `site.toml` leaves it out.
+- The build writes one more file, `html/build-info.js`. A project check
+  that lists the files of the built site has to know it.
+- The reader shows a leading slide face alone in a chapter's first view.
+
+### Discussion before the work
+
+The rules described work from the record onward. A new section in the
+[delivery guide](../../../rules/engineering/delivery.md#discussion-before-the-work)
+covers what comes first: chat is the main channel; a page is built during
+the discussion when the person asks for one, marked as a proposal; nothing
+is agreed until the person accepts it in words; work that outlives the chat
+gets its agreement written into its open item or plan before building.
+
+### Questions, reports, settings and numbers
+
+Four additions came from a working session on an experiment in a project.
+
+- A question to the person names the strongest case against the
+  recommendation. An option that rests on a number names the measurement;
+  one that rests on a premise nobody measured says so
+  ([decisions and blockers](../../../rules/engineering/delivery.md#decisions-and-blockers)).
+- When a rendered page covers the work, the report gives the result in a
+  few lines and links the page; what waits on the person stays in the report
+  ([reporting completion](../../../rules/engineering/handoffs.md#reporting-completion)).
+- A setting the person decides is decided on a measurement where measuring
+  is cheap, and a later run is sized from the earlier run's measured cost
+  ([start from evidence](../../../rules/experiments/workflow.md#start-from-evidence-and-bound-the-question)).
+  A decision the person made keeps its date, who decided and the person's
+  words ([naming and honest claims](../../../rules/records.md#naming-and-honest-claims)).
+- On a page, a value that depends on a setting is plotted over that
+  setting, a quantity stays in the unit of its claim, and what has not run
+  is named as not run ([page design](../../../rules/writing/pages.md#page-design)).
+
+The figures guide changes its stance on tables: what can be drawn is drawn,
+and a table is for exact lookup
+([figures and comparisons](../../../rules/writing/figures.md#figures-and-comparisons)).
+Before, a table counted as the equal of a plot for a comparison. Lint cannot
+check this; existing pages with comparison tables are reworked when they are
+next touched.
+
+### A kit line on every site
+
+The sidebar of every page ends with "Built with the documentation kit" and
+the pinned version, linked to the kit's site, and under it "Site built" with
+the day and hour in the reader's time zone. The time is the one thing a
+build does not derive from the sources, so it is kept out of the pages: the
+build writes it to `html/build-info.js` when it changes the site, the
+navigation script loads that file afresh on each visit, and `build --check`
+does not compare it. [Site authoring](../../../rules/site/authoring.md)
+names the setting.
+
+### The kit's own site
+
+The kit's site did not say what a record, a page and a chapter are, nor how
+work runs from an idea to a landed change. The home page now tells the kit's
+story in five figures, a new page "Discuss, build, record" holds the three
+words and the path of work, and Get started keeps only setup. Five anchors
+moved from `getting-started.html` to `index.html`: `#what-the-kit-provides`,
+`#how-it-works`, `#practice-areas`, `#fig-kit-pin` and `#fig-routing`.
+
+### Inside the kit
+
+Tests build their throwaway projects through one helper, and build, lint
+and the record notes read Markdown headings through one function. The built
+output is byte-identical.
+
+### A slide face stands alone in a chapter's first view
+
+This part corrects two defects of the 5.7.0 reader.
 
 Both defects are in the one-chapter view of a chapter that opens with a
 [slide face](../../../rules/site/authoring.md#slide-faces-and-decks).

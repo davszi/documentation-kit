@@ -24,6 +24,7 @@ No application runtime is needed.
 
 from __future__ import annotations
 
+import datetime
 import argparse
 from copy import deepcopy
 from functools import lru_cache
@@ -267,6 +268,32 @@ def markers_to_callouts(body: str) -> str:
 HEADING_ID_RE = re.compile(r"\s*\{#([A-Za-z0-9][A-Za-z0-9_-]*)\}\s*$")
 
 _errors: list[str] = []
+
+
+KIT_SITE_URL = "https://davszi.github.io/documentation-kit/"
+# When the site was last built, for the sidebar's last line. The time is the one
+# thing a build does not derive from the sources, so it lives in this file
+# alone: no page links it with a version, the asset digest leaves it out, and
+# `--check` does not compare it. The navigation script loads it.
+BUILD_INFO = "html/build-info.js"
+
+
+def kit_line(site: dict) -> str:
+    """The sidebar's last line: a link to the kit with the pinned version, and the place for the build time."""
+    shown = site.get("kit_link", True)
+    if not isinstance(shown, bool):
+        err("site.toml: kit_link must be true or false")
+    if shown is False:
+        return ""
+    version = (KIT_SITE.parent / "VERSION").read_text().strip()
+    return (f'<p class="kit-line"><a href="{KIT_SITE_URL}">Built with the documentation kit {html.escape(version)}</a>'
+            '<span class="kit-built" data-kit-built hidden></span></p>\n')
+
+
+def write_build_info() -> None:
+    """Record the time of this build, in UTC to the minute."""
+    stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
+    (OUTPUT_ROOT / BUILD_INFO).write_text(f'window.docsSiteBuilt = "{stamp}";\n')
 
 
 def err(msg: str) -> None:
@@ -1008,6 +1035,7 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
         "{{BRAND_SUB}}": html.escape(meta.get("brand_sub", "")),
         "{{TOC}}": toc,
         "{{CROSSNAV}}": crossnav,
+        "{{KIT_LINE}}": kit_line(site),
         "{{HEAD_EXTRA}}": head_extra,
         "{{CONTENT}}": content.rstrip() + "\n",
         "{{SCRIPTS}}": scripts,
@@ -1414,7 +1442,7 @@ def main() -> int:
         "kit": {"version": (KIT_SITE.parent / "VERSION").read_text().strip(),
                 "asset_sha256": hashlib.sha256(b"".join(key.encode() + outputs[key] for key in sorted(outputs) if key.startswith("html/assets/"))).hexdigest()},
         # Every generated file, so the next build can prune what it no longer produces.
-        "files": sorted([*outputs, "site-build.json"])}, indent=2) + "\n").encode()
+        "files": sorted([*outputs, "site-build.json", BUILD_INFO])}, indent=2) + "\n").encode()
     for problem in validate_resources(outputs):
         err(problem)
 
@@ -1434,7 +1462,7 @@ def main() -> int:
             if not p.is_file():
                 continue
             rel = p.relative_to(OUTPUT_ROOT).as_posix()
-            if rel in outputs or rel in unmanaged:
+            if rel in outputs or rel in unmanaged or rel == BUILD_INFO:
                 continue
             if args.page and rel.endswith(".html"):
                 continue  # other pages not rebuilt this run
@@ -1492,6 +1520,9 @@ def main() -> int:
             return 2
         print("generated site is fresh")
         return 0
+    # The build time moves only when the build changed the site, or the file is missing.
+    if wrote or removed or not (OUTPUT_ROOT / BUILD_INFO).is_file():
+        write_build_info()
     for w in wrote:
         print(f"wrote .build/docs/{w}")
     for r in removed:

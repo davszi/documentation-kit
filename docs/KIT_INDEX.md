@@ -50,7 +50,7 @@ shared independent-comparison component.
 [Releases and upgrades](topics/releases/releases.md) owns version changes,
 stable interfaces and what a version number promises. The
 [5.8.0 migration guide](topics/releases/migrations/5.8.0.md) moves 5.5.0 to
-5.7.0 consumers to 5.8.0; the current 5.8.1 adds no step. The
+5.7.0 consumers to 5.8.0; the current 5.9.0 adds no step. The
 [5.5.0 migration guide](topics/releases/migrations/5.5.0.md) moves 5.2.0 to
 5.4.1 consumers to 5.5.0. The
 [5.2.0 migration guide](topics/releases/migrations/5.2.0.md)

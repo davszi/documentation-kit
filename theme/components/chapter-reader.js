@@ -314,6 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
   allSwitch.addEventListener('click', () => setLayers(presentKinds.map(([kind]) => kind), allSwitch.getAttribute('aria-checked') !== 'true'));
   allSwitch.hidden = !presentKinds.length;
   sidebar.appendChild(layerPanel);
+  const kitLine = sidebar.querySelector('.kit-line'); if (kitLine) sidebar.appendChild(kitLine);
   topics.forEach(topic => topic.folds.forEach(resolveFold));
   const backdrop = document.getElementById('backdrop');
   backdrop?.addEventListener('click', () => closeDrawer());
