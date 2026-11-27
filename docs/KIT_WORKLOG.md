@@ -2,6 +2,39 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — The owner's decisions on figures, folds and pages that fall behind
+
+- Pushed `main` at `d166ac3` after the full check script passed there:
+  exit 0, 539 tests. The Pages workflow succeeded; the site's build time
+  read 2026-11-27T21:08Z. No tag.
+- The owner read the context of three open decisions and said:
+  - "the never draw invented data should not apply for the kit site
+    itself", and the kit's figures "should draw the best expl not shapes
+    only". The figures guide now excepts the kit's own pages, which explain
+    rules and report no results; an example there says its values are
+    invented. The two stamped schematics are being redrawn as full
+    examples by a page author.
+  - He did not see why `dead-end` is shown as "Alternatives" and asked
+    whether projects use it correctly. Read: no rule says what a kind is
+    for. Of 13 such folds, 6 in ADP, 1 in Tempo and 6 in the kit, about 8
+    hold an approach not taken; the rest are cautions, a comparison or
+    other detail.
+  - "there can be dropdowns which are none of the above and still be
+    dropdowns and showall should still open them all". A fold without a
+    kind is being built by an implementer, with one sentence per kind in
+    the rule.
+  - "do the proposal for 3": built here. Lint names a changed record
+    section that no page links when a page explains other sections of the
+    record, and a numbered figure the text never cites. The validation
+    guide describes a page review as a task of its own.
+- The new note found its first case at once: the new review section itself
+  had no page; Build a site now links it. The kit's pages have no uncited
+  numbered figure.
+- Two of the new tests were wrong at first: appending a section also
+  changed the section above it in the fixture, and the marker for a figure
+  left uncited on purpose is a comment, which the masked text no longer
+  holds.
+
 ## 2026-11-27 — Review of 5.10.0: not fit to tag; the blocking finding and the rest answered
 
 - Pushed `main` at `690dd4e`, with the Open work entry, after the full check

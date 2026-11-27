@@ -52,6 +52,9 @@ What a project meets after moving its pin:
   version shows as a lint note, not as an error.
 - The starter router's row for upgrading names the guide's new, fixed
   address.
+- Lint may print two kinds of note it did not print before: a changed
+  record section that no page links, and a numbered figure the text never
+  cites. Neither fails a run.
 
 ### Open work at the top of every menu
 
@@ -63,6 +66,22 @@ more page. It opens the list as a page. A site that does not show the list as a 
 gets no entry, so the entry publishes nothing by itself.
 `open_work_entry = false` leaves the entry out.
 [Site authoring](../../../rules/site/authoring.md) names the setting.
+
+### Notes that keep pages from falling behind, and a review as a task
+
+Four of the kit's pages had fallen behind the rules because nothing said
+so: lint listed the pages that link a changed record section, and a new
+section that no page linked raised nothing. Lint has two more notes. It
+names a changed section that no page links when a page explains other
+sections of the same record, and it names a numbered figure that the text of
+its page never cites. Notes never fail a run.
+[Reviewing a page against its rules](../../../rules/site/validation.md#reviewing-a-page-against-its-rules)
+describes the review as a task of its own: one page per agent, chapter by
+chapter, findings first.
+
+The [figures guide](../../../rules/writing/figures.md#figures-and-comparisons)
+forbids invented data. The kit's own pages explain rules and report no
+results; an example there may use invented values and says so.
 
 ### A record page can offer its Markdown
 

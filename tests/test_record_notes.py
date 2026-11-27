@@ -197,6 +197,28 @@ class RecordChangeNotes(unittest.TestCase):
         git(self.root, 'add', 'rules/other.md')
         self.assertEqual(self.notes(), [])
 
+    def test_a_new_section_nobody_links_is_named_when_a_page_explains_the_rest(self):
+        # The capability map case: a guide gained a section, the page that explains the guide
+        # linked the old sections only, and nothing said so.
+        path = self.root / 'rules/code.md'
+        path.write_text(path.read_text() + '\n## Brand new\n\nNobody links this yet.\n')
+        new = [note for note in self.notes() if 'Brand new' in note]
+        self.assertEqual(len(new), 1, new)
+        self.assertIn('NOTE: rules/code.md › Brand new changed.', new[0])
+        self.assertIn('No page links this section.', new[0])
+        self.assertIn('docs/topics/practice/index.md', new[0])
+
+    def test_a_page_that_only_points_into_a_record_does_not_count_as_explaining_it(self):
+        # One link into a record is a pointer. The overview page links one section of the guide,
+        # so a new section there is not its business.
+        self.write('rules/other.md', '# Other\n\n## First\n\nText.\n')
+        self.write('docs/topics/pointer/index.md', '+++\ntitle = "Pointer"\ntoc = []\n+++\n\n## One\n\nSee [first](../../rules/other.md#first).\n')
+        git(self.root, 'add', '-A')
+        git(self.root, 'commit', '-q', '-m', 'A pointer')
+        path = self.root / 'rules/other.md'
+        path.write_text(path.read_text() + '\n## Second\n\nNew.\n')
+        self.assertEqual([note for note in self.notes() if 'Second' in note], [])
+
     def test_clean_tree_and_projects_without_history_give_nothing(self):
         self.assertEqual(self.notes(), [])
         with tempfile.TemporaryDirectory() as folder:
@@ -371,3 +393,37 @@ class TopicStructure(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class UncitedFigures(unittest.TestCase):
+    def notes(self, body):
+        from record_changes import uncited_figure_notes
+        folder = tempfile.TemporaryDirectory(prefix='docs-kit-figures-')
+        self.addCleanup(folder.cleanup)
+        root = Path(folder.name)
+        page = root / 'docs/topics/demo/index.md'
+        page.parent.mkdir(parents=True)
+        (root / 'docs/site').mkdir(parents=True)
+        (root / 'docs/site/site.toml').write_text('title = "Fixture"\n')
+        page.write_text('+++\ntitle = "Demo"\ntoc = []\n+++\n\n## One\n\n' + body)
+        return uncited_figure_notes(root)
+
+    FIGURE = '<figure id="fig-a"><svg></svg><figcaption><b>Figure 1.</b> A flow.</figcaption></figure>\n'
+
+    def test_a_numbered_figure_the_text_never_cites_is_noted(self):
+        notes = self.notes(self.FIGURE + '\nText without a reference.\n')
+        self.assertEqual(len(notes), 1, notes)
+        self.assertIn('docs/topics/demo/index.md', notes[0])
+        self.assertIn('Figure 1 (#fig-a)', notes[0])
+
+    def test_a_cited_figure_and_one_left_out_on_purpose_give_nothing(self):
+        self.assertEqual(self.notes(self.FIGURE + '\n[Figure 1](#fig-a) shows the flow.\n'), [])
+        self.assertEqual(self.notes(self.FIGURE + '\nSee <a href="#fig-a">Figure 1</a>.\n'), [])
+        self.assertEqual(self.notes('<!-- unreferenced figure: decoration -->\n' + self.FIGURE), [])
+
+    def test_a_link_inside_the_figure_itself_does_not_count(self):
+        inside = self.FIGURE.replace('A flow.', 'A flow, <a href="#fig-a">this one</a>.')
+        self.assertEqual(len(self.notes(inside)), 1)
+
+    def test_a_figure_without_a_number_needs_no_citation(self):
+        self.assertEqual(self.notes('<figure id="fig-b"><img src="x.png" alt="x"><figcaption>How it looks.</figcaption></figure>\n'), [])

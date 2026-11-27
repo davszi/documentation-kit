@@ -605,7 +605,7 @@ git config core.hooksPath "$(git rev-parse --show-toplevel)/.docs-kit/hooks"
 </ul></div>
 </div>
 
-[Figure 9](#fig-lint) is how to read a lint run. An error is wrong now. A warning is for the author to decide: `lint` prints it and passes, `--strict` fails. A note never fails: when a record section changes, lint lists the pages that link it so that you reread them ([rendered pages are for people](documentation-system.html#rendered-pages-are-for-people-records-stay-markdown)), and `--since <rev>` compares with an older commit. With `page_number_notes = true` it also lists numbers in a page's prose that its linked records do not state.
+[Figure 9](#fig-lint) is how to read a lint run. An error is wrong now. A warning is for the author to decide: `lint` prints it and passes, `--strict` fails. A note never fails: when a record section changes, lint lists the pages that link it so that you reread them ([rendered pages are for people](documentation-system.html#rendered-pages-are-for-people-records-stay-markdown)), and `--since <rev>` compares with an older commit. With `page_number_notes = true` it also lists numbers in a page's prose that its linked records do not state. Two more notes keep pages from falling behind: a changed section that no page links, when a page explains the rest of its record, and a numbered figure the text never cites. [Reviewing a page against its rules](validation.html#reviewing-a-page-against-its-rules) says what to do with a page they point at.
 
 ```bash
 python .docs-kit/docsite.py lint --project . --strict

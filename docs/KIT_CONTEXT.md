@@ -40,7 +40,9 @@ every step from 5.7.0, each under a heading that says which versions need it.
 At a release, add the new version's steps there, set the tag in its commands
 and, on the owner's word, drop the steps for versions no project is on. Do not
 rename the file: projects link it. The guides of versions up to 5.8.0 are in
-the repository at the tag `v5.9.0`.
+the repository at the tag `v5.9.0`. Before a tag, run
+`python docsite.py lint --project . --since <last tag>` and settle each note
+about a changed rule section: the kit's own page follows in the same release.
 
 The [website record](topics/website/website.md) owns the kit's own site.
 Build it from the kit root with `python docsite.py build --project .`.

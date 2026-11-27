@@ -22,6 +22,12 @@ Review every visual change by eye before reporting it done. Capture each element
 
 For local review, follow [local review and browser access](#local-review-and-browser-access), using `.build/docs/` and `/html/<slug>.html`. Follow the [publishing gate](publication.md#publishing-gate) before deployment.
 
+## Reviewing a page against its rules
+
+Rules change and the pages that explain them stay behind unless someone looks. Lint helps to find them: it notes a changed record section with the pages that link it, a changed section that no page links although a page explains the record, which means it links two or more of its other sections, and a numbered figure the text never cites. `lint --since <tag>` lists them for everything since a release.
+
+A review is a task of its own, asked for by the person; it is not part of an upgrade. Give one page to one agent. For each chapter the agent writes down which rule sections the chapter explains, what those sections say now that the chapter does not, what the chapter says that they no longer say, whether the chapter has a real visual and whether each numbered figure is cited. It reports that list first and fixes after. A change of structure, such as splitting or merging pages, goes to the person. The page is then checked as any page work is: at a wide and a narrow width, with the captures the agent looked at.
+
 ## One command and a pre-push gate
 
 `python .docs-kit/docsite.py check --project .` runs the checks a push should

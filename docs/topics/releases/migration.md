@@ -141,7 +141,11 @@ Only for a project that comes from 5.7.0 or 5.8.0; 5.9.0 brought these.
 
 ## New in 5.10.0
 
-Beyond the two steps above, nothing a project must do. The menu of every page now starts with "Open
+Beyond the two steps above, nothing a project must do. Lint may print two
+new kinds of note: a changed record section that no page links, and a
+numbered figure the text never cites. They list work, they fail nothing;
+[reviewing a page against its rules](../../../rules/site/validation.md#reviewing-a-page-against-its-rules)
+says how to take a page through them. The menu of every page now starts with "Open
 work" and the number of lines in the project's open-work list; a project
 that does not want the entry writes `open_work_entry = false` in `site.toml`.
 A long list shows as a large number: this is a good moment to delete

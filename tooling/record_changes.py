@@ -310,11 +310,56 @@ def record_change_notes(root: Path, since: str | None = None) -> list[str]:
             elif not (section.whole_record or link.fragment in section.anchors):
                 continue
             readers.setdefault((link.page, link.chapter), link.position)
-        if not readers:
-            continue
         title = section.record + (f" › {section.heading.text}" if section.heading else "")
+        if not readers:
+            # A section nobody links is easy to miss: a page explains other sections of the
+            # record, so its reader expects this one there too. A page explains a record when
+            # it links two or more of its sections; one link is a pointer. A record that no
+            # page explains, such as a worklog, stays silent.
+            linked: dict[str, set[str]] = {}
+            for link in links:
+                if link.record == section.record and link.fragment:
+                    linked.setdefault(link.page, set()).add(link.fragment)
+            others = sorted(page for page, fragments in linked.items() if len(fragments) >= 2)
+            if others and section.heading is not None and not section.whole_record:
+                notes.append("\n".join([f"NOTE: {title} changed.",
+                                        "      No page links this section. Pages that explain other sections of the record:",
+                                        *[f"        {page}" for page in others]]))
+            continue
         lines = [f"NOTE: {title} changed.", "      Pages that explain it — reread them:"]
         for (page, chapter), _ in sorted(readers.items(), key=lambda item: (item[0][0], item[1])):
             lines.append(f"        {page}" + (f"  (chapter: {chapter})" if chapter else ""))
         notes.append("\n".join(lines))
+    return notes
+
+
+_FIGURE = re.compile(r'<figure\b[^>]*\bid="([^"]+)"[^>]*>(.*?)</figure>', re.S)
+_NUMBERED = re.compile(r"<figcaption\b[^>]*>\s*<b>\s*Figure\s+(\d+)")
+_ON_PURPOSE = "<!-- unreferenced figure"
+
+
+def uncited_figure_notes(root: Path) -> list[str]:
+    """One note per topic page whose numbered figures the text never cites.
+
+    A numbered figure is cited when the page links its id outside the figure itself. A figure left
+    uncited on purpose carries `<!-- unreferenced figure: reason -->` just before it or inside it.
+    """
+    root = Path(root)
+    notes = []
+    for page in topic_pages(root):
+        raw = page.read_text()
+        text = masked(raw)  # same length as the source: code and comments are blanked in place
+        missing = []
+        for match in _FIGURE.finditer(text):
+            identifier, body = match.group(1), match.group(2)
+            number = _NUMBERED.search(body)
+            # The marker is a comment, which the masked text no longer holds: look in the source.
+            if not number or _ON_PURPOSE in raw[max(0, match.start() - 200):match.end()]:
+                continue
+            outside = text[:match.start()] + text[match.end():]
+            if f"(#{identifier})" not in outside and f'href="#{identifier}"' not in outside:
+                missing.append(f"Figure {number.group(1)} (#{identifier})")
+        if missing:
+            notes.append("\n".join([f"NOTE: {page.relative_to(root).as_posix()}: numbered figure(s) the text never cites:",
+                                    *[f"        {item}" for item in missing]]))
     return notes

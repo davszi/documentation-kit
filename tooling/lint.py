@@ -818,6 +818,12 @@ def check_formulas() -> None:
         summaries.append(summary)
 
 
+def uncited_figure_notes() -> list[str]:
+    """Numbered figures on topic pages that the text never cites; notes, never a failure."""
+    from record_changes import uncited_figure_notes as notes
+    return notes(REPO)
+
+
 def record_change_notes(since: str | None) -> list[str]:
     """Reminders, never failures: pages that explain a changed record section."""
     from record_changes import record_change_notes as notes
@@ -868,7 +874,7 @@ def main() -> int:
     check_slide_faces()
     check_formulas()
     check_kit_pin()
-    notes = record_change_notes(args.since) + page_number_notes()
+    notes = record_change_notes(args.since) + page_number_notes() + uncited_figure_notes()
 
     for w in warnings:
         print(f"WARN: {w}")

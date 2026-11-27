@@ -60,6 +60,8 @@ Document work in this order:
 3. A page that exists stays true to its record. When a record changes, update the pages that explain it in the same deliverable, after the record; that needs no new request, also when the page gains or loses a chapter because the record did. [Rendered pages are for people](#rendered-pages-are-for-people-records-stay-markdown) says how lint lists those pages.
 4. The size of the page work decides who does it. A small sync changes a sentence or two that a record edit made stale; it needs no page guides and stays with the agent that edited the record. Anything larger, or anything that needs layout, a figure or a new block, goes to a separate agent where the runtime supports delegation; follow [delegating a page for people](engineering/delivery.md#delegating-a-page-for-people) for its brief. Without delegation, do the page as a separate step after the record.
 
+Lint notes help to keep step: a changed record section lists the pages that link it, and a changed section that no page links is named when a page explains the rest of its record; [reviewing a page against its rules](site/validation.md#reviewing-a-page-against-its-rules) says what to do with a page that has fallen behind.
+
 A page built while a proposal is discussed comes before the work and has no record yet; [Discussion before the work](engineering/delivery.md#discussion-before-the-work) covers it.
 
 The page author reads the applicable [page guides](writing.md) and [site guides](maintenance.md). The record author needs them only for what [excerpts, formulas and figures](records.md#excerpts-formulas-and-figures) names.
