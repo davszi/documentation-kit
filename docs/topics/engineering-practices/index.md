@@ -174,7 +174,7 @@ Guide: [Efficient by default](performance.html#efficient-by-default) · [Workloa
 
 A job that skips the project's route can spend its budget on the wrong executable, source or inputs, so [Figure 6](#fig-execution) starts by checking them. Squeezing a budget to get admitted does not make the job need less. And because a reservation says nothing about consumption, its basis is stated with it: “no comparable successful run exists, so this is a deliberately generous first reservation; it is reserved capacity, not measured use.” Deadlines and cleanup reserves fit the operation under the project's timing rules. A job runs alone when interference would spoil a timing or when it tests lifecycle, runaway, signal or resource-stress behaviour. The project supplies the concrete controls; reservation, usage-cache and receipt rules apply when it uses those mechanisms.
 
-<!-- fold: experiment Reusing an earlier reservation -->
+<!-- fold: detail Reusing an earlier reservation -->
 
 The measured use of a successful earlier run is the best basis for the next reservation, but only for the same job. Reuse it when the workload, command, checkout or source state, executable, relevant environment and its metadata, and input identity all match; name external or changing inputs and import roots explicitly, since they are easy to miss. If anything differs, make an explicit, adequate reservation again. An estimate or a limit a job failed at is not a successful measurement.
 

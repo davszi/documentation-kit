@@ -90,7 +90,7 @@ Full guide: [page design](page-design.html#page-design), [page types](page-desig
 
 The board above is the real block, filled with what each of its five states means; it reports no project's status. Shared blocks help only if each means the same thing everywhere: a row reading "Decided" can be mistaken for shipped work, so the board says what each state does not prove. A page has one board. The other blocks, from the one-sentence `bs-lead` to flows, tiles and checks, are listed by purpose in [build-sheet pages](page-design.html#build-sheet-pages), with the rule that every row is filled: two, three or four items, or a fixed split for more.
 
-<!-- fold: code Slide faces -->
+<!-- fold: detail Slide faces -->
 
 A chapter may open with one 16:9 slide face, a summary that states its takeaway and shows it; the chapter below stays the complete source. Faces are added last and only on request: build the chapters, then ask the person, and add none without a yes. A face earns its place by its visual, drawn from the chapter's own figures and numbers and laid out for the shape of its finding. Boxes of text are not a visual, except the terms of a formula the chapter explains or a grid that compares options factor by factor; a chapter with nothing to show gets no face. No fact lives only on a face: lint warns about a number a face shows and its chapter does not. A review of existing faces sorts each into redraw or remove, redesign, or keep, with a reason. Examples are on [Build a site](build-a-site.html#figures-and-slides).
 
@@ -110,7 +110,7 @@ Full guide: [build-sheet pages](page-design.html#build-sheet-pages) and [slide f
 <div class="bs-flow n2" role="img" aria-label="The visible Story holds the complete argument in order of understanding: purpose and prerequisites, ingredients and mechanism, examples, evidence and limits, comparison cases and verdict. Typed folds for math, experiment, code and dead-end add optional depth. A fold starts closed unless its author marks it open for depth most readers of the chapter need. Folds never hide a separate required argument.">
 <div class="bs-node bs-teal"><span class="bs-label">Always visible</span><b>The Story</b><ul><li>Purpose and prerequisites</li><li>Ingredients and mechanism</li><li>Examples, evidence and limits</li><li>Comparison cases and verdict</li></ul></div>
 <div class="bs-arrow"><span>go deeper</span></div>
-<div class="bs-node bs-violet"><span class="bs-label">Optional</span><b>Typed folds</b><ul><li><code>math</code>, <code>experiment</code>, <code>code</code>, <code>dead-end</code> (Alternatives)</li><li>closed by default</li><li><code>(open)</code>: depth most readers of the chapter need</li><li>a reader's own click is remembered</li></ul></div>
+<div class="bs-node bs-violet"><span class="bs-label">Optional</span><b>Typed folds</b><ul><li><code>math</code>, <code>experiment</code>, <code>code</code>, <code>dead-end</code> (Not chosen)</li><li>closed by default</li><li><code>(open)</code>: depth most readers of the chapter need</li><li>a reader's own click is remembered</li></ul></div>
 <div class="bs-back"><span>×</span> A fold never hides a separate required argument.</div>
 </div>
 <figcaption><b>Figure 2.</b> Optional depth branches from a complete visible argument. This illustrative diagram is authored in the page source and contains no measured results.</figcaption>
@@ -168,13 +168,13 @@ A missing figure is work to do. The page author makes it from what exists, measu
 
 Every figure has a stable anchor, a numbered caption, a prose reference like the one above that links its number and says what to notice, a named source and useful alternative text; an image that only shows appearance gets a caption and no number. Chart labels stay at 11 px or more, controls are at least 44 px as touch targets, and nothing overflows the page at any width.
 
-<!-- fold: experiment Comparisons, captures and live reports -->
+<!-- fold: detail Comparisons, captures and live reports -->
 
 Compared views share orientation, scale, framing and input cases, keep their zoom while switching and use one set of markers and colours; method names, not colours alone, carry identity. For independent changes, show the baseline, each change alone and their combination, beside an ablation table, and explain a zero effect honestly. Prefer scripted captures with their generator and inputs; an interactive screenshot states its commit, date and scenario and never supports a quantitative claim. A public report on a live experiment carries `ongoing = true` until its findings and limits are settled.
 
 <!-- /fold -->
 
-<!-- fold: code Generated figures, palettes and colour meanings -->
+<!-- fold: detail Generated figures, palettes and colour meanings -->
 
 A generated figure names its generator and input data in a manifest or metadata; Git holds its revision, date and bytes. It takes its colours from the kit's figure palettes and is written in a dark file for pages and a light file for slides and print. A project whose figures give a colour a meaning keeps those meanings in one table in its development conventions, and a new meaning gets its row before its first figure. Flows written in the page source, like the figures here, count as local diagrams: the page source is their generator, and their layout passes the same overflow review. A figure left unreferenced on purpose carries a source comment beside it:
 
@@ -208,7 +208,7 @@ Full guide: [figures and comparisons](figures.html#figures-and-comparisons), [in
 
 A formula with undefined symbols asks the reader to trust it rather than follow it, and a formula plot unconnected to the Story adds a second picture to decode. [Figure 4](#fig-math) shows the alternative: the equation is reached through marks on the picture the reader already has, then worked with the Story's own inputs. Along the way, symbols, units and prerequisites are defined before use, intermediate steps such as a chain rule are shown, and local conditions are kept apart from global validity. A non-obvious formula gets its derivation or a precise citation of the section that derives it; a claim about an analytic derivative or Jacobian names its numerical tolerance and the self-test that checked it.
 
-<!-- fold: math KaTeX syntax and the formula check -->
+<!-- fold: detail KaTeX syntax and the formula check -->
 
 With `math = true` in the frontmatter, write `$…$` and `$$…$$` in Markdown and `\(…\)` inside raw HTML. The kit renders with its bundled KaTeX, fetches nothing, and lint compiles every formula of the built pages, naming each one that would show as raw text. A long expression wraps or scrolls in its own box; the type is never shrunk until it is hard to read.
 
@@ -249,7 +249,7 @@ Code on a page can go stale silently: the file changes and the excerpt does not.
 
 Diagrams come from data or explicit local source and pass an overflow and collision check. Their parts keep the meanings in the legend of Figure 5 on every page, with a legend and a named source in the caption. Numbered sequence steps, mode views over common data and generated quantitative SVGs are useful patterns.
 
-<!-- fold: dead-end Interactive diagram controls not yet built -->
+<!-- fold: detail Interactive diagram controls not yet built -->
 
 Pan, fullscreen and annotation controls exist and may be used. Edge highlighting, drill-down and semantic zoom are only planned, so no page describes them as working. If one is built, drill-down with a breadcrumb suits independent child diagrams, and semantic zoom suits a diagram whose context must stay visible.
 

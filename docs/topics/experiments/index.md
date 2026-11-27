@@ -202,7 +202,7 @@ In the right panel a later run is sized from an earlier one. The report first gi
 
 [Figure 5](#fig-record) lays the required content along the experiment. A plan written before results exist keeps the decision, baseline and stop from drifting toward whatever appears. A report of every attempt shows how many tries the result needed and which settings failed; a best-only report hides both. The run output behind the reported results is [tracked in the experiment directory](records.html#numbers-and-staleness) before completion is reported, and a failed bar is [never lowered](#changes-and-failures). This is content, not a form: a short note in the project's own record holds it, and no template is added unless the project asks.
 
-<!-- fold: experiment What the reproduction details include -->
+<!-- fold: detail What the reproduction details include -->
 
 The [measurement rules](records.html#numbers-and-staleness) make a measured claim reproducible: its source commit, exact reproduction command, runtime or environment, workload, units, baseline, method and scope, with links to its raw result and limitations. When something affecting the claim changes, it is rerun before it is quoted as current.
 
@@ -334,7 +334,7 @@ For example, a rewritten CSV reader should give the old reader's totals. Existin
 - **Application logic**, where it affects the claim: data identity and composition, leakage, metric definitions and aggregation, and how configuration, library calls and saved outputs compose. Pick cases that can expose a plausible wiring error, including one that still looks reasonable. Ordinary library use needs no recertification: verify the application's use, and look into the library only when a concrete risk or the claim depends on its behavior. Learned or fitted models add the [model-specific checks](#learned-or-fitted-models-only).
 - **A regression gate**, where a fixed defect or difficult case could return unnoticed; the project decides its scope. It keeps those cases, documents its tolerances and, where available, fails on a known-bad state. A fast gate targets under five seconds; the target limits gates, not experiments.
 
-<!-- fold: experiment When higher precision, exhaustive replay or another backend is justified -->
+<!-- fold: detail When higher precision, exhaustive replay or another backend is justified -->
 
 Only when it addresses the claim and a risk the reference comparison leaves uncovered. Optional native comparisons are explicitly guarded.
 
@@ -366,7 +366,7 @@ See [application logic](experiment-verification.html#check-the-experiments-appli
 
 For example, a dependency update lands before a performance comparison of two request handlers is reported. The timings it affects are rerun, unaffected parser tests are reused after confirming the same source and inputs, and a failure is investigated against the agreed tolerance instead of widening it.
 
-<!-- fold: experiment Interruptions and what the report states -->
+<!-- fold: detail Interruptions and what the report states -->
 
 Where an interruption could affect a run's validity or cost, verify the recovery that matters for that run: checkpoints, resume identity, partial outputs or restart. No universal interruption suite is added. The report keeps apart, under the [handoff guide](handoffs.html), the checks executed, their results, conclusions by inspection only and the remaining uncertainty; reuse after a change follows the [staleness rules](records.html#numbers-and-staleness).
 

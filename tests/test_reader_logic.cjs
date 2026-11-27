@@ -180,7 +180,7 @@ function checkFoldsKeysAndDrawer() {
   assert.equal(page.sidebar.children.at(-1), panel, 'The options sit at the bottom of the navigation');
   assert.equal(panel.hidden, false, 'A page with folds shows its options');
   assert.deepEqual(panel.querySelectorAll('[data-reader-layer]').map(node => node.textContent),
-    ['Math', 'Experiments', 'Code', 'Alternatives'], 'The options are the kinds, in order, without Story');
+    ['Math', 'Experiments', 'Code', 'Not chosen'], 'The options are the kinds, in order, without Story');
   assert.ok(!panel.textContent.includes('Story'), 'Story is not an option');
   assert.equal(page.option('all').getAttribute('role'), 'switch', 'All is a switch');
   assert.ok(!page.key('ArrowRight', {target: page.option('math')}).defaultPrevented, 'Options keep their arrow keys');
@@ -625,10 +625,11 @@ function checkFrame() {
   narrow.assertPair(1, 2);
   // The help describes the reader as it now is.
   const help = page.document.querySelector('.reader-help').textContent;
-  for (const phrase of ['stepper', 'swipe', 'row of icons', 'Also show', 'All switches every kind']) {
+  // Changed behaviour: All also opens folds of no kind, so the help says it opens every fold.
+  for (const phrase of ['stepper', 'swipe', 'row of icons', 'Also show', 'All opens or closes every fold']) {
     assert.ok(help.includes(phrase), `The help mentions ${phrase}`);
   }
-  for (const gone of ['From start', 'layer buttons', 'independently for each column']) {
+  for (const gone of ['From start', 'layer buttons', 'independently for each column', 'All switches every kind']) {
     assert.ok(!help.includes(gone), `The help no longer mentions ${gone}`);
   }
   // Review finding: a chapter without a headline of its own keeps its strip, and a
@@ -816,6 +817,60 @@ function checkAdaptedPages() {
   return 'h2 headers, nested cards, present kinds only, pins, subsection links, full page and print';
 }
 
+// A fold of no kind (`fold: detail`) holds optional detail that is none of the
+// kinds. It has no option of its own; All opens it with every other fold, a
+// reader's click on it is saved, printing and deep links open it.
+function checkFoldsOfNoKind() {
+  const chapters = CHAPTERS.slice(0, 3);
+  const subsections = [{id: 'inside-detail', label: 'Inside detail', chapter: 1, fold: 0}];
+  const options = {chapters, foldKinds: [['math', 'detail'], ['detail'], []], subsections};
+  const page = bootReader('', options);
+  const layersKey = 'foldlayers:' + page.location.pathname;
+  const statesKey = 'foldstates:' + page.location.pathname;
+  const detail = page.folds(1)[0];
+  assert.equal(detail.querySelector('.fold-tag'), null, 'A fold of no kind has no badge');
+  assert.equal(detail.querySelector('summary .fold-title').textContent, 'Details', 'A fold of no kind keeps its title');
+  assert.ok(detail.querySelector('.fold-content'), 'A fold of no kind receives its reading panel');
+  assert.deepEqual(page.panel().querySelectorAll('[data-reader-layer]').map(node => node.dataset.readerLayer), ['math'],
+    'A fold of no kind has no option of its own');
+  assert.equal(page.option('all').hidden, false, 'All is offered');
+  page.layers(['math']);
+  assert.deepEqual([page.states(0), page.states(1)], [[true, false], [false]], 'A kind option leaves folds of no kind closed');
+  assert.equal(page.option('all').getAttribute('aria-checked'), 'false', 'All is off while folds of no kind are closed');
+  page.click(page.option('all'));
+  assert.deepEqual([page.states(0), page.states(1)], [[true, true], [true]], 'All opens the folds of no kind too');
+  assert.equal(page.option('all').getAttribute('aria-checked'), 'true', 'All shows on');
+  assert.deepEqual(JSON.parse(page.storage.get(layersKey)).sort(), ['detail', 'math'], 'All is stored with the kinds');
+  page.click(page.option('all'));
+  assert.deepEqual([page.states(0), page.states(1)], [[false, false], [false]], 'All off closes the folds of no kind');
+  page.toggleFold(1, 0);
+  assert.deepEqual(JSON.parse(page.storage.get(statesKey)).at(-1), [chapters[1].id + '|detail|Details', true],
+    'A click on a fold of no kind is saved');
+  const stored = {[statesKey]: page.storage.get(statesKey), [layersKey]: page.storage.get(layersKey)};
+  const again = bootReader('', {...options, stored});
+  assert.deepEqual([again.states(0), again.states(1)], [[false, false], [true]], 'The saved click wins on the next visit');
+  again.window.emit('beforeprint');
+  assert.ok(again.sections.every((_, index) => again.states(index).every(Boolean)), 'Print opens the folds of no kind');
+  again.window.emit('afterprint');
+  again.flush();
+  // Saved values of the kinds keep their meaning.
+  const saved = bootReader('', {...options, stored: {[layersKey]: JSON.stringify(['math'])}});
+  assert.deepEqual([saved.states(0), saved.states(1)], [[true, false], [false]], 'A saved kind opens only its folds');
+  const deep = bootReader('#inside-detail', options);
+  assert.equal(deep.folds(1)[0].open, true, 'A deep link opens the fold of no kind around it');
+  // A page whose only folds have no kind shows All alone.
+  const only = bootReader('', {chapters, foldKinds: [['detail'], [], ['detail']]});
+  assert.equal(only.panel().hidden, false, 'A page with only folds of no kind shows Also show');
+  assert.equal(only.panel().querySelectorAll('[data-reader-layer]').length, 0, 'It offers no kind');
+  assert.equal(only.option('all').hidden, false, 'It offers All');
+  only.click(only.option('all'));
+  assert.deepEqual([only.states(0), only.states(2)], [[true], [true]], 'All opens them');
+  only.click(only.option('all'));
+  assert.deepEqual([only.states(0), only.states(2)], [[false], [false]], 'All closes them');
+  return 'no badge or option of its own, All opens and closes it, saved click, print, deep link, saved kinds, '
+    + 'a page with only such folds shows All alone';
+}
+
 // Subsection links are labelled jumps within a parent, not extra chapters.
 function checkJumpGroups() {
   const chapters = [{id: 'intro', label: 'Introduction'}, {id: 'queries', label: 'Projection and containment'}];
@@ -934,8 +989,42 @@ function checkFoldControls() {
   runFoldControls(unknown, local);
   assert.ok(unknown.document.querySelectorAll('details.fold').length > 0, 'The fixture has folds of an unknown kind');
   assert.equal(!!unknown.document.querySelector('.fold-bar'), false, 'Folds of no known kind get no bar');
+  // Folds of no kind (`fold: detail`): no option of their own, All opens them,
+  // a click on one is saved, and a page with only such folds shows All alone.
+  const detailOptions = {runReader: false, foldKinds: [['math', 'detail'], ['detail'], [], [], [], [], [], []]};
+  const detailStorage = new Map();
+  const detailLocal = {getItem: key => detailStorage.get(key) ?? null, setItem: (key, value) => detailStorage.set(key, value)};
+  const mixed = bootReader('', detailOptions);
+  mixed.nav.dataset.foldControls = 'default';
+  runFoldControls(mixed, detailLocal);
+  const mixedButtons = mixed.document.querySelector('.fold-bar').querySelectorAll('button');
+  assert.deepEqual(mixedButtons.map(node => node.textContent), ['Math', 'All'], 'A fold of no kind has no option of its own');
+  mixedButtons[0].emit('click');
+  assert.deepEqual([states(mixed, 0), states(mixed, 1)], [[true, false], [false]], 'A kind option leaves folds of no kind closed');
+  assert.equal(mixedButtons[1].getAttribute('aria-checked'), 'false', 'All is off while folds of no kind are closed');
+  mixedButtons[1].emit('click');
+  assert.deepEqual([states(mixed, 0), states(mixed, 1)], [[true, true], [true]], 'All opens the folds of no kind too');
+  mixedButtons[1].emit('click');
+  assert.deepEqual([states(mixed, 0), states(mixed, 1)], [[false, false], [false]], 'All off closes them');
+  const detailSummary = mixed.sections[1].querySelector('summary');
+  const detailClick = detailSummary.emit('click', {preventDefault() { this.defaultPrevented = true; }});
+  if (!detailClick.defaultPrevented) detailSummary.parentElement.open = !detailSummary.parentElement.open;
+  const detailStates = JSON.parse(detailStorage.get('foldstates:' + mixed.location.pathname));
+  assert.deepEqual(detailStates.at(-1), ['notation|detail|Details', true], 'A click on a fold of no kind is saved');
+  const mixedAgain = bootReader('', detailOptions);
+  mixedAgain.nav.dataset.foldControls = 'default';
+  runFoldControls(mixedAgain, detailLocal);
+  assert.deepEqual([states(mixedAgain, 0), states(mixedAgain, 1)], [[false, false], [true]], 'The saved click wins on the next visit');
+  const onlyDetail = bootReader('', {runReader: false, foldKinds: CHAPTERS.map((_, index) => index === 2 ? ['detail'] : [])});
+  onlyDetail.nav.dataset.foldControls = 'default';
+  runFoldControls(onlyDetail, {getItem: () => null, setItem() {}});
+  const onlyBar = onlyDetail.document.querySelector('.fold-bar');
+  assert.ok(onlyBar, 'A page with only folds of no kind gets the bar');
+  assert.deepEqual(onlyBar.querySelectorAll('button').map(node => node.textContent), ['All'], 'It offers All alone');
+  onlyBar.querySelector('button').emit('click');
+  assert.deepEqual(states(onlyDetail, 2), [true], 'All opens them');
   return 'reader opt-in installs no bar or hash handler; the bar offers present kinds and All, author-open folds, '
-    + 'saved clicks, foldmode migration and hash deep links';
+    + 'saved clicks, foldmode migration and hash deep links; folds of no kind have no option and open with All';
 }
 
 function checkSourceRules() {
@@ -959,6 +1048,7 @@ const checks = [
   ['Reader page identities', checkPageIdentities],
   ['Reader small pages', checkSmallPagesAndRedirects],
   ['Reader adapted pages', checkAdaptedPages],
+  ['Reader folds of no kind', checkFoldsOfNoKind],
   ['Reader jump groups', checkJumpGroups],
   ['Fold controls', checkFoldControls],
   ['Reader source rules', checkSourceRules],

@@ -534,7 +534,7 @@ async function reviewArrangements(browser, origin) {
   await setView(page, 'full');
   await settle(page);
   const panel = await page.evaluate(() => [...document.querySelectorAll('#sidebar .reader-layers button')].filter(node => node.getClientRects().length).map(node => node.textContent.trim()));
-  assert.deepEqual(panel, ['All', 'Math', 'Code', 'Alternatives', 'Slides'], 'Also show offers the kinds present, All and, in All chapters, Slides');
+  assert.deepEqual(panel, ['All', 'Math', 'Code', 'Not chosen', 'Slides'], 'Also show offers the kinds present, All and, in All chapters, Slides');
   const island = await page.evaluate(() => { const r = document.querySelector('.reader-island').getBoundingClientRect(); return r.bottom <= innerHeight && r.top > innerHeight / 2; });
   assert.ok(island, 'in All chapters the stepper rides the bottom of the window');
   const code = () => page.evaluate(() => [...document.querySelectorAll('details.fold[data-fold="code"]')].map(fold => fold.open));

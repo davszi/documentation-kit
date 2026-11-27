@@ -114,7 +114,7 @@ Each file has one job so that nobody has to guess where something goes, and an a
 <div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>One home, linked</h3><p>The flag goes into <code>PROJECT_CONTEXT.md</code> under build and review. The router's row and the page both link there.</p></div>
 </div>
 
-<!-- fold: code What is not in the project, and why -->
+<!-- fold: detail What is not in the project, and why -->
 
 `.docs-kit/` is the kit's own repository, pinned as a submodule: its rules, theme and tools. Change a shared rule in the kit itself, never in a project's checkout of it. `.build/` holds the Python environment (`.build/docs-env/`) and the generated site (`.build/docs/`); both are recreated by commands and stay out of Git through `.gitignore`. Generated pages are never edited; change the source and rebuild. Inside the kit, the starter's entry files are stored as `*.tmpl` so none of them is active there; `init` writes them under the names above.
 

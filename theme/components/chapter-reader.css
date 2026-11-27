@@ -102,10 +102,13 @@ body.topic-deck {overflow:hidden;}
 .chapter-body details.fold[data-fold="experiment"] {--fold-color:#5dcaa5;}
 .chapter-body details.fold[data-fold="code"] {--fold-color:#85b7eb;}
 .chapter-body details.fold[data-fold="dead-end"] {--fold-color:#f0997b;}
+/* A fold of no kind: a neutral hue and no badge, so its title takes the badge's column too. */
+.chapter-body details.fold[data-fold="detail"] {--fold-color:var(--muted);}
 .chapter-body details.fold[open] {border-color:color-mix(in srgb,var(--fold-color) 28%,var(--border));border-left-color:var(--fold-color);}
 .chapter-body details.fold > summary {display:grid;grid-template-columns:12px auto minmax(0,1fr);align-items:center;gap:10px;min-height:60px;margin:0;padding:12px 16px;color:var(--bright);line-height:1.45;opacity:1;border-radius:9px;transition:background .2s;}
 .chapter-body details.fold > summary:hover {background:color-mix(in srgb,var(--fold-color) 5%,transparent);}
 .chapter-body details.fold > summary::before {color:var(--fold-color);margin:0;font-size:15px;text-align:center;}
+.chapter-body details.fold[data-fold="detail"] > summary {grid-template-columns:12px minmax(0,1fr);}
 .chapter-body details.fold[open] > summary {border-bottom:1px solid var(--border);border-radius:9px 9px 0 0;}
 .chapter-body .fold-tag {font-size:11px;letter-spacing:.015em;padding:3px 8px;margin:0;color:var(--fold-color);border-color:color-mix(in srgb,var(--fold-color) 35%,transparent);background:color-mix(in srgb,var(--fold-color) 7%,transparent);white-space:nowrap;opacity:1;}
 .fold-title {font-size:15px;font-weight:600;overflow-wrap:anywhere;}
@@ -175,6 +178,7 @@ body.topic-deck {overflow:hidden;}
   .chapter-body details.fold > summary {grid-template-columns:12px minmax(0,1fr);gap:7px;padding:12px;}
   .chapter-body .fold-tag {justify-self:start;}
   .fold-title {grid-column:1 / -1;font-size:14px;}
+  .chapter-body details.fold[data-fold="detail"] .fold-title {grid-column:auto;}
   .fold-content {padding:14px;}
   .fold-content > h4 {font-size:15px;margin-top:24px;padding-top:16px;}
   .fold-content p.fold-equation {padding:12px;}
@@ -232,6 +236,7 @@ body.topic-deck {overflow:hidden;}
   .chapter-body details.fold[data-fold="experiment"] {--fold-color:#08765d;}
   .chapter-body details.fold[data-fold="code"] {--fold-color:#235d91;}
   .chapter-body details.fold[data-fold="dead-end"] {--fold-color:#aa492d;}
+  .chapter-body details.fold[data-fold="detail"] {--fold-color:#57606a;}
   .chapter-body details.fold > summary {break-after:avoid;}
   .fold-content p.fold-equation {break-inside:avoid;background:none;overflow:visible;font-size:.85em;}
   /* The reader opens every fold just before printing; its fade, still running, would print pale. */

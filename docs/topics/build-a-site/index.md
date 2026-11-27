@@ -162,7 +162,7 @@ page_only = "Explains building a site; its records are the site guides in rules/
 
 [Figure 1](#fig-build) is the whole pipeline. Generated output can always be deleted and rebuilt, so a reviewer only looks at sources. Only tracked files are read, so what you publish is what is in Git: a stray local file cannot leak onto the site, and a file you forgot to add fails the build instead of leaving a broken image. No web framework or JavaScript install is needed; the reader, theme, fonts and math come from the pinned kit ([tooling and ownership](authoring.html#tooling-and-ownership)).
 
-<!-- fold: code How links are rewritten -->
+<!-- fold: detail How links are rewritten -->
 
 A page body links from the generated page: `records.html#numbers-and-staleness` reaches a page, `../topics/guide/guide.md` a record. A link to another repository file becomes a source link on `gh_repo`; with `gh_repo = ""` it keeps its local path. A link, include or image that leaves the project fails the build, and lint checks every link to a repository file, in Markdown or an HTML `href` ([authoring paths](authoring.html#authoring-paths)).
 
@@ -289,7 +289,7 @@ toc = []
 
 [Figure 3](#fig-reader) answers two ways long pages fail readers: the point scrolls away under detail, or a definition disappears while you read its use. One chapter keeps one claim on the stage. **Two chapters** holds a definition beside its use: choose it, press `⌖` on this chapter's strip, then <kbd>→</kbd>. **All chapters** reads as one document, its slide faces hidden until **Slides** shows them. **Presentation** fills the window with each chapter's slide, or with a title card from its headline and lead.
 
-Depth lives in typed folds that start closed: a switch under Also show opens every fold of its kind, a reader's own click on a fold is remembered, and printing opens them all. A `[theme_colors]` table gives the reader a project's own colours; the build refuses colours below 4.5:1 for text or 3:1 for marks ([theme colours](authoring.html#theme-colours)). [Shared reading layout](reader.html#shared-reading-layout) owns all of it.
+Depth lives in folds that start closed: a switch under Also show opens every fold of its kind, All opens every fold, those of no kind too, a reader's own click on a fold is remembered, and printing opens them all. A `[theme_colors]` table gives the reader a project's own colours; the build refuses colours below 4.5:1 for text or 3:1 for marks ([theme colours](authoring.html#theme-colours)). [Shared reading layout](reader.html#shared-reading-layout) owns all of it.
 
 <!-- fold: code The settings and fold markers behind it -->
 
@@ -302,7 +302,7 @@ gh_ref = "main"
 chapter_reader = true
 ```
 
-A fold is `<!-- fold: math Title -->` … `<!-- /fold -->`, with `experiment`, `code` or `dead-end` (shown as Alternatives) in place of `math`; `(open)` after the kind starts it open ([reading layers](explanations.html#story-and-reading-layers)).
+A fold is `<!-- fold: math Title -->` … `<!-- /fold -->`, with `experiment`, `code` or `dead-end` (shown as Not chosen) in place of `math`; `(open)` after the kind starts it open ([reading layers](explanations.html#story-and-reading-layers)).
 
 <!-- /fold -->
 

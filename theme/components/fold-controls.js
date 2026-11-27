@@ -2,8 +2,9 @@
 // chapter reader. Folds are typed <details> blocks emitted by build.py (fold:
 // math / experiment / code / dead-end; "(open)" makes one start open). The bar
 // offers only the kinds the page has: a kind switched on opens every fold of
-// that kind page-wide, All switches every kind; with nothing on the reader is
-// in the story. A reader's own click on one fold is saved and wins on the next
+// that kind page-wide, All switches every fold, the folds of no kind (fold:
+// detail) among them, which have no option of their own; with nothing on the
+// reader is in the story. A reader's own click on one fold is saved and wins on the next
 // visit. Deep links auto-open their fold. Storage matches the chapter reader.
 (() => {
   const style = document.createElement("style");
@@ -30,6 +31,8 @@
     details.fold-code > summary { color: var(--fold-color, #85b7eb); }
     details.fold-dead-end { border-left-color: var(--fold-color, #f0997b); }
     details.fold-dead-end > summary { color: var(--fold-color, #f0997b); }
+    details.fold-detail { border-left-color: var(--fold-color, var(--muted, #8b949e)); }
+    details.fold-detail > summary { color: var(--fold-color, var(--muted, #8b949e)); }
     details.fold > summary + * { margin-top: .6em; }
     .fold-bar { display: flex; flex-wrap: wrap; align-items: center;
       gap: 7px; margin: 1em 0 1.4em; position: sticky; top: 8px;
@@ -63,10 +66,13 @@
     ["math", "Math"],
     ["experiment", "Experiments"],
     ["code", "Code"],
-    ["dead-end", "Alternatives"],
+    ["dead-end", "Not chosen"],
   ];
+  // A fold of no kind has no option; All opens it, and it is stored like a kind.
+  const DETAIL = "detail";
   const present = KINDS.filter(([kind]) => folds.some((f) => f.dataset.fold === kind));
-  const valid = (kind) => KINDS.some(([known]) => known === kind);
+  const presentLayers = [...present.map(([kind]) => kind), ...(folds.some((f) => f.dataset.fold === DETAIL) ? [DETAIL] : [])];
+  const valid = (kind) => kind === DETAIL || KINDS.some(([known]) => known === kind);
   const layersKey = "foldlayers:" + location.pathname;
   const statesKey = "foldstates:" + location.pathname;
   const LIMIT = 200;
@@ -78,7 +84,7 @@
   if (!Array.isArray(saved)) {
     let legacy = null;
     try { legacy = localStorage.getItem("foldmode:" + location.pathname); } catch (e) {}
-    saved = legacy === "all" ? KINDS.map(([kind]) => kind) : valid(legacy) ? [legacy] : [];
+    saved = legacy === "all" ? [...KINDS.map(([kind]) => kind), DETAIL] : valid(legacy) ? [legacy] : [];
   }
   const layers = new Set(saved.filter(valid));
   const stored = read(statesKey);
@@ -132,7 +138,7 @@
   const all = document.createElement("button");
   function sync() {
     for (const b of buttons) b.setAttribute("aria-pressed", String(layers.has(b.dataset.fold)));
-    all.setAttribute("aria-checked", String(present.every(([kind]) => layers.has(kind))));
+    all.setAttribute("aria-checked", String(presentLayers.every((kind) => layers.has(kind))));
   }
   // An option sets every fold of its kinds and replaces their saved states.
   function setKinds(kinds, on) {
@@ -161,11 +167,11 @@
   all.className = "fb-all";
   all.setAttribute("role", "switch");
   all.textContent = "All";
-  all.addEventListener("click", () => setKinds(present.map(([kind]) => kind), all.getAttribute("aria-checked") !== "true"));
+  all.addEventListener("click", () => setKinds(presentLayers, all.getAttribute("aria-checked") !== "true"));
   bar.appendChild(all);
   sync();
-  // Folds of no known kind have nothing to offer here: no bar, only the deep links below.
-  if (!present.length) bar.parentNode?.removeChild(bar);
+  // Folds of an unknown kind have nothing to offer here: no bar, only the deep links below.
+  if (!presentLayers.length) bar.parentNode?.removeChild(bar);
 
   // deep links: opening a hash inside a closed fold expands the chain
   function openHash() {
