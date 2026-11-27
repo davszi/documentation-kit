@@ -691,7 +691,7 @@ async function reviewArrangements(browser, origin) {
       assert.ok(reached.outline !== 'none' || reached.shadow !== 'none', 'focused page card is visibly marked');
 
       // Pages for people use the chapter reader; rendered records are plain reference pages.
-      const peoplePages = ['getting-started', 'build-a-site', 'engineering-practices',
+      const peoplePages = ['discuss-build-record', 'getting-started', 'build-a-site', 'engineering-practices',
                            'writing-practices', 'experiments', 'approval-failed-open'];
       for (const slug of pages.filter(slug => slug !== 'index')) {
         await page.goto(`${origin}/html/${slug}.html`, {waitUntil:'networkidle'});

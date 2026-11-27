@@ -32,6 +32,11 @@ file = "index.html"
 
 # ── Start ─────────────────────────────────────────────────────────────
 [[nav]]
+label = "Discuss, build, record"
+file = "discuss-build-record.html"
+group = "start here"
+
+[[nav]]
 label = "Get started"
 file = "getting-started.html"
 group = "start here"

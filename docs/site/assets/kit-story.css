@@ -1,0 +1,118 @@
+/* Figures shared by the home page and the "Discuss, build, record" page:
+   the three words (record, page, chapter) and the path of work. Their markup
+   is in docs/site/fragments/kit-story/; each page numbers and captions them.
+   Every text size is 11px or more, at every width. */
+
+/* ---- Record, page and chapter in one topic folder ---- */
+.ks-words { container-type: inline-size; margin: 0; border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+  background: radial-gradient(ellipse at 100% 0, rgba(var(--secondary-rgb), .08), transparent 60%), var(--bg2); }
+.ks-words-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 12px 18px;
+  border-bottom: 1px solid var(--border); background: rgba(var(--rule-rgb), .04); }
+.ks-words-head code { padding: 0; background: none; font: 600 13.5px var(--mono); color: var(--bright); }
+.ks-words-head span { font: 600 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.ks-words-body { display: grid; grid-template-columns: minmax(0, .9fr) 92px minmax(0, 1.25fr); align-items: center; padding: 18px; }
+.ks-card { position: relative; min-width: 0; padding: 14px 16px 16px; border: 1px solid var(--border); border-top: 3px solid var(--tone);
+  border-radius: 10px; background: var(--panel); transition: box-shadow .2s, border-color .2s; }
+.ks-card:hover { border-color: color-mix(in srgb, var(--tone) 45%, var(--border)); box-shadow: 0 0 24px color-mix(in srgb, var(--tone) 16%, transparent); }
+.ks-record { --tone: var(--accent); }
+.ks-page { --tone: var(--secondary); }
+.ks-tag { display: block; font: 700 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--tone); }
+.ks-file { display: inline-block; margin: 8px 0 6px; padding: 2px 7px; border-radius: 5px; font: 600 13px var(--mono); color: var(--bright);
+  background: color-mix(in srgb, var(--tone) 12%, transparent); }
+.ks-card > b { display: block; margin: 2px 0 8px; font: 700 16px/1.3 var(--sans); color: var(--bright); }
+.ks-card ul { margin: 0; padding-left: 18px; font-size: 13.5px; line-height: 1.5; color: var(--text); }
+.ks-card li + li { margin-top: 3px; }
+.ks-bridge { position: relative; display: grid; gap: 22px; justify-items: center; align-self: center; padding: 0 6px; }
+.ks-bridge::before { content: ""; position: absolute; left: 6px; right: 10px; top: 50%; height: 2px;
+  background: linear-gradient(90deg, var(--secondary), var(--accent)); opacity: .7; }
+.ks-bridge::after { content: ""; position: absolute; left: 0; top: calc(50% - 6px); border: 7px solid transparent; border-right: 9px solid var(--accent); border-left: 0; }
+.ks-bridge span { position: relative; font: 600 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); text-align: center; }
+.ks-chapters { display: grid; gap: 8px; margin: 4px 0 0; padding: 0; list-style: none; counter-reset: ks-chapter; }
+.ks-chapters > li { counter-increment: ks-chapter; display: grid; grid-template-columns: 26px minmax(0, 1fr) 64px; gap: 4px 10px; align-items: center;
+  padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg2); opacity: .62; }
+.ks-chapters > li::before { content: counter(ks-chapter, decimal-leading-zero); grid-row: 1 / span 2; font: 700 12px var(--mono); color: var(--muted); }
+.ks-chapters > li.is-on { opacity: 1; border-color: color-mix(in srgb, var(--orange) 55%, var(--border));
+  box-shadow: 0 0 22px color-mix(in srgb, var(--orange) 14%, transparent); }
+.ks-chapters > li.is-on::before { color: var(--orange); }
+.ks-h { font: 600 13px/1.3 var(--mono); color: var(--bright); min-width: 0; }
+.ks-lead { font-size: 12.5px; line-height: 1.35; color: var(--text); min-width: 0; }
+.ks-line { display: block; height: 7px; width: 78%; border-radius: 4px; background: rgba(var(--rule-rgb), .18); }
+.ks-fig { grid-column: 3; grid-row: 1 / span 2; display: flex; align-items: flex-end; gap: 4px; height: 38px; padding: 6px 8px;
+  border-radius: 6px; background: rgba(var(--rule-rgb), .08); }
+.ks-fig i { flex: 1; border-radius: 2px 2px 0 0; background: color-mix(in srgb, var(--orange) 70%, transparent); }
+.ks-fig i:nth-child(1) { height: 40%; } .ks-fig i:nth-child(2) { height: 85%; } .ks-fig i:nth-child(3) { height: 60%; }
+.ks-chapters > li:not(.is-on) .ks-fig i { background: rgba(var(--rule-rgb), .3); }
+.ks-parts { grid-column: 2 / -1; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.ks-parts span { padding: 2px 8px; border: 1px solid color-mix(in srgb, var(--orange) 45%, transparent); border-radius: 999px;
+  font: 600 11px var(--mono); letter-spacing: .04em; color: var(--orange); }
+@container (max-width: 640px) {
+  .ks-words-body { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 14px; }
+  .ks-bridge { grid-auto-flow: row; gap: 2px; justify-items: start; padding: 12px 0 12px calc(50% + 16px); }
+  .ks-bridge span { text-align: left; }
+  .ks-bridge::before { left: calc(50% - 1px); right: auto; top: 6px; bottom: 10px; width: 2px; height: auto;
+    background: linear-gradient(180deg, var(--accent), var(--secondary)); }
+  .ks-bridge::after { left: calc(50% - 7px); top: 0; border: 7px solid transparent; border-bottom: 9px solid var(--accent); border-top: 0; }
+  .ks-chapters > li { grid-template-columns: 22px minmax(0, 1fr) 48px; }
+}
+
+/* ---- The path of work: six stations on one rail ---- */
+.ks-path { container-type: inline-size; margin: 0; }
+.ks-steps { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0 14px; margin: 0; padding: 0; list-style: none; }
+.ks-steps::before { content: ""; position: absolute; left: 4%; right: 4%; top: 25px; height: 3px; border-radius: 2px;
+  background: linear-gradient(90deg, rgba(var(--rule-rgb), .25), var(--accent) 45%, var(--secondary) 78%, rgba(var(--rule-rgb), .25)); opacity: .75; }
+.ks-step { position: relative; min-width: 0; --tone: var(--secondary); }
+.ks-step .ks-n { position: relative; z-index: 1; display: grid; place-items: center; width: 52px; height: 52px; margin: 0 auto 12px; border-radius: 50%;
+  border: 3px solid var(--tone); background: var(--bg); font: 700 15px var(--mono); color: var(--tone); transition: box-shadow .2s, transform .2s; }
+.ks-step:hover .ks-n { transform: scale(1.06); box-shadow: 0 0 24px color-mix(in srgb, var(--tone) 35%, transparent); }
+.ks-step.is-optional { --tone: var(--muted); }
+.ks-step.is-optional .ks-n { border-style: dashed; }
+.ks-step.is-gate { --tone: var(--accent); }
+.ks-step.is-gate .ks-n { background: var(--accent); color: var(--on-fill); box-shadow: 0 0 0 8px rgba(var(--accent-rgb), .14), 0 0 28px rgba(var(--accent-rgb), .35); }
+.ks-step.is-build { --tone: var(--orange); }
+.ks-step-text { display: block; padding: 12px 12px 14px; border: 1px solid var(--border); border-top: 2px solid var(--tone); border-radius: 10px;
+  background: var(--bg2); text-align: left; }
+.ks-step.is-optional .ks-step-text { border-style: dashed; border-top-style: dashed; }
+.ks-step.is-gate .ks-step-text { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); background: color-mix(in srgb, var(--accent) 6%, var(--bg2)); }
+.ks-step b { display: block; font: 700 17px/1.15 var(--display); text-transform: uppercase; letter-spacing: .01em; color: var(--bright); }
+.ks-when { display: block; margin: 4px 0 6px; font: 600 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--tone); }
+.ks-step p { margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--text); }
+.ks-step code { font-size: 12px; overflow-wrap: anywhere; }
+@container (max-width: 860px) {
+  .ks-steps { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .ks-steps::before { left: 25px; right: auto; top: 26px; bottom: 26px; width: 3px; height: auto;
+    background: linear-gradient(180deg, rgba(var(--rule-rgb), .25), var(--accent) 40%, var(--secondary) 78%, rgba(var(--rule-rgb), .25)); }
+  .ks-step { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .ks-step .ks-n { margin: 0; }
+}
+
+/* ---- Discuss, build, record page: what counts as a yes, and what is written down after it ---- */
+.ks-yes { container-type: inline-size; margin: 0; }
+.ks-yes-grid { display: grid; grid-template-columns: minmax(0, .85fr) 64px minmax(0, .7fr) 64px minmax(0, 1.25fr); align-items: center; }
+.ks-yes-col { min-width: 0; }
+.ks-yes-label { display: block; margin: 0 0 8px; font: 700 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.ks-not { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.ks-not li { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px dashed rgba(var(--red-rgb), .5); border-radius: 8px;
+  background: rgba(var(--red-rgb), .05); font-size: 14px; color: var(--text); }
+.ks-not li::before { content: "×"; font: 700 17px var(--mono); color: var(--red); }
+.ks-gate { display: grid; place-items: center; gap: 6px; padding: 22px 12px; border: 2px solid var(--accent); border-radius: 14px; text-align: center;
+  background: radial-gradient(ellipse at 50% 0, rgba(var(--accent-rgb), .2), transparent 70%), var(--bg2); box-shadow: 0 0 30px rgba(var(--accent-rgb), .18); }
+.ks-gate b { font: 800 26px/1 var(--display); text-transform: uppercase; color: var(--accent); }
+.ks-gate span { font-size: 13.5px; line-height: 1.4; color: var(--text); }
+.ks-to { position: relative; height: 2px; margin: 0 8px; background: linear-gradient(90deg, transparent, var(--muted)); }
+.ks-to::after { content: ""; position: absolute; right: -2px; top: -6px; border: 7px solid transparent; border-left: 9px solid var(--muted); border-right: 0; }
+.ks-to.is-blocked { background: repeating-linear-gradient(90deg, var(--red) 0 6px, transparent 6px 11px); opacity: .7; }
+.ks-to.is-blocked::after { content: "×"; top: -14px; right: 50%; transform: translateX(50%); border: 0; font: 700 18px var(--mono); color: var(--red); }
+.ks-fork { display: grid; gap: 12px; }
+.ks-branch { padding: 12px 14px 14px; border: 1px solid var(--border); border-left: 3px solid var(--tone); border-radius: 10px; background: var(--bg2); }
+.ks-branch.is-chat { --tone: var(--secondary); }
+.ks-branch.is-written { --tone: var(--orange); }
+.ks-branch .ks-yes-label { color: var(--tone); margin-bottom: 4px; }
+.ks-branch b { display: block; font: 700 15.5px/1.3 var(--sans); color: var(--bright); margin-bottom: 4px; }
+.ks-branch p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--text); }
+@container (max-width: 820px) {
+  .ks-yes-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .ks-to { justify-self: center; width: 2px; height: 34px; margin: 6px 0; background: linear-gradient(180deg, transparent, var(--muted)); }
+  .ks-to::after { right: -6px; top: auto; bottom: -2px; border: 7px solid transparent; border-top: 9px solid var(--muted); border-bottom: 0; }
+  .ks-to.is-blocked { background: repeating-linear-gradient(180deg, var(--red) 0 6px, transparent 6px 11px); }
+  .ks-to.is-blocked::after { top: 50%; right: auto; left: 12px; bottom: auto; transform: translateY(-50%); border: 0; }
+}
