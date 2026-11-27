@@ -1,84 +1,41 @@
 +++
 title = "Experiments"
 brand_sub = "small · bounded · proportionate"
-description = "How the kit's two experiment guides keep experiments small, choose their purpose, state their content and match verification to the claim, with the reason for each rule and an illustrative case."
+description = "How the kit's two experiment guides keep experiments small, bound the question, state the plan, show the running total and match verification to the claim, with the reason for each rule and a drawn example."
 components = ["toc", "nav", "code", "filelinks"]
-page_css = ["build-sheet.css"]
-toc = [["Guides", "#routes"], ["Keep it small", "#keep-experiments-small"], ["Purpose", "#choose-the-purpose"], ["Evidence and stopping", "#start-from-evidence"], ["Before and after", "#required-content"], ["Learned models only", "#learned-or-fitted-models-only"], ["Evidence gap", "#identify-the-evidence-gap"], ["Targeted checks", "#checks-and-failures"], ["Changes and failures", "#changes-and-failures"]]
+page_css = ["build-sheet.css", "experiments/experiments.css"]
+toc = [["Keep it small", "#keep-experiments-small"], ["Purpose", "#choose-the-purpose"], ["Evidence and stopping", "#start-from-evidence"], ["Measured settings", "#decide-on-a-measurement"], ["Plan and report", "#required-content"], ["The total", "#show-the-total"], ["Learned models only", "#learned-or-fitted-models-only"], ["Evidence gap", "#identify-the-evidence-gap"], ["Targeted checks", "#checks-and-failures"], ["Changes and failures", "#changes-and-failures"]]
 page_only = "Explains the experiment guides; they are the records, in rules/experiments/."
 +++
 
 # Experiments
 
-<section class="card" id="routes">
-
-## Two guides cover how to design an experiment and how to check it
-
-<p class="bs-lead">Read the workflow guide before designing or running an experiment, and the verification guide before choosing checks.</p>
-
-<div class="scroll" role="region" tabindex="0" data-reader-horizontal aria-label="Experiment guides by task">
-
-| Before… | Read… | It covers |
-|---|---|---|
-| Designing or running an experiment | [Experiment workflow](experiment-workflow.html) | Keeping experiments small, investigations and qualifications, baselines, stopping and required content |
-| Choosing checks or interpreting failures | [Proportionate verification](experiment-verification.html) | Evidence gaps, application logic, custom numerical code, regression gates, changes and failures |
-
-</div>
-
-Both guides exist to keep experiments small enough to finish and honest enough to rely on. Each chapter below states one rule, explains the failure it prevents and shows an illustrative case. The cases come from different fields because the rules apply by what a result decides, not by the project's field.
-
-Projects keep their questions, criteria, contracts and decisions in their own records. Existing contracts still apply. Resources, provenance, benchmarks and placement stay with their [existing owners](experiment-workflow.html#use-the-existing-owners).
-
-<!-- fold: experiment Which guides own resources, provenance, benchmarks and placement -->
-
-The experiment guides do not restate what other guides own. When an experiment touches one of these subjects, follow the owning guide:
-
-- Checks: [proportionate verification](experiment-verification.html).
-- Resources and cleanup: [execution](execution.html).
-- Provenance of measured numbers: [numbers and staleness](records.html#numbers-and-staleness), in the guide for writing records.
-- Run visuals and live experiment reports: [figures](figures.html#run-visuals-and-experiment-lifecycle), one of the page guides.
-- Benchmarks: [performance](performance.html).
-- Placement: [documentation policy](documentation-system.html).
-- Supporting code such as a harness or a judge, and the capability map: [name the need first](code-practices.html#name-the-need-first).
-
-See [use the existing owners](experiment-workflow.html#use-the-existing-owners).
-
-<!-- /fold -->
-
-</section>
-
 <section class="card" id="keep-experiments-small">
+
+<span id="routes"></span>
 
 ## Start with the smallest experiment that can change a decision
 
-<p class="bs-lead">Read this first: before adding a run, check, document or gate, name the decision it changes and the error it would catch.</p>
+<p class="bs-lead">A run, check, document or gate is added only when it names the decision it changes and the error it would catch.</p>
 
-<div class="bs-checks r32">
-<div class="bs-check"><span class="bs-badge bs-ok">Start</span><h3>Smallest first</h3><p>A one-line probe before an experiment. One comparison before a grid. A probe that needs more than its line is an investigation.</p></div>
-<div class="bs-check"><span class="bs-badge bs-ok">Each addition</span><h3>Name its purpose</h3><p>Name the decision it changes and the error it would catch. If you cannot, do not add it. There is no quota.</p></div>
-<div class="bs-check"><span class="bs-badge bs-ok">First</span><h3>Agree the budget</h3><p>Agree time, compute and files, and when to change approach. Ask before exceeding the budget or widening the question.</p></div>
-<div class="bs-check"><span class="bs-badge bs-bad">Unless asked</span><h3>Add no process</h3><p>No registries, receipts, templates, approval steps, audit files or status boards unless the project asks.</p></div>
-<div class="bs-check"><span class="bs-badge bs-bad">Unless needed</span><h3>Import no other field's methods</h3><p>No preregistration, ablation grids or learned-model practices unless the results depend on them.</p></div>
+<figure id="fig-small">
+<div class="xp-fig" role="img" aria-label="A budget of time, compute and files is agreed first and spans the whole climb. Three steps rise from left to right: a one-line probe, one comparison, then a grid. Each step up passes a gate: an open question that matters to the next decision, naming the decision and the error. Below, crossed out: registries, receipts, templates, approval steps, audit files and status boards beyond the running total, and other fields' methods, unless the project asks or the results depend on them.">
+<div class="xp-rail"><span class="xp-tag">Agreed first</span>the budget in time, compute and files, and when to change approach · ask before exceeding it or widening the question</div>
+<div class="xp-stair">
+<div class="xp-box xp-teal"><span class="xp-tag">Smallest</span><b>A one-line probe</b><p>A probe that needs more than its line is an investigation.</p><i>Current steering gain against one higher gain, on the existing lane-change scenario.</i></div>
+<div class="xp-arrow"><span>names a decision and an error</span></div>
+<div class="xp-box xp-violet"><span class="xp-tag">Then</span><b>One comparison</b><p>An experiment with its plan and baseline.</p><i>Whether a tuning investigation is worth opening.</i></div>
+<div class="xp-arrow"><span>an open question needs it</span></div>
+<div class="xp-box xp-orange"><span class="xp-tag">Only if needed</span><b>A grid</b><p>More settings, cases or scenarios. There is no quota.</p><i>Speeds and road surfaces wait until a question needs them.</i></div>
 </div>
-
-Without this limit, an experiment grows by additions that each look careful: another sweep, another check, another file. An addition that changes no decision and catches no error costs time and compute without telling anyone more. The rule therefore asks for a reason before each addition, not a minimum amount of work: there is no quota. Supporting code is no exception: before building a harness or a judge, [name the need first](code-practices.html#name-the-need-first) and read the project's capability map.
-
-<p><b>Illustrative case:</b> does a higher steering-controller gain reduce overshoot in a simulated lane change?</p>
-
-<div class="bs-grid g2">
-<div class="bs-part bs-red"><span class="bs-label">Not this · overbuilt</span><h3>A sweep before a question</h3><ul><li>a grid of gains, speeds and road surfaces before any single comparison</li><li>a new run registry and a template for every run</li><li>an ablation grid borrowed from another field</li><li>no agreed budget, so the sweep has no stopping point</li></ul></div>
-<div class="bs-part bs-green"><span class="bs-label">This · proportionate</span><h3>One comparison first</h3><ul><li>a one-line probe: current gain against one higher gain on the existing lane-change scenario</li><li>the decision it informs: whether a tuning investigation is worth opening</li><li>budget agreed first: a few runs, no new files</li><li>speeds and surfaces wait for an open question that matters to the next decision</li></ul></div>
+<div class="xp-no"><span>×</span><span>Not added unless the project asks: registries, receipts, templates, approval steps, audit files, status boards beyond the running total. Not imported unless the results depend on them: preregistration, ablation grids, learned-model practices.</span></div>
 </div>
+<figcaption><b>Figure 1.</b> An experiment climbs one step at a time inside a budget agreed first. The steering case is illustrative; the diagram is authored in the page source and holds no measured results.</figcaption>
+</figure>
 
-<!-- fold: dead-end Why borrowed rigor is not added by default -->
+[Figure 1](#fig-small) shows the climb. Without the limit an experiment grows by additions that each look careful: another sweep, another check, another file. One that changes no decision and catches no error costs time and tells nobody more, so the rule asks for a reason before each addition instead of a minimum amount of work. [Approval that failed open](approval-failed-open.html) measured where unexamined additions lead. Small never waives the [plan and the report](#required-content), and supporting code such as a harness or a judge starts with [naming the need](code-practices.html#name-the-need-first) and reading the project's capability map. See [keep experiments small](experiment-workflow.html#keep-experiments-small).
 
-Preregistration, ablation grids and learned-model practices serve experiments whose results depend on them. Elsewhere they add steps and files without changing a decision, so the guide imports them only when the results depend on them. Registries, receipts, templates, approval steps, audit files and status boards follow the same logic: they appear when the project asks for them.
-
-Keeping an experiment small never removes its required content. The smallest probe still states its plan and reports every attempt; see [before and after](#required-content).
-
-<!-- /fold -->
-
-See [keep experiments small](experiment-workflow.html#keep-experiments-small).
+An experiment starts like other work: its design is discussed and agreed before it runs, and [an experiment takes the same path, with extra gates](discuss-build-record.html#experiments) shows where each gate sits. This page explains the gates. Their rules are in the [experiment workflow](experiment-workflow.html) and [proportionate verification](experiment-verification.html); resources, provenance, visuals, benchmarks and placement stay with [their existing owners](experiment-workflow.html#use-the-existing-owners).
 
 </section>
 
@@ -86,7 +43,7 @@ See [keep experiments small](experiment-workflow.html#keep-experiments-small).
 
 ## Classify an experiment by what its result decides, not by the project's field
 
-<p class="bs-lead">Ask one question: does it accept or reject a named system against a bar fixed before the run?</p>
+<p class="bs-lead">One question sorts it: does it accept or reject a named system against a bar fixed before the run?</p>
 
 <figure id="fig-purpose">
 <div class="bs-flow n2" role="img" aria-label="Ask whether the experiment accepts or rejects a named system against a bar fixed before the run. If not, it is an investigation, declared exploratory or confirmatory before running. If so, it is a qualification with a pass, fail or inconclusive verdict. An exploratory finding is not a confirmation or qualification.">
@@ -98,60 +55,111 @@ See [keep experiments small](experiment-workflow.html#keep-experiments-small).
 </div>
 <div class="bs-back"><span>×</span> An exploratory finding is not a confirmation or qualification. Before a decision relies on it, test it on evidence that did not shape it.</div>
 </div>
-<figcaption><b>Figure 1.</b> One question sorts an experiment; an investigation declares its kind before running.</figcaption>
+<figcaption><b>Figure 2.</b> One question sorts an experiment; an investigation declares its kind before running.</figcaption>
 </figure>
 
-The kind decides what must be fixed before the run and what the result can support. A verdict needs its bar before the run; otherwise the bar can bend toward whatever the run produced. An investigation may end in "no" or "inconclusive" and still be a finding. Without a declared kind, a pattern found while exploring can be reported as if it had been tested.
+[Figure 2](#fig-purpose) sorts by what the result decides. The kind fixes what must be settled before the run: a verdict needs its bar first, or the bar bends toward whatever the run produced. An investigation may end in "no" or "inconclusive" and still be a finding. Declaring it exploratory or confirmatory before running keeps a pattern found while exploring from being reported as tested.
 
-<p><b>Illustrative case:</b> is a new cache layer faster for the project's request workload?</p>
-
-<div class="bs-grid g2">
-<div class="bs-part bs-red"><span class="bs-label">Not this · mislabelled</span><h3>Exploration reported as a verdict</h3><ul><li>try several cache sizes and request mixes, keep the best</li><li>report "the cache is faster" as if a bar had been fixed first</li><li>the requests that picked the size also judge it</li></ul></div>
-<div class="bs-part bs-green"><span class="bs-label">This · declared</span><h3>Exploratory first, then fresh evidence</h3><ul><li>declared exploratory: cache sizes may change as results come in</li><li>the speed-up reported as an exploratory finding, with its scope</li><li>before the release decision relies on it, tested on requests that did not shape it</li><li>a release check against a bar fixed first is a qualification</li></ul></div>
-</div>
-
-See [choose the purpose](experiment-workflow.html#choose-the-purpose).
+For example, trying several cache sizes on the project's requests and keeping the fastest is exploratory. The speed-up is reported as an exploratory finding with its scope, and before a release decision relies on it, it is tested on requests that did not shape it; a release check against a bar fixed first is a qualification. See [choose the purpose](experiment-workflow.html#choose-the-purpose).
 
 </section>
 
 <section class="card" id="start-from-evidence">
 
-## Build on existing evidence and stop once the question is answered
+## Build on existing evidence, keep tuning apart from evaluation, and stop once the question is answered
 
-<p class="bs-lead">Read what is already known, run the smallest comparison that resolves the rest, and keep tuning apart from evaluation.</p>
-
-A setting the person decides, such as a training length or a number of workers, is settled on a measurement where measuring is cheap next to what the decision costs. When a later run is sized from an earlier run's cost, the report first gives that run's measured cost beside its estimate.
+<p class="bs-lead">Read what is known, compare against a baseline that measures the intended behavior on cases kept apart from tuning, and stop at one of three conditions.</p>
 
 <figure id="fig-bound">
-<div class="bs-flow" role="img" aria-label="Read prior evidence and check that it applies. Choose the smallest comparison with a verified baseline. Stop when the question is answered, the budget is reached or the approach cannot answer it. Evaluation results that shaped selection must be stated; repeating runs does not repair leakage.">
-<div class="bs-node bs-teal"><span class="bs-label">Read first</span><b>Prior evidence</b><ul><li>results, failures, code and decisions</li><li>check their inputs and scope apply</li></ul></div>
-<div class="bs-arrow"><span>bound</span></div>
-<div class="bs-node bs-violet"><span class="bs-label">Design</span><b>Smallest comparison</b><ul><li>resolves only what remains</li><li>before changing measured behavior, verify that the strongest relevant baseline the budget allows measures the intended behavior</li><li>shipped behavior: run the shipped path</li><li>replication matched to the claim</li></ul></div>
-<div class="bs-arrow"><span>stop</span></div>
-<div class="bs-node bs-orange"><span class="bs-label">Stop when</span><b>One condition holds</b><ul><li>the question is answered</li><li>the budget is reached</li><li>the approach cannot answer it</li></ul></div>
-<div class="bs-back"><span>×</span> Repeating runs does not repair leakage. If evaluation results influenced selection, say so, then narrow the claim or get fresh evidence.</div>
+<div class="xp-fig" role="img" aria-label="Three stages from left to right. Read first: prior results, failures, code and decisions, after checking that their inputs and scope apply. The smallest comparison: a baseline verified to measure the intended behavior, the shipped path for shipped behavior, and two pools of cases kept apart, one that guides choices and one that evaluates the claim. Stop when the question is answered, the budget is reached or the approach cannot answer it. Crossed out below: evaluation results that shaped selection are stated, and the claim narrowed or fresh evidence found; repeating runs does not repair leakage.">
+<div class="xp-bound">
+<div class="xp-box xp-teal"><span class="xp-tag">Read first</span><b>Prior evidence</b><ul><li>results, failures, code and decisions</li><li>used only where their inputs and scope apply</li></ul><i>Earlier planner results; their map inputs still hold.</i></div>
+<div class="xp-arrow"><span>what remains</span></div>
+<div class="xp-box xp-violet"><span class="xp-tag">Smallest comparison</span><b>A verified baseline, two pools of cases</b><ul><li>before measured behavior changes, the strongest baseline the budget allows is checked to measure the intended behavior; shipped behavior runs the shipped path</li><li>replication matches the claim: many seeds on one intersection replicate only that one</li></ul>
+<div class="xp-pools"><div class="xp-pool" style="--pool: var(--blue)"><span class="xp-tag">Guide choices</span>cost weights tuned on these intersections</div><div class="xp-wall" aria-hidden="true"></div><div class="xp-pool" style="--pool: var(--orange)"><span class="xp-tag">Evaluate the claim</span>near-misses judged on these, kept apart</div></div></div>
+<div class="xp-arrow"><span>stop</span></div>
+<div class="xp-box xp-orange"><span class="xp-tag">Stop when</span><b>One condition holds</b><ul><li>the question is answered</li><li>the budget is reached</li><li>the approach cannot answer it</li></ul></div>
 </div>
-<figcaption><b>Figure 2.</b> The path from prior evidence to a stop. Data, cases or scenarios that guide choices stay apart from those that evaluate the claim, as far as the claim requires.</figcaption>
+<div class="xp-no"><span>×</span><span>Evaluation results that shaped a choice are stated; the claim is narrowed or fresh evidence found. More repeats of the same cases do not repair the leak.</span></div>
+</div>
+<figcaption><b>Figure 3.</b> From prior evidence to a stop, on an illustrative question: do new path-planner cost weights reduce near-misses at simulated intersections? The diagram is authored in the page source and holds no measured results.</figcaption>
 </figure>
 
-An experiment that skips prior results can repeat a known failure or re-measure what is already settled. A baseline that does not measure the intended behavior makes any improvement against it meaningless, which is why it is verified before measured behavior changes. Tuning on the cases that later judge the claim lets the evaluation confirm its own choices, and more repeats of those cases do not undo that.
+[Figure 3](#fig-bound) follows the planner question. Reading first avoids repeating a known failure. A baseline that does not measure the intended behavior makes any improvement against it meaningless, so it is checked before measured behavior changes. Tuning on the cases that later judge the claim lets the evaluation confirm its own choices, and every repeat of those cases carries the same influence. The separation goes as far as the claim requires, not further.
 
-<p><b>Illustrative case:</b> do new path-planner cost weights reduce near-misses at simulated intersections?</p>
+An investigation set aside before its question is answered is [shelved](records.html#shelved-investigations): a scope decision recorded with its inputs, code, failures and the conditions for taking it up again; resuming it needs a new explicit assignment. See [start from evidence](experiment-workflow.html#start-from-evidence-and-bound-the-question) and [keep evaluation separate from tuning](experiment-workflow.html#keep-evaluation-separate-from-tuning).
 
-<div class="bs-grid g2">
-<div class="bs-part bs-red"><span class="bs-label">Not this · unbounded</span><h3>Tuned and judged on the same cases</h3><ul><li>prior planner results and failure notes left unread</li><li>baseline: a simplified planner script, not the planner that ships</li><li>weights tuned on the intersections that also report the result</li><li>one intersection rerun with many seeds, called replication across intersections</li><li>sweeping continues after the question is answered</li></ul></div>
-<div class="bs-part bs-green"><span class="bs-label">This · bounded</span><h3>Shipped baseline, separate cases, clear stop</h3><ul><li>prior results read; their map inputs and scope still apply</li><li>baseline runs the shipped planner path</li><li>weights tuned on some intersections, the claim evaluated on others kept apart</li><li>stop when answered, at the budget, or when the approach cannot answer it</li></ul></div>
+</section>
+
+<section class="card" id="decide-on-a-measurement">
+
+## A setting the person decides rests on a measurement taken before the question is put
+
+<p class="bs-lead">Where measuring is cheap next to what the decision costs, a list of candidate values, a training length or a number of workers is chosen from a measured number.</p>
+
+<figure id="fig-setting">
+<div class="xp-fig">
+<div class="xp-plots">
+<div class="xp-plot"><span class="xp-tag">Decide a setting</span>
+<svg class="xp-wide" viewBox="0 0 400 300" role="img" aria-label="Schematic plot without data. The vertical axis is minutes per run, the unit the question is asked in; the horizontal axis is the candidate value of the setting, c1 to c5. Four candidates are measured and joined by a line; their script and output are tracked. The fifth candidate is a dashed empty circle labelled not run.">
+<text class="xt" x="6" y="20">↑ minutes per run</text>
+<text class="xstamp" x="394" y="20" text-anchor="end">SCHEMATIC · NO DATA</text>
+<path class="xax" d="M62 34V240H394"/>
+<polyline class="xln" points="105,192 165,138 225,110 285,100"/>
+<circle class="xpt" cx="105" cy="192" r="7"/><circle class="xpt" cx="165" cy="138" r="7"/><circle class="xpt" cx="225" cy="110" r="7"/><circle class="xpt" cx="285" cy="100" r="7"/>
+<circle class="xopen" cx="350" cy="100" r="9"/>
+<text class="xtn" x="350" y="76" text-anchor="middle">not run</text>
+<text class="xtm" x="72" y="228">measured · script, output tracked</text>
+<text class="xtm" x="105" y="263" text-anchor="middle">c1</text><text class="xtm" x="165" y="263" text-anchor="middle">c2</text><text class="xtm" x="225" y="263" text-anchor="middle">c3</text><text class="xtm" x="285" y="263" text-anchor="middle">c4</text><text class="xtm" x="350" y="263" text-anchor="middle">c5</text>
+<text class="xt" x="228" y="292" text-anchor="middle">candidate value of the setting →</text>
+</svg>
+<svg class="xp-narrow" viewBox="0 0 300 264" role="img" aria-label="Schematic plot without data, narrow version. The vertical axis is minutes per run; the horizontal axis is the candidate value of the setting, c1 to c5. Four candidates are measured, tracked and joined by a line. The fifth is a dashed empty circle labelled not run.">
+<text class="xt" x="4" y="18">↑ minutes per run</text>
+<text class="xstamp" x="296" y="40" text-anchor="end">SCHEMATIC · NO DATA</text>
+<path class="xax" d="M44 52V206H296"/>
+<polyline class="xln" points="78,170 128,126 178,104 228,96"/>
+<circle class="xpt" cx="78" cy="170" r="7"/><circle class="xpt" cx="128" cy="126" r="7"/><circle class="xpt" cx="178" cy="104" r="7"/><circle class="xpt" cx="228" cy="96" r="7"/>
+<circle class="xopen" cx="272" cy="96" r="8"/>
+<text class="xtn" x="264" y="76" text-anchor="middle">not run</text>
+<text class="xtm" x="96" y="196">measured · tracked</text>
+<text class="xtm" x="78" y="226" text-anchor="middle">c1</text><text class="xtm" x="128" y="226" text-anchor="middle">c2</text><text class="xtm" x="178" y="226" text-anchor="middle">c3</text><text class="xtm" x="228" y="226" text-anchor="middle">c4</text><text class="xtm" x="272" y="226" text-anchor="middle">c5</text>
+<text class="xt" x="170" y="254" text-anchor="middle">candidate value of the setting →</text>
+</svg></div>
+<div class="xp-plot"><span class="xp-tag">Size a later run</span>
+<svg class="xp-wide" viewBox="0 0 400 300" role="img" aria-label="Schematic bars without data. The vertical axis is minutes. For the earlier run, a dashed bar shows its estimate and a filled bar its measured cost, which is taller. An arrow leads to a dashed bar for the later run, sized from the measured cost. The report gives the measured cost against the estimate before the sizing.">
+<text class="xt" x="6" y="20">↑ minutes</text>
+<text class="xstamp" x="394" y="20" text-anchor="end">SCHEMATIC · NO DATA</text>
+<path class="xax" d="M62 34V240H394"/>
+<text class="xtb" x="72" y="58">1 · measured vs estimate</text>
+<rect class="xest" x="78" y="150" width="54" height="90" rx="3"/>
+<rect class="xmeas" x="163" y="96" width="54" height="144" rx="3"/>
+<path class="xarr" d="M230 150H270M262 143l8 7-8 7"/>
+<text class="xtb" x="296" y="58">2 · sizing</text>
+<rect class="xnext" x="300" y="82" width="54" height="158" rx="3"/>
+<text class="xtm" x="105" y="263" text-anchor="middle">estimate</text><text class="xtm" x="190" y="263" text-anchor="middle">measured</text><text class="xtm" x="327" y="263" text-anchor="middle">sized</text>
+<text class="xt" x="148" y="292" text-anchor="middle">earlier run</text><text class="xt" x="327" y="292" text-anchor="middle">later run</text>
+</svg>
+<svg class="xp-narrow" viewBox="0 0 300 264" role="img" aria-label="Schematic bars without data, narrow version. For the earlier run, a dashed bar shows its estimate and a taller filled bar its measured cost. An arrow leads to a dashed bar for the later run, sized from the measured cost.">
+<text class="xt" x="4" y="18">↑ minutes</text>
+<text class="xstamp" x="296" y="40" text-anchor="end">SCHEMATIC · NO DATA</text>
+<path class="xax" d="M44 52V206H296"/>
+<text class="xtb" x="52" y="70">1 · measured vs estimate</text>
+<text class="xtb" x="296" y="92" text-anchor="end">2 · sizing</text>
+<rect class="xest" x="48" y="140" width="40" height="66" rx="3"/>
+<rect class="xmeas" x="138" y="110" width="40" height="96" rx="3"/>
+<path class="xarr" d="M186 156H216M209 150l7 6-7 6"/>
+<rect class="xnext" x="232" y="102" width="40" height="104" rx="3"/>
+<text class="xtm" x="68" y="226" text-anchor="middle">estimate</text><text class="xtm" x="158" y="226" text-anchor="middle">measured</text><text class="xtm" x="252" y="226" text-anchor="middle">sized</text>
+<text class="xt" x="113" y="254" text-anchor="middle">earlier run</text><text class="xt" x="252" y="254" text-anchor="middle">later run</text>
+</svg></div>
 </div>
+</div>
+<figcaption><b>Figure 4.</b> Where a measured number goes before the person decides. Schematic: the shapes are invented to show placement and hold no data; the plots are drawn in the page source.</figcaption>
+</figure>
 
-<!-- fold: dead-end When evaluation results already shaped a choice -->
+In the left panel of [Figure 4](#fig-setting), the cost of a run is plotted over the candidate values, because a cost that depends on a setting tells little at one setting alone. The axis keeps the unit the question is asked in, and a candidate that was not measured stands in its place as *not run* ([page design](page-design.html#page-design)). The number meets the [measurement rules](records.html#numbers-and-staleness) before the question reaches the person: its script and its output are tracked, so the person can check what the choice rests on.
 
-Say so in the report. Then either narrow the claim to what the untouched evidence supports or get fresh evidence. Rerunning the same evaluation more times does not help: every repeat carries the same influence it was meant to test. Repeating one case, scenario, seed or dataset also does not replicate across others.
-
-The separation between tuning and evaluation goes as far as the claim requires, not further.
-
-<!-- /fold -->
-
-See [start from evidence](experiment-workflow.html#start-from-evidence-and-bound-the-question) and [keep evaluation separate from tuning](experiment-workflow.html#keep-evaluation-separate-from-tuning).
+In the right panel a later run is sized from an earlier one. The report first gives the earlier run's measured cost against its estimate, then the sizing, so the person sees how far the last estimate held before trusting the next. See [start from evidence](experiment-workflow.html#start-from-evidence-and-bound-the-question).
 
 </section>
 
@@ -159,29 +167,71 @@ See [start from evidence](experiment-workflow.html#start-from-evidence-and-bound
 
 ## Every experiment states its plan before running and reports every attempt after
 
-<p class="bs-lead">Exploratory work included, the plan comes first and the report keeps failures beside the best result.</p>
+<p class="bs-lead">Exploratory work included, the plan comes first, and the report keeps every failure and changed setting beside the best result.</p>
 
-<div class="bs-grid g2">
-<div class="bs-part bs-teal"><span class="bs-label">Before running</span><h3>State the plan</h3><ul><li>question and measured motivation</li><li>kind: exploratory, confirmatory or qualification</li><li>the decision it informs</li><li>baseline, budget and stopping condition</li></ul><p><b>Confirmatory or qualification</b> also fixes its bar or expected observation, tolerances, workload, analysis, and what counts as failure or inconclusive.</p></div>
-<div class="bs-part bs-violet"><span class="bs-label">After running</span><h3>Report the whole run</h3><ul><li>reproduction details under the <a href="records.html#numbers-and-staleness">measurement rules</a></li><li>results with units and scope</li><li>the verdict, for confirmatory work or a qualification</li><li>every attempt, failure and changed setting, with its reason</li><li>for exploration, how the interpretation developed</li><li>caveats and next step</li><li>the run output behind the reported results, tracked in the experiment directory before completion is reported</li></ul></div>
+<figure id="fig-record">
+<div class="xp-fig" role="img" aria-label="An experiment's life from left to right. Before the first attempt, the plan: question and measured motivation, kind, the decision it informs, baseline, budget and stopping condition; a confirmatory investigation or qualification also fixes its bar or expected observation, tolerances, workload, analysis and what counts as failure or inconclusive. Three attempts follow, each adding a line to the running total; the second crashed and its buffer setting changed. The run output is tracked before completion is reported. Then the report: reproduction details, results with units and scope, the verdict where one is due, every attempt, failure and changed setting with its reason, how an exploratory interpretation developed, caveats and next step. Crossed out: a failed bar is lowered.">
+<ol class="xp-life">
+<li class="xp-box xp-teal"><span class="xp-tag">Before running · plan</span><ul><li>question and measured motivation</li><li>kind and the decision it informs</li><li>baseline, budget, stopping condition</li><li><b>confirmatory or qualification:</b> bar or expected observation, tolerances, workload, analysis, what counts as failure or inconclusive</li></ul></li>
+<li class="xp-box xp-step xp-muted"><span class="xp-tag">First attempt</span><b>runs</b><span class="xp-chip">+ total line</span></li>
+<li class="xp-box xp-step xp-red"><span class="xp-tag">Second attempt</span><b>crashed; buffer setting changed</b><span class="xp-chip">+ total line</span></li>
+<li class="xp-box xp-step xp-muted"><span class="xp-tag">Third attempt</span><b>runs with the new buffer</b><span class="xp-chip">+ total line</span></li>
+<li class="xp-box xp-step xp-blue"><span class="xp-tag">Before done</span><b>run output tracked</b></li>
+<li class="xp-box xp-violet"><span class="xp-tag">After · report</span><ul><li>reproduction details, results with units and scope</li><li>the verdict, where one is due</li><li>every attempt, failure and changed setting, with its reason</li><li>exploration: how the interpretation developed</li><li>caveats and next step</li></ul></li>
+</ol>
+<div class="xp-no"><span>×</span><span>A failed bar is never lowered, and the report never shows only the best attempt.</span></div>
 </div>
+<figcaption><b>Figure 5.</b> The plan before the first attempt, the report after the last, on an illustrative case: does a streaming parser fix the slow import of large log files? The diagram is authored in the page source and holds no measured results.</figcaption>
+</figure>
 
-A plan written before results exist keeps the decision, baseline and stopping condition from drifting toward whichever outcome appears. Reporting every attempt matters because a best-only report hides how many tries the result needed and which settings failed. This is content, not a form: a short note in the project's own record can hold it, and no template is added unless the project asks.
-
-<p><b>Illustrative case:</b> does a streaming parser fix the slow import of large log files?</p>
-
-<div class="bs-grid g2">
-<div class="bs-part bs-red"><span class="bs-label">Not this · form without content</span><h3>Process added, attempts dropped</h3><ul><li>a new experiment template, a sign-off step and a status board</li><li>no stated decision or stopping condition</li><li>a report showing only the configuration that finally worked</li><li>the crashed attempt and the changed buffer setting left out</li></ul></div>
-<div class="bs-part bs-green"><span class="bs-label">This · content in the existing note</span><h3>A short plan, a complete report</h3><ul><li>before: the question; the measured slow import that prompted it; exploratory; decision: switch the import path or not; baseline: the current parser; budget and stop</li><li>after: reproduction details, results with units and scope, every attempt including the crash and why the setting changed, caveats and next step</li></ul></div>
-</div>
+[Figure 5](#fig-record) lays the required content along the experiment. A plan written before results exist keeps the decision, baseline and stop from drifting toward whatever appears. A report of every attempt shows how many tries the result needed and which settings failed; a best-only report hides both. The run output behind the reported results is [tracked in the experiment directory](records.html#numbers-and-staleness) before completion is reported, and a failed bar is [never lowered](#changes-and-failures). This is content, not a form: a short note in the project's own record holds it, and no template is added unless the project asks.
 
 <!-- fold: experiment What the reproduction details include -->
 
-The [measurement rules](records.html#numbers-and-staleness) say what makes a measured claim reproducible: its source commit, exact reproduction command, runtime or environment, workload, units, baseline, method and scope, with links to its raw result and limitations. When code, input data, method, workload or runtime conditions affecting the claim change, rerun before quoting it as current.
+The [measurement rules](records.html#numbers-and-staleness) make a measured claim reproducible: its source commit, exact reproduction command, runtime or environment, workload, units, baseline, method and scope, with links to its raw result and limitations. When something affecting the claim changes, it is rerun before it is quoted as current.
 
 <!-- /fold -->
 
-A failed bar is [never lowered](experiment-verification.html#respond-to-changes-and-failures). See [required content](experiment-workflow.html#required-content).
+See [required content](experiment-workflow.html#required-content).
+
+</section>
+
+<section class="card" id="show-the-total">
+
+## The running total shows what the machinery costs, and a step back reads it across experiments
+
+<p class="bs-lead">Each attempt adds one line of counts for the person to read; after every third finished experiment, a fresh agent reads them all.</p>
+
+<figure id="fig-total">
+<div class="xp-fig" role="img" aria-label="Left: the guide's example line, Total after attempt 7, split into five counts: attempts, usable results, lines of supporting code, lines of its tests, and the person's minutes. Counted: harness, judges, preparation steps and other supporting code, and the person's time. Not counted: runs, seeds, controls and repetitions. Right: three finished experiments, each with its total lines; after the third, a fresh agent reads the capability map, the experiment records with their totals, the tooling tree and the worklog, changes nothing, and answers three questions. Its findings go to the person and into the capability map's list of needs seen but not built, each decision open.">
+<div class="xp-total">
+<div class="xp-box xp-orange"><span class="xp-tag">One line per attempt · the guide's example</span>
+<code class="xp-line">Total after attempt 7: <mark data-n="1">7 attempts</mark>, <mark data-n="2">2 usable results</mark>, <mark data-n="3">1,240 lines of supporting code</mark> and <mark data-n="4">610 lines of tests</mark>, <mark data-n="5">95 minutes of the person's time</mark>.</code>
+<ol class="xp-key">
+<li>each run of the experiment's procedure</li>
+<li>output a finding or verdict can rest on; a "no" counts, an attempt stopped before its output was complete does not</li>
+<li>every line written or changed for this experiment, in its folder and in the tooling tree</li>
+<li>counted apart from the code, with one counting command named in the record</li>
+<li>from session records or from the person; otherwise "not recorded", never estimated</li>
+</ol>
+<div class="xp-count"><div class="xp-pool" style="--pool: var(--orange)"><span class="xp-tag">Counted · machinery</span>harness, judges, preparation steps, other supporting code, the person's time</div><div class="xp-pool" style="--pool: var(--muted)"><span class="xp-tag">Not counted · science</span>runs, seeds, controls, repetitions</div></div>
+</div>
+<div class="xp-box xp-violet xp-back"><span class="xp-tag">Step back · after every third finished experiment</span>
+<div class="xp-three"><span>first experiment · its totals</span><span>second · its totals</span><span>third · its totals</span></div>
+<div class="xp-down">counted in the worklog; review asked</div>
+<p><b>A fresh agent only reads</b> the capability map, the experiment records with their totals, the tooling tree and the worklog, and changes nothing.</p>
+<ol><li>Which needs were solved more than once, and where?</li><li>What does the person keep doing by hand?</li><li>What do the totals show across experiments?</li></ol>
+<div class="xp-down">findings</div>
+<p>To the person, and into the capability map's needs seen but not built, each decision open.</p>
+</div>
+</div>
+</div>
+<figcaption><b>Figure 6.</b> The total for each attempt, and the read across experiments. The line is the example the workflow guide gives; the diagram is authored in the page source.</figcaption>
+</figure>
+
+The left half of [Figure 6](#fig-total) takes the guide's example line apart. It counts the machinery and the person's time, not the science, so a well-controlled experiment does not look expensive for being careful. It is information, not a target: it has no threshold, stops nothing, and an experiment is never weakened to shrink it; its question decides what it needs. [Approval that failed open](approval-failed-open.html#kit) shows supporting code that grew while nobody added it up.
+
+The right half is the step back: after every third finished experiment unless the project's context names another interval, and whenever the person asks. The agent that asked writes the findings into the capability map and brings the person the options of [name the need first](code-practices.html#name-the-need-first). Where the runtime cannot start a fresh agent, the review is a separate step that reads everything before anything is written, and its report says so. See [show the total](experiment-workflow.html#show-the-total) and [step back across experiments](experiment-workflow.html#step-back-across-experiments).
 
 </section>
 
@@ -191,27 +241,28 @@ A failed bar is [never lowered](experiment-verification.html#respond-to-changes-
 
 <p class="bs-lead">Skip this rule unless results depend on a model learned or fitted from data; nothing in it applies to other experiments.</p>
 
-<div class="bs-grid g2">
-<div class="bs-part bs-muted"><span class="bs-label">Results do not depend on a learned or fitted model</span><h3>Skip the section</h3><p>No final run and no model-specific checks. Do not import learned-model practices into the experiment.</p></div>
-<div class="bs-part bs-violet"><span class="bs-label">Results depend on a learned or fitted model</span><h3>Apply three rules</h3><ul><li>A <b>final run</b> trains a selected recipe to produce the model that will be reported or used. It is a production step, not a rigor tier. Fix the recipe and usable-result criteria first; a recipe change is a new attempt. An investigation or qualification judges its output.</li><li>Check splits, preprocessing and label or target alignment.</li><li>Comparing training objectives does not require reimplementing each one.</li></ul></div>
+<figure id="fig-final-run">
+<div class="xp-fig" role="img" aria-label="The question: do results depend on a model learned or fitted from data? If not, skip the section: no final run, no split checks, no learned-model practices. If so: fix the recipe and usable-result criteria, run the final run as a production step, and let an investigation or qualification judge its output. A recipe change loops back as a new attempt. Alongside: check splits, preprocessing and label or target alignment; comparing training objectives does not require reimplementing each one.">
+<div class="xp-fork">
+<div class="xp-box xp-blue xp-q"><span class="xp-tag">Ask</span><b>Do the results depend on a model learned or fitted from data?</b><p>Not the project's field: a controller comparison in a physics simulation says no; a simulation resting on a tire model fitted from measurements says yes for that model.</p></div>
+<div class="xp-box xp-muted xp-dashed xp-no-side"><span class="xp-tag">No · skip</span><b>Nothing here applies</b><p>No final run, no split checks, no learned-model practices imported.</p></div>
+<div class="xp-box xp-violet"><span class="xp-tag">Yes · a lane-detection network trained for release</span>
+<div class="xp-chain">
+<div class="xp-box xp-teal"><span class="xp-tag">First</span><b>Fix the recipe</b><p>and the usable-result criteria</p></div>
+<div class="xp-arrow"><span>train</span></div>
+<div class="xp-box xp-orange"><span class="xp-tag">Final run</span><b>A production step</b><p>not a rigor tier</p></div>
+<div class="xp-arrow"><span>judge</span></div>
+<div class="xp-box xp-blue"><span class="xp-tag">Then</span><b>Investigation or qualification</b><p>judges the model it produced</p></div>
+<div class="xp-loop"><span>↺</span>A changed learning rate is a recipe change: a new attempt, reported as one.</div>
 </div>
-
-When a result depends on a model learned from data, the model that is reported or used comes from a final run of the selected recipe. Fixing the recipe and the usable-result criteria first keeps that run from becoming another round of tuning; a recipe change is a new attempt and is reported as one. A final run is a production step, not a rigor tier, so adding one to other experiments makes them longer, not more rigorous.
-
-<p><b>Illustrative case:</b> a lane-detection network trained for release.</p>
-
-<div class="bs-grid g2">
-<div class="bs-part bs-red"><span class="bs-label">Not this · hidden tuning</span><h3>A final run that keeps changing</h3><ul><li>train, inspect the output, adjust the learning rate, retrain, and still call it the final run</li><li>the final run treated as its own proof that the model is good</li><li>every training objective reimplemented from scratch to compare them</li><li>no check that labels line up with their images</li></ul></div>
-<div class="bs-part bs-green"><span class="bs-label">This · production step</span><h3>Fixed recipe, judged output</h3><ul><li>recipe and usable-result criteria fixed before the final run</li><li>a changed learning rate starts a new, reported attempt</li><li>an investigation or qualification judges the trained model</li><li>splits, preprocessing and label alignment checked</li><li>objectives compared without reimplementing each one</li></ul></div>
+<p class="xp-also">Also: check splits, preprocessing and label or target alignment; compare training objectives without reimplementing each one.</p>
 </div>
+</div>
+</div>
+<figcaption><b>Figure 7.</b> Whether the section applies, and what a final run is where it does. The cases are illustrative; the diagram is authored in the page source.</figcaption>
+</figure>
 
-<!-- fold: dead-end Engineering and simulation work that skips this section -->
-
-The test is whether results depend on a model learned or fitted from data, not the project's field. A controller comparison in a physics simulation, a parser benchmark or a check of a numerical routine skips the section: no final run and no split checks. If such an experiment does depend on a fitted model, for example a simulation whose result rests on a tire model fitted from measurements, the section applies to that model.
-
-<!-- /fold -->
-
-See [learned or fitted models only](experiment-workflow.html#learned-or-fitted-models-only).
+[Figure 7](#fig-final-run) starts with the test, which is about the result, not the field. Where it applies, fixing the recipe and the usable-result criteria first keeps the final run from becoming another round of tuning, so a recipe change is a new attempt. A final run produces the model that will be reported or used, and an investigation or qualification judges it; as a production step, not a rigor tier, it makes other experiments longer, not more rigorous. See [learned or fitted models only](experiment-workflow.html#learned-or-fitted-models-only).
 
 </section>
 
@@ -230,19 +281,12 @@ See [learned or fitted models only](experiment-workflow.html#learned-or-fitted-m
 <div class="bs-node bs-orange"><span class="bs-label">Still open</span><b>Cheapest credible check</b><ul><li>miniature pipeline, targeted case or source inspection</li><li>state what remains untested</li><li>broader only when a smaller check cannot close the gap</li></ul></div>
 <div class="bs-back"><span>×</span> Neither the experiment's kind nor a planned publication by itself requires an extra audit.</div>
 </div>
-<figcaption><b>Figure 3.</b> Follow the arrows from naming the gap to the cheapest check that closes it. Adopted project requirements remain binding.</figcaption>
+<figcaption><b>Figure 8.</b> Follow the arrows from naming the gap to the cheapest check that closes it. Adopted project requirements remain binding.</figcaption>
 </figure>
 
-A check that cannot expose a named error adds time without adding confidence, and a check that repeats existing coverage adds nothing new. Naming the error first also points to the cheapest check that could find it, and stating what remains untested keeps the claim within its evidence. Neither a confirmatory label nor a planned publication changes this by itself.
+[Figure 8](#fig-gap) runs from the gap to the check. A check that cannot expose a named error adds time without confidence, and one that repeats existing coverage adds nothing. Naming the error points to the cheapest check that could find it; stating what remains untested keeps the claim within its evidence.
 
-<p><b>Illustrative case:</b> a rewritten CSV reader should give the same totals as the old one.</p>
-
-<div class="bs-grid g2">
-<div class="bs-part bs-red"><span class="bs-label">Not this · audit by default</span><h3>Everything checked because it will be published</h3><ul><li>a review of the whole parsing library</li><li>a broad fuzzing campaign</li><li>the full test suite rerun under several settings</li><li>no named error that any of these could catch</li></ul></div>
-<div class="bs-part bs-green"><span class="bs-label">This · gap first</span><h3>Name the gap, close it cheaply</h3><ul><li>existing tests already cover quoting and empty fields for this reader</li><li>open gap: files that end with a trailing delimiter</li><li>one miniature file with that case; totals compared, old against new</li><li>reported as untested: encodings other than UTF-8</li></ul></div>
-</div>
-
-See [identify the evidence gap](experiment-verification.html#identify-the-evidence-gap).
+For example, a rewritten CSV reader should give the old reader's totals. Existing tests cover quoting and empty fields, so the open gap is a file that ends in a trailing delimiter: one miniature file with that case, totals compared old against new, closes it, and the report names other encodings as untested. See [identify the evidence gap](experiment-verification.html#identify-the-evidence-gap).
 
 </section>
 
@@ -250,34 +294,33 @@ See [identify the evidence gap](experiment-verification.html#identify-the-eviden
 
 ## Check application logic, custom numerical code and regressions only where their risk applies
 
-<p class="bs-lead">The verification guide names three targeted checks; each is required only when its condition holds.</p>
+<p class="bs-lead">Each targeted check covers a place where a plausible error survives ordinary testing, and is required only when its condition holds.</p>
 
-<div class="bs-checks">
-<div class="bs-check"><span class="bs-badge bs-wait">Where it affects the claim</span><h3>Application logic</h3><p>Check data identity and composition, leakage, metric definitions and aggregation, and how configuration, library calls and saved outputs compose. Pick cases that can expose a plausible wiring error, including one that still looks reasonable. Ordinary library use needs no recertification. For learned or fitted models, also apply the <a href="#learned-or-fitted-models-only">model-specific checks</a>.</p></div>
-<div class="bs-check"><span class="bs-badge bs-wait">Custom numerical code</span><h3>Independent reference</h3><p>Where no trusted reference covers it, compare with a reference derived from the stated formulas or an independent source, never from production or generated logic. Use claim-based tolerances over the relevant regimes; a self-check fails its exit status beyond them. State observed agreement and its scope; do not presume parity.</p></div>
-<div class="bs-check"><span class="bs-badge bs-wait">Defect could return</span><h3>Regression gate</h3><p>The project decides its scope. Keep the fixed defect or difficult case, document tolerances and, where available, show the gate fails on a known-bad state. Keep routine gates thin: target under five seconds for a fast gate. The target limits gates, not experiments.</p></div>
+<figure id="fig-reference">
+<div class="xp-fig" role="img" aria-label="At the top, the stated formulas or an independent source. The custom numerical code implements them; the independent reference is derived from them. A reference derived from the production or generated logic is crossed out: it shares the suspected error. Both feed a comparison over the relevant regimes with tolerances chosen for the claim; an executable self-check fails its exit status beyond the tolerance and reports observed agreement with its scope.">
+<div class="xp-ref">
+<div class="xp-box xp-blue xp-src"><span class="xp-tag">Source</span><b>Stated formulas or an independent source</b><p>the motion equations, a case with a known solution</p></div>
+<div class="xp-down a1">implements</div>
+<div class="xp-down a2">derived from</div>
+<div class="xp-box xp-orange xp-prod"><span class="xp-tag">Under test</span><b>Custom numerical code</b><p>the simulation's integrator</p></div>
+<div class="xp-cross"><b>not derived from production or generated logic</b>a reference that shares the suspected error is no evidence against it</div>
+<div class="xp-box xp-teal xp-refr"><span class="xp-tag">Reference</span><b>Independent derivation</b><p>can expose errors shared by production code</p></div>
+<div class="xp-down a3">compare</div>
+<div class="xp-down a4">compare</div>
+<div class="xp-box xp-violet xp-cmp"><span class="xp-tag">Self-check</span><b>Over the relevant regimes</b><p>step sizes and speeds, tolerances chosen for the claim; the exit status fails beyond them, and agreement is stated with its scope, never presumed.</p></div>
 </div>
-
-Each targets a place where a plausible error can survive ordinary testing. Application logic can be wired wrong and still give results that look reasonable. Custom numerical code can agree with a reference that shares its error. A fixed defect can return unnoticed. Outside those conditions the check adds cost, not evidence.
-
-<p><b>Illustrative case:</b> a custom integrator in a vehicle-dynamics simulation.</p>
-
-<div class="bs-grid g2">
-<div class="bs-part bs-red"><span class="bs-label">Not this · shared error, heavy gate</span><h3>A reference that cannot disagree</h3><ul><li>reference values generated by the production integrator itself</li><li>higher precision, exhaustive replay and a native-backend comparison run by default</li><li>a routine gate that replays every scenario</li><li>parity presumed after one matching case</li></ul></div>
-<div class="bs-part bs-green"><span class="bs-label">This · independent and thin</span><h3>Derived reference, thin gate</h3><ul><li>reference derived from the stated motion equations for a case with a known solution</li><li>compared over the relevant step sizes and speeds, with tolerances chosen for the claim</li><li>a self-check that fails its exit status beyond tolerance</li><li>a fast gate keeps the fixed defect case and fails on the known-bad version</li><li>observed agreement reported with its scope</li></ul></div>
 </div>
+<figcaption><b>Figure 9.</b> A custom integrator checked against a reference that can disagree with it. The case is illustrative; the diagram is authored in the page source.</figcaption>
+</figure>
+
+[Figure 9](#fig-reference) draws the check for custom numerical code that no trusted reference covers: the reference comes from the formulas, not from the code under test, because one derived from that code agrees with its errors. The other two checks:
+
+- **Application logic**, where it affects the claim: data identity and composition, leakage, metric definitions and aggregation, and how configuration, library calls and saved outputs compose. Pick cases that can expose a plausible wiring error, including one that still looks reasonable. Ordinary library use needs no recertification: verify the application's use, and look into the library only when a concrete risk or the claim depends on its behavior. Learned or fitted models add the [model-specific checks](#learned-or-fitted-models-only).
+- **A regression gate**, where a fixed defect or difficult case could return unnoticed; the project decides its scope. It keeps those cases, documents its tolerances and, where available, fails on a known-bad state. A fast gate targets under five seconds; the target limits gates, not experiments.
 
 <!-- fold: experiment When higher precision, exhaustive replay or another backend is justified -->
 
-Use higher precision, exhaustive replay or a native or other-backend comparison only when it addresses the claim and a risk the reference comparison leaves uncovered. Make optional native comparisons explicitly guarded.
-
-A reference that shares the suspected error is no evidence against it, which is why the reference is never derived from generated or production logic.
-
-<!-- /fold -->
-
-<!-- fold: dead-end Why the library itself is not re-tested -->
-
-Re-testing a well-used library before trusting an experiment looks rigorous and mostly checks the wrong thing. Using a library in the ordinary way does not call for certifying it again. The errors that matter sit in the experiment's own wiring: how it puts together configuration, library calls and saved outputs, wherever those affect the claim. Verify that. Look into the library itself only when a concrete risk, or the claim, depends on how the library behaves.
+Only when it addresses the claim and a risk the reference comparison leaves uncovered. Optional native comparisons are explicitly guarded.
 
 <!-- /fold -->
 
@@ -300,23 +343,16 @@ See [application logic](experiment-verification.html#check-the-experiments-appli
 <div class="bs-node bs-orange"><span class="bs-label">Failed check</span><b>Investigate against the criteria</b><ul><li>the agreed criteria stay the reference</li><li>obsolete criterion: explicit project decision and rationale</li><li>original failure retained</li></ul></div>
 <div class="bs-back"><span>×</span> Do not lower a failed bar to make the same result pass.</div>
 </div>
-<figcaption><b>Figure 4.</b> From a change to current evidence, and from a failure to an open decision.</figcaption>
+<figcaption><b>Figure 10.</b> From a change to current evidence, and from a failure to an open decision.</figcaption>
 </figure>
 
-Evidence describes the source, inputs and conditions that produced it. After a change, affected results no longer describe the current state, while unaffected ones can still be reused once their identity and scope are confirmed. Lowering a failed bar to make the same result pass would turn the check into a description of the result, so the original criterion and failure stay on record; replacing an obsolete criterion is an explicit project decision.
+[Figure 10](#fig-failure) follows a change to a decision. Evidence describes the source, inputs and conditions that produced it, so a change leaves the affected results describing an older state. Lowering a failed bar to make the same result pass would turn the check into a description of the result, so the original criterion and failure stay on record.
 
-<p><b>Illustrative case:</b> a dependency update lands before a performance comparison of two request handlers is reported.</p>
-
-<div class="bs-grid g2">
-<div class="bs-part bs-red"><span class="bs-label">Not this · stale and softened</span><h3>Old numbers, moved bar</h3><ul><li>timings from before the update quoted as current</li><li>the agreed tolerance widened until the new handler passes</li><li>the original failure dropped from the record</li><li>an interruption test suite added to every experiment</li></ul></div>
-<div class="bs-part bs-green"><span class="bs-label">This · rerun and decide openly</span><h3>Rerun, investigate, keep the record</h3><ul><li>timings the update affects rerun</li><li>unaffected parser tests reused after confirming the same source and inputs</li><li>the failure investigated against the agreed criteria</li><li>if a criterion is obsolete: a project decision with rationale, original failure kept</li></ul></div>
-</div>
+For example, a dependency update lands before a performance comparison of two request handlers is reported. The timings it affects are rerun, unaffected parser tests are reused after confirming the same source and inputs, and a failure is investigated against the agreed tolerance instead of widening it.
 
 <!-- fold: experiment Interruptions and what the report states -->
 
-A long run can be interrupted. Where that could affect the validity or the cost of a run, verify the recovery behaviour that matters for that run: its checkpoints, the identity it resumes under, its partial outputs or its restart. There is no universal interruption suite to add on top.
-
-The report then keeps four things apart, under the [handoff guide](handoffs.html): the checks that were executed, their results, the conclusions reached by inspection only, and the uncertainty that remains. Reusing a result after something changed follows the [staleness rules](records.html#numbers-and-staleness).
+Where an interruption could affect a run's validity or cost, verify the recovery that matters for that run: checkpoints, resume identity, partial outputs or restart. No universal interruption suite is added. The report keeps apart, under the [handoff guide](handoffs.html), the checks executed, their results, conclusions by inspection only and the remaining uncertainty; reuse after a change follows the [staleness rules](records.html#numbers-and-staleness).
 
 <!-- /fold -->
 
