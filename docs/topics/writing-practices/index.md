@@ -161,6 +161,8 @@ The [delivery guide](delivery.html#delegating-a-page-for-people) has the complet
 
 **A small sync.** Sometimes a record edit makes a sentence or two on a page wrong. That fix needs no page guides, and handing it to a new agent costs more than the fix, so the agent that edited the record changes those sentences itself, in the same deliverable, after the record. Lint's reread notes, explained in [In step](#page-and-record-in-step), list the chapters that link a changed section; a chapter that links only the whole record is listed only when the record's opening text changed, which is why a chapter links the section it explains. Anything larger, or anything that needs layout, a figure or a new block, is page work.
 
+**A page before the work.** A page built while a proposal is still being discussed comes before any record. It says at its top that it is a proposal, and the delivery guide's [discussion before the work](delivery.html#discussion-before-the-work) covers it.
+
 **No delegation available.** Some runtimes cannot hand work to a second agent. The page is then still a separate step in the same deliverable: the same agent starts it only after the record is finished.
 
 **Who reads which guides.** The record writer reads writing records and the documentation system's sections on order, pages, open work and changes. It needs the page guides only for the few rules on what a code excerpt, a formula or an experiment visual may claim, which apply in records too; [writing records](records.html#excerpts-formulas-and-figures) names them. The page author reads the applicable page and site guides, starting from the [writing index](writing.html) and the [site index](maintenance.html).

@@ -1,5 +1,32 @@
 # Ownership and delivery
 
+## Discussion before the work
+
+A feature, an experiment or a change of direction starts with a discussion
+between the person and the agent, unless an assignment already fixes what to
+build.
+
+- **Chat is the main channel.** Explain there first, and lead with what the
+  person has to decide.
+- **A page grows when the topic needs one.** When chat stops being enough,
+  for a mechanism, a geometry or options to compare side by side, offer a
+  page and build it when the person asks. Extend it as the discussion moves.
+  Say at its top that it is a proposal, and declare
+  `page_only = "proposal under discussion"` while no record exists.
+- **A proposal stays a proposal** until the person
+  [accepts it in words](../documentation.md#from-open-work-to-subject-knowledge).
+- **After the yes, the agreement is the assignment.** Scale how it is written
+  down to the work. A change one session finishes needs no more than the
+  chat; its record follows the work. Work that outlives the chat, with a
+  second session, a second owner or an expensive run, gets its deliverable,
+  scope and completion condition written into its open item or plan before
+  building starts; [Assigning work](#assigning-work) lists what that holds.
+- **An open item is optional.** Open one when work is owed but not started,
+  or when it will pause.
+
+An experiment's design is discussed the same way; the
+[experiment workflow](../experiments/workflow.md) adds what its plan must hold.
+
 ## Assigning work
 
 For delegated or parallel work, define the deliverable, scope, required inputs,

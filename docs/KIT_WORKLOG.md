@@ -2,6 +2,32 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — Rule: discussion before the work
+
+- deivid found that the kit's pages do not say what a record, a page and a
+  chapter are, nor how work runs from an idea to a landed change. Searched:
+  the record is defined in `rules/records.md`, the page in
+  `rules/documentation.md`, the chapter only on the Build a site page; the
+  rules cover work from the record onward, and one sentence covers
+  proposals. Nothing describes the discussion that comes first.
+- His practice, in his words: chat is the main channel, and a page is built
+  slowly during the discussion so that a hard topic can be understood;
+  sometimes chat is enough.
+- New section "Discussion before the work" in
+  `rules/engineering/delivery.md`, and one pointing sentence in
+  `rules/documentation.md` with its sync on the Documentation and writing
+  page. deivid read the draft and asked what "the agreement is written
+  down" means; after the explanation he kept that part.
+- Agreed and not built yet: the home page tells the kit's story in figures;
+  a new page "Discuss, build, record" holds the three words and the path;
+  Get started keeps only setup. The kit keeps its `KIT_` file names.
+- Left out: asking for a yes with the size of what it covers. That idea is
+  still open in `open/approval-scope-and-ask-size.md`.
+- Not done: no router row names the new section, so an agent reaches it
+  only through the row for assigning work. A new row in the starter's
+  router would change what conformance asks of projects.
+- With a new rule section the next release is a minor one, not 5.8.1.
+
 ## 2026-11-27 — Review of 5.8.1: not fit to tag, then fixed
 
 - The full check script failed on the first commit, `07741c9`: exit 1. The
