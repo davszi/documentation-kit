@@ -62,8 +62,8 @@ bundle's page text encrypted behind two passwords.
 
 [`examples/global-agent-context.md`](examples/global-agent-context.md) is a
 snapshot of the kit owner's global agent instructions with personal details
-removed: how agents report, delegate, commit, ask and check facts in every
-project. The kit does not load it and no rule depends on it. A person may add
+removed: how agents report, delegate, commit, put a decision to the person
+and check facts in every project. The kit does not load it and no rule depends on it. A person may add
 it to their own global agent file or replace theirs with it. Codex reads
 `~/.codex/AGENTS.md`; Claude Code reads `~/.claude/CLAUDE.md`. From the
 project root, with `target` set to that file:

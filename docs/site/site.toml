@@ -140,6 +140,12 @@ group = "releases"
 # The sidebar's repository section lists these by path, pinned ones first in
 # declared order; no [[nav]] entry is needed.
 [[source_pages]]
+source = "examples/global-agent-context.md"
+slug = "global-agent-instructions"
+title = "The owner's global agent instructions"
+description = "A copy of the kit owner's global agent instructions, without personal details: gates, delegation, reporting, decisions with the person, commits and fact-checking. Optional to adopt."
+
+[[source_pages]]
 source = "README.md"
 slug = "readme"
 pinned = true

@@ -181,6 +181,7 @@ toc = []
 <a class="map-card" href="discuss-build-record.html"><span class="map-text"><strong>Discuss, build, record</strong><span>What a record, a page and a chapter are, and the one path every piece of work takes, experiments included.</span></span></a>
 <a class="map-card" href="getting-started.html"><span class="map-text"><strong>Get started</strong><span>Set up a project: three commands, the files the starter writes and the adoption route that fits.</span></span></a>
 <a class="map-card" href="build-a-site.html"><span class="map-text"><strong>Build a site</strong><span>How the kit turns tracked Markdown into a checked website, and every command from build to upgrade.</span></span></a>
+<a class="map-card" href="global-agent-instructions.html"><span class="map-text"><strong>The owner's global agent instructions</strong><span>How the kit's owner has agents report, delegate, ask for a decision and check facts in every project. Optional to adopt, and not loaded by the kit.</span></span></a>
 </div></section>
 <section class="map-group" data-group="practices"><h2>Practices</h2><div class="map-grid">
 <a class="map-card" href="engineering-practices.html"><span class="map-text"><strong>Engineering</strong><span>Why the six engineering guides exist, what each requires and what following them looks like.</span></span></a>

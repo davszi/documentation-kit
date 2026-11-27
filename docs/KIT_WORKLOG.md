@@ -2,6 +2,38 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — Release 5.9.0
+
+- The owner gave the go in two messages: "release first, catch up after",
+  on the question whether to release before the kit's four older pages are
+  brought up to the rules, and then "release 5,9". The ask before it named
+  what the go covers: moving `main` to the release commit, the tag `v5.9.0`
+  and the push, which rebuilds the kit's own site.
+- Size against 5.8.0 at `f455db7`, before this entry and the copy below: 17
+  commits, 60 files, 2,086 lines added, 681 removed. The full check script
+  passed there: exit 0, 527 tests.
+- Added on the owner's word just before the go: the copy of his global
+  agent instructions is renewed from the file of 2026-11-27, from 265 to
+  302 lines, with the sections "Gates" and "Decisions with me". The same
+  three replacements as in the first copy keep his name and address out; a
+  script checked the result for an address, a home path and a name. The
+  site did not mention the copy; it is now a page, linked from the home
+  page and from Get started. Checked at 1600 and 390 px: no overflow, no
+  label under 11 px.
+- 5.9.0 holds the changes of the entries below, down to "One helper for the
+  projects that tests build".
+- Two independent reviews read the release. The corrections after the
+  second one, and the copy, have not been reviewed.
+- Not verified, as told to the owner: the owner has not yet looked through
+  the new pages himself; Chromium only, no Firefox or Safari; no real
+  phone; no screen reader; no printed page of the new pages; a locked
+  site; no consumer project built against this version.
+- Agreed for after the release: the kit's four older pages, Engineering,
+  Documentation and writing, Experiments and Build a site, are brought up
+  to the rules one page per agent, chapter by chapter.
+- This commit adds this entry and the copy. The full check script runs on
+  it before the tag; the Pages workflow runs it again on the push.
+
 ## 2026-11-27 — Second review of 5.9.0: fit to tag after two corrections; both made
 
 - The full check script passed on `3c00ac2`: exit 0, 525 tests.

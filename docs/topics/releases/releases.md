@@ -131,6 +131,18 @@ words and the path of work, and Get started keeps only setup. Five anchors
 moved from `getting-started.html` to `index.html`: `#what-the-kit-provides`,
 `#how-it-works`, `#practice-areas`, `#fig-kit-pin` and `#fig-routing`.
 
+### The owner's global agent instructions, renewed and on the site
+
+The kit ships a copy of its owner's global agent instructions,
+`examples/global-agent-context.md`. The copy was of 2026-11-15; it is now of
+2026-11-27 and gains two sections: "Gates", four checks at fixed moments,
+and "Decisions with me", how an agent explains and asks. The site did not
+mention the copy. It is now [a page of its own](../../../examples/global-agent-context.md),
+linked from the home page and from Get started. A person who added the
+earlier copy to their own file may replace it; the
+[README](../../../README.md#optional-the-owners-global-agent-instructions)
+has the commands. The kit still does not load it.
+
 ### Inside the kit
 
 Tests build their throwaway projects through one helper, and build, lint
