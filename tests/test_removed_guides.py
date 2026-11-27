@@ -4,6 +4,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -46,6 +47,15 @@ class RemovedGuides(unittest.TestCase):
         # The build counts it among its notes and still writes the page; lint spells the notes out.
         self.assertNotIn("ERROR", said)
         self.assertTrue((project.root / ".build/docs/html/upgrade-notes.html").is_file())
+
+    def test_the_kit_is_recognised_through_a_symlink(self):
+        sys.path.insert(0, str(KIT / "tooling"))
+        from page_source import removed_kit_guide
+        folder = Path(tempfile.mkdtemp(prefix="docs-kit-link-"))
+        self.addCleanup(shutil.rmtree, folder)
+        (folder / ".docs-kit").symlink_to(KIT, target_is_directory=True)
+        self.assertTrue(removed_kit_guide(folder / ".docs-kit/docs/topics/releases/migrations/5.0.0.md"))
+        self.assertFalse(removed_kit_guide(folder / "docs/topics/releases/migrations/5.0.0.md"))
 
     def test_a_guide_that_never_existed_is_a_dead_link(self):
         done = self.linked("9.9.9.md")

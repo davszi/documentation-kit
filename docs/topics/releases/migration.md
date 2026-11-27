@@ -92,9 +92,11 @@ removed those files.
 Until 5.9.0 the kit had one guide per version, under
 `.docs-kit/docs/topics/releases/migrations/`. A link from a project's own file
 to one of them no longer finds its target. Lint reports each such link as a
-note, not as an error, so strict lint still passes. Change a link in a current
-document to this guide or to plain words that name the tag `v5.9.0`; leave a
-link in a worklog entry as it is.
+note, not as an error, so strict lint still passes, and the build treats
+such a link on a record page the same way. The link itself stays as written
+and leads nowhere on the built page. Change a link in a current document to
+this guide or to plain words that name the tag `v5.9.0`; leave a link in a
+worklog entry as it is.
 
 ## Update the router row for upgrades
 

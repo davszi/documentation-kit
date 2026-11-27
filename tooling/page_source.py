@@ -335,4 +335,4 @@ def removed_kit_guide(dest: Path) -> bool:
     a link as a note, so the project still passes; any other missing file stays an error.
     """
     folder = Path(__file__).resolve().parents[1] / "docs/topics/releases/migrations"
-    return Path(dest).parent == folder and Path(dest).name in REMOVED_GUIDES
+    return Path(dest).resolve().parent == folder and Path(dest).name in REMOVED_GUIDES

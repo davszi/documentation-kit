@@ -38,7 +38,7 @@ settings and one fixed entry to every site's menu. No lint error or warning
 is added, and a project that passed before still passes. Several guides
 change their text: site authoring, publication, the reader and validation;
 explanations and figures; the documentation system, resources and
-conformance. The sections below say what each gains. The [migration guide](migration.md) has two small steps for every
+conformance. The [migration guide](migration.md) has two small steps for every
 project: a changed router row, and links to the removed guides.
 
 What a project meets after moving its pin:

@@ -2,6 +2,28 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-28 — Third review of 5.10.0: fit to tag
+
+- Pushed `main` at `738d826` after the full check script passed there:
+  exit 0, 550 tests. No tag.
+- A third review read only the commit that answered the second one, in its
+  own worktree and on a scratch clone of adaptation. Verdict: fit to tag
+  as a minor release, no high finding. It registered two files of the
+  clone as record pages, one with links to removed guides in Markdown and
+  as `<a href>`: build exit 0, strict lint exit 0, each link a note. With
+  fifty commits of history the clone gave 8 notes for a changed section
+  that no page links, down from 23, and all 8 looked right to it.
+- Taken from its optional points: the build recognised a removed-guide
+  problem by a phrase anywhere in the text, so a file or link that held
+  the phrase could have an error turned into a note; it now matches the
+  problem's own prefix. A kit reached through a symlink was not
+  recognised; the path is resolved now, with a test. The guide says that
+  such a link stays as written and leads nowhere on the built page. The
+  figures guide says the comment that excuses a figure stands directly
+  before its tag or inside it, which is what the note checks.
+- Left: an image that points at a removed guide still stops the build,
+  which no real page does.
+
 ## 2026-11-27 — Second review of 5.10.0: one blocking finding, answered
 
 - Pushed `main` at `29e40f7` after the full check script passed there:

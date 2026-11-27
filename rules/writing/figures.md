@@ -23,7 +23,7 @@ Every included figure has:
 - Clickable references everywhere, including table cells, panel labels and references to other figures inside captions. A caption's own number is its identifying label.
 - A named source and useful alternative text. A generated figure names its generator and its input data in a manifest or metadata. Git holds the revision, the date and the exact bytes of the figure and of its generator; the manifest does not record them again. This holds for SVG, PNG and interactive data alike.
 
-A plot, diagram, flow, interactive comparison or evidence capture is a figure. An appearance-only image gets a short caption without a number. A deliberate unreferenced figure needs an adjacent source comment: `<!-- unreferenced figure: reason -->`.
+A plot, diagram, flow, interactive comparison or evidence capture is a figure. An appearance-only image gets a short caption without a number. A deliberate unreferenced figure needs a source comment directly before its `<figure>` tag or inside it: `<!-- unreferenced figure: reason -->`.
 
 Design comparisons together: matched orientation, scale, framing and input cases; persistent zoom across switching; overview locating a detail; consistent markers and colors across profiles/tables. Method names in controls/legends carry identity independently of color. Offer every option named in the comparison, grouped by method with roles such as current, selected, previous or rejected. An interactive comparison replaces its redundant static gallery, while retaining a useful loading/fallback image.
 
