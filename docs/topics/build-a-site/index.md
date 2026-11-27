@@ -293,15 +293,13 @@ Depth lives in typed folds that start closed: a switch under Also show opens eve
 
 <!-- fold: code The settings and fold markers behind it -->
 
-This site turns the reader on and starts one menu group closed; `kit_link = false` would drop the kit line from the foot.
+This site turns the reader on; `folded_groups = ["releases"]` would start that menu group closed, and `kit_link = false` would drop the kit line from the foot.
 
-```toml source=docs/site/site.toml#L4-L9
+```toml source=docs/site/site.toml#L4-L7
 title = "Documentation kit"
 gh_repo = "https://github.com/davszi/documentation-kit"
 gh_ref = "main"
 chapter_reader = true
-# Twelve release pages: the group starts closed unless it holds the current page.
-folded_groups = ["releases"]
 ```
 
 A fold is `<!-- fold: math Title -->` … `<!-- /fold -->`, with `experiment`, `code` or `dead-end` (shown as Alternatives) in place of `math`; `(open)` after the kind starts it open ([reading layers](explanations.html#story-and-reading-layers)).
@@ -709,6 +707,6 @@ git add .docs-kit
 
 </div>
 
-The writing side of a page (section design, figures, mathematics, code excerpts) is explained on [Documentation and writing](writing-practices.html).
+The writing side of a page (section design, figures, mathematics, code excerpts) is explained on [Writing pages](writing-practices.html), and where a document lives on [Records and documents](documentation-practices.html).
 
 </section>

@@ -501,7 +501,7 @@ condition has nothing to do.
   repeat another chapter or page gives its point to the chapter that owns
   the subject; see
   [page design](../../../rules/writing/pages.md#page-design).
-- **A showcase.** Figure 3 of [Build a site](../build-a-site/index.md) shows
+- **A showcase.** The showcase figure of [Build a site](../build-a-site/index.md) shows
   six chapters of the adaptation project in twelve pictures: each slide
   face and its chapter in the reader. They are examples of what a project
   can build, not templates, taken at that project's commit `d22ef36` and
