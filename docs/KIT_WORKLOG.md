@@ -2,6 +2,41 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — Pages: the kit's story, "Discuss, build, record", setup-only Get started
+
+- Built the three pages of the outline deivid agreed after the rule
+  "Discussion before the work". The rule files are the records; no rule
+  changed.
+- Home tells the kit's story in five numbered figures, one per section: two
+  projects on one kit and the router flow (both moved from Get started), a new
+  record-page-chapter figure, a new path-of-work figure and one slide face
+  with its reader chapter from the Build a site showcase. The three practice
+  columns moved here from Get started. The route cards are composed by hand,
+  as Project-owned homepages allows: the `<!-- site-map -->` marker cannot
+  fold the eleven release entries into one card.
+- New page "Discuss, build, record" in "start here", before Get started, with
+  `page_only`: six chapters, four figures and one slide face, on the path
+  chapter. No rule defines a chapter in one sentence; the page links the
+  sentence on Build a site and the page-design rule for its content.
+- Get started keeps setup only: three commands, the starter's files and the
+  adoption routes. Its first three chapters and their slide face are gone,
+  with the anchors `getting-started.html#what-the-kit-provides`, `#how-it-works`,
+  `#practice-areas`, `#fig-kit-pin` and `#fig-routing`; the home page now has
+  the first three and both figure anchors. Corrected: the starter file lists
+  now name `docs/CAPABILITY_MAP.md` and the two fragments, as `init` writes
+  them; `git add` tracks the generated `.gitignore`, in README too; the
+  Reference listing covers tracked Markdown under `docs/` or `reference_roots`,
+  not every tracked file.
+- The two shared figures live once, in `docs/site/fragments/kit-story/` with
+  `docs/site/assets/kit-story.css`; the home layout is in
+  `docs/topics/home/home-story.css`. The shared `theme/` is unchanged.
+  [Website record](topics/website/website.md) updated.
+- `tests/own_site_review.cjs` lists the new page among the pages for people,
+  because the navigation now holds it.
+- Checks: build and strict lint clean; captures at 1600 and 390 px in
+  `.build/page-review-5.9/`, dark scheme, no overflow and no text below
+  11 px. Commits: assigned by their landing commits.
+
 ## 2026-11-27 — Rule: discussion before the work
 
 - deivid found that the kit's pages do not say what a record, a page and a

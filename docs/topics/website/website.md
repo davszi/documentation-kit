@@ -21,8 +21,9 @@ tables give the navigation and `[[source_pages]]` tables map records to routes.
 
 | Page for people | Source | Explains |
 |---|---|---|
-| Home | [`home/index.md`](../home/index.md) | Three paths, the three adoption steps and a router snippet |
-| Get started | [`getting-started/index.md`](../getting-started/index.md) | What the kit provides, how routing works, the three practice areas, setup and adoption routes |
+| Home | [`home/index.md`](../home/index.md) | The kit's story in figures: one kit shared by many projects, a rule read before its action, record, page and chapter, the path of work, a finished chapter, the three practice areas, and route cards to every page |
+| Discuss, build, record | [`discuss-build-record/index.md`](../discuss-build-record/index.md) | What a record, a page and a chapter are, and the path of work from discussion through the person's yes, the build and the record to the closed open item, with an experiment's extra gates |
+| Get started | [`getting-started/index.md`](../getting-started/index.md) | Setup in three commands, the files the starter writes and the adoption routes |
 | Build a site | [`build-a-site/index.md`](../build-a-site/index.md) | How the build works, writing a topic page, the reader, figures and slides, publishing existing Markdown, and every command from build to upgrade |
 | Engineering | [`engineering-practices/index.md`](../engineering-practices/index.md) | The six engineering guides |
 | Documentation and writing | [`writing-practices/index.md`](../writing-practices/index.md) | The documentation system and the writing guides |
@@ -42,7 +43,12 @@ record under `examples/` are in no entry and so are not listed.
 
 The site sets `chapter_reader = true`; records keep the registry default
 `reader = false`. Topic pages use the shared `home.css` and
-`build-sheet.css` blocks. One page adds its own stylesheet:
+`build-sheet.css` blocks. The home page and Discuss, build, record share two
+figures, record, page and chapter, and the path of work: their markup is in
+`docs/site/fragments/kit-story/` and their styles in
+`docs/site/assets/kit-story.css`. The home page adds its own layout in
+`home/home-story.css` and composes its route cards by hand, with one card for
+the release notes and migration guides. One more page adds its own stylesheet:
 [Approval that failed open](../approval-failed-open/index.md) loads
 `approval-failed-open/approval-failed-open.css` for the wide and upright
 versions of its generated figures and for the marks of measured statements,

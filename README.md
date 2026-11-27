@@ -37,11 +37,11 @@ For local-only use, add the kit with
 Use a shared remote URL when distributing consuming repositories to others.
 
 Review `docs/site/site.toml`: the sidebar home label, source ref and navigation. Set `page_css = ["build-sheet.css"]` on pages
-that use the shared layout. Add `.build/` to the project's `.gitignore`, then
-track the authored sources before building:
+that use the shared layout. `init` also writes a `.gitignore` that keeps `.build/`
+out of Git; track it with the authored sources before building:
 
 ```bash
-git add docs AGENTS.md CLAUDE.md .gitmodules .docs-kit
+git add .gitignore AGENTS.md CLAUDE.md docs .gitmodules .docs-kit
 .build/docs-env/bin/python .docs-kit/docsite.py build --project .
 .build/docs-env/bin/python .docs-kit/docsite.py lint --project . --strict
 python3.12 -m http.server 8321 --bind 127.0.0.1 --directory .build/docs

@@ -1,0 +1,38 @@
+/* The home page's own layout: the kit's story, one figure per section.
+   Loaded after the shared home.css; every text size is 11px or more. */
+.hs-jump{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0}
+.hs-jump a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border-radius:999px;border:1px solid var(--border);
+  font:600 12.5px var(--mono);color:var(--muted);text-decoration:none;transition:color .15s,border-color .15s,box-shadow .2s}
+.hs-jump a:hover,.hs-jump a:focus-visible{color:var(--bright);border-color:rgba(var(--accent-rgb),.45);box-shadow:0 0 18px rgba(var(--accent-rgb),.14)}
+.hs-sec{display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);gap:22px 44px;align-items:center;margin:0 0 64px;scroll-margin-top:24px}
+.hs-sec.is-flip{grid-template-columns:minmax(0,1.22fr) minmax(0,.78fr)}
+.hs-sec.is-flip>.hs-text{order:2}
+.hs-sec.is-wide{grid-template-columns:minmax(0,1fr);gap:18px}
+.hs-sec.is-wide>.hs-text{max-width:none;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:4px 44px;align-items:end}
+.hs-sec.is-wide>.hs-text>.hs-kicker{grid-column:1/-1}
+.hs-kicker{display:flex;align-items:center;gap:10px;margin:0 0 10px;font:700 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--g,var(--accent))}
+.hs-kicker::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,color-mix(in srgb,var(--g,var(--accent)) 40%,transparent),transparent)}
+.hs-text h2{margin:0 0 12px;padding:0;border:0;font:700 clamp(24px,2.4vw,32px)/1.15 var(--sans);letter-spacing:-.01em;color:var(--bright)}
+.hs-text p{margin:0 0 10px;font-size:16px;line-height:1.65;color:var(--text)}
+.hs-text .hs-more{display:inline-block;margin-top:4px;font-size:14.5px;font-weight:600;text-decoration:none}
+.hs-text .hs-more:hover{text-decoration:underline}
+.hs-sec figure{margin:0;min-width:0}
+.hs-sec figcaption{margin-top:10px;font-size:13.5px;line-height:1.55;color:var(--muted)}
+.hs-sec .inline-fig{display:block;width:100%;height:auto}
+.hs-sec .bs-flow{margin:0}
+.hs-shots{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.hs-shots img{display:block;width:100%;height:auto;border:1px solid var(--border);border-radius:10px;cursor:zoom-in;transition:border-color .2s,box-shadow .2s}
+.hs-shots img:hover{border-color:rgba(var(--accent-rgb),.45);box-shadow:0 0 24px rgba(var(--accent-rgb),.14)}
+.hs-sec .bs-grid.g3{margin:0}
+.hs-routes{margin-top:8px}
+.hs-routes>.hs-kicker{margin-bottom:16px}
+.hs-routes .map-grid{grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr))}
+.hs-routes .map-text span{-webkit-line-clamp:unset;display:block}
+#fig-kit-pin .inline-fig{max-width:640px;margin:0 auto}
+@media (max-width:1100px){
+  .hs-sec,.hs-sec.is-wide>.hs-text{grid-template-columns:minmax(0,1fr)}
+  .hs-sec.is-flip{grid-template-columns:minmax(0,1fr)}
+  .hs-sec.is-flip>.hs-text{order:0}
+  .hs-sec{margin-bottom:48px}
+}
+@media (max-width:640px){.hs-shots{grid-template-columns:minmax(0,1fr)}.hs-text p{font-size:15.5px}}
