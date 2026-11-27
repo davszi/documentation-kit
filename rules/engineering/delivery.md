@@ -89,8 +89,10 @@ A question for the person must not exist only in chat. Before stopping work
 or reporting completion, write each question the person has not answered into
 the open owner as an unresolved choice, under
 [open work](../documentation.md#from-open-work-to-subject-knowledge): the
-question, the options, the recommendation and what waits on the answer, routed
-from `OPEN.md`. A delegated owner sends such a question through the agreed
+question, the options, the recommendation, the strongest case against it
+and what waits on the answer, routed from `OPEN.md`. An option that rests on
+a number names the measurement. One that rests on a premise nobody measured
+says so. A delegated owner sends such a question through the agreed
 return channel; the agent that reports to the person records it. When the
 person answers, record the answer where the work continues and delete the
 entry once nothing waits on it.

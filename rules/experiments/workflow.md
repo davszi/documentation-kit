@@ -53,6 +53,14 @@ the shipped path. Match replication to the claim: repeating one case, scenario,
 seed or dataset does not replicate across others. Stop when the question is
 answered, the budget is reached or the approach cannot answer it.
 
+A setting the person decides, such as a list of candidate values, a training
+length or a number of workers, is decided on a measurement where measuring is
+cheap next to what the decision costs. The number meets the
+[measurement rules](../records.md#numbers-and-staleness) before the question
+is put to the person: its script and output are tracked. When a later run is
+sized from an earlier one's cost, the report gives the earlier run's measured
+cost against its estimate before the sizing.
+
 ## Keep evaluation separate from tuning
 
 Separate the data, cases or scenarios that guide choices from those that

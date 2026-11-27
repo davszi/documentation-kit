@@ -461,7 +461,7 @@ These rules live in the records guide because a claim is first made in a record,
 
 <!-- fold: dead-end Decision rationale and baselines -->
 
-A decision recorded without its reasons invites the same debate again. Put the rationale next to the decision, including why this instrument or default was chosen and why the alternatives lost.
+A decision recorded without its reasons invites the same debate again. Put the rationale next to the decision, including why this instrument or default was chosen and why the alternatives lost. A decision the person made keeps its date, who decided, the person's words and its known weakness.
 
 Baselines need the same care. A baseline cited for what currently ships has to measure what ships, and a retired baseline is labelled historical. The verdict of an experiment is also a different kind of content from measurements taken in deployment, so the two are not presented as one.
 
@@ -527,6 +527,8 @@ Full guide: [numbers and staleness](records.html#numbers-and-staleness). Screens
 ## Each section has one purpose and states its takeaway before the evidence
 
 <p class="bs-lead">Titles state the takeaway, a one-sentence lead states the claim, and the evidence follows.</p>
+
+A number keeps what gives it meaning: a value that depends on a setting is plotted over that setting, a quantity stays in the unit of its claim, and a result that has not run is named as not run where it would stand.
 
 <div class="bs-checks r32">
 <div class="bs-check"><span class="bs-badge bs-ok">section</span><h3>One purpose</h3><p>Answer a question, show a construction or compare alternatives. Split when the purpose changes; merge thin sections into their concept.</p></div>
@@ -693,7 +695,7 @@ Full guide: [story and reading layers](explanations.html#story-and-reading-layer
 
 ## Every mechanism, spatial claim and measurement needs a visual
 
-<p class="bs-lead">A section is not done until a mechanism has a diagram, a spatial claim a picture and a measured claim a plot or table.</p>
+<p class="bs-lead">A section is not done until a mechanism has a diagram, a spatial claim a picture and a measured claim a plot; a table alone serves only exact lookup.</p>
 
 <div class="bs-checks">
 <div class="bs-check"><span class="bs-badge bs-ok">anchor</span><h3>Number and caption</h3><p>A stable HTML anchor and a visible numbered caption, unique and in reading order.</p></div>

@@ -5,13 +5,14 @@
 A visual must answer an actual understanding or evidence need. Prefer a worked construction, comparison or counterexample; do not add a decorative plot because a formula exists. Within that, aim high: a visual that only repeats the text has not earned its place either, and the page-design guide asks for the [most telling picture](pages.md#page-design) each claim allows.
 
 Use diagrams for structure, ownership, flow or sequence. Label the relevant
-objects and transitions in place. Use tables for exact lookup and comparison of
-values, conditions or criteria. Use plots for patterns, variation or trade-offs.
-Pair formats when they answer different questions. Show the details the reader
+objects and transitions in place. Draw what can be drawn. Values that are
+compared, ranked or change over a setting become a plot or a diagram. A table
+is for exact lookup, where the reader reads off single values, and may stand
+beside a figure to give its exact numbers. Show the details the reader
 needs to understand or check the claim. Keep complete field mappings and
 implementation inventories in linked records.
 
-Every mechanism needs a diagram; every geometric/spatial claim needs a picture; every measured claim needs a plot or table. This is a completion gate. Budget visual production before declaring a section done. Figures, tables and headings alone should convey the story.
+Every mechanism needs a diagram; every geometric/spatial claim needs a picture; every measured claim needs a plot; a table alone serves only exact lookup. This is a completion gate. Budget visual production before declaring a section done. Figures, tables and headings alone should convey the story.
 
 A missing figure is work to do. When neither the record nor the repository has a figure for a claim that needs one, the page author makes it from what exists: measured data and run outputs for a plot, code and configuration for a structure or flow diagram, geometry and inputs for a picture. Record its generator and inputs like any generated figure. A number the figure shows must be in the record; a number computed for the figure goes into the record first. Leave a claim without its figure only when nothing true can be drawn, because the data was never recorded or the claim is not measured yet. Then say in the completion report which figure is missing and what would be needed to make it. Never draw invented data, and never draw a sketch that reads as a measurement.
 

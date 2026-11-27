@@ -2,6 +2,41 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — Rules: questions, reports, settings and numbers on a page
+
+- A proposal from a session on a consumer project's experiment, pasted in
+  by the owner, asked for four additions. Its reasons: three recommendations
+  were overturned once the option was measured; long chat reports repeated
+  the page; one planned rule rested on a premise nobody had measured; two
+  presentations of a number were rejected on a results page.
+- Checked against the rules before drafting: the four quoted places exist.
+  Taken with changes the owner read as drafts and accepted:
+  - a question to the person names the strongest case against the
+    recommendation; only an option that rests on a number names its
+    measurement (`rules/engineering/delivery.md`);
+  - a report links a page that covers the work and keeps what waits on the
+    person (`rules/engineering/handoffs.md`);
+  - settings are decided on a measurement, without a new section
+    (`rules/experiments/workflow.md`); the decision's date, who decided and
+    the person's words go to `rules/records.md`, where decision rationale
+    already lives.
+- Not taken from the proposal: its new heading "Decisions on settings"; the
+  sentence on unmeasured premises a second time in the experiment guide; the
+  sentence "Show a number with the conditions that give it meaning", which
+  the figures guide covers.
+- The owner did not agree with "table or plot" and said a figure is almost
+  always better where one can be drawn; lookup tables are fine. The figures
+  guide now says: draw what can be drawn; a table is for exact lookup. The
+  gate reads "every measured claim needs a plot; a table alone serves only
+  exact lookup". The number rules went into `rules/writing/pages.md`
+  without the table.
+- Pages synced with one sentence each: Engineering (decisions, handoffs),
+  Documentation and writing (figures, honest claims, page design),
+  Experiments (start from evidence).
+- Not done: existing pages with comparison tables are not reworked; lint
+  cannot check the new figure rule. `rules/writing/pages.md` still lists
+  "table" among a chapter's visual blocks.
+
 ## 2026-11-27 — Pages: the kit's story, "Discuss, build, record", setup-only Get started
 
 - Built the three pages of the outline the owner agreed after the rule

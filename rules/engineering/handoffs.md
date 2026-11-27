@@ -15,6 +15,10 @@ assess and continue the work:
 Distinguish work completed from behavior verified. State whether a claim
 comes from an executed check, source inspection or an inference.
 
+When a rendered page covers the work, the report to the person gives the
+result in a few lines and links the page and its section. It does not repeat
+the page's detail. What waits on the person stays in the report.
+
 Name a file by its full path from the repository root, as a link's text
 where the reader's tool opens links; the target stays as the record's other
 links are written. Give an absolute path for a file outside

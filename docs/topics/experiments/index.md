@@ -120,6 +120,8 @@ See [choose the purpose](experiment-workflow.html#choose-the-purpose).
 
 <p class="bs-lead">Read what is already known, run the smallest comparison that resolves the rest, and keep tuning apart from evaluation.</p>
 
+A setting the person decides, such as a training length or a number of workers, is settled on a measurement where measuring is cheap next to what the decision costs. A later run is sized from the earlier run's measured cost, set beside its estimate.
+
 <figure id="fig-bound">
 <div class="bs-flow" role="img" aria-label="Read prior evidence and check that it applies. Choose the smallest comparison with a verified baseline. Stop when the question is answered, the budget is reached or the approach cannot answer it. Evaluation results that shaped selection must be stated; repeating runs does not repair leakage.">
 <div class="bs-node bs-teal"><span class="bs-label">Read first</span><b>Prior evidence</b><ul><li>results, failures, code and decisions</li><li>check their inputs and scope apply</li></ul></div>

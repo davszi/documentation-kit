@@ -16,7 +16,7 @@ Use one term per object across prose, controls, legends, tables, figures and out
 
 A project that has renamed terms, or whose pages use a simpler term than its records, keeps one list of those terms in its [development conventions](documentation.md#canonical-homes): the term, a link to the record that defines it, and the words it replaces. The list defines nothing itself. Where a record keeps the older or more technical term on purpose, the list says so. A rename changes the list first, then sweeps all surfaces.
 
-Decision rationale belongs beside the decision, including why an instrument/default was chosen and why alternatives lost. A baseline cited for current shipped behavior measures what ships; label retired baselines historical. An experimental verdict and deployment measurements are distinct content kinds.
+Decision rationale belongs beside the decision, including why an instrument/default was chosen and why alternatives lost. A decision the person made is kept with its date, who decided, the person's words and its known weakness. A baseline cited for current shipped behavior measures what ships; label retired baselines historical. An experimental verdict and deployment measurements are distinct content kinds.
 
 Separate claims requiring different evidence: visual fidelity, smoothness, input preservation, correspondence with a source and physical accuracy. A local check or smoother drawing proves only its tested property. Label accepted future behavior, implemented behavior, CPU checks and native/runtime observations separately. Say "not measured" plainly and provide a supported bound where available. Never manufacture an estimate to fill an empty metric.
 
