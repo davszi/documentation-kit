@@ -33,10 +33,21 @@ shows the new warnings.
 ## 5.10.0 — the kit's pages brought up to its rules, one migration guide, a button that copies a record
 
 5.10.0 is a minor release under
-[what a version number promises](#what-a-version-number-promises): it adds one
-setting. No rule text changes, no lint message is added, and a project that
+[what a version number promises](#what-a-version-number-promises): it adds two
+settings and one fixed entry to every site's menu. No rule text changes, no lint message is added, and a project that
 passed before still passes. The [migration guide](migrations/5.10.0.md) has no
 new step for a project on 5.9.0.
+
+### Open work at the top of every menu
+
+Every project keeps a list of what is owed, `docs/open/OPEN.md`, one line per
+piece of work. It was published, but only the folder browser led to it. The
+menu of every page now starts with "Open work" and the number of lines in
+that list, drawn as a tile in the warm colour so that it does not read as one
+more page. It opens the list as a page. A site that does not show the list as a page
+gets no entry, so the entry publishes nothing by itself.
+`open_work_entry = false` leaves the entry out.
+[Site authoring](../../../rules/site/authoring.md) names the setting.
 
 ### A record page can offer its Markdown
 

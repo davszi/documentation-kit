@@ -2,6 +2,40 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — Pushed for the owner to look; "Open work" at the top of every menu
+
+- The full check script failed twice on the joined branch, exit 1 both
+  times, on the same script test: the copy button's script looks for its
+  button with `document.querySelector`, and the file-links logic test runs
+  that script against stand-in pages without that function. The test has
+  three stand-in pages; my first fix reached one. With all three fixed the
+  third run passed on `7befa20`: exit 0, 529 tests.
+- Pushed `main` at `7befa20` on the owner's word, "push when its done so i
+  can check it out on pages". No tag. Until a tag exists the published
+  site names version 5.10.0, which is not released.
+- The owner asked whether "open" should be a special page every project
+  has. Checked: every project has the list already, `docs/open/OPEN.md`,
+  published but reachable only through the folder browser; 4 lines in the
+  kit, 7 in safety gates, 10 in adaptation, 15 in Tempo, 68 in ADP. He
+  chose a fixed menu entry, at the top under the site name, and asked for
+  a look of its own.
+- Built: the menu's first line is "Open work" with the number of lines, a
+  44 px tile in the warm colour with a ring mark and a count badge; current
+  on the open-work page. `open_work_entry = false` leaves it out.
+- Second attempt failed and is kept here: where a site did not show its
+  list, the build added the list as a page. Six existing tests failed on
+  it, among them one where `publish` refuses a page from a private file:
+  the entry would have published a file a project keeps private, and it
+  changed what turning the Reference listing off means. Removed: a list
+  the site does not show gets no entry.
+- First attempt failed and is kept here: the entry never appeared, because
+  the file was compared with the tracked files by its relative path and
+  they are held as full paths. The new tests caught it.
+- Checked at 1600 and 390 px on the home page, a reader page and the
+  open-work page: the entry is the menu's first line, below the icon row
+  on a reader page, 44 px tall, no overflow.
+- On branch `after-5.9.0`, not on `main`.
+
 ## 2026-11-27 — The kit's four older pages brought up to its rules; pushed for the owner to look
 
 - The owner said the kit's own pages lag behind the kit, and doubted that an

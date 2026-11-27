@@ -538,3 +538,20 @@ body:not(.reader-enabled) .sidebar .brand small{padding-left:41px}
 .kit-line a,.kit-line .kit-built {display:block;width:max-content;max-width:100%;}
 .kit-line .kit-built[hidden] {display:none;}
 @media print {.kit-line {display:none;}}
+/* ---- the menu's first line: the project's open work, with the number of open
+   lines. It is drawn as a tile in the warm colour, so it does not read as one
+   more page of the menu. ---- */
+.toc a.open-work{display:flex;align-items:center;gap:10px;min-height:44px;margin:6px 0 10px;padding:8px 12px;
+  border:1px solid color-mix(in srgb,var(--orange) 34%,var(--border));border-radius:10px;
+  background:linear-gradient(135deg,rgba(var(--orange-rgb),.10),rgba(var(--orange-rgb),.02) 70%);
+  color:var(--bright);font:600 13.5px var(--sans);letter-spacing:.01em;text-decoration:none;
+  transition:border-color .2s,box-shadow .2s,background .2s}
+.reader-enabled .toc a.open-work{font-size:13.5px}
+.toc a.open-work::before{content:"";flex:none;width:9px;height:9px;border:2px solid var(--orange);border-radius:50%;
+  box-shadow:0 0 10px rgba(var(--orange-rgb),.45)}
+.toc a.open-work:hover,.toc a.open-work:focus-visible{border-color:var(--orange);box-shadow:0 0 18px rgba(var(--orange-rgb),.16)}
+.toc a.open-work.current{border-color:var(--orange);background:linear-gradient(135deg,rgba(var(--orange-rgb),.20),rgba(var(--orange-rgb),.06) 70%)}
+.toc a.open-work.current::before{background:var(--orange)}
+.open-work-count{margin-left:auto;min-width:26px;padding:1px 8px;border-radius:999px;background:rgba(var(--orange-rgb),.16);
+  color:var(--orange);font:600 12px/1.6 var(--mono);text-align:center}
+@media (prefers-reduced-motion:reduce){.toc a.open-work{transition:none}}

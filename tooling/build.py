@@ -281,6 +281,41 @@ BUILD_INFO = "html/build-info.js"
 STARTER_REPOSITORY = "https://github.com/example/project"
 
 
+def open_work_page(site: dict, pages: list):
+    """Where the menu's fixed "Open work" entry leads, and how many lines the list holds.
+
+    The entry opens the project's open-work list (`open_work`, by default `docs/open/OPEN.md`) where
+    the site already shows that list as a page: registered, or listed in the Reference section. A
+    list the site does not show gets no entry, so the entry never publishes a file by itself.
+    Returns None when the setting turns the entry off or no such page exists.
+    """
+    from worklog_entries import configured_entry
+    shown = site.get("open_work_entry", True)
+    if not isinstance(shown, bool):
+        err("site.toml: open_work_entry must be true or false")
+        return None
+    source = configured_entry(site, "open_work")
+    page = next((candidate for candidate in pages if candidate.source == source), None) if shown else None
+    if page is None:
+        return None
+    # One line of the list is one piece of owed work.
+    count = sum(1 for line in (REPO / source).read_text().splitlines() if line.startswith("- "))
+    return {"route": page.route, "count": count}
+
+
+def open_work_entry(site: dict, fname: str) -> str:
+    """The first line of the menu: "Open work" with the number of open lines."""
+    entry = site.get("_open_work")
+    if not entry:
+        return ""
+    current = fname == entry["route"]
+    count = (f'<span class="open-work-count" aria-label="{entry["count"]} open">{entry["count"]}</span>'
+             if entry["count"] else "")
+    return (f'    <a class="open-work{" current" if current else ""}" href="{html.escape(entry["route"], quote=True)}"'
+            + (' aria-current="page"' if current else "")
+            + f'><span class="open-work-label">Open work</span>{count}</a>\n')
+
+
 def kit_line_shown(site: dict) -> bool:
     """Whether the sidebar's last line is shown: `kit_link`, true unless site.toml says false."""
     shown = site.get("kit_link", True)
@@ -1055,6 +1090,7 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
         "{{BRAND_SUB}}": html.escape(meta.get("brand_sub", "")),
         "{{TOC}}": toc,
         "{{CROSSNAV}}": crossnav,
+        "{{OPEN_WORK}}": open_work_entry(site, fname),
         "{{KIT_LINE}}": kit_line(site),
         "{{HEAD_EXTRA}}": head_extra,
         "{{CONTENT}}": content.rstrip() + "\n",
@@ -1362,6 +1398,7 @@ def main() -> int:
                                            | {page.route for page in source_pages}, KIT_SITE.parent)
     for problem in tolerated:
         note(problem)
+    site["_open_work"] = open_work_page(site, source_pages + automatic)
     site["_repository_tree"] = repository_tree(source_pages + automatic)
     from source_tree import TREE_INDEX, TREE_SCRIPT, is_large, shared_tree_html, tree_script
     # The page lock keeps the tree out of pages a general-password reader opens,
