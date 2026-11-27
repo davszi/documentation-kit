@@ -2,6 +2,35 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — The owner's decisions on the open points; a migration guide for 5.9.0
+
+- The owner decided the points the review and I had left open:
+  - a router row for the discussion before the work: add it. He asked
+    whether the section is not the same for every project anyway;
+    conformance item 2 already asks for every starter row that applies;
+  - the five anchors that left Get started: no stubs, "we never care about
+    bookmarks";
+  - the kit's site address fixed in the build: leave it;
+  - a sentence that says what a chapter is: add it;
+  - the plot rule in three sentences: keep as is;
+  - the two sentences changed after he read them, "Building starts then"
+    and the narrowed figure gate: keep both.
+- Done: the row in the starter's router and the kit's own; the chapter
+  sentence at the start of page design, which the new page now cites; a
+  clause in conformance item 6 that exempts a proposal page under
+  discussion.
+- A new row is a step for each project, so 5.9.0 has a migration guide
+  after all: move the pin, add the row, and three things to look at. The
+  release note, the README, the context and the index name it.
+- The full check script passed on `f5b9035`, the commit before: exit 0,
+  525 tests.
+- Raised by the owner and not settled: nothing makes an agent read a
+  project's pages chapter by chapter against a newer kit, and much of what
+  exists would not pass. Checked: conformance asks for structure and for
+  pages that link changed sections only. Proposed for after this release:
+  lint notes for what a script can count, and a page review as a task of
+  its own.
+
 ## 2026-11-27 — A link to the repository in every sidebar and on the kit's home page
 
 - The owner opened the published kit site and said it should link its

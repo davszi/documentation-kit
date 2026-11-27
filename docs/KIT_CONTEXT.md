@@ -34,7 +34,9 @@ owns the shared panel switcher's authoring, behavior and extraction checks.
 
 [Releases and upgrades](topics/releases/releases.md) owns version notes and
 consumer migration steps; `VERSION` holds the current version.
-The current release is 5.9.0, which has no migration step. The
+The current release is 5.9.0. Its
+[migration guide](topics/releases/migrations/5.9.0.md) covers the new router
+row and the sidebar's foot. The
 [5.8.0 migration guide](topics/releases/migrations/5.8.0.md) covers the lint warning
 for text before a page's first chapter. The
 [5.5.0 migration guide](topics/releases/migrations/5.5.0.md) covers the

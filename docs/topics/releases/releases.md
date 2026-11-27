@@ -32,7 +32,8 @@ shows the new warnings.
 [what a version number promises](#what-a-version-number-promises): it adds
 rule text and one setting and changes how the shared theme looks. No rule
 anchor is removed or renamed, no lint message is added, and a project that
-passed before still passes. No migration step exists.
+passed before still passes. The [5.9.0 migration guide](migrations/5.9.0.md)
+holds its one step, a new row in the router.
 
 What a project meets after moving its pin:
 
@@ -46,6 +47,7 @@ What a project meets after moving its pin:
   readable without a password. `kit_link = false` removes both. A project
   check that lists the files of the built site has to know the file.
 - The reader shows a leading slide face alone in a chapter's first view.
+- The starter router has one more row, for the discussion before the work.
 - Every group of the menu opens and closes at its label. In the markup a
   group is a `details` element with a `summary`, where it was a `div` with
   a `span`; the classes `nav-section` and `nav-group` stay. Project styles
@@ -58,7 +60,9 @@ The rules described work from the record onward. A new section in the
 covers what comes first: chat is the main channel; a page is built during
 the discussion when the person asks for one, marked as a proposal; nothing
 is agreed until the person accepts it in words; work that outlives the chat
-gets its agreement written into its open item or plan before building.
+gets its agreement written into its open item or plan before building. The
+starter router and the kit's own router gain a row for it. The page-design
+guide now says what a chapter is.
 
 ### Questions, reports, settings and numbers
 

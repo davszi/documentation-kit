@@ -22,6 +22,7 @@ expands. These routes grant no execution or publication permission.
 | Designing or running an experiment, qualification or benchmark | `rules/experiments/workflow.md` and the project's owning experiment records |
 | Choosing or changing experiment checks or interpreting their failures | `rules/experiments/verification.md` and the project's accepted verification contract |
 | Running tests, builds, benchmarks or other expensive jobs | `rules/engineering/execution.md` and the environment/check commands in `docs/KIT_CONTEXT.md` |
+| Discussing a feature, an experiment or a change of direction before work starts | **Discussion before the work** in `rules/engineering/delivery.md` |
 | Assigning work, coordinating contributors or editing in parallel | `rules/engineering/delivery.md` |
 | Reporting completion or blockers, handing off work or integrating a handoff | `rules/engineering/handoffs.md` |
 | Staging, committing or rewriting Git history | `rules/engineering/git.md` and repository validation requirements |

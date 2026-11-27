@@ -37,7 +37,8 @@ their owner instead of changing them in the same deliverable.
 6. **Topics.** Every topic page has a record in its folder or declares
    `page_only` with a reason **(lint)**. No `README.md` exists below the repository root, apart from files that arrive with third-party code ([README is the bounded exception](documentation.md#readme-is-the-bounded-exception)).
    Read each `page_only` reason: if the page states a rule, specification or
-   limit, that part belongs in a record. Follow
+   limit, that part belongs in a record. A page for a
+   [proposal under discussion](engineering/delivery.md#discussion-before-the-work) is exempt until its work lands. Follow
    [rendered pages are for people](documentation.md#rendered-pages-are-for-people-records-stay-markdown).
 7. **Pages and records.** No contract, handoff state, readiness board or long
    chronology sits on a rendered page, and no layout HTML sits in a record.

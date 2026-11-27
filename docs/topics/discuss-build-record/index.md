@@ -25,7 +25,7 @@ page_only = "Explains how work runs under the kit; its records are the rule file
 
 A **page** is a page for people: a topic's `index.md`. It explains its record in its own words, leads with the conclusion and shows a figure. It never adds a rule, number or limit that its record lacks; when the two disagree, the record decides ([rendered pages are for people](documentation-system.html#rendered-pages-are-for-people-records-stay-markdown)). A Markdown file that the site shows whole is a [registered source page](authoring.html#registered-source-pages): it stays a record, and editing it is editing a record ([record first, page on request](documentation-system.html#record-first-page-on-request)).
 
-A **chapter** is one part of a page: a `##` heading, or a `section.card` when the author wants control over its contents, as [the reader](build-a-site.html#the-reader) on Build a site shows. Its title states the takeaway, a one-sentence lead states the claim before the evidence, and it carries a visual block of its own ([page design](page-design.html#page-design)). A chapter with nothing of its own to claim merges into the chapter that owns its subject.
+A **chapter** is one `##` section of a page, or a `section.card` when the author wants control over its contents, and it carries one claim ([page design](page-design.html#page-design)); [the reader](build-a-site.html#the-reader) on Build a site shows how it is drawn. Its title states the takeaway, a one-sentence lead states the claim before the evidence, and it carries a visual block of its own ([page design](page-design.html#page-design)). A chapter with nothing of its own to claim merges into the chapter that owns its subject.
 
 </section>
 
