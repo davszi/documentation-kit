@@ -2,6 +2,35 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — Example figures with values, folds without a kind, "Not chosen"
+
+- Two agents finished what the owner had decided; each commit read by me,
+  the joined tree built and linted clean after each merge.
+- The two stamped schematics are example plots now. Experiments, Figure 4:
+  minutes per run over 1 to 8 workers, 80, 44, 26 and 21, a budget line at
+  30 and "not run" at 16; beside it an estimate of 40 against a measured
+  65, and the later run sized as 2 × 65 = 130. Writing pages, Figure 3:
+  accuracy of 71, 78 and 82 percent over training steps, the longest
+  training not run. Each says "invented values" in the drawing and in its
+  caption. The author's browser check passed in 16 cases; the smallest
+  label was 11.9 px, in a neighbour preview at 390 px.
+- A fold may have no kind: `<!-- fold: detail Title -->`. No badge, no
+  option under Also show, opened by All, a click remembered like any
+  other. The explanations guide says what each of the four kinds is for.
+  The kit's pages hold 27 folds, not the 30 a search for the marker gave;
+  15 moved to `detail`. Checked by the implementer: built pages it did not
+  edit are identical apart from asset version hashes; the old reader
+  script fails the new tests.
+- The owner chose the on-screen name of the `dead-end` kind: "Not chosen",
+  in place of "Alternatives". The source word and saved reader state are
+  unchanged. Tooltips now read "Show Math folds in every chapter" and the
+  like.
+- Three page sentences that still listed four kinds were synced after the
+  join.
+- Inferred by the implementer, not checked: a reader who had All on for a
+  kit page that now has folds of no kind sees All off until it is pressed
+  again.
+
 ## 2026-11-27 — The owner's decisions on figures, folds and pages that fall behind
 
 - Pushed `main` at `d166ac3` after the full check script passed there:

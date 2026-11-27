@@ -141,7 +141,10 @@ Only for a project that comes from 5.7.0 or 5.8.0; 5.9.0 brought these.
 
 ## New in 5.10.0
 
-Beyond the two steps above, nothing a project must do. Lint may print two
+Beyond the two steps above, nothing a project must do. A fold whose
+content is none of math, an experiment, code or an approach not taken can now
+be written `<!-- fold: detail Title -->`; moving a misfiled fold is optional.
+The option that read "Alternatives" reads "Not chosen". Lint may print two
 new kinds of note: a changed record section that no page links, and a
 numbered figure the text never cites. They list work, they fail nothing;
 [reviewing a page against its rules](../../../rules/site/validation.md#reviewing-a-page-against-its-rules)

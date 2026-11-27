@@ -52,6 +52,8 @@ What a project meets after moving its pin:
   version shows as a lint note, not as an error.
 - The starter router's row for upgrading names the guide's new, fixed
   address.
+- The option "Alternatives" under Also show reads "Not chosen", and All
+  opens every fold. A page may write a fold of no kind with `detail`.
 - Lint may print two kinds of note it did not print before: a changed
   record section that no page links, and a numbered figure the text never
   cites. Neither fails a run.
@@ -82,6 +84,22 @@ chapter, findings first.
 The [figures guide](../../../rules/writing/figures.md#figures-and-comparisons)
 forbids invented data. The kit's own pages explain rules and report no
 results; an example there may use invented values and says so.
+
+### A fold without a kind, and "Not chosen"
+
+A fold had to be one of four kinds, and no rule said what a kind is for.
+Pages filed optional detail of no kind under a wrong one, so the option
+"Code" opened notes that are not code. `<!-- fold: detail Title -->` is a
+fold of no kind: it has no badge and no option of its own, and All opens it
+with every other fold. The
+[explanations guide](../../../rules/writing/explanations.md#story-and-reading-layers)
+now says in one line each what `math`, `experiment`, `code` and `dead-end`
+are for. Fifteen of the 27 folds on the kit's pages moved to `detail`.
+
+The kind written `dead-end` was shown as "Alternatives". It holds an
+approach that was considered or tried and not taken, and is now shown as
+"Not chosen". The word in page sources and what a reader's browser has saved
+stay as they are.
 
 ### A record page can offer its Markdown
 
