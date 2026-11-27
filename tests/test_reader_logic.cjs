@@ -180,7 +180,7 @@ function checkFoldsKeysAndDrawer() {
   assert.equal(page.sidebar.children.at(-1), panel, 'The options sit at the bottom of the navigation');
   assert.equal(panel.hidden, false, 'A page with folds shows its options');
   assert.deepEqual(panel.querySelectorAll('[data-reader-layer]').map(node => node.textContent),
-    ['Math', 'Experiments', 'Code', 'Alternatives'], 'The options are the kinds, in order, without Story');
+    ['Math', 'Experiments', 'Code', 'Not chosen'], 'The options are the kinds, in order, without Story');
   assert.ok(!panel.textContent.includes('Story'), 'Story is not an option');
   assert.equal(page.option('all').getAttribute('role'), 'switch', 'All is a switch');
   assert.ok(!page.key('ArrowRight', {target: page.option('math')}).defaultPrevented, 'Options keep their arrow keys');

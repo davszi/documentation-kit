@@ -302,7 +302,7 @@ gh_ref = "main"
 chapter_reader = true
 ```
 
-A fold is `<!-- fold: math Title -->` … `<!-- /fold -->`, with `experiment`, `code` or `dead-end` (shown as Alternatives) in place of `math`; `(open)` after the kind starts it open ([reading layers](explanations.html#story-and-reading-layers)).
+A fold is `<!-- fold: math Title -->` … `<!-- /fold -->`, with `experiment`, `code` or `dead-end` (shown as Not chosen) in place of `math`; `(open)` after the kind starts it open ([reading layers](explanations.html#story-and-reading-layers)).
 
 <!-- /fold -->
 

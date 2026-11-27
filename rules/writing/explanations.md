@@ -17,7 +17,7 @@ Choose the kind by what the fold holds:
 - `math`: a derivation or proof.
 - `experiment`: a measurement, run or comparison behind a claim.
 - `code`: code or configuration.
-- `dead-end`, shown as Alternatives: an approach that was considered or tried and not taken, with the reason.
+- `dead-end`, shown as Not chosen: an approach that was considered or tried and not taken, with the reason.
 
 Optional detail that is none of these is a fold of no kind: `<!-- fold: detail Title -->`. It has no option of its own; All opens every fold, these included.
 

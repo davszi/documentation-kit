@@ -16,7 +16,7 @@ The tree contains home, ordered groups/pages and the current page's chapters, fo
 
 The home page has the reader off: it sets `reader = false`. The reader's frame is for the chapters of a topic page; the home page is the project's own composition. The optional `<!-- site-map -->` marker derives one card per visible, grouped `[[nav]]` page: its nav label, its frontmatter `description` (else `brand_sub`) and its frontmatter `thumbnail` (else the first `<img>` or Markdown image in its body; inline SVG figures are not detected). Local SVG thumbnails are inlined like other local figures and hidden from assistive technology, since the card names the page; a thumbnail must be a local, tracked image. Projects may instead compose their own homepage. When the other pages use the chapter reader, give the home page `toc = []` so its sidebar shows the same site tree as every reader page instead of its own section list; moving between pages then keeps the navigation in place. Handwritten status summaries are dated and updated when their underlying state changes; they must not become another status owner.
 
-One set of section options serves the whole page, under Also show at the bottom of the sidebar. Each option opens every fold of one kind in every chapter and in both columns: Math, Experiments, Code and Alternatives, of which a page offers only the kinds it has. A fold of no kind (`fold: detail`) has no option of its own. All is a switch for every fold, folds of no kind included; a page whose only folds have no kind offers All alone. With nothing switched on, the Story stays visible. A fold starts closed, or open where its author marked it. A reader's own click on a fold is saved for that fold and wins on the next visit, until an option sets its kind again. Preserve the options, individual fold states and reading positions across revisits. Changing an option preserves the visible anchor or its closed summary. A deep link opens its containing fold. History restores arrangements without undoing current reading preferences. Without JavaScript, content and native folds remain usable; print includes every layer; transitions respect reduced motion.
+One set of section options serves the whole page, under Also show at the bottom of the sidebar. Each option opens every fold of one kind in every chapter and in both columns: Math, Experiments, Code and Not chosen, of which a page offers only the kinds it has. A fold of no kind (`fold: detail`) has no option of its own. All is a switch for every fold, folds of no kind included; a page whose only folds have no kind offers All alone. With nothing switched on, the Story stays visible. A fold starts closed, or open where its author marked it. A reader's own click on a fold is saved for that fold and wins on the next visit, until an option sets its kind again. Preserve the options, individual fold states and reading positions across revisits. Changing an option preserves the visible anchor or its closed summary. A deep link opens its containing fold. History restores arrangements without undoing current reading preferences. Without JavaScript, content and native folds remain usable; print includes every layer; transitions respect reduced motion.
 
 A page without folds shows no options. Subsection jumps remain beneath their containing chapter, reveal folded targets and highlight their exact location. They do not create extra chapters or reorder prerequisites. Preserve public anchors, tables, figures, media paths and manual folds during adaptation. Local comparison tabs keep their behavior.
 
@@ -24,14 +24,14 @@ An explicitly structured guide may use `data-reader-unit="section"` on its `data
 
 ## Extending reading layers
 
-Add a layer only for recurring content that Math, Experiments, Code and Alternatives cannot express and that needs an option of its own; other optional detail is a fold of no kind. A new source marker requires a coordinated shared-kit change:
+Add a layer only for recurring content that Math, Experiments, Code and Not chosen cannot express and that needs an option of its own; other optional detail is a fold of no kind. A new source marker requires a coordinated shared-kit change:
 
 - Register its marker and balance validation in the builder.
 - Register its human label, accepted saved preferences and its option in the reader.
 - Add reader and print styles, plus equivalent no-reader/fallback fold controls.
 - Add checks for both columns, deep-link reveal, saved preferences, printing and fallback reading; inspect wide/narrow output.
 
-Keep existing marker names and saved values stable. Human labels may differ from source markers (`dead-end` displays as Alternatives). Content placement follows the writing guide.
+Keep existing marker names and saved values stable. Human labels may differ from source markers (`dead-end` displays as Not chosen). Content placement follows the writing guide.
 
 ## Maintaining shared interactions
 

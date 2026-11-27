@@ -157,7 +157,7 @@ No benchmark has been run for this starter. These are authoring requirements, no
 
 <p class="bs-lead">A reader should understand the claim and verdict with every supporting fold closed.</p>
 
-[Figure 3](#fig-layers) puts the explanation on the visible path. Math, Experiments, Code and Alternatives add detail without becoming prerequisites hidden from the reader.
+[Figure 3](#fig-layers) puts the explanation on the visible path. Math, Experiments, Code and Not chosen add detail without becoming prerequisites hidden from the reader.
 
 <figure id="fig-layers">
 <div class="bs-flow n2" role="img" aria-label="Visible story contains the question, mechanism, evidence and verdict. Optional layers add derivation, reproduction, source and alternatives.">

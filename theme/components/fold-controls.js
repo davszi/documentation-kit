@@ -66,7 +66,7 @@
     ["math", "Math"],
     ["experiment", "Experiments"],
     ["code", "Code"],
-    ["dead-end", "Alternatives"],
+    ["dead-end", "Not chosen"],
   ];
   // A fold of no kind has no option; All opens it, and it is stored like a kind.
   const DETAIL = "detail";

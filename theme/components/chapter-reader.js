@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
   try { const saved = localStorage.getItem(drawerPreferenceKey); if (saved !== null) drawerPinned = saved === 'true'; } catch (_) {}
   const browserScrollMode = history.scrollRestoration;
   const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-  const kinds = [['math', 'Math'], ['experiment', 'Experiments'], ['code', 'Code'], ['dead-end', 'Alternatives']];
+  const kinds = [['math', 'Math'], ['experiment', 'Experiments'], ['code', 'Code'], ['dead-end', 'Not chosen']];
   // A fold of no kind (`fold: detail`) is a layer without an option of its own:
   // only All opens it with the others, and it is stored like a kind.
   const detailLayer = 'detail';
@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ['Move through chapters', 'Use the arrows on the stepper at the bottom of the page, click a neighbouring chapter at its edge, swipe sideways on a touch screen, or press the left and right arrow keys. Each chapter resumes where you left it. Controls inside figures keep their own keys.'],
     ['Choose the arrangement', 'The row of icons under the site name shows One chapter, Two chapters or All chapters' + (presentable ? ', starts the Presentation' : '') + ' and opens About this page and this help. On narrow screens the row is in the navigation menu.'],
     ['Compare two chapters', 'Two chapters shows two equal columns. The stepper and the arrow keys move both until you pin one. Select an unpinned column before choosing its chapter from the navigation.'],
-    ['Choose how much to read', 'With nothing switched on you read the story. Also show, at the bottom of the navigation, opens Math, Experiments, Code or Alternatives in every chapter and both columns at once; All opens or closes every fold. A fold you open or close yourself keeps that state on your next visit, until you choose its kind again.'],
+    ['Choose how much to read', 'With nothing switched on you read the story. Also show, at the bottom of the navigation, opens Math, Experiments, Code or Not chosen in every chapter and both columns at once; All opens or closes every fold. A fold you open or close yourself keeps that state on your next visit, until you choose its kind again.'],
     ['Hold a reference', 'Pin the button on a column header to hold that chapter while the other moves. Purple marks the pinned column; its own scrolling still works.'],
     ['Keep navigation handy', 'On wide screens the navigation docks beside the page. Hide it with « and bring it back with ☰ at the top of the page; the choice holds across the site. Reading stays interactive and chapter links keep the navigation open. On narrow screens, navigation opens over the page and closes after choosing a chapter or an arrangement.']
   ];
@@ -476,7 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
     layerButtons.forEach(node => {
       const kind = node.dataset.readerLayer, on = layers.has(kind), label = kinds.find(([key]) => key === kind)[1];
       node.setAttribute('aria-pressed', String(on));
-      node.title = `${on ? 'Hide' : 'Show'} ${label.toLowerCase()} in every ${unit}`;
+      node.title = `${on ? 'Hide' : 'Show'} ${label} folds in every ${unit}`;
     });
     allSwitch.setAttribute('aria-checked', String(allOn));
     allSwitch.title = `${allOn ? 'Close' : 'Open'} every fold in every ${unit}`;
