@@ -5,7 +5,6 @@ import sys
 import tempfile
 import unittest
 
-import lint
 from record_changes import changed_lines, record_change_notes
 from topic_structure import page_sources, topic_structure_problems
 
@@ -140,7 +139,7 @@ class RecordChangeNotes(unittest.TestCase):
         self.assertEqual(len(changes['rules/code.md']), 2)
 
     def notes(self, since=None):
-        return record_change_notes(self.root, lint.slugify, since)
+        return record_change_notes(self.root, since)
 
     def test_changed_section_names_linking_pages_and_chapters(self):
         self.edit('Remove the old form', 'Remove every old form')
@@ -204,10 +203,10 @@ class RecordChangeNotes(unittest.TestCase):
             bare = Path(folder)
             (bare / 'rules').mkdir()
             (bare / 'rules/code.md').write_text(RECORD)
-            self.assertEqual(record_change_notes(bare, lint.slugify), [])  # not a repository
+            self.assertEqual(record_change_notes(bare), [])  # not a repository
             git(bare, 'init', '-q')
             git(bare, 'add', '-A')
-            self.assertEqual(record_change_notes(bare, lint.slugify), [])  # no HEAD yet
+            self.assertEqual(record_change_notes(bare), [])  # no HEAD yet
 
     def test_since_compares_with_another_revision(self):
         self.edit('Log text.', 'Log to stderr.')

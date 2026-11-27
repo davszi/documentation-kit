@@ -32,6 +32,7 @@ import posixpath
 import re
 from urllib.parse import quote, unquote, urlsplit
 
+from page_source import LAST_ID_SUFFIX, TITLE_HEADING, markdown_headings
 from topic_structure import is_topic_page, topic_group_folders
 from worklog_entries import HTML_HEADING, unchecked_spans, within
 
@@ -40,7 +41,6 @@ _SLUG = re.compile(r"[a-z0-9][a-z0-9-]*")
 _TAG = re.compile(r"<(a|img|video|audio|source|iframe)\b[^>]*>", re.I)
 _ATTR = re.compile(r'(?<![\w-])(href|src|poster)="([^"]*)"')
 _HEADING = re.compile(r'<h([23]) id="([^"]+)">(.*?)</h\1>', re.S)
-_FENCE = re.compile(r"^(```|~~~)")
 
 
 @dataclass(frozen=True)
@@ -270,14 +270,9 @@ def automatic_pages(site: dict, root: Path, tracked: frozenset[Path], explicit: 
 
 
 def first_heading(text: str) -> str | None:
-    """The first level-one ATX heading outside fenced code."""
-    fenced = False
-    for line in text.splitlines():
-        if _FENCE.match(line):
-            fenced = not fenced
-        elif not fenced and line.startswith("# "):
-            return re.sub(r"\s*\{#[^}]*\}\s*$", "", line[2:]).strip()
-    return None
+    """The text of the first level-one ATX heading outside fenced code."""
+    found = markdown_headings(text, syntax=TITLE_HEADING, fences="column0", id_suffix=LAST_ID_SUFFIX)
+    return found[0].text if found else None
 
 
 LINK_GONE = '<span class="link-gone" title="The target of this link no longer exists.">'

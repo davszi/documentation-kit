@@ -18,12 +18,13 @@ from __future__ import annotations
 from datetime import date
 import re
 
+from page_source import ENTRY_HEADING, markdown_headings
+
 ENTRY_DEFAULTS = {"worklog": "docs/worklog.md", "open_work": "docs/open/OPEN.md"}
 CUTOFF_ERROR = 'worklog_links_checked_from must be a date written as "YYYY-MM-DD"'
 
-# Level-two headings in Markdown source and in rendered HTML; group 1 is the
-# heading text, which starts with the entry's date.
-MARKDOWN_HEADING = re.compile(r"(?m)^## (.*)$")
+# Level-two headings in rendered HTML; group 1 is the heading text, which
+# starts with the entry's date. `_entry_headings` finds them in Markdown source.
 HTML_HEADING = re.compile(r"<h2\b[^>]*>(.*?)</h2>", re.S)
 _DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
 _FENCE = re.compile(r"(?m)^ {0,3}(`{3,}|~{3,})")
@@ -75,39 +76,46 @@ def fenced_spans(text: str) -> list[tuple[int, int]]:
     return spans
 
 
+def _entry_headings(text: str) -> list[tuple[int, str]]:
+    """(offset, text) of each `## ` line of Markdown source outside fenced code, the whole line after `## ` kept."""
+    found = markdown_headings(text, syntax=ENTRY_HEADING, fences=None, skip=fenced_spans(text),
+                              line_breaks="newline", id_suffix=None)
+    return [(heading.offset, heading.text) for heading in found]
+
+
 def markdown_entry_dates(text: str) -> list[str]:
     """The dates of the dated entry headings in Markdown source, in file order."""
-    fenced = fenced_spans(text)
     dates = []
-    for match in MARKDOWN_HEADING.finditer(text):
-        dated = _DATE.match(match.group(1).strip())
-        if dated and not within(fenced, match.start()):
+    for _, heading in _entry_headings(text):
+        dated = _DATE.match(heading)
+        if dated:
             dates.append(dated.group(0))
     return dates
 
 
-def unchecked_spans(text: str, first: str | None, heading: re.Pattern = MARKDOWN_HEADING) -> list[tuple[int, int]]:
+def unchecked_spans(text: str, first: str | None, heading: re.Pattern | None = None) -> list[tuple[int, int]]:
     """(start, end) offsets of the entries dated before `first`.
 
-    `heading` finds the level-two headings: MARKDOWN_HEADING in the source,
-    HTML_HEADING in rendered markup. An undated section belongs to the dated
+    `heading` finds the level-two headings of rendered markup, HTML_HEADING;
+    None reads Markdown source. An undated section belongs to the dated
     entry above it. A `## ` line inside a fenced code block of the Markdown
     source is not a heading, as in the rendered page.
     """
     if first is None:
         return []
-    fenced = fenced_spans(text) if heading is MARKDOWN_HEADING else []
+    if heading is None:
+        found = _entry_headings(text)
+    else:
+        found = [(match.start(), match.group(1).strip()) for match in heading.finditer(text)]
     spans: list[tuple[int, int]] = []
     entry_date, start = None, 0
-    for match in heading.finditer(text):
-        if within(fenced, match.start()):
-            continue
-        dated = _DATE.match(match.group(1).strip())
+    for position, title in found:
+        dated = _DATE.match(title)
         if not dated:
             continue
         if entry_date is not None and entry_date < first:
-            spans.append((start, match.start()))
-        entry_date, start = dated.group(0), match.start()
+            spans.append((start, position))
+        entry_date, start = dated.group(0), position
     if entry_date is not None and entry_date < first:
         spans.append((start, len(text)))
     return spans

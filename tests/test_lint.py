@@ -45,7 +45,8 @@ Text.
 
     def test_numbering_follows_document_order(self):
         seen = {}
-        self.assertEqual([lint.unique_heading_id(hid, seen) for hid in ["a", "a", "a-1", "a", ""]],
+        from page_source import unique_heading_id
+        self.assertEqual([unique_heading_id(hid, seen) for hid in ["a", "a", "a-1", "a", ""]],
                          ["a", "a-1", "a-1-1", "a-2", ""])
 
     def test_lint_knows_the_numbered_anchors(self):
@@ -76,8 +77,9 @@ Text.
 
     def test_record_notes_number_the_same_way(self):
         import record_changes
-        self.assertEqual([heading.anchor for heading in record_changes.headings(self.TEXT, lint.slugify)], self.IDS)
-        chapters = [value for _, kind, value in record_changes._chapter_index(self.TEXT, lint.slugify) if kind == "heading"]
+        from page_source import markdown_headings
+        self.assertEqual([heading.anchor for heading in markdown_headings(self.TEXT, frontmatter=True)], self.IDS)
+        chapters = [value for _, kind, value in record_changes._chapter_index(self.TEXT) if kind == "heading"]
         self.assertEqual(chapters, ["result", "result-1", "result-1-1", "result-3", "", ""])
 
 
@@ -252,7 +254,7 @@ class ShellIds(unittest.TestCase):
 
     def test_the_record_notes_name_the_chapter_as_the_page_has_it(self):
         import record_changes
-        chapters = [value for _, kind, value in record_changes._chapter_index("## Menu\n\n## Chapter reader\n", lint.slugify)
+        chapters = [value for _, kind, value in record_changes._chapter_index("## Menu\n\n## Chapter reader\n")
                     if kind == "heading"]
         self.assertEqual(chapters, ["menu-1", "chapter-reader-1"])
 

@@ -24,12 +24,18 @@ untracked, empty, unreadable, outside the theme and the project, part of a
 cycle, or nested deeper than `INCLUDE_DEPTH`. Importing this module reads no
 environment variable and no project.
 
+The kit's tools read the headings of Markdown source through
+`markdown_headings`. It and the build make a heading's id with the same
+`slugify` and `unique_heading_id`; the build slugifies the rendered heading,
+so its id can still differ, as `markdown_headings` says.
+
 `page_source`, `PageSourceError` and its `problems` are the stable interface.
 The other names serve the build and may change.
 """
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
+from dataclasses import dataclass
 import os
 from pathlib import Path
 import re
@@ -112,6 +118,111 @@ def unique_heading_id(hid: str, seen: dict[str, int]) -> str:
         result = f"{hid}-{seen[hid]}"
     seen[result] = 0
     return result
+
+
+def slugify(text: str) -> str:
+    """The id of a heading without an explicit `{#id}`, GitHub style.
+
+    Tags are dropped, then punctuation, and every white-space character becomes
+    a hyphen, so the spaces left around stripped punctuation stay as `--`. The
+    build passes the rendered heading with its character references decoded;
+    lint and the record notes pass the Markdown source text.
+    """
+    text = re.sub(r"<[^>]+>", "", text)
+    text = re.sub(r"[^\w\s-]", "", text.lower())
+    return re.sub(r"\s", "-", text.strip())
+
+
+# The ATX headings of Markdown source as the kit's readers have always read them. Group 1 is the run of `#`
+# that gives the level, group 2 the heading text. Lint's anchors and the changed record sections read every
+# level; the record notes' chapter index needs text on the line and separates with a space or tab only; a
+# source page's title is a level-one heading written `# `; a worklog entry is a level-two heading written `## `.
+ATX_HEADING = re.compile(r"(#{1,6})\s+(.*)")
+ATX_HEADING_WITH_TEXT = re.compile(r"(#{1,6})[ \t]+(.+?)[ \t]*$")
+TITLE_HEADING = re.compile(r"(#) (.*)")
+ENTRY_HEADING = re.compile(r"(##) (.*)")
+# A heading's explicit id, and the end of its text that is cut off before the text is used: from the first
+# `{#` to the last `}` for lint and the record notes, only the last `{#…}` for a source page's title.
+EXPLICIT_ID = re.compile(r"\{#([A-Za-z0-9][\w-]*)\}\s*$")
+ID_SUFFIX = re.compile(r"\{#.*\}\s*$")
+LAST_ID_SUFFIX = re.compile(r"\s*\{#[^}]*\}\s*$")
+_FENCE_MARKS = ("```", "~~~")
+
+
+@dataclass(frozen=True)
+class Heading:
+    line: int  # 1-based, counted at the line breaks the reader was given
+    offset: int  # where the heading's line starts in the text
+    level: int
+    text: str  # without the cut-off end, stripped
+    anchor: str  # the explicit `{#id}`, or `slugify` of the text; numbered through `seen`
+
+
+def markdown_headings(text: str, *, syntax: re.Pattern = ATX_HEADING, fences: str | None = "indented",
+                      skip: Sequence[tuple[int, int]] = (), line_breaks: str = "all", frontmatter: bool = False,
+                      id_suffix: re.Pattern | None = ID_SUFFIX, seen: dict[str, int] | None = None) -> list[Heading]:
+    """The headings of Markdown source, with the ids lint and the record notes give them, in file order.
+
+    The defaults read the file as lint's anchor list does. The readers differ,
+    and each keyword keeps one reader's rule:
+
+    - `syntax`: which lines are headings, one of the patterns above.
+    - `fences`: `"indented"` skips the lines from a line that starts with
+      three backticks or tildes after any indentation to the next such line,
+      either character closing; `"column0"` does the same for fence lines
+      that start in the first column; None skips no lines.
+    - `skip`: (start, end) offsets, such as fenced code that
+      `worklog_entries.fenced_spans` finds; a heading whose line starts
+      inside one is skipped.
+    - `line_breaks`: `"all"` splits lines as `str.splitlines` does, at every
+      Unicode line break; `"newline"` splits at `\\n` only.
+    - `frontmatter`: skip a `+++` TOML frontmatter block at the top that is
+      closed by a second `+++` line.
+    - `id_suffix`: the end of the heading text cut off before the text is
+      used and slugified; None keeps the whole text. An explicit id is always
+      the one `EXPLICIT_ID` finds.
+    - `seen`: the ids the page holds already, for `unique_heading_id`;
+      it is updated.
+
+    The build reads headings with mistune instead and slugifies their rendered
+    text, so its ids can differ from these, for example for a heading that
+    holds a link.
+    """
+    seen = {} if seen is None else seen
+    if line_breaks == "all":
+        lines = text.splitlines()
+        lengths = [len(line) for line in text.splitlines(keepends=True)]
+    elif line_breaks == "newline":
+        lines = text.split("\n")
+        lengths = [len(line) + 1 for line in lines]
+    else:
+        raise ValueError(f"line_breaks must be 'all' or 'newline', not {line_breaks!r}")
+    if fences not in ("indented", "column0", None):
+        raise ValueError(f"fences must be 'indented', 'column0' or None, not {fences!r}")
+    start = 0
+    if frontmatter and lines and lines[0] == "+++":
+        closing = next((i for i in range(1, len(lines)) if lines[i] == "+++"), None)
+        if closing is not None:
+            start = closing + 1
+    found, in_fence, offset = [], False, sum(lengths[:start])
+    for index in range(start, len(lines)):
+        line, line_start = lines[index], offset
+        offset += lengths[index]
+        mark = line.lstrip() if fences == "indented" else line
+        if fences is not None and mark.startswith(_FENCE_MARKS):
+            in_fence = not in_fence
+            continue
+        if in_fence or any(begin <= line_start < end for begin, end in skip):
+            continue
+        match = syntax.match(line)
+        if not match:
+            continue
+        body = match.group(2)
+        kept = id_suffix.sub("", body) if id_suffix is not None else body
+        explicit = EXPLICIT_ID.search(body)
+        anchor = unique_heading_id(explicit.group(1) if explicit else slugify(kept), seen)
+        found.append(Heading(index + 1, line_start, len(match.group(1)), kept.strip(), anchor))
+    return found
 
 
 def tracked_paths(repo: Path) -> frozenset[Path]:

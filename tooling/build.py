@@ -281,14 +281,6 @@ def note(msg: str) -> None:
     _notes.append(msg)
 
 
-def slugify(text: str) -> str:
-    """GitHub-style (kept in sync with docs/lint.py): strip punctuation, then
-    every space becomes a hyphen — consecutive spaces stay as -- runs."""
-    text = re.sub(r"<[^>]+>", "", html.unescape(text).lower())
-    text = re.sub(r"[^\w\s-]", "", text)
-    return re.sub(r"\s", "-", text.strip())
-
-
 class DocsRenderer(mistune.HTMLRenderer):
     """HTML renderer with explicit-{#id} headings, source-anchored code
     fences and explicit display/inline math delimiters."""
@@ -305,7 +297,7 @@ class DocsRenderer(mistune.HTMLRenderer):
         if m:
             hid, text = m.group(1), text[: m.start()]
         else:
-            hid = slugify(text)
+            hid = page_source.slugify(html.unescape(text))  # the rendered text, its character references decoded
         hid = page_source.unique_heading_id(hid, self.seen_ids)  # a repeated heading: result, result-1, …
         self.heading_ids.append(hid)
         return f'<h{level}{self.id_attribute(hid)}>{text}</h{level}>\n'

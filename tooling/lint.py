@@ -134,7 +134,7 @@ def resolve_path(path: Path) -> Path:
 
 
 import worklog_entries as _worklog_entries
-from page_source import tracked_paths, unique_heading_id
+from page_source import markdown_headings, tracked_paths
 from figure_themes import variant_path
 
 _record_cache: dict = {}
@@ -264,31 +264,10 @@ def strip_code(text: str) -> str:
     return "\n".join(out)
 
 
-def slugify(text: str) -> str:
-    """GitHub-style: strip punctuation, then EVERY space becomes a hyphen
-    (consecutive spaces left by stripped punctuation stay as -- runs)."""
-    text = re.sub(r"<[^>]+>", "", text)
-    text = re.sub(r"[^\w\s-]", "", text.lower())
-    return re.sub(r"\s", "-", text.strip())
-
-
 def md_anchors(path: Path) -> set[str]:
     text = re.sub(r"<!--[\s\S]*?-->", "", path.read_text())
     anchors = set(re.findall(r'''<[A-Za-z][^>]*\bid\s*=\s*["']([^"']+)["']''', strip_code(text)))
-    in_fence = False
-    seen: dict[str, int] = {}  # repeated headings are numbered as the build numbers them
-    for line in text.splitlines():
-        if line.lstrip().startswith(("```", "~~~")):
-            in_fence = not in_fence
-            continue
-        if in_fence:
-            continue
-        m = re.match(r"#{1,6}\s+(.*)", line)
-        if not m:
-            continue
-        text = m.group(1)
-        idm = re.search(r"\{#([A-Za-z0-9][\w-]*)\}\s*$", text)
-        anchors.add(unique_heading_id(idm.group(1) if idm else slugify(re.sub(r"\{#.*\}\s*$", "", text)), seen))
+    anchors.update(heading.anchor for heading in markdown_headings(text))  # repeats numbered as the build numbers them
     return anchors
 
 
@@ -824,7 +803,7 @@ def record_change_notes(since: str | None) -> list[str]:
     """Reminders, never failures: pages that explain a changed record section."""
     from record_changes import record_change_notes as notes
     try:
-        return notes(REPO, slugify, since)
+        return notes(REPO, since)
     except ValueError as problem:
         error(str(problem))
         return []
@@ -833,7 +812,7 @@ def record_change_notes(since: str | None) -> list[str]:
 def page_number_notes() -> list[str]:
     """Reminders, never failures: page numbers that no linked record states."""
     from page_numbers import page_number_notes as notes
-    return notes(REPO, slugify)
+    return notes(REPO)
 
 
 def check_kit_pin() -> None:
