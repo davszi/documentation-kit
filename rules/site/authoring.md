@@ -26,7 +26,7 @@ python .docs-kit/docsite.py lint --project .
 
 Use `--page <slug>` with build for targeted iteration. Lint supports `--strict` and `--registry`. The `capability-map` command rewrites the generated column of the project's capability map; see [capability map settings](#capability-map-settings). The kit README owns installation and shared-engine development checks. The project's `docs/PROJECT_CONTEXT.md` records its tested environment and additional checks. Pin dependency versions; documentation builds must not require importing the consuming application's runtime or initializing a GPU.
 
-The sidebar of every page ends with one line: a link to the kit's site with the pinned kit version, and under it the day and hour the site was last built, in the reader's time zone. The build writes that time to `html/build-info.js` when it changes the site; `build --check` does not compare the file. Set `kit_link = false` in `site.toml` to leave the line out.
+The sidebar of every page ends with one line: a link to the kit's site with the pinned kit version, and under it the day and hour the site was last built, in the reader's time zone. The build writes that time to `html/build-info.js` when it changes the site; `build --check` does not compare the file, and an export replaces its older copy. Set `kit_link = false` in `site.toml` to leave the line out; the site then publishes no build time.
 
 Set `gh_repo = ""` when the project has no source remote. Source links then
 keep their local identity relative to the logical `docs/html/` origin, and

@@ -38,8 +38,12 @@ What a project meets after moving its pin:
 
 - Every page's sidebar ends with a line that links the kit and shows when
   the site was last built. `kit_link = false` in `site.toml` leaves it out.
-- The build writes one more file, `html/build-info.js`. A project check
-  that lists the files of the built site has to know it.
+- The build writes one more file, `html/build-info.js`, which holds the day
+  and hour of the last build and nothing else. A site therefore publishes
+  two things it did not publish before: that it is built with the kit, with
+  the version, and when it was last built. On a locked site both stay
+  readable without a password. `kit_link = false` removes both. A project
+  check that lists the files of the built site has to know the file.
 - The reader shows a leading slide face alone in a chapter's first view.
 - Every group of the menu opens and closes at its label. In the markup a
   group is a `details` element with a `summary`, where it was a `div` with
@@ -67,16 +71,18 @@ Four additions came from a working session on an experiment in a project.
   few lines and links the page; what waits on the person stays in the report
   ([reporting completion](../../../rules/engineering/handoffs.md#reporting-completion)).
 - A setting the person decides is decided on a measurement where measuring
-  is cheap, and a later run is sized from the earlier run's measured cost
+  is cheap; when a later run is sized from an earlier run's cost, the report
+  first gives that run's measured cost against its estimate
   ([start from evidence](../../../rules/experiments/workflow.md#start-from-evidence-and-bound-the-question)).
-  A decision the person made keeps its date, who decided and the person's
-  words ([naming and honest claims](../../../rules/records.md#naming-and-honest-claims)).
+  A decision the person made keeps its date, who decided, the person's
+  words and its known weakness ([naming and honest claims](../../../rules/records.md#naming-and-honest-claims)).
 - On a page, a value that depends on a setting is plotted over that
   setting, a quantity stays in the unit of its claim, and what has not run
   is named as not run ([page design](../../../rules/writing/pages.md#page-design)).
 
 The figures guide changes its stance on tables: what can be drawn is drawn,
-and a table is for exact lookup
+a measured comparison, ranking or trend needs a plot, and a table is for
+exact lookup or a single value
 ([figures and comparisons](../../../rules/writing/figures.md#figures-and-comparisons)).
 Before, a table counted as the equal of a plot for a comparison. Lint cannot
 check this; existing pages with comparison tables are reworked when they are
@@ -90,7 +96,8 @@ the day and hour in the reader's time zone. The time is the one thing a
 build does not derive from the sources, so it is kept out of the pages: the
 build writes it to `html/build-info.js` when it changes the site, the
 navigation script loads that file afresh on each visit, and `build --check`
-does not compare it. [Site authoring](../../../rules/site/authoring.md)
+does not compare it. An export into an existing publication replaces the
+older copy of the file without it being named. [Site authoring](../../../rules/site/authoring.md)
 names the setting.
 
 ### A shorter sidebar foot and menu groups that close
@@ -117,7 +124,12 @@ moved from `getting-started.html` to `index.html`: `#what-the-kit-provides`,
 
 Tests build their throwaway projects through one helper, and build, lint
 and the record notes read Markdown headings through one function. The built
-output is byte-identical.
+output is byte-identical. Names inside `tooling/` went with the copies:
+`lint.slugify`, `build.slugify`, `record_changes.headings` and its heading
+patterns, `worklog_entries.MARKDOWN_HEADING`, and the `slugify` argument of
+`record_change_notes`, `changed_sections`, `page_links` and
+`page_number_notes`. None is a stable or provisional interface; a script
+that imports them has to follow.
 
 ### A slide face stands alone in a chapter's first view
 
@@ -129,7 +141,7 @@ Both defects are in the one-chapter view of a chapter that opens with a
 - **Wide windows.** A face is 16:9. In a 16:10 window about a quarter of the
   chapter's height stayed free under it, so the headline and the first lines
   of the full chapter showed there, and the rule of the Full chapter row ran
-  through a line of text. deivid saw this on a 16:10 laptop. Measured on
+  through a line of text. The owner saw this on a 16:10 laptop. Measured on
   Tempo's lessons page at 1440 by 900: the face ended at 573 px, the
   headline started at 601 px and the row's rule sat at 819 px, inside the
   text.

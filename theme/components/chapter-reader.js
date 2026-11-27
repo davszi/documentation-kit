@@ -562,10 +562,10 @@ document.addEventListener('DOMContentLoaded', () => {
       fittedFaces.set(face, room);
       if (room.lift === was.lift && room.drop === was.drop) return;
       face.style.setProperty('--reader-face-lift', room.lift + 'px');
+      face.style.setProperty('--reader-face-drop', room.drop + 'px');
       face.toggleAttribute('data-reader-face-lifted', room.lift > 0);
       // A reader who is past the face keeps their line when the room changes.
       if (topic.body.scrollTop > 24) topic.body.scrollTop += room.lift + room.drop - was.lift - was.drop;
-      face.style.setProperty('--reader-face-drop', room.drop + 'px');
     });
   }
   function align(animate = true) {

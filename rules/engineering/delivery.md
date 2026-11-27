@@ -15,8 +15,9 @@ build.
   `page_only = "proposal under discussion"` while no record exists.
 - **A proposal stays a proposal** until the person
   [accepts it in words](../documentation.md#from-open-work-to-subject-knowledge).
-- **After the yes, the agreement is the assignment.** Scale how it is written
-  down to the work. A change one session finishes needs no more than the
+- **After the yes, the agreement is the assignment.** Building starts then; a
+  proposal page is not the work. Scale how the agreement is written down to
+  the work. A change one session finishes needs no more than the
   chat; its record follows the work. Work that outlives the chat, with a
   second session, a second owner or an expensive run, gets its deliverable,
   scope and completion condition written into its open item or plan before

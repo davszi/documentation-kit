@@ -329,7 +329,9 @@ pages = ["shared-rule.html", "other-rule.html"]
         self.assertEqual(self.build().returncode, 0)
         page = self.page('shared-rule')
         self.assertNotIn('nav-fold', page)
-        self.assertIn('<span class="nav-group" data-group="rules">rules</span>', page)
+        # Changed in 5.9.0: a group's label is the summary of its disclosure, which starts open.
+        self.assertIn('<details class="nav-section nav-section-fold" data-group="rules" open data-nav-open>', page)
+        self.assertIn('<summary class="nav-group" data-group="rules">rules</summary>', page)
 
     def test_reference_entry_page_tables_scroll_in_place(self):
         table = '| Before… | Read… |\n|---|---|\n| Quoting | evidence |\n'

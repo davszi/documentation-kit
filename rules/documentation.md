@@ -78,7 +78,8 @@ is authoritative: a page never adds a rule, number or limit its record lacks.
 
 A topic without a record is an exception. Which cases need it is not settled
 yet; the kit's own pages that explain its guides, whose records live in
-`rules/`, are one known case. Declare it in the page's frontmatter as
+`rules/`, are one known case; a page built while a
+[proposal is discussed](engineering/delivery.md#discussion-before-the-work) is another, until its work lands. Declare it in the page's frontmatter as
 `page_only = "<reason>"`. Lint warns about a topic page with neither a record
 nor that declaration. Once the page
 gains a rule, specification or limit, that part moves into a record.

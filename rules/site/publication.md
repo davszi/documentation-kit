@@ -293,6 +293,8 @@ authenticated data. `tooling/page_lock.py` encrypts;
   follow repository paths, so they can be guessed.
 - `assets/filelinks.js` stays readable. With a source remote configured it
   carries the repository's address.
+- `build-info.js` stays readable: it holds the day and hour of the last
+  build. `kit_link = false` removes it together with the sidebar's kit line.
 - A lock page shows the size of the page it holds and which password it
   needs. The salt changes exactly when a password changes, so anyone can see
   that it changed.

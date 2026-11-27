@@ -695,7 +695,7 @@ Full guide: [story and reading layers](explanations.html#story-and-reading-layer
 
 ## Every mechanism, spatial claim and measurement needs a visual
 
-<p class="bs-lead">A section is not done until a mechanism has a diagram, a spatial claim a picture and a measured claim a plot; a table alone serves only exact lookup.</p>
+<p class="bs-lead">A section is not done until a mechanism has a diagram, a spatial claim a picture and a measured comparison, ranking or trend a plot; a single value or an exact lookup may stand in text or a table.</p>
 
 <div class="bs-checks">
 <div class="bs-check"><span class="bs-badge bs-ok">anchor</span><h3>Number and caption</h3><p>A stable HTML anchor and a visible numbered caption, unique and in reading order.</p></div>

@@ -12,7 +12,7 @@ beside a figure to give its exact numbers. Show the details the reader
 needs to understand or check the claim. Keep complete field mappings and
 implementation inventories in linked records.
 
-Every mechanism needs a diagram; every geometric/spatial claim needs a picture; every measured claim needs a plot; a table alone serves only exact lookup. This is a completion gate. Budget visual production before declaring a section done. Figures, tables and headings alone should convey the story.
+Every mechanism needs a diagram; every geometric/spatial claim needs a picture; every measured comparison, ranking or trend needs a plot, while a single value or an exact lookup may stand in text or a table. This is a completion gate. Budget visual production before declaring a section done. Figures, tables and headings alone should convey the story.
 
 A missing figure is work to do. When neither the record nor the repository has a figure for a claim that needs one, the page author makes it from what exists: measured data and run outputs for a plot, code and configuration for a structure or flow diagram, geometry and inputs for a picture. Record its generator and inputs like any generated figure. A number the figure shows must be in the record; a number computed for the figure goes into the record first. Leave a claim without its figure only when nothing true can be drawn, because the data was never recorded or the claim is not measured yet. Then say in the completion report which figure is missing and what would be needed to make it. Never draw invented data, and never draw a sketch that reads as a measurement.
 

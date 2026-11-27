@@ -22,6 +22,9 @@ import sys
 import tempfile
 import tomllib
 from collections.abc import Iterable, Mapping
+
+# The file `build.py` writes the time of a build to (its `BUILD_INFO`).
+BUILD_INFO = 'html/build-info.js'
 from urllib.parse import unquote, urlsplit
 
 from chapter_layout import Structure
@@ -207,7 +210,8 @@ def export_pages(generated_root: Path, destination: Path, *, root: Path,
             if existing.exists() and not existing.is_dir():
                 raise ValueError(f'Publication file/directory collision: {name}')
             parent = parent.parent
-        if target.exists() and (not target.is_file() or (name not in replace and target.read_bytes() != data)):
+        # The build-time file differs on every build by design; it replaces its older copy without being named.
+        if target.exists() and (not target.is_file() or (name not in replace and name != BUILD_INFO and target.read_bytes() != data)):
             raise ValueError(f'Publication would overwrite an existing output: {name}')
     for name, data in outputs.items():
         target = _contained(destination, name)

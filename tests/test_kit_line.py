@@ -7,7 +7,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from starter_project import KIT, StarterProject  # noqa: E402
 
 VERSION = (KIT / "VERSION").read_text().strip()
-LINK = f'<a href="https://davszi.github.io/documentation-kit/">Built with the documentation kit {VERSION}</a>'
+LINK = f'<a href="https://davszi.github.io/documentation-kit/">Built with the documentation kit {VERSION}<span aria-hidden="true"> ↗</span></a>'
 
 
 class KitLine(unittest.TestCase):
@@ -23,13 +23,25 @@ class KitLine(unittest.TestCase):
         project.build()
         self.assertNotIn("kit-line", project.html("index"))
         self.assertNotIn("data-kit-built", project.html("guide"))
+        # Without the line the site publishes no build time: the file is not written and not listed.
+        self.assertFalse((project.root / ".build/docs/html/build-info.js").exists())
+        self.assertNotIn("build-info.js", (project.root / ".build/docs/site-build.json").read_text())
+
+    def test_turning_the_line_off_removes_an_earlier_build_time_file(self):
+        project = StarterProject(self)
+        project.build()
+        info = project.root / ".build/docs/html/build-info.js"
+        self.assertTrue(info.is_file())
+        project.configure(first="kit_link = false\n")
+        project.build()
+        self.assertFalse(info.exists())
 
     def test_the_setting_takes_only_true_or_false(self):
         project = StarterProject(self)
         project.configure(first='kit_link = "no"\n')
         done = project.run("build")
         self.assertNotEqual(done.returncode, 0)
-        self.assertIn("kit_link must be true or false", done.stdout + done.stderr)
+        self.assertEqual((done.stdout + done.stderr).count("kit_link must be true or false"), 1, "reported once, not per page")
 
     def test_the_build_time_does_not_make_a_fresh_site_stale(self):
         project = StarterProject(self)

@@ -2,6 +2,44 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — Review of 5.9.0: not fit to tag as it stood, then fixed
+
+- The full check script failed on the sidebar commit, `a1ac65a`: exit 1,
+  two failures. One test expected the group label as a `span`, one the kit
+  link without its arrow. Both expectations followed changes made the same
+  hour; a third fixture in the text-size check was brought along.
+- One independent review read `d551177`, the commit before the sidebar
+  change, in its own worktree and ran the unit tests, builds and an export
+  there. Verdict: not fit to tag as is, no high finding.
+- Fixed, medium: a second export into an existing publication failed with
+  "Publication would overwrite an existing output: html/build-info.js",
+  because the file differs on every build. The export now replaces it.
+- Fixed, medium: `kit_link = false` removed the line and still published
+  the build time. Without the line the file is now neither written nor
+  listed, and an earlier copy is removed. The publication guide lists the
+  file among what stays readable on a locked site; the release note says
+  what a site newly publishes.
+- Fixed, medium: the gate "every measured claim needs a plot" asked a plot
+  for a single value and went past the owner's words. It now reads: a
+  measured comparison, ranking or trend needs a plot; a single value or an
+  exact lookup may stand in text or a table.
+- Fixed, low: the new page said nothing is built before the yes, which no
+  rule said. The delivery guide now says building starts after the yes and
+  a proposal page is not the work. This sentence is new and the owner has
+  not read it yet.
+- Fixed, low: a wrong `kit_link` value was reported once per page; the
+  scroll correction ran before the second space was set; two sentences
+  restated a conditional rule as an instruction; the release note did not
+  name the internal names the heading tidy-up removed; a proposal page was
+  missing from the cases of a page without a record.
+- Records of this release name the owner by role. Earlier entries stay as
+  written.
+- Not changed, for the owner: no router row reaches the discussion section
+  when an agent only discusses; five anchors left `getting-started.html`
+  with no stub; the kit's site address is fixed in the build; the plot rule
+  stands in three sentences of two guides.
+- Not reviewed: the sidebar commit and these fixes.
+
 ## 2026-11-27 — Sidebar: a shorter foot, groups that close, a link that reads as one
 
 - The owner looked at the local build and said three things: the "Also
@@ -125,7 +163,7 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
 ## 2026-11-27 — Rule: discussion before the work
 
-- deivid found that the kit's pages do not say what a record, a page and a
+- The owner found that the kit's pages do not say what a record, a page and a
   chapter are, nor how work runs from an idea to a landed change. Searched:
   the record is defined in `rules/records.md`, the page in
   `rules/documentation.md`, the chapter only on the Build a site page; the
@@ -137,7 +175,7 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
 - New section "Discussion before the work" in
   `rules/engineering/delivery.md`, and one pointing sentence in
   `rules/documentation.md` with its sync on the Documentation and writing
-  page. deivid read the draft and asked what "the agreement is written
+  page. The owner read the draft and asked what "the agreement is written
   down" means; after the explanation he kept that part.
 - Agreed and not built yet: the home page tells the kit's story in figures;
   a new page "Discuss, build, record" holds the three words and the path;
@@ -179,14 +217,14 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
 - Not changed, reported: the review's strongest case against "patch" is
   that the correction changes looks (a band, an arrow button, the fade in
   Two chapters), which the version promise lists under a minor release.
-  The note names the three look changes. deivid decides the number.
+  The note names the three look changes. The owner decides the number.
 - Not verified by the review or by me: a screen reader, a printed page,
   Firefox, Safari, a real phone.
 
 ## 2026-11-27 — 5.8.1 built: a slide face alone in the first view
 
 - Two reports. A subagent that upgraded Tempo to 5.8.0 captured its lessons
-  page at 390 px: Continue reading covered the last lines of a face. deivid
+  page at 390 px: Continue reading covered the last lines of a face. The owner
   then reported from a 16:10 laptop that the chapter's title shows under the
   slide without scrolling and that the horizontal line cuts the words.
 - Measured on a copy of Tempo's built lessons page, 5.8.0 reader, at 1600 by
@@ -206,10 +244,10 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
   with `!important`. The two properties moved into that rule.
 - The browser review gained the first-view checks and its narrow check
   changed: the button beside the stepper, not above it. That expectation
-  encoded the 5.7.0 placement, which is the defect corrected here; deivid
+  encoded the 5.7.0 placement, which is the defect corrected here; the owner
   asked for the fix. The changed review fails on the 5.8.0 code, in a
   throwaway worktree: "the headline starts below the first view at 900 px".
-- deivid has the before and after captures at 1440 by 900 and 390 by 844.
+- The owner has the before and after captures at 1440 by 900 and 390 by 844.
   He has not yet said whether the look is right. Not released.
 ## 2026-11-27 — One reader for the headings of Markdown source
 
@@ -242,7 +280,7 @@ Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
 ## 2026-11-27 — One helper for the projects that tests build
 
-- deivid chose maintenance debt as the next work. Measured on 5.8.0 first:
+- The owner chose maintenance debt as the next work. Measured on 5.8.0 first:
   21 test files build a project with their own setup code, and
   `tests/test_slide_faces.py` failed when run alone, with
   `FileNotFoundError` for `examples/starter/.build/docs/html/guide.html`,

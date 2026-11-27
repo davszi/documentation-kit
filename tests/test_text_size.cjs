@@ -31,7 +31,7 @@ const BODY = `<span class="badge">new</span><div class="owns"><span class="k">ow
   <svg width="300" height="60" viewBox="0 0 300 60"><text class="s" x="20" y="20">s</text><text class="lab" x="60" y="20">lab</text>
     <text class="d-note" x="100" y="20">note</text><text class="d-lab" x="150" y="20">d-lab</text>
     <text class="dimt" x="200" y="20">dimt</text><text class="axt" x="250" y="20">axt</text></svg>`;
-const NAV = `<span class="nav-group">Group</span><div class="reader-chapter-list"><span class="reader-nav-group" data-part="1">Part</span>
+const NAV = `<details class="nav-section nav-section-fold" open><summary class="nav-group">Group</summary></details><div class="reader-chapter-list"><span class="reader-nav-group" data-part="1">Part</span>
   <a class="top" href="#a">Chapter</a><a class="reader-chapter-sub" href="#b"><span class="reader-jump-kind">figure</span></a></div>`;
 const HOST = 'build-a-site.html';
 

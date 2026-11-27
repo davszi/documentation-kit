@@ -278,12 +278,18 @@ KIT_SITE_URL = "https://davszi.github.io/documentation-kit/"
 BUILD_INFO = "html/build-info.js"
 
 
-def kit_line(site: dict) -> str:
-    """The sidebar's last line: a link to the kit with the pinned version, and the place for the build time."""
+def kit_line_shown(site: dict) -> bool:
+    """Whether the sidebar's last line is shown: `kit_link`, true unless site.toml says false."""
     shown = site.get("kit_link", True)
     if not isinstance(shown, bool):
         err("site.toml: kit_link must be true or false")
-    if shown is False:
+        return True
+    return shown
+
+
+def kit_line(site: dict) -> str:
+    """The sidebar's last line: a link to the kit with the pinned version, and the place for the build time."""
+    if not site.get("_kit_line", True):
         return ""
     version = (KIT_SITE.parent / "VERSION").read_text().strip()
     return (f'<p class="kit-line"><a href="{KIT_SITE_URL}">Built with the documentation kit {html.escape(version)}<span aria-hidden="true"> ↗</span></a>'
@@ -1305,6 +1311,7 @@ def main() -> int:
     site["_edit_ref"] = site.get("gh_ref", "main")
     if os.environ.get("GITHUB_SHA"):
         site["gh_ref"] = os.environ["GITHUB_SHA"]
+    site["_kit_line"] = kit_line_shown(site)
     bundle = SiteBundle(site)
     origins: dict[str, str] = {}
     outputs: dict[str, bytes] = {"html/" + name: data for name, data in gather_assets(site, origins=origins).items()}
@@ -1444,7 +1451,8 @@ def main() -> int:
         "kit": {"version": (KIT_SITE.parent / "VERSION").read_text().strip(),
                 "asset_sha256": hashlib.sha256(b"".join(key.encode() + outputs[key] for key in sorted(outputs) if key.startswith("html/assets/"))).hexdigest()},
         # Every generated file, so the next build can prune what it no longer produces.
-        "files": sorted([*outputs, "site-build.json", BUILD_INFO])}, indent=2) + "\n").encode()
+        # The build-time file belongs to the kit line: a site without the line publishes no build time.
+        "files": sorted([*outputs, "site-build.json", *([BUILD_INFO] if site.get("_kit_line", True) else [])])}, indent=2) + "\n").encode()
     for problem in validate_resources(outputs):
         err(problem)
 
@@ -1464,7 +1472,7 @@ def main() -> int:
             if not p.is_file():
                 continue
             rel = p.relative_to(OUTPUT_ROOT).as_posix()
-            if rel in outputs or rel in unmanaged or rel == BUILD_INFO:
+            if rel in outputs or rel in unmanaged or (rel == BUILD_INFO and site.get("_kit_line", True)):
                 continue
             if args.page and rel.endswith(".html"):
                 continue  # other pages not rebuilt this run
@@ -1523,7 +1531,7 @@ def main() -> int:
         print("generated site is fresh")
         return 0
     # The build time moves only when the build changed the site, or the file is missing.
-    if wrote or removed or not (OUTPUT_ROOT / BUILD_INFO).is_file():
+    if site.get("_kit_line", True) and (wrote or removed or not (OUTPUT_ROOT / BUILD_INFO).is_file()):
         write_build_info()
     for w in wrote:
         print(f"wrote .build/docs/{w}")
