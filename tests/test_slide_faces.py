@@ -4,6 +4,7 @@ import unittest
 
 import build
 import slides
+from starter_project import StarterProject
 
 
 FACE = ('<!-- slide -->\n<p class="slide-eyebrow">Topic</p>\n<p class="slide-title">A finding</p>\n'
@@ -165,7 +166,11 @@ class DeckExport(unittest.TestCase):
             page.unlink()
 
     def test_starter_guide_faces_survive_the_build(self):
-        built = (slides.OUTPUT_ROOT / "html" / "guide.html").read_text()
+        # The test builds its own starter. It read the one that the check script builds first, so it
+        # failed whenever it ran alone.
+        project = StarterProject(self, prefix="docs-kit-starter-faces-")
+        project.build()
+        built = project.html("guide")
         found = [c for c in slides.chapters(built) if c["face"]]
         self.assertEqual([c["id"] for c in found], ["pipeline", "slides"])
         self.assertRegex(built, r'href="assets/slide-face\.css\?v=[0-9a-f]{10}"')

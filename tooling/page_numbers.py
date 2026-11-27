@@ -103,7 +103,7 @@ def enabled(root: Path) -> bool:
     return site.get("page_number_notes") is True
 
 
-def page_number_notes(root: Path, slugify) -> list[str]:
+def page_number_notes(root: Path) -> list[str]:
     """Formatted notes, one per page that shows numbers its linked records do not state."""
     root = Path(root)
     if not enabled(root):
@@ -114,7 +114,7 @@ def page_number_notes(root: Path, slugify) -> list[str]:
     notes = []
     for page in topic_pages(root):
         text = page.read_text(errors="replace")
-        linked = sorted({link.record for link in page_links(root, page, records, routes, slugify)})
+        linked = sorted({link.record for link in page_links(root, page, records, routes)})
         if not linked:
             continue
         stated: set[str] = set()
@@ -126,7 +126,7 @@ def page_number_notes(root: Path, slugify) -> list[str]:
                 stated |= stated_numbers(path.read_text(errors="replace"))
             except OSError:
                 continue  # lint reports the missing link target
-        events = _chapter_index(masked(text), slugify)
+        events = _chapter_index(masked(text))
         by_chapter: dict[str | None, list[str]] = {}
         for position, number in shown_numbers(text):
             if number in stated:

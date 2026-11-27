@@ -5,7 +5,6 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tooling'))
-import lint  # noqa: E402
 from page_numbers import page_number_notes, shown_numbers, stated_numbers  # noqa: E402
 
 SITE = '''title = "Fixture"
@@ -42,7 +41,7 @@ class PageNumberNotes(unittest.TestCase):
         path.write_text(text)
 
     def notes(self):
-        return page_number_notes(self.root, lint.slugify)
+        return page_number_notes(self.root)
 
     def test_numbers_stated_in_a_linked_record_give_no_note(self):
         self.write('docs/topics/timing/index.md', page(

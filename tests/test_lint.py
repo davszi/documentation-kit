@@ -6,6 +6,7 @@ import unittest
 from unittest import mock
 
 import lint
+from starter_project import StarterProject
 
 
 class Anchors(unittest.TestCase):
@@ -44,7 +45,8 @@ Text.
 
     def test_numbering_follows_document_order(self):
         seen = {}
-        self.assertEqual([lint.unique_heading_id(hid, seen) for hid in ["a", "a", "a-1", "a", ""]],
+        from page_source import unique_heading_id
+        self.assertEqual([unique_heading_id(hid, seen) for hid in ["a", "a", "a-1", "a", ""]],
                          ["a", "a-1", "a-1-1", "a-2", ""])
 
     def test_lint_knows_the_numbered_anchors(self):
@@ -64,34 +66,20 @@ Text.
         self.assertEqual(len(named), len(set(named)))
 
     def test_tabs_of_a_page_share_one_numbering(self):
-        import os
         import re
-        import subprocess
-        import sys
-        kit = Path(__file__).resolve().parents[1]
-        with tempfile.TemporaryDirectory(prefix="docs-kit-tab-ids-") as folder:
-            root = Path(folder).resolve()
-            subprocess.run(["git", "init", "-q", str(root)], check=True)
-            env = {key: value for key, value in os.environ.items() if key not in {"DOCSITE_PROJECT_ROOT", "GITHUB_SHA"}}
-            subprocess.run([sys.executable, str(kit / "docsite.py"), "init", str(root)], check=True, capture_output=True, env=env)
-            page = root / "docs/topics/tabbed/index.md"
-            page.parent.mkdir(parents=True)
-            page.write_text('+++\ntoc = []\ntitle = "Tabbed"\npage_only = "a fixture"\n+++\n\n# Tabbed\n\n## Result\n\nBefore the tabs.\n\n'
-                            '<!-- tab: One -->\n\n## Result\n\nIn one.\n\n<!-- tab: Two -->\n\n## Result\n\nIn two.\n')
-            config = root / "docs/site/site.toml"
-            config.write_text(config.read_text() + '\n[[nav]]\nlabel = "Tabbed"\nfile = "tabbed.html"\ngroup = "guide"\n')
-            subprocess.run(["git", "-C", str(root), "add", "-A"], check=True)
-            built = subprocess.run([sys.executable, str(kit / "docsite.py"), "build", "--project", str(root)],
-                                   capture_output=True, text=True, env=env)
-            self.assertEqual(built.returncode, 0, built.stdout + built.stderr)
-            ids = re.findall(r'id="(result[^"]*)"', (root / ".build/docs/html/tabbed.html").read_text())
-            self.assertEqual(sorted(ids), ["result", "result-1", "result-2"])
-            self.assertEqual({"result", "result-1", "result-2"} - lint.md_anchors(page), set())
+        project = StarterProject(self, prefix="docs-kit-tab-ids-")
+        page = project.page("tabbed", '# Tabbed\n\n## Result\n\nBefore the tabs.\n\n'
+                            '<!-- tab: One -->\n\n## Result\n\nIn one.\n\n<!-- tab: Two -->\n\n## Result\n\nIn two.\n', title="Tabbed")
+        project.build()
+        ids = re.findall(r'id="(result[^"]*)"', project.html("tabbed"))
+        self.assertEqual(sorted(ids), ["result", "result-1", "result-2"])
+        self.assertEqual({"result", "result-1", "result-2"} - lint.md_anchors(page), set())
 
     def test_record_notes_number_the_same_way(self):
         import record_changes
-        self.assertEqual([heading.anchor for heading in record_changes.headings(self.TEXT, lint.slugify)], self.IDS)
-        chapters = [value for _, kind, value in record_changes._chapter_index(self.TEXT, lint.slugify) if kind == "heading"]
+        from page_source import markdown_headings
+        self.assertEqual([heading.anchor for heading in markdown_headings(self.TEXT, frontmatter=True)], self.IDS)
+        chapters = [value for _, kind, value in record_changes._chapter_index(self.TEXT) if kind == "heading"]
         self.assertEqual(chapters, ["result", "result-1", "result-1-1", "result-3", "", ""])
 
 
@@ -266,7 +254,7 @@ class ShellIds(unittest.TestCase):
 
     def test_the_record_notes_name_the_chapter_as_the_page_has_it(self):
         import record_changes
-        chapters = [value for _, kind, value in record_changes._chapter_index("## Menu\n\n## Chapter reader\n", lint.slugify)
+        chapters = [value for _, kind, value in record_changes._chapter_index("## Menu\n\n## Chapter reader\n")
                     if kind == "heading"]
         self.assertEqual(chapters, ["menu-1", "chapter-reader-1"])
 
@@ -291,40 +279,23 @@ class ShellIds(unittest.TestCase):
         self.assertLessEqual(set(page_source.taken_ids(reader=True, tree=True, plot_labels=True)), source_pages.KIT_IDS)
 
     def test_built_pages_carry_no_id_twice(self):
-        import os
         import re
-        import subprocess
-        import sys
-        kit = Path(__file__).resolve().parents[1]
-        with tempfile.TemporaryDirectory(prefix="docs-kit-shell-ids-") as folder:
-            root = Path(folder).resolve()
-            subprocess.run(["git", "init", "-q", str(root)], check=True)
-            env = {key: value for key, value in os.environ.items() if key not in {"DOCSITE_PROJECT_ROOT", "GITHUB_SHA"}}
-            subprocess.run([sys.executable, str(kit / "docsite.py"), "init", str(root)], check=True, capture_output=True, env=env)
-            for slug, extra in (("shellids", ""), ("plainids", "reader = false\n")):
-                page = root / f"docs/topics/{slug}/index.md"
-                page.parent.mkdir(parents=True)
-                page.write_text(f'+++\ntoc = []\ntitle = "Shell ids"\npage_only = "a fixture"\n{extra}+++\n\n# Shell ids\n\n' + self.HEADINGS)
-            (root / "docs/listed.md").write_text("# Listed\n\n" + self.HEADINGS)
-            (root / "docs/registered.md").write_text("# Registered\n\n" + self.HEADINGS)
-            config = root / "docs/site/site.toml"
-            config.write_text(config.read_text()
-                              + '\n[[nav]]\nlabel = "Shell ids"\nfile = "shellids.html"\ngroup = "guide"\n'
-                              + '\n[[nav]]\nlabel = "Plain ids"\nfile = "plainids.html"\ngroup = "guide"\n'
-                              + '\n[[source_pages]]\nsource = "docs/registered.md"\nslug = "registered"\ntitle = "Registered"\n')
-            subprocess.run(["git", "-C", str(root), "add", "-A"], check=True)
-            built = subprocess.run([sys.executable, str(kit / "docsite.py"), "build", "--project", str(root)],
-                                   capture_output=True, text=True, env=env)
-            self.assertEqual(built.returncode, 0, built.stdout + built.stderr)
-            for name in ("shellids.html", "plainids.html", "docs.listed.md.html", "registered.html"):
-                with self.subTest(page=name):
-                    markup = (root / ".build/docs/html" / name).read_text()
-                    self.assertEqual(lint.repeated_ids(markup), [])
-                    self.assertIn('id="menu-2"', markup)
-                    self.assertEqual(len(re.findall(r'\bid="top"', markup)), 1)
-            # The reader's bar is part of a reader page only, so only there the heading gives way to it.
-            self.assertRegex((root / ".build/docs/html/shellids.html").read_text(), r'<section\b[^>]*\bid="chapter-reader-1"')
-            self.assertIn('<h2 id="chapter-reader">', (root / ".build/docs/html/plainids.html").read_text())
+        project = StarterProject(self, prefix="docs-kit-shell-ids-")
+        for slug, label, extra in (("shellids", "Shell ids", ""), ("plainids", "Plain ids", "reader = false\n")):
+            project.page(slug, "# Shell ids\n\n" + self.HEADINGS, title="Shell ids", label=label, frontmatter=extra)
+        project.write("docs/listed.md", "# Listed\n\n" + self.HEADINGS)
+        project.write("docs/registered.md", "# Registered\n\n" + self.HEADINGS)
+        project.configure(last='\n[[source_pages]]\nsource = "docs/registered.md"\nslug = "registered"\ntitle = "Registered"\n')
+        project.build()
+        for name in ("shellids.html", "plainids.html", "docs.listed.md.html", "registered.html"):
+            with self.subTest(page=name):
+                markup = project.html(name)
+                self.assertEqual(lint.repeated_ids(markup), [])
+                self.assertIn('id="menu-2"', markup)
+                self.assertEqual(len(re.findall(r'\bid="top"', markup)), 1)
+        # The reader's bar is part of a reader page only, so only there the heading gives way to it.
+        self.assertRegex(project.html("shellids"), r'<section\b[^>]*\bid="chapter-reader-1"')
+        self.assertIn('<h2 id="chapter-reader">', project.html("plainids"))
 
     def test_the_readers_id_is_taken_only_where_the_page_places_the_bar(self):
         import build
@@ -335,66 +306,35 @@ class ShellIds(unittest.TestCase):
         self.assertFalse(build.places_reader_bar("<!-- include: fragments/chapter-reader.html -->\n"))
 
     def test_a_page_that_lists_the_reader_without_its_bar_keeps_the_heading(self):
-        import os
-        import subprocess
-        import sys
-        kit = Path(__file__).resolve().parents[1]
         bar = "\n<!-- include: components/chapter-reader.html -->\n"
         text = "## Chapter reader\n\nA [link](#chapter-reader) to the heading.\n"
-        with tempfile.TemporaryDirectory(prefix="docs-kit-reader-id-") as folder:
-            root = Path(folder).resolve()
-            subprocess.run(["git", "init", "-q", str(root)], check=True)
-            env = {key: value for key, value in os.environ.items() if key not in {"DOCSITE_PROJECT_ROOT", "GITHUB_SHA"}}
-            subprocess.run([sys.executable, str(kit / "docsite.py"), "init", str(root)], check=True, capture_output=True, env=env)
-            config = root / "docs/site/site.toml"
-            added = ""
-            for slug, body in (("listsreader", text), ("placesbar", text + bar)):
-                page = root / f"docs/topics/{slug}/index.md"
-                page.parent.mkdir(parents=True)
-                page.write_text(f'+++\ntoc = []\ntitle = "Reader id"\npage_only = "a fixture"\nreader = false\n'
-                                f'components = ["chapter-reader", "nav"]\n+++\n\n# Reader id\n\n' + body)
-                added += f'\n[[nav]]\nlabel = "{slug}"\nfile = "{slug}.html"\ngroup = "guide"\n'
-            config.write_text("reference_listing = false\n" + config.read_text() + added)
-            subprocess.run(["git", "-C", str(root), "add", "-A"], check=True)
-            for command in ("build", "lint"):
-                done = subprocess.run([sys.executable, str(kit / "docsite.py"), command, "--project", str(root)],
-                                      capture_output=True, text=True, env=env)
-                self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
-            # Without the bar the heading keeps the id and the link reaches it, as on 5.5.1.
-            listed = (root / ".build/docs/html/listsreader.html").read_text()
-            self.assertIn('<h2 id="chapter-reader">', listed)
-            self.assertEqual(lint.repeated_ids(listed), [])
-            # With the bar the heading gives way to it.
-            placed = (root / ".build/docs/html/placesbar.html").read_text()
-            self.assertIn('<h2 id="chapter-reader-1">', placed)
-            self.assertEqual(lint.repeated_ids(placed), [])
+        project = StarterProject(self, prefix="docs-kit-reader-id-")
+        for slug, body in (("listsreader", text), ("placesbar", text + bar)):
+            project.page(slug, "# Reader id\n\n" + body, title="Reader id", label=slug,
+                         frontmatter='reader = false\ncomponents = ["chapter-reader", "nav"]\n')
+        project.configure(first="reference_listing = false\n")
+        project.build()
+        linted = project.run("lint")
+        self.assertEqual(linted.returncode, 0, linted.stdout + linted.stderr)
+        # Without the bar the heading keeps the id and the link reaches it, as on 5.5.1.
+        listed = project.html("listsreader")
+        self.assertIn('<h2 id="chapter-reader">', listed)
+        self.assertEqual(lint.repeated_ids(listed), [])
+        # With the bar the heading gives way to it.
+        placed = project.html("placesbar")
+        self.assertIn('<h2 id="chapter-reader-1">', placed)
+        self.assertEqual(lint.repeated_ids(placed), [])
 
     def test_without_a_reference_tree_a_heading_keeps_the_tree_labels_id(self):
-        import os
-        import subprocess
-        import sys
-        kit = Path(__file__).resolve().parents[1]
-        with tempfile.TemporaryDirectory(prefix="docs-kit-no-tree-") as folder:
-            root = Path(folder).resolve()
-            subprocess.run(["git", "init", "-q", str(root)], check=True)
-            env = {key: value for key, value in os.environ.items() if key not in {"DOCSITE_PROJECT_ROOT", "GITHUB_SHA"}}
-            subprocess.run([sys.executable, str(kit / "docsite.py"), "init", str(root)], check=True, capture_output=True, env=env)
-            page = root / "docs/topics/notree/index.md"
-            page.parent.mkdir(parents=True)
-            page.write_text('+++\ntoc = []\ntitle = "No tree"\npage_only = "a fixture"\nreader = false\n+++\n\n# No tree\n\n'
-                            '## Repo tree label\n\nA [link](#repo-tree-label) to the heading.\n\n## Menu\n\nText.\n')
-            config = root / "docs/site/site.toml"
-            config.write_text("reference_listing = false\n" + config.read_text()
-                              + '\n[[nav]]\nlabel = "No tree"\nfile = "notree.html"\ngroup = "guide"\n')
-            subprocess.run(["git", "-C", str(root), "add", "-A"], check=True)
-            built = subprocess.run([sys.executable, str(kit / "docsite.py"), "build", "--project", str(root)],
-                                   capture_output=True, text=True, env=env)
-            self.assertEqual(built.returncode, 0, built.stdout + built.stderr)
-            markup = (root / ".build/docs/html/notree.html").read_text()
-            self.assertEqual(markup.count('id="repo-tree-label"'), 1)
-            self.assertIn('<h2 id="repo-tree-label">', markup)
-            self.assertIn('<h2 id="menu-1">', markup)
-
+        project = StarterProject(self, prefix="docs-kit-no-tree-")
+        project.page("notree", '# No tree\n\n## Repo tree label\n\nA [link](#repo-tree-label) to the heading.\n\n## Menu\n\nText.\n',
+                     title="No tree", frontmatter="reader = false\n")
+        project.configure(first="reference_listing = false\n")
+        project.build()
+        markup = project.html("notree")
+        self.assertEqual(markup.count('id="repo-tree-label"'), 1)
+        self.assertIn('<h2 id="repo-tree-label">', markup)
+        self.assertIn('<h2 id="menu-1">', markup)
 
 
 class InlinedFigureIds(unittest.TestCase):
@@ -408,31 +348,13 @@ class InlinedFigureIds(unittest.TestCase):
             '<img src="../figures/one.svg" alt="one again">\n')
 
     def built(self):
-        import os
-        import subprocess
-        import sys
-        kit = Path(__file__).resolve().parents[1]
-        folder = tempfile.TemporaryDirectory(prefix="docs-kit-figure-ids-")
-        self.addCleanup(folder.cleanup)
-        root = Path(folder.name).resolve()
-        subprocess.run(["git", "init", "-q", str(root)], check=True)
-        env = {key: value for key, value in os.environ.items() if key not in {"DOCSITE_PROJECT_ROOT", "GITHUB_SHA"}}
-        subprocess.run([sys.executable, str(kit / "docsite.py"), "init", str(root)], check=True, capture_output=True, env=env)
-        (root / "docs/figures").mkdir(exist_ok=True)
+        project = StarterProject(self, prefix="docs-kit-figure-ids-")
         for name in ("one.svg", "two.svg"):
-            (root / "docs/figures" / name).write_text(self.SVG)
-        added = ""
+            project.write("docs/figures/" + name, self.SVG)
         for slug, extra in (("plainfigures", "reader = false\n"), ("readerfigures", "")):
-            page = root / f"docs/topics/{slug}/index.md"
-            page.parent.mkdir(parents=True)
-            page.write_text(f'+++\ntoc = []\ntitle = "Figures"\npage_only = "a fixture"\n{extra}+++\n\n# Figures\n\n## Three figures\n\n' + self.BODY)
-            added += f'\n[[nav]]\nlabel = "{slug}"\nfile = "{slug}.html"\ngroup = "guide"\n'
-        config = root / "docs/site/site.toml"
-        config.write_text(config.read_text() + added)
-        subprocess.run(["git", "-C", str(root), "add", "-A"], check=True)
-        done = subprocess.run([sys.executable, str(kit / "docsite.py"), "build", "--project", str(root)], capture_output=True, text=True, env=env)
-        self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
-        return {slug: (root / f".build/docs/html/{slug}.html").read_text() for slug in ("plainfigures", "readerfigures")}
+            project.page(slug, "# Figures\n\n## Three figures\n\n" + self.BODY, title="Figures", label=slug, frontmatter=extra)
+        project.build()
+        return {slug: project.html(slug) for slug in ("plainfigures", "readerfigures")}
 
     def figures(self, markup):
         import re
@@ -472,53 +394,36 @@ class OpeningBeforeTheFirstChapter(unittest.TestCase):
     BODY = "# Opening\n\nSeven words stand before the first chapter.\n\n## First chapter\n\nBody.\n\n## Second chapter\n\nMore.\n"
 
     def project(self, frontmatter=""):
-        import os
-        import subprocess
-        import sys
-        kit = Path(__file__).resolve().parents[1]
-        folder = tempfile.TemporaryDirectory(prefix="docs-kit-opening-")
-        self.addCleanup(folder.cleanup)
-        root = Path(folder.name).resolve()
-        subprocess.run(["git", "init", "-q", str(root)], check=True)
-        env = {key: value for key, value in os.environ.items() if key not in {"DOCSITE_PROJECT_ROOT", "GITHUB_SHA"}}
-        run = lambda *command: subprocess.run([sys.executable, str(kit / "docsite.py"), *command, "--project", str(root)],
-                                              capture_output=True, text=True, env=env)
-        subprocess.run([sys.executable, str(kit / "docsite.py"), "init", str(root)], check=True, capture_output=True, env=env)
-        page = root / "docs/topics/opening/index.md"
-        page.parent.mkdir(parents=True)
-        page.write_text(f'+++\ntoc = []\ntitle = "Opening"\npage_only = "a fixture"\n{frontmatter}+++\n\n' + self.BODY)
-        config = root / "docs/site/site.toml"
-        config.write_text(config.read_text() + '\n[[nav]]\nlabel = "Opening"\nfile = "opening.html"\ngroup = "guide"\n')
-        subprocess.run(["git", "-C", str(root), "add", "-A"], check=True)
-        return root, run
+        project = StarterProject(self, prefix="docs-kit-opening-")
+        project.page("opening", self.BODY, title="Opening", frontmatter=frontmatter)
+        return project
 
     def test_lint_warns_until_the_author_decides(self):
-        root, run = self.project()
-        built = run("build")
-        self.assertEqual(built.returncode, 0, built.stdout + built.stderr)
-        markup = (root / ".build/docs/html/opening.html").read_text()
+        project = self.project()
+        project.build()
+        markup = project.html("opening")
         # No chapter of its own: the text opens the first chapter, after its heading.
         self.assertNotIn("Introduction", markup)
         self.assertLess(markup.index("First chapter</h2>"), markup.index("Seven words stand before"))
         self.assertLess(markup.index("Seven words stand before"), markup.index("Body."))
-        plain, strict = run("lint"), run("lint", "--strict")
+        plain, strict = project.run("lint"), project.run("lint", "--strict")
         self.assertEqual(plain.returncode, 0, plain.stdout + plain.stderr)
         self.assertIn("opening.html: 7 word(s) stand before the first chapter", plain.stdout + plain.stderr)
         self.assertNotEqual(strict.returncode, 0)
 
     def test_keep_in_the_frontmatter_is_the_decision(self):
-        root, run = self.project('opening = "keep"\n')
-        self.assertEqual(run("build").returncode, 0)
-        strict = run("lint", "--strict")
+        project = self.project('opening = "keep"\n')
+        project.build()
+        strict = project.run("lint", "--strict")
         self.assertEqual(strict.returncode, 0, strict.stdout + strict.stderr)
         self.assertNotIn("stand before the first chapter", strict.stdout + strict.stderr)
-        self.assertIn("Seven words stand before", (root / ".build/docs/html/opening.html").read_text())
+        self.assertIn("Seven words stand before", project.html("opening"))
 
     def test_another_value_is_refused(self):
-        _, run = self.project('opening = "drop"\n')
-        built = run("build")
+        built = self.project('opening = "drop"\n').run("build")
         self.assertNotEqual(built.returncode, 0)
         self.assertIn('frontmatter opening accepts only "keep"', built.stdout + built.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

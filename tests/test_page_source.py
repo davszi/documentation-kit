@@ -274,5 +274,96 @@ class EqualsTheBuild(unittest.TestCase):
         self.assertEqual(source.count('page_source.rendered_part('), 2)
 
 
+class MarkdownHeadings(unittest.TestCase):
+    """One heading reader with each caller's rule as a keyword; these inputs show where the rules differ."""
+
+    @staticmethod
+    def anchors(text, **rules):
+        from page_source import markdown_headings
+        return [heading.anchor for heading in markdown_headings(text, **rules)]
+
+    @staticmethod
+    def texts(text, **rules):
+        from page_source import markdown_headings
+        return [heading.text for heading in markdown_headings(text, **rules)]
+
+    def test_heading_fields(self):
+        from page_source import Heading, markdown_headings
+        self.assertEqual(markdown_headings('Intro\n\n## Result {#runs}\n## Result\n'),
+                         [Heading(3, 7, 2, 'Result', 'runs'), Heading(4, 25, 2, 'Result', 'result')])
+
+    def test_fences(self):
+        # Lint and the record sections: a fence line may be indented, and either character closes it.
+        self.assertEqual(self.anchors(' ```\n# In\n```\n# Out\n'), ['out'])
+        self.assertEqual(self.anchors('```\n## A\n~~~\n## B\n'), ['b'])
+        # A source page's title: only a fence line in the first column counts.
+        self.assertEqual(self.anchors(' ```\n# In\n```\n', fences='column0'), ['in'])
+        # The chapter index reads masked text and skips nothing itself.
+        self.assertEqual(self.anchors('```\n## A\n```\n', fences=None), ['a'])
+        # The worklog entries skip the blocks that fenced_spans finds: a fence closes only with its own kind.
+        from worklog_entries import fenced_spans
+        text = '````\n## A\n```\n## B\n````\n## C\n'
+        self.assertEqual(self.anchors(text), ['b'])
+        self.assertEqual(self.anchors(text, fences=None, skip=fenced_spans(text), line_breaks='newline'), ['c'])
+
+    def test_line_breaks(self):
+        # str.splitlines also breaks at a form feed, a lone carriage return and other Unicode breaks.
+        self.assertEqual(self.anchors('a\x0c## B\n'), ['b'])
+        self.assertEqual(self.anchors('a\x0c## B\n', line_breaks='newline'), [])
+        self.assertEqual(self.anchors('a\r## B\n', line_breaks='newline'), [])
+        with self.assertRaises(ValueError):
+            self.anchors('', line_breaks='crlf')
+
+    def test_syntax(self):
+        from page_source import ATX_HEADING_WITH_TEXT, ENTRY_HEADING, TITLE_HEADING
+        # Any white space separates in lint's reading; the chapter index wants a space or tab and some text.
+        self.assertEqual(self.anchors('##\xa0x\n## \n'), ['x', ''])
+        self.assertEqual(self.anchors('##\xa0x\n## \n##  \n', syntax=ATX_HEADING_WITH_TEXT), [''])
+        # A source page's title is `# ` at level one; a worklog entry is `## ` at level two.
+        self.assertEqual(self.texts('#\tTab\n## Two\n#  Title\n', syntax=TITLE_HEADING), ['Title'])
+        self.assertEqual(self.texts('##\tTab\n### Three\n##  Entry\n', syntax=ENTRY_HEADING), ['Entry'])
+
+    def test_frontmatter(self):
+        self.assertEqual(self.anchors('+++\n# k\n+++\n# T\n'), ['k', 't'])
+        self.assertEqual(self.anchors('+++\n# k\n+++\n# T\n', frontmatter=True), ['t'])
+        self.assertEqual(self.anchors('+++\n# k\n', frontmatter=True), ['k'])  # never closed: read as text
+
+    def test_id_suffix(self):
+        from page_source import LAST_ID_SUFFIX
+        text = '# A {#x} b {#y}\n'
+        self.assertEqual(self.texts(text), ['A'])
+        self.assertEqual(self.texts(text, id_suffix=LAST_ID_SUFFIX), ['A {#x} b'])
+        self.assertEqual(self.texts(text, id_suffix=None), ['A {#x} b {#y}'])
+        self.assertEqual(self.anchors(text), ['y'])
+        self.assertEqual(self.anchors('# A {#x}}\n'), ['a'])  # no explicit id, the end is still cut off
+
+    def test_seen_starts_the_numbering(self):
+        from page_source import taken_ids
+        self.assertEqual(self.anchors('## Menu\n## Menu\n', seen=taken_ids(reader=True)), ['menu-1', 'menu-2'])
+        self.assertEqual(self.anchors('## Menu\n## Menu\n'), ['menu', 'menu-1'])
+
+    def test_slugify_of_source_and_of_rendered_text(self):
+        import html
+        from page_source import slugify
+        self.assertEqual(slugify('Results: a <em>b</em>  c'), 'results-a-b--c')
+        # The build decodes character references in the rendered text first; the source text keeps them.
+        self.assertEqual(slugify(html.unescape('a &amp; b')), 'a--b')
+        self.assertEqual(slugify('a &amp; b'), 'a-amp-b')
+        self.assertEqual(slugify(html.unescape('&lt;b&gt;x')), 'x')
+        self.assertEqual(slugify('Straße İ'), 'straße-i')  # İ lowers to i and a combining dot, which is dropped
+
+    def test_where_the_build_gives_another_id(self):
+        # Present behaviour, not a contract: the build slugifies rendered text and allows only ASCII in `{#id}`.
+        import re
+        import build
+        import mistune
+        for text, source_id, built_id in [('## [L](u.md)\n', 'lumd', 'l'), ('## a &amp; b\n', 'a-amp-b', 'a--b'),
+                                          ('## T {#título}\n', 'título', 't-título')]:
+            with self.subTest(text=text):
+                rendered = mistune.create_markdown(renderer=build.DocsRenderer(), plugins=['table', 'math'])(text)
+                self.assertEqual(self.anchors(text), [source_id])
+                self.assertEqual(re.findall(r'<h2 id="([^"]*)"', rendered), [built_id])
+
+
 if __name__ == '__main__':
     unittest.main()

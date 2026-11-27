@@ -22,26 +22,15 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import unquote
 
-from page_source import taken_ids, unique_heading_id
+from page_source import ATX_HEADING_WITH_TEXT, Heading, markdown_headings, taken_ids
 
 HUNK_RE = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@")
-HEADING_RE = re.compile(r"(#{1,6})\s+(.*)")
-EXPLICIT_ID_RE = re.compile(r"\{#([A-Za-z0-9][\w-]*)\}\s*$")
 MARKDOWN_LINK_RE = re.compile(r"!?\[[^\]]*\]\(\s*<?([^)\s>]+)>?")
 REFERENCE_LINK_RE = re.compile(r"^[ ]{0,3}\[[^\]]+\]:\s*<?([^\s>]+)>?", re.M)
 HREF_RE = re.compile(r"""\bhref\s*=\s*(?:"([^"]*)"|'([^']*)')""", re.I)
 SECTION_RE = re.compile(r"<section\b([^>]*)>|</section\s*>", re.I)
-ANY_HEADING_RE = re.compile(r"^(#{1,6})[ \t]+(.+?)[ \t]*$", re.M)
 SCHEME_RE = re.compile(r"^(?:[a-z][a-z0-9+.-]*:|//)", re.I)
 PAGE_END = "<!-- page-end -->"
-
-
-@dataclass(frozen=True)
-class Heading:
-    line: int  # 1-based line of the heading in the new file
-    level: int
-    text: str
-    anchor: str
 
 
 @dataclass
@@ -135,33 +124,6 @@ def changed_lines(root: Path, since: str | None = None) -> dict[str, list[int] |
 
 
 # ------------------------------------------------------------- Markdown
-def headings(text: str, slugify) -> list[Heading]:
-    """ATX headings outside fenced code and TOML frontmatter, as lint anchors them."""
-    found, in_fence = [], False
-    lines = text.splitlines()
-    start = 0
-    seen: dict[str, int] = {}
-    if lines and lines[0] == "+++":
-        closing = next((i for i in range(1, len(lines)) if lines[i] == "+++"), None)
-        if closing is not None:
-            start = closing + 1
-    for number, line in enumerate(lines[start:], start + 1):
-        if line.lstrip().startswith(("```", "~~~")):
-            in_fence = not in_fence
-            continue
-        if in_fence:
-            continue
-        match = HEADING_RE.match(line)
-        if not match:
-            continue
-        body = match.group(2)
-        explicit = EXPLICIT_ID_RE.search(body)
-        title = re.sub(r"\{#.*\}\s*$", "", body).strip()
-        anchor = unique_heading_id(explicit.group(1) if explicit else slugify(re.sub(r"\{#.*\}\s*$", "", body)), seen)
-        found.append(Heading(number, len(match.group(1)), title, anchor))
-    return found
-
-
 def _enclosing(heads: list[Heading], line: int) -> list[Heading]:
     """Headings enclosing a line, outermost first."""
     chain: list[Heading] = []
@@ -174,7 +136,7 @@ def _enclosing(heads: list[Heading], line: int) -> list[Heading]:
     return chain
 
 
-def changed_sections(root: Path, slugify, since: str | None = None) -> list[ChangedSection]:
+def changed_sections(root: Path, since: str | None = None) -> list[ChangedSection]:
     """Changed sections of records: tracked Markdown files that are not topic pages."""
     root = Path(root)
     pages = {page.relative_to(root).as_posix() for page in topic_pages(root)}
@@ -188,7 +150,8 @@ def changed_sections(root: Path, slugify, since: str | None = None) -> list[Chan
         path = root / record
         if not path.is_file():
             continue
-        heads = headings(path.read_text(errors="replace"), slugify)
+        # ATX headings outside fenced code and TOML frontmatter, as lint anchors them.
+        heads = markdown_headings(path.read_text(errors="replace"), frontmatter=True)
         for position in positions:
             chain = _enclosing(heads, position)
             key = (record, chain[-1].line if chain else 0)
@@ -226,7 +189,7 @@ def masked(text: str) -> str:
     return "".join(chars)
 
 
-def _chapter_index(text: str, slugify) -> list[tuple[int, str, str | None]]:
+def _chapter_index(text: str) -> list[tuple[int, str, str | None]]:
     """Ordered (position, kind, value) events for card sections and `## ` headings."""
     events = []
     for match in SECTION_RE.finditer(text):
@@ -239,13 +202,11 @@ def _chapter_index(text: str, slugify) -> list[tuple[int, str, str | None]]:
         card = classes and "card" in (classes.group(1) or classes.group(2) or "").split()
         events.append((match.start(), "open", (ident.group(1) or ident.group(2)) if card and ident else None))
     # These are the chapter ids of the built page, so the numbering starts as the build's does on a reader page.
+    # The text comes masked, so no fence is left to skip.
     seen = taken_ids(reader=True)
-    for match in ANY_HEADING_RE.finditer(text):  # every level takes part in the numbering of repeats
-        body = match.group(2)
-        explicit = EXPLICIT_ID_RE.search(body)
-        anchor = unique_heading_id(explicit.group(1) if explicit else slugify(re.sub(r"\{#.*\}\s*$", "", body)), seen)
-        if len(match.group(1)) == 2:
-            events.append((match.start(), "heading", anchor))
+    for heading in markdown_headings(text, syntax=ATX_HEADING_WITH_TEXT, fences=None, line_breaks="newline", seen=seen):
+        if heading.level == 2:  # every level takes part in the numbering of repeats
+            events.append((heading.offset, "heading", heading.anchor))
     return sorted(events, key=lambda event: event[0])
 
 
@@ -266,13 +227,13 @@ def _chapter_at(events, position: int) -> str | None:
     return card or heading
 
 
-def page_links(root: Path, page: Path, records: set[str], routes: dict[str, str], slugify) -> list[RecordLink]:
+def page_links(root: Path, page: Path, records: set[str], routes: dict[str, str]) -> list[RecordLink]:
     """Links from a topic page to records, by file path or by built route."""
     root = Path(root)
     raw = page.read_text(errors="replace")
     page_end = raw.find(PAGE_END)  # read before masking, which blanks the marker with every comment
     text = masked(raw)
-    events = _chapter_index(text, slugify)
+    events = _chapter_index(text)
     html = root / "docs/html"
     links = []
     found = [(m.start(), m.group(1)) for m in MARKDOWN_LINK_RE.finditer(text)]
@@ -325,15 +286,15 @@ def source_routes(root: Path) -> dict[str, str]:
             and isinstance(entry.get("source"), str)}
 
 
-def record_change_notes(root: Path, slugify, since: str | None = None) -> list[str]:
+def record_change_notes(root: Path, since: str | None = None) -> list[str]:
     """Formatted notes, one per changed record section that a page explains."""
     root = Path(root)
-    sections = changed_sections(root, slugify, since)
+    sections = changed_sections(root, since)
     if not sections:
         return []
     changed = {section.record for section in sections}
     routes = {slug: source for slug, source in source_routes(root).items() if source in changed}
-    links = [link for page in topic_pages(root) for link in page_links(root, page, changed, routes, slugify)]
+    links = [link for page in topic_pages(root) for link in page_links(root, page, changed, routes)]
     notes = []
     for section in sections:
         readers: dict[tuple[str, str | None], int] = {}
