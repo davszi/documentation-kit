@@ -286,6 +286,23 @@ def source_routes(root: Path) -> dict[str, str]:
             and isinstance(entry.get("source"), str)}
 
 
+def _subsection_anchors(record: Path, heading: Heading) -> set[str]:
+    """The anchors of the headings below `heading` in its record, down to the next heading of its level or above."""
+    if not record.is_file():
+        return set()
+    heads = markdown_headings(record.read_text(errors="replace"), frontmatter=True)
+    below: set[str] = set()
+    inside = False
+    for head in heads:
+        if head.line == heading.line:
+            inside = True
+        elif inside and head.level <= heading.level:
+            break
+        elif inside:
+            below.add(head.anchor)
+    return below
+
+
 def record_change_notes(root: Path, since: str | None = None) -> list[str]:
     """Formatted notes, one per changed record section that a page explains."""
     root = Path(root)
@@ -321,7 +338,11 @@ def record_change_notes(root: Path, since: str | None = None) -> list[str]:
                 if link.record == section.record and link.fragment:
                     linked.setdefault(link.page, set()).add(link.fragment)
             others = sorted(page for page, fragments in linked.items() if len(fragments) >= 2)
-            if others and section.heading is not None and not section.whole_record:
+            # The record's title and a section whose subsections are linked are covered already:
+            # the page explains the parts, and the text above them introduces those parts.
+            covered = section.heading is None or section.heading.level == 1 or bool(
+                _subsection_anchors(root / section.record, section.heading) & set().union(*linked.values(), set()))
+            if others and not covered and not section.whole_record:
                 notes.append("\n".join([f"NOTE: {title} changed.",
                                         "      No page links this section. Pages that explain other sections of the record:",
                                         *[f"        {page}" for page in others]]))
@@ -353,8 +374,11 @@ def uncited_figure_notes(root: Path) -> list[str]:
         for match in _FIGURE.finditer(text):
             identifier, body = match.group(1), match.group(2)
             number = _NUMBERED.search(body)
-            # The marker is a comment, which the masked text no longer holds: look in the source.
-            if not number or _ON_PURPOSE in raw[max(0, match.start() - 200):match.end()]:
+            # The marker is a comment, which the masked text no longer holds: look in the source,
+            # inside the figure or in the comment that stands directly before it.
+            before = raw[:match.start()].rstrip()
+            directly = before.endswith("-->") and before[before.rfind("<!--"):].startswith(_ON_PURPOSE)
+            if not number or directly or _ON_PURPOSE in raw[match.start():match.end()]:
                 continue
             outside = text[:match.start()] + text[match.end():]
             if f"(#{identifier})" not in outside and f'href="#{identifier}"' not in outside:

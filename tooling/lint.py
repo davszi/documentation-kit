@@ -134,7 +134,7 @@ def resolve_path(path: Path) -> Path:
 
 
 import worklog_entries as _worklog_entries
-from page_source import markdown_headings, tracked_paths
+from page_source import REMOVED_GUIDE_NOTE, REMOVED_GUIDE_PROBLEM, markdown_headings, removed_kit_guide, tracked_paths
 from figure_themes import variant_path
 
 _record_cache: dict = {}
@@ -364,21 +364,6 @@ def link_checked_worklog_text(text: str) -> str:
     return "".join(kept)
 
 
-_REMOVED_GUIDE = re.compile(r"\d+\.\d+\.\d+\.md")
-REMOVED_GUIDE_NOTE = ("the kit keeps one migration guide since 5.10.0, docs/topics/releases/migration.md; "
-                      "the guides of earlier versions are at its tag v5.9.0")
-
-
-def removed_kit_guide(dest: Path) -> bool:
-    """Whether `dest` is a per-version migration guide of the kit, which 5.10.0 removed.
-
-    A project that linked one passed lint before the upgrade. The missing file is the kit's doing,
-    so the link is reported as a note and the project still passes.
-    """
-    folder = Path(__file__).resolve().parents[1] / "docs/topics/releases/migrations"
-    return dest.parent == folder and bool(_REMOVED_GUIDE.fullmatch(dest.name))
-
-
 def _check_chunk_links(f: Path, text: str, base: Path) -> None:
         for target in LINK_RE.findall(strip_code(text)):
             if target.lower().startswith(("http://", "https://", "mailto:")):
@@ -398,7 +383,7 @@ def _check_chunk_links(f: Path, text: str, base: Path) -> None:
                 if retained_locally(dest):
                     notice(f"{rel}: artifact retained locally, omitted from push: {target}")
                 elif removed_kit_guide(dest):
-                    notice(f"{rel}: link to a migration guide the kit removed: {target}; {REMOVED_GUIDE_NOTE}")
+                    notice(f"{rel}: {REMOVED_GUIDE_PROBLEM}: {target}; {REMOVED_GUIDE_NOTE}")
                 else:
                     error(f"{rel}: dead link {target}")
                 continue
@@ -466,7 +451,7 @@ def check_source_links() -> None:
                 if retained_locally(dest):
                     notice(f"{label}: artifact retained locally, omitted from push: {shown}")
                 elif removed_kit_guide(dest):
-                    notice(f"{label}: link to a migration guide the kit removed: {shown}; {REMOVED_GUIDE_NOTE}")
+                    notice(f"{label}: {REMOVED_GUIDE_PROBLEM}: {shown}; {REMOVED_GUIDE_NOTE}")
                 else:
                     report(f"{label}: dead link to repository file {shown}")
             elif fragment and dest.suffix == ".md" and fragment not in md_anchors(dest):

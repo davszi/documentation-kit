@@ -208,6 +208,17 @@ class RecordChangeNotes(unittest.TestCase):
         self.assertIn('No page links this section.', new[0])
         self.assertIn('docs/topics/practice/index.md', new[0])
 
+    def test_the_title_and_a_group_whose_parts_are_linked_are_covered(self):
+        # A change under the record's title, or to the text that opens a group of sections the
+        # page links, is not a section the page forgot.
+        self.write('rules/group.md', '# Group\n\nOpening.\n\n## Parts\n\nAbout the parts.\n\n### One\n\nText.\n\n### Two\n\nText.\n')
+        self.write('docs/topics/parts/index.md', '+++\ntitle = "Parts"\ntoc = []\n+++\n\n## A\n\nSee [one](../../rules/group.md#one) and [two](../../rules/group.md#two).\n')
+        git(self.root, 'add', '-A')
+        git(self.root, 'commit', '-q', '-m', 'A group')
+        self.edit('Opening.', 'Opening, changed.', 'rules/group.md')
+        self.edit('About the parts.', 'About the parts, changed.', 'rules/group.md')
+        self.assertEqual([note for note in self.notes() if 'No page links' in note], [])
+
     def test_a_page_that_only_points_into_a_record_does_not_count_as_explaining_it(self):
         # One link into a record is a pointer. The overview page links one section of the guide,
         # so a new section there is not its business.
@@ -420,6 +431,10 @@ class UncitedFigures(unittest.TestCase):
         self.assertEqual(self.notes(self.FIGURE + '\n[Figure 1](#fig-a) shows the flow.\n'), [])
         self.assertEqual(self.notes(self.FIGURE + '\nSee <a href="#fig-a">Figure 1</a>.\n'), [])
         self.assertEqual(self.notes('<!-- unreferenced figure: decoration -->\n' + self.FIGURE), [])
+        # The comment excuses the figure it stands before, not the one after that.
+        two = '<!-- unreferenced figure: decoration -->\n' + self.FIGURE + '\n' + self.FIGURE.replace('fig-a', 'fig-b').replace('Figure 1', 'Figure 2')
+        self.assertEqual(len(self.notes(two)), 1)
+        self.assertIn('Figure 2 (#fig-b)', self.notes(two)[0])
 
     def test_a_link_inside_the_figure_itself_does_not_count(self):
         inside = self.FIGURE.replace('A flow.', 'A flow, <a href="#fig-a">this one</a>.')

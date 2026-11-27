@@ -134,7 +134,7 @@ An investigation set aside before its question is answered is [shelved](records.
 <text class="xt" x="168" y="254" text-anchor="middle">workers per run →</text>
 </svg></div>
 <div class="xp-plot"><span class="xp-tag">Size a later run · twice the steps</span>
-<svg class="xp-wide" viewBox="0 0 400 300" role="img" aria-label="Example bars with invented values. The vertical axis is minutes, from 0 to 140, with gridlines every 40. Step 1, the earlier run: a dashed bar shows its estimate of 40 minutes and a filled bar its measured cost of 65 minutes, 25 minutes more. Step 2, the later run with twice the steps: a dashed bar sized from the measured cost, 2 × 65 = 130 minutes. The report gives the measured cost against the estimate before the sizing.">
+<svg class="xp-wide" viewBox="0 0 400 300" role="img" aria-label="Example bars with invented values. The vertical axis is minutes, with gridlines every 40 up to 120. Step 1, the earlier run: a dashed bar shows its estimate of 40 minutes and a filled bar its measured cost of 65 minutes, 25 minutes more. Step 2, the later run with twice the steps: a dashed bar sized from the measured cost, 2 × 65 = 130 minutes. The report gives the measured cost against the estimate before the sizing.">
 <text class="xt" x="6" y="20">↑ minutes</text>
 <text class="xstamp" x="394" y="20" text-anchor="end">INVENTED VALUES</text>
 <path class="xgrid" d="M62 180H392M62 124H392M62 68H392"/>

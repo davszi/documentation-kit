@@ -141,35 +141,42 @@ Only for a project that comes from 5.7.0 or 5.8.0; 5.9.0 brought these.
 
 ## New in 5.10.0
 
-Beyond the two steps above, nothing a project must do. A fold whose
-content is none of math, an experiment, code or an approach not taken can now
-be written `<!-- fold: detail Title -->`; moving a misfiled fold is optional.
-The option that read "Alternatives" reads "Not chosen". Lint may print two
-new kinds of note: a changed record section that no page links, and a
-numbered figure the text never cites. They list work, they fail nothing;
-[reviewing a page against its rules](../../../rules/site/validation.md#reviewing-a-page-against-its-rules)
-says how to take a page through them. The menu of every page now starts with "Open
-work" and the number of lines in the project's open-work list; a project
-that does not want the entry writes `open_work_entry = false` in `site.toml`.
-A long list shows as a large number: this is a good moment to delete
-finished lines. Three things follow from the entry:
+For every project. Beyond the two steps above, nothing a project must do.
+What it meets:
 
-- The number stands on every page, so a changed list makes every page stale
-  for `build --check` until the next build, and a `--page` build leaves the
-  old number on the other pages.
-- The entry is the first element inside the menu, `a.open-work` in `div.toc`.
-  Project styles or checks that take the menu's first element have to follow.
-- On a [locked site](../../../rules/site/publication.md) the entry is off
-  unless the project writes `open_work_entry = true`: pages opened with the
-  general password would otherwise show that a list exists and how long it
-  is. A record page can offer its Markdown to the
-clipboard: `copy_raw = true` on its `[[source_pages]]` table
-([registered source pages](../../../rules/site/authoring.md#registered-source-pages)).
-Links from a project's own files into the kit's site that named a chapter of
-"Documentation and writing" may need the new page; the release notes list
-which chapters moved.
+- **Open work in the menu.** The menu of every page starts with "Open work"
+  and the number of lines in the project's open-work list. A long list shows
+  as a large number: this is a good moment to delete finished lines. A project
+  that does not want the entry writes `open_work_entry = false` in
+  `site.toml`.
+  - The number stands on every page, so a changed list makes every page stale
+    for `build --check` until the next build, and a `--page` build leaves the
+    old number on the other pages.
+  - The entry is the first element inside the menu, `a.open-work` in
+    `div.toc`. Project styles or checks that take the menu's first element
+    have to follow.
+  - On a [locked site](../../../rules/site/publication.md) the entry is off
+    unless the project writes `open_work_entry = true`: pages opened with the
+    general password would otherwise show that a list exists and how long it
+    is.
+- **Folds.** The option that read "Alternatives" reads "Not chosen". A fold
+  whose content is none of math, an experiment, code or an approach not taken
+  can be written `<!-- fold: detail Title -->`; moving a misfiled fold is
+  optional. All opens every fold.
+- **Two new lint notes.** A changed record section that no page links, and a
+  numbered figure the text never cites. They list work and fail nothing;
+  [reviewing a page against its rules](../../../rules/site/validation.md#reviewing-a-page-against-its-rules)
+  says how to take a page through them.
+- **Copying a record.** A record page can offer its Markdown to the
+  clipboard: `copy_raw = true` on its `[[source_pages]]` table
+  ([registered source pages](../../../rules/site/authoring.md#registered-source-pages)).
+- **Moved chapters of the kit's site.** A link from a project's own files to
+  a chapter of "Documentation and writing" may need the new page; the release
+  notes list which chapters moved.
 
 ## Optional: the newer copy of the owner's global agent instructions
+
+For a project that comes from 5.7.0 or 5.8.0; 5.9.0 renewed the copy.
 
 `.docs-kit/examples/global-agent-context.md` is renewed. A person who added
 the earlier copy to their own global agent file replaces that part with the
@@ -177,6 +184,8 @@ new copy; [the README](../../../README.md#optional-the-owners-global-agent-instr
 has the commands. It gains "Gates" and "Decisions with me".
 
 ## What needs no step
+
+For a project that comes from 5.7.0 or 5.8.0; these came with 5.9.0.
 
 The new and changed rule sentences apply to work from now on. The figures
 guide asks for a plot where a table compared values; lint cannot check it, so

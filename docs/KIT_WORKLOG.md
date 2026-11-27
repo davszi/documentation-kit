@@ -2,6 +2,42 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — Second review of 5.10.0: one blocking finding, answered
+
+- Pushed `main` at `29e40f7` after the full check script passed there:
+  exit 0, 547 tests. The Pages workflow succeeded; checked over HTTP: the
+  Experiments page holds the example values, Records and documents holds
+  four folds of no kind, the reader script says "Not chosen". No tag.
+- A review of everything after `690dd4e`, in its own worktree and on a
+  scratch clone of adaptation. Verdict: not fit to tag yet. On the clone
+  at `29e40f7`: build exit 0, strict lint exit 0, two notes for removed
+  guides, none of the two new kinds of note.
+- High, fixed: a registered record page that links a removed migration
+  guide still failed the build, and so lint, because only lint knew the
+  removed guides. Shown on the clone by registering a file that holds such
+  a link. The names of the twelve removed guides and the test for them now
+  live in the shared page-source module; the build reports such a link as
+  a note on every kind of page. The test puts the kit inside a test
+  project, as a project holds it, and fails on the commit before.
+- Low, fixed with it: the test for a removed guide matched any file named
+  like a version; a link to a guide that never existed is an error again.
+- Medium, fixed: the note for a changed section that no page links fired
+  where it should not. On the clone, with fifty commits of history, 15 of
+  23 such notes were a record's own title or a section whose subsections
+  the page links. Both are covered now.
+- Medium, fixed: the note for an uncited figure reads the page's own
+  source only. The validation guide says so. The comment that excuses a
+  figure now has to stand directly before it or inside it.
+- Medium and low, fixed in the records: the release note named two guides
+  as changed where nine changed; a list in the migration guide swallowed
+  two paragraphs; two of its sections did not say which versions they are
+  for; the exception for invented values now says "the kit's own
+  repository" and that a project's pages never show them; the kit's
+  fifteen moved folds lose saved clicks, which the release note now says.
+- Not changed: a fenced example that starts a line with a fold marker is
+  read as a fold, as it was for the four kinds.
+- Not checked: the copy button in Safari; a lint run on ADP itself.
+
 ## 2026-11-27 — Example figures with values, folds without a kind, "Not chosen"
 
 - Two agents finished what the owner had decided; each commit read by me,

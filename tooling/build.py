@@ -954,7 +954,8 @@ def build_source_page(page, routes: dict[str, str], site: dict, shell: str,
     if page.automatic:
         content = quiet_text(content)
     for problem in problems:
-        report(problem)
+        # A link to a guide the kit removed is the kit's doing: a note on every kind of page.
+        (note if page_source.REMOVED_GUIDE_PROBLEM in problem else report)(problem)
     banner = origin_banner(page, site.get("gh_repo", ""), site.get("_edit_ref", site.get("gh_ref", "main")),
                            raw=(REPO / page.source).read_text() if page.copy_raw else None)
     content = banner + content

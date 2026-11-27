@@ -1,6 +1,8 @@
 """A project's link to a migration guide the kit removed is a note, so the project still passes lint."""
 import os
 from pathlib import Path
+import shutil
+import subprocess
 import sys
 import unittest
 
@@ -25,6 +27,29 @@ class RemovedGuides(unittest.TestCase):
         self.assertIn("link to a migration guide the kit removed", said)
         self.assertIn("docs/topics/releases/migration.md", said)
         self.assertIn("v5.9.0", said)
+
+    def test_a_registered_page_that_links_a_removed_guide_still_builds(self):
+        # The build has its own link check for record pages; there too the link is a note. That
+        # check refuses a link that leaves the project, so the kit stands inside it here, as a
+        # project holds it.
+        project = StarterProject(self)
+        shutil.copytree(KIT, project.root / ".docs-kit",
+                        ignore=shutil.ignore_patterns(".git", ".build", "node_modules", "__pycache__"))
+        project.write("notes/upgrade.md",
+                      "# Upgrade notes\n\nSee the [older guide](../.docs-kit/docs/topics/releases/migrations/5.0.0.md).\n")
+        project.configure(last='\n[[source_pages]]\nsource = "notes/upgrade.md"\nslug = "upgrade-notes"\n')
+        subprocess.run(["git", "-C", str(project.root), "add", "-A"], check=True)
+        built = subprocess.run([sys.executable, str(project.root / ".docs-kit/docsite.py"), "build", "--project", str(project.root)],
+                               capture_output=True, text=True, env=project.env)
+        said = built.stdout + built.stderr
+        self.assertEqual(built.returncode, 0, said[-1500:])
+        # The build counts it among its notes and still writes the page; lint spells the notes out.
+        self.assertNotIn("ERROR", said)
+        self.assertTrue((project.root / ".build/docs/html/upgrade-notes.html").is_file())
+
+    def test_a_guide_that_never_existed_is_a_dead_link(self):
+        done = self.linked("9.9.9.md")
+        self.assertNotEqual(done.returncode, 0)
 
     def test_any_other_missing_file_there_is_still_a_dead_link(self):
         done = self.linked("notes.md")

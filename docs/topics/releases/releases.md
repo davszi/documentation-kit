@@ -35,11 +35,10 @@ shows the new warnings.
 5.10.0 is a minor release under
 [what a version number promises](#what-a-version-number-promises): it adds two
 settings and one fixed entry to every site's menu. No lint error or warning
-is added, and a project that passed before still passes. Two site guides
-change their text: [site authoring](../../../rules/site/authoring.md) gains the
-Open work entry and `copy_raw`, and one sentence of
-[resources](../../../rules/site/resources.md) names the tag that keeps an old
-guide. The [migration guide](migration.md) has two small steps for every
+is added, and a project that passed before still passes. Several guides
+change their text: site authoring, publication, the reader and validation;
+explanations and figures; the documentation system, resources and
+conformance. The sections below say what each gains. The [migration guide](migration.md) has two small steps for every
 project: a changed router row, and links to the removed guides.
 
 What a project meets after moving its pin:
@@ -82,8 +81,9 @@ describes the review as a task of its own: one page per agent, chapter by
 chapter, findings first.
 
 The [figures guide](../../../rules/writing/figures.md#figures-and-comparisons)
-forbids invented data. The kit's own pages explain rules and report no
-results; an example there may use invented values and says so.
+forbids invented data. The pages in the kit's own repository explain rules
+and report no results; an example there may use invented values and says so.
+A project's pages never do.
 
 ### A fold without a kind, and "Not chosen"
 
@@ -99,7 +99,9 @@ are for. Fifteen of the 27 folds on the kit's pages moved to `detail`.
 The kind written `dead-end` was shown as "Alternatives". It holds an
 approach that was considered or tried and not taken, and is now shown as
 "Not chosen". The word in page sources and what a reader's browser has saved
-stay as they are.
+stay as they are. On the kit's own site, the fifteen folds that moved to
+`detail` lose a reader's saved clicks, because a click is kept under the
+fold's kind.
 
 ### A record page can offer its Markdown
 
@@ -119,7 +121,7 @@ are deleted, 15,671 words; they stay in the repository at the tag `v5.9.0`.
 One guide remains, at a fixed address, `docs/topics/releases/migration.md`.
 It holds every step from 5.7.0 and says for each step which versions need
 it. A project's link to a removed guide is a lint note, so strict lint still
-passes. Build messages that
+passes; the build treats such a link on a record page the same way. Build messages that
 pointed a project to an old guide name that tag.
 
 ### The kit's own pages follow the kit's rules

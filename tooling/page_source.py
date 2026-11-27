@@ -317,3 +317,22 @@ def page_source(path, project) -> tuple[dict, str]:
     if problems:
         raise PageSourceError(problems)
     return meta, body
+
+
+# The per-version migration guides the kit had until 5.9.0. 5.10.0 keeps one guide at a fixed
+# address, so a project's link to one of these finds nothing through no fault of the project.
+REMOVED_GUIDES = frozenset(name + ".md" for name in (
+    "1.1.0", "2.0.0", "3.0.0", "3.1.0", "3.2.0", "4.0.0", "5.0.0", "5.1.0", "5.2.0", "5.5.0", "5.8.0", "5.9.0"))
+REMOVED_GUIDE_PROBLEM = "link to a migration guide the kit removed"
+REMOVED_GUIDE_NOTE = ("the kit keeps one migration guide since 5.10.0, docs/topics/releases/migration.md; "
+                      "the guides of earlier versions are at its tag v5.9.0")
+
+
+def removed_kit_guide(dest: Path) -> bool:
+    """Whether `dest` is one of the kit's removed per-version migration guides.
+
+    A project that linked one passed its checks before the upgrade. The build and lint report such
+    a link as a note, so the project still passes; any other missing file stays an error.
+    """
+    folder = Path(__file__).resolve().parents[1] / "docs/topics/releases/migrations"
+    return Path(dest).parent == folder and Path(dest).name in REMOVED_GUIDES

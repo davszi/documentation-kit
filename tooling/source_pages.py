@@ -33,7 +33,8 @@ import posixpath
 import re
 from urllib.parse import quote, unquote, urlsplit
 
-from page_source import LAST_ID_SUFFIX, TITLE_HEADING, markdown_headings
+from page_source import (LAST_ID_SUFFIX, REMOVED_GUIDE_NOTE, REMOVED_GUIDE_PROBLEM, TITLE_HEADING, markdown_headings,
+                         removed_kit_guide)
 from topic_structure import is_topic_page, topic_group_folders
 from worklog_entries import HTML_HEADING, unchecked_spans, within
 
@@ -412,6 +413,10 @@ def rewrite_links(markup: str, page: SourcePage, routes: dict[str, str], root: P
         if not exists(root / target):
             if old:
                 return _GONE
+            if removed_kit_guide(root / target):
+                # Reported as a note for every kind of page; the link is left as it is.
+                problems.append(f"{page.source}: {REMOVED_GUIDE_PROBLEM}: {_visible(raw)}; {REMOVED_GUIDE_NOTE}")
+                return _GONE if tolerant else None
             problems.append(f"{page.source}: link target not found: {_visible(raw)}")
             return _GONE if tolerant else None
         if tolerant and media and posixpath.splitext(target)[1].lower() not in RASTER_SUFFIXES:
