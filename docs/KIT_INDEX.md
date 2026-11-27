@@ -49,8 +49,8 @@ shared independent-comparison component.
 
 [Releases and upgrades](topics/releases/releases.md) owns version changes,
 stable interfaces and what a version number promises. The
-[5.9.0 migration guide](topics/releases/migrations/5.9.0.md) moves 5.7.0 and
-5.8.0 consumers to the current 5.9.0; it is the only guide the kit keeps.
+[5.9.0 migration guide](topics/releases/migrations/5.10.0.md) moves 5.7.0 to
+5.9.0 consumers to the current 5.10.0; it is the only guide the kit keeps.
 
 The extraction record, policy map, source hashes and initial receipts remain at
 the [`v1.1.0` tag](https://github.com/davszi/documentation-kit/tree/v1.1.0).

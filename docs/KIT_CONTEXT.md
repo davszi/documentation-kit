@@ -34,8 +34,8 @@ owns the shared panel switcher's authoring, behavior and extraction checks.
 
 [Releases and upgrades](topics/releases/releases.md) owns version notes and
 consumer migration steps; `VERSION` holds the current version.
-The current release is 5.9.0. Its
-[migration guide](topics/releases/migrations/5.9.0.md) is the only one the kit
+The current release is 5.10.0. Its
+[migration guide](topics/releases/migrations/5.10.0.md) is the only one the kit
 keeps: it holds every step from 5.7.0. The guides of earlier versions are in
 the repository at the tag `v5.9.0`.
 

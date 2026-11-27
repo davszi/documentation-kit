@@ -2,6 +2,51 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — The kit's four older pages brought up to its rules; pushed for the owner to look
+
+- The owner said the kit's own pages lag behind the kit, and doubted that an
+  agent told to fix "the site" would go page by page. Agreed way: one page
+  author per page in its own working copy, each chapter held against the
+  rule sections it explains, an inventory first, captures at 1600 and
+  390 px. The four started after 5.9.0 was out.
+- Results, each author's commit read by me, figures and citations counted
+  by script, two or three captures looked at per page:
+  - Engineering: a new chapter for supporting code and the capability map;
+    routes in the starter's wording with the three missing rows; two thin
+    performance chapters merged; 4 figures became 12. All 34 headings of
+    the six engineering guides are explained.
+  - Experiments: new chapters for the running total with the step back,
+    and for settings decided on a measurement; the routes chapter merged
+    into the first; 4 figures became 10, none was cited before.
+  - Documentation and writing: 13,768 source words became 7,963; 7 figures
+    became 14; the copied rule tables became links.
+  - Build a site: 4 figures became 11; record first, the reader of 5.7.0 to
+    5.9.0, the two-theme figures, `check` and the pre-push gate are on the
+    page; its output tree was wrong and is corrected.
+- The owner decided to split Documentation and writing into Records and
+  documents and Writing pages; its author had recommended it and I had
+  not. Nine chapters moved page and keep their ids. The home page shows
+  four practice areas; two layout faults the fourth column caused there
+  were fixed and measured.
+- After the join: the Build a site page excerpted a settings line that the
+  migration clean-up had removed; lint's snippet check caught it.
+- Reported by the authors and not settled: no fold kind for plain optional
+  detail, so pages had mislabelled such folds; whether a schematic with no
+  data may stand as a figure, against "never draw invented data"; whether
+  text tiles count as a chapter's visual; whether the text inside an HTML
+  figure counts as its alternative text; the 11 px check also measures the
+  smaller neighbour chapters; the theme's `svg .t` rule restyles a page's
+  own SVG classes; two lint checks, repeated ids and the worklog's order,
+  that no rule states; the kit has no table of what its figure colours
+  mean; a stale path in a comment of `theme/assets/build-sheet.css`.
+- The one migration guide rolled to 5.10.0 with the version; the release
+  note is written. Not tagged.
+- The owner: "push when its done so i can check it out on pages". The push
+  of `main` follows the full check on this commit. A tag waits for his
+  word and for the independent review.
+- Agreed and not built: a fixed "Open work" entry in every site's menu;
+  where it sits is open.
+
 ## 2026-11-27 — One migration guide: the eleven older ones are deleted
 
 - The owner asked to stop maintaining migration guides for versions nobody

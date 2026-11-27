@@ -6,7 +6,7 @@ A consuming project pins an exact commit or tag and upgrades deliberately, follo
 release changes for consumers and how to move to it. Chronology stays in the
 [worklog](../../KIT_WORKLOG.md); consumer adoption status stays in each consuming project.
 
-The kit keeps one migration guide, [for the current version](migrations/5.9.0.md). The
+The kit keeps one migration guide, [for the current version](migrations/5.10.0.md). The
 guides of earlier versions, which the notes below name, are in the kit's
 repository at the tag `v5.9.0`, under `docs/topics/releases/migrations/`.
 
@@ -30,13 +30,74 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## 5.10.0 — the kit's pages brought up to its rules, one migration guide, a button that copies a record
+
+5.10.0 is a minor release under
+[what a version number promises](#what-a-version-number-promises): it adds one
+setting. No rule text changes, no lint message is added, and a project that
+passed before still passes. The [migration guide](migrations/5.10.0.md) has no
+new step for a project on 5.9.0.
+
+### A record page can offer its Markdown
+
+`copy_raw = true` on a `[[source_pages]]` table adds "Copy raw Markdown" to
+the page's source line. The page carries the file's text itself, so the
+button needs no request and works on a page opened from disk. The kit's site
+uses it on the page of the owner's global agent instructions, which a person
+is meant to take into their own file.
+[Registered source pages](../../../rules/site/authoring.md#registered-source-pages)
+names the setting.
+
+### One migration guide
+
+The kit carried a guide for every version since 1.1.0. Every project that
+uses the kit pins 5.7.0 or later, so the eleven guides for 1.1.0 to 5.8.0
+are deleted, 15,671 words; they stay in the repository at the tag `v5.9.0`.
+One guide remains, named for the current version. It holds every step from
+5.7.0 and says for each step which versions need it. Build messages that
+pointed a project to an old guide name that tag.
+
+### The kit's own pages follow the kit's rules
+
+The rules moved on for many releases and the pages that explain them stayed
+behind: the Engineering page did not mention the capability map, 10 of 28
+numbered figures were cited nowhere, and about 23 of 53 chapters held text
+boxes only. Each page was held against its rule sections chapter by chapter.
+
+| Page | Chapters | Numbered figures, before → after | Source words, before → after |
+|---|---|---|---|
+| Engineering | 12 | 4 → 12 | 7,113 → 6,369 |
+| Experiments | 10 | 4 → 10 | 3,978 → 4,759 |
+| Records and documents | 10 | 7 → 14, on the two pages together | 13,768 → 8,252, on the two pages together |
+| Writing pages | 7 | | |
+| Build a site | 10 | 4 → 11 | 5,311 → 7,714 |
+
+Source words count the figures' markup, which is why two pages grew while
+their prose shrank. Every numbered figure is now cited from the text, and
+every chapter of these pages has a figure or a lookup table.
+
+"Documentation and writing" answered two questions and is now two pages:
+[Records and documents](../documentation-practices/index.md), where a
+document lives and what a record says, and
+[Writing pages](../writing-practices/index.md), how a page presents its
+record. Nine chapters moved from `writing-practices.html` to
+`documentation-practices.html` and keep their ids: `homes`, `record-first`,
+`open-to-topic`, `topics`, `records-and-pages`, `page-and-record-in-step`,
+`changes-and-publishing`, `honest-claims` and `evidence`, with their figures.
+On Engineering, `#performance-claims` now lands in the performance chapter;
+on Experiments, `#routes` lands in the first chapter. The home page names
+four practice areas.
+
+Not verified: Firefox and Safari; a real phone; a printed page of the new
+pages; the Two chapters view of the reworked pages.
+
 ## 5.9.0 — the path of work, rules for decisions, a kit line on every site
 
 5.9.0 is a minor release under
 [what a version number promises](#what-a-version-number-promises): it adds
 rule text and one setting and changes how the shared theme looks. No rule
 anchor is removed or renamed, no lint message is added, and a project that
-passed before still passes. The [5.9.0 migration guide](migrations/5.9.0.md)
+passed before still passes. The [migration guide](migrations/5.10.0.md#add-the-router-row)
 holds its one step, a new row in the router.
 
 What a project meets after moving its pin:
@@ -210,7 +271,7 @@ page; a window up to about 350 px wide, where the fallback applies.
 5.8.0 is a minor release under
 [what a version number promises](#what-a-version-number-promises): it changes
 how the reader lays out a page and adds one lint warning, which fails
-`--strict`. The [5.9.0 migration guide](migrations/5.9.0.md#decide-about-the-text-before-each-first-chapter) gives the step
+`--strict`. The [5.9.0 migration guide](migrations/5.10.0.md#decide-about-the-text-before-each-first-chapter) gives the step
 for it.
 
 deivid asked why pages had an Introduction chapter at all: it gave him small

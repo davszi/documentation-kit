@@ -140,7 +140,7 @@ Each file has one job so that nobody has to guess where something goes, and an a
 <li>Publish existing Markdown in place: every tracked Markdown file under <code>docs/</code>, or under the folders <code>reference_roots</code> names, becomes a <a href="build-a-site.html#existing-markdown">source page</a> in the Reference section unless you exclude it; nothing moves.</li>
 <li>Keep historical public routes with the <a href="publication.html">publication exporter</a>.</li>
 <li>Replace a copied shared rule only once its project-specific parts have a linked home.</li>
-</ol><p><b>Stays as is:</b> your content, destinations and history; the <a href="migrate-5-9-0.html#prepare-the-upgrade">migration guide</a> shows the review steps.</p></div>
+</ol><p><b>Stays as is:</b> your content, destinations and history; the <a href="migrate-5-10-0.html#prepare-the-upgrade">migration guide</a> shows the review steps.</p></div>
 <div class="bs-part bs-orange" id="route-practices"><span class="bs-label">You want the rules, not a site</span><h3 id="route-practices-only">Practices only</h3><ol>
 <li>Add the submodule.</li>
 <li>Add router rows to <code>AGENTS.md</code>, as in <a href="index.html#how-it-works">read before acting</a>.</li>
