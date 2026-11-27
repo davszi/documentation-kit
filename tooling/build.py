@@ -286,7 +286,7 @@ def kit_line(site: dict) -> str:
     if shown is False:
         return ""
     version = (KIT_SITE.parent / "VERSION").read_text().strip()
-    return (f'<p class="kit-line"><a href="{KIT_SITE_URL}">Built with the documentation kit {html.escape(version)}</a>'
+    return (f'<p class="kit-line"><a href="{KIT_SITE_URL}">Built with the documentation kit {html.escape(version)}<span aria-hidden="true"> ↗</span></a>'
             '<span class="kit-built" data-kit-built hidden></span></p>\n')
 
 
@@ -953,8 +953,10 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
     if fname not in {n["file"] for n in nav_entries} and fname not in {f.route for f in tree} and fname != TREE_INDEX:
         err(f"{name}: {fname} missing from site.toml [[nav]] registry")
     crossnav_lines, last_group, section_close = [], None, '    </div>'
-    # `folded_groups`: a named group is a native disclosure, closed unless it
-    # holds the current page. It works without JavaScript and with the reader.
+    # Every group is a native disclosure, so a reader can close what they do
+    # not need; it works without JavaScript and with the reader. A group starts
+    # open. `folded_groups` names the groups that start closed unless they hold
+    # the current page.
     folded = set(site.get("folded_groups", []))
     current_group = next((n.get("group") for n in nav_entries
                           if n["file"] == fname and not n.get("hidden", False) and fname != "index.html"), None)
@@ -975,9 +977,9 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
                 crossnav_lines.append(f'    <summary class="nav-group" data-group="{html.escape(group)}">{html.escape(group)}</summary>')
                 section_close = '    </details>'
             elif group:
-                crossnav_lines.append(f'    <div class="nav-section" data-group="{html.escape(group)}">')
-                crossnav_lines.append(f'    <span class="nav-group" data-group="{html.escape(group)}">{html.escape(group)}</span>')
-                section_close = '    </div>'
+                crossnav_lines.append(f'    <details class="nav-section nav-section-fold" data-group="{html.escape(group)}" open data-nav-open>')
+                crossnav_lines.append(f'    <summary class="nav-group" data-group="{html.escape(group)}">{html.escape(group)}</summary>')
+                section_close = '    </details>'
             last_group = group
         attrs = ' class="xpage current" aria-current="page"' if current else ' class="xpage"'
         if group:

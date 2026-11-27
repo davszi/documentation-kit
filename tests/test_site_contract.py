@@ -198,7 +198,10 @@ class SiteContract(unittest.TestCase):
         text = site.read_text()
         self.assertEqual(self.build().returncode, 0)
         html = self.root / '.build/docs/html'
-        self.assertNotIn('nav-section-fold', (html / 'guide.html').read_text())
+        # Changed in 5.9.0: every group is a disclosure the reader can close; a group that is not
+        # named in folded_groups starts open.
+        self.assertIn('<details class="nav-section nav-section-fold" data-group="guide" open data-nav-open>',
+                      (html / 'guide.html').read_text())
         site.write_text(text.replace('[[nav]]', 'folded_groups = ["guide"]\n\n[[nav]]', 1))
         self.assertEqual(self.build().returncode, 0)
         opened = '<details class="nav-section nav-section-fold" data-group="guide" open data-nav-default>'
@@ -248,9 +251,11 @@ class SiteContract(unittest.TestCase):
         page = (self.root / '.build/docs/html/beta.html').read_text()
         # The navigation only: the Reference section after it has disclosures of its own.
         tree = page[page.index('<div class="toc"'):page.index('</nav>')].split('<div class="repo-tree"')[0]
-        self.assertEqual(tree.count('<details class="nav-section nav-section-fold"'), 2)
-        self.assertEqual(tree.count('</details>'), 2)
-        self.assertEqual(tree.count('<div class="nav-section"'), 1)
+        # Changed in 5.9.0: the third group, not folded, is a disclosure too and starts open.
+        self.assertEqual(tree.count('<details class="nav-section nav-section-fold"'), 3)
+        self.assertEqual(tree.count('</details>'), 3)
+        self.assertEqual(tree.count('<div class="nav-section"'), 0)
+        self.assertEqual(tree.count(' open data-nav-open>'), 1)
         self.assertEqual(tree.count(' open data-nav-default'), 1)
         self.assertIn('<details class="nav-section nav-section-fold" data-group="two" open data-nav-default>', tree)
         self.assertLess(tree.index('data-group="one"'), tree.index('</details>'))

@@ -5,6 +5,8 @@ title = "Documentation kit"
 gh_repo = "https://github.com/davszi/documentation-kit"
 gh_ref = "main"
 chapter_reader = true
+# Twelve release pages: the group starts closed unless it holds the current page.
+folded_groups = ["releases"]
 brand_mark = "docs/site/brand-mark.svg"
 # Lint notes for page numbers that no linked record states.
 page_number_notes = true

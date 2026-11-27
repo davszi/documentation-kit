@@ -145,8 +145,10 @@ keeps working without JavaScript. Groups a reader opens stay open on later
 pages through browser storage, and open or close with a short transition that
 respects reduced motion. The default is the flat site tree.
 
-`folded_groups = ["parked"]` folds the named navigation groups, one disclosure
-per group, and leaves the other groups as they are. The `[[nav]]` entries of a
+Every navigation group is a disclosure: its label opens and closes its pages,
+and the reader's choice is remembered. A group starts open.
+`folded_groups = ["parked"]` names the groups that start closed unless they
+hold the current page. The `[[nav]]` entries of a
 folded group stand together; the build rejects a folded group that other
 entries split. A folded group is closed
 unless it holds the current page. A group the reader opens stays open on later

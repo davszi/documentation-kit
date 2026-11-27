@@ -59,8 +59,24 @@
   var opened = [];
   try { opened = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) {}
   if (!Array.isArray(opened)) opened = [];
+  // A group that starts open remembers the opposite choice: that the reader
+  // closed it. The group of the current page opens all the same.
+  var closedKey = 'docsite-nav-closed:' + (document.body.getAttribute('data-site-home-label') || '');
+  var closed = [];
+  try { closed = JSON.parse(localStorage.getItem(closedKey) || '[]'); } catch (e) {}
+  if (!Array.isArray(closed)) closed = [];
   folds.forEach(function(fold){
     var group = fold.dataset.group;
+    if (fold.hasAttribute('data-nav-open')) {
+      if (closed.indexOf(group) >= 0 && !fold.querySelector('[aria-current="page"]')) fold.open = false;
+      fold.querySelector('summary').addEventListener('click', function(){
+        var willOpen = !fold.open;
+        closed = closed.filter(function(g){ return g !== group; });
+        if (!willOpen) closed.push(group);
+        try { localStorage.setItem(closedKey, JSON.stringify(closed)); } catch (e) {}
+      });
+      return;
+    }
     if (opened.indexOf(group) >= 0) fold.open = true;
     if (fold.hasAttribute('data-nav-default')) return;
     // Record on click, which runs before the queued toggle event and before navigation.

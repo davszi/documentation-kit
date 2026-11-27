@@ -41,6 +41,10 @@ What a project meets after moving its pin:
 - The build writes one more file, `html/build-info.js`. A project check
   that lists the files of the built site has to know it.
 - The reader shows a leading slide face alone in a chapter's first view.
+- Every group of the menu opens and closes at its label. In the markup a
+  group is a `details` element with a `summary`, where it was a `div` with
+  a `span`; the classes `nav-section` and `nav-group` stay. Project styles
+  or checks that name the elements have to follow.
 
 ### Discussion before the work
 
@@ -88,6 +92,17 @@ build writes it to `html/build-info.js` when it changes the site, the
 navigation script loads that file afresh on each visit, and `build --check`
 does not compare it. [Site authoring](../../../rules/site/authoring.md)
 names the setting.
+
+### A shorter sidebar foot and menu groups that close
+
+On a 1440 by 900 window the foot of the reader's sidebar took 224 px, so
+the page list kept 544 px. "Also show" now sets its options on one line and
+takes 83 px where it took 157 px; with the kit line at 47 px the page list
+keeps 642 px. Every menu group is a disclosure: its label opens and closes
+its pages, the choice is remembered, and the group of the current page
+opens all the same. A group starts open; `folded_groups` names the groups
+that start closed, where it used to name the only groups that could fold.
+The kit's own site folds its twelve release pages that way.
 
 ### The kit's own site
 

@@ -2,6 +2,29 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — Sidebar: a shorter foot, groups that close, a link that reads as one
+
+- The owner looked at the local build and said three things: the "Also
+  show" part of the sidebar is too long, the parts of the menu with several
+  pages should all be collapsible, and it is not clear that "those 2
+  labels" are clickable. He has not yet said which two labels he meant; the
+  kit line's link was restyled on my guess that he meant the two new lines.
+- Measured before, on Documentation and writing at 1440 by 900: "Also show"
+  157 px, its three options wrapping onto two lines; kit line 67 px; page
+  list 544 px. After: 83 px, 47 px and 642 px. The options keep their 44 px
+  targets.
+- A folding group existed already, for the groups `folded_groups` names.
+  Now every group is that disclosure and starts open; `folded_groups` names
+  those that start closed. A closed group is remembered under its own key.
+  The kit's site folds "releases".
+- Two expectations in `tests/test_site_contract.py` pinned the old markup,
+  a `div` for a group that is not folded. They now expect the disclosure;
+  the owner asked for every group to be collapsible.
+- Read-only search of the four projects' own styles and checks for the old
+  element names: no match.
+- Checked at 1600 and 390 px on the home page and a reader page: no
+  overflow, labels 11.5 px.
+
 ## 2026-11-27 — A kit line and the build time on every site; the release is 5.9.0
 
 - The owner asked for two things: every project site links the kit's site,

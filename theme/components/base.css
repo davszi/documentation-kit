@@ -526,10 +526,11 @@ body.reader-enabled .sidebar .toc .reader-chapter-list a.active::before{color:va
 .sidebar .brand-mark-glyph{font-size:21px;letter-spacing:0}
 .sidebar .brand-mark svg{width:18px;height:18px;filter:drop-shadow(0 0 6px rgba(var(--accent-rgb),.45))}
 body:not(.reader-enabled) .sidebar .brand small{padding-left:41px}
-/* The sidebar's last line: the kit this site is built with, and when it was last built. */
-.kit-line {margin:14px 0 0;padding:10px 12px 4px;border-top:1px solid var(--border);font:11.5px/1.5 "IBM Plex Mono",monospace;color:var(--muted);}
-.kit-line a {color:inherit;text-decoration:none;}
-.kit-line a:hover {color:var(--accent);text-decoration:underline;}
+/* The sidebar's last line: the kit this site is built with, as a link that
+   reads as one, and when the site was last built. */
+.kit-line {margin:10px 0 0;padding:8px 12px 2px;border-top:1px solid var(--border);font:11.5px/1.55 var(--sans);color:var(--muted);}
+.kit-line a {color:var(--accent);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--accent) 45%,transparent);text-underline-offset:3px;}
+.kit-line a:hover,.kit-line a:focus-visible {color:var(--bright);text-decoration-color:currentColor;}
 .kit-line .kit-built {display:block;}
 .kit-line .kit-built[hidden] {display:none;}
 @media print {.kit-line {display:none;}}
