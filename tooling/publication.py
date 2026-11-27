@@ -23,8 +23,10 @@ import tempfile
 import tomllib
 from collections.abc import Iterable, Mapping
 
-# The file `build.py` writes the time of a build to (its `BUILD_INFO`).
+# The file `build.py` writes the time of a build to (its `BUILD_INFO`), as an export names it:
+# from the built site's root, or from its `html` folder, which is what `publish` exports.
 BUILD_INFO = 'html/build-info.js'
+BUILD_INFO_NAMES = (BUILD_INFO, PurePosixPath(BUILD_INFO).name)
 from urllib.parse import unquote, urlsplit
 
 from chapter_layout import Structure
@@ -211,7 +213,7 @@ def export_pages(generated_root: Path, destination: Path, *, root: Path,
                 raise ValueError(f'Publication file/directory collision: {name}')
             parent = parent.parent
         # The build-time file differs on every build by design; it replaces its older copy without being named.
-        if target.exists() and (not target.is_file() or (name not in replace and name != BUILD_INFO and target.read_bytes() != data)):
+        if target.exists() and (not target.is_file() or (name not in replace and name not in BUILD_INFO_NAMES and target.read_bytes() != data)):
             raise ValueError(f'Publication would overwrite an existing output: {name}')
     for name, data in outputs.items():
         target = _contained(destination, name)

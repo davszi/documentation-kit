@@ -48,8 +48,10 @@
   sync();
 })();
 
-// nested_nav and folded_groups: groups the reader opens stay open across pages
-// (per viewer, best effort). Groups the server opened (the current page's, or
+// Every group is a disclosure. A group that starts closed (nested_nav, or one
+// named in folded_groups) stays open across pages once the reader opens it; a
+// group that starts open stays closed once the reader closes it (per viewer,
+// best effort). Groups the server opened (the current page's, or
 // with nested_nav the first on the home page) are not stored, so only the
 // reader's own choices persist.
 (function(){

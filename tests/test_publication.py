@@ -37,6 +37,21 @@ class PublicationTests(unittest.TestCase):
         options.update(kwargs)
         return export_pages(self.generated, self.destination, **options)
 
+    def test_the_build_time_file_replaces_its_older_copy_from_either_root(self):
+        # The file differs on every build, so a second export meets another copy. `publish` exports
+        # the `html` folder, where the file is `build-info.js`; an export of the whole site names it
+        # `html/build-info.js`. Any other file that differs still stops the export.
+        for name in ('build-info.js', 'html/build-info.js'):
+            with self.subTest(name=name):
+                self.put(self.generated, name, 'window.docsSiteBuilt = "2026-11-27T19:00Z";\n')
+                self.put(self.destination, name, 'window.docsSiteBuilt = "2026-11-20T08:00Z";\n')
+                self.export(pages=())
+                self.assertIn('2026-11-27', (self.destination / name).read_text())
+        self.put(self.generated, 'other/build-info.js', 'new')
+        self.put(self.destination, 'other/build-info.js', 'old')
+        with self.assertRaisesRegex(ValueError, 'would overwrite an existing output: other/build-info.js'):
+            self.export(pages=())
+
     def test_original_overlay_output_is_byte_exact(self):
         self.resource('docs/chart.svg', public=True)
         self.resource('evidence/report.html', public=True)

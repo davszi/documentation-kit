@@ -94,5 +94,19 @@ class KitLine(unittest.TestCase):
         self.assertNotIn("kit-line", project.html("guide"))
 
 
+    def test_only_a_real_repository_address_gets_a_link(self):
+        sys.path.insert(0, str(KIT / "tooling"))
+        import build
+        import publication
+        # One name for the build-time file in the build and in the export; one placeholder in the build and in `init`.
+        self.assertEqual(build.BUILD_INFO, publication.BUILD_INFO)
+        self.assertIn(f"default='{build.STARTER_REPOSITORY}'", (KIT / "docsite.py").read_text())
+        line = lambda repo: build.kit_line({"gh_repo": repo, "_kit_line": False})
+        self.assertIn("Source on GitHub", line("https://github.com/owner/project.git"))
+        self.assertIn("Source on gitlab.com", line("https://gitlab.com/owner/github.com-mirror"))
+        for placeholder in (build.STARTER_REPOSITORY, build.STARTER_REPOSITORY + "/", build.STARTER_REPOSITORY + ".git", "", "owner/project", "git@github.com:owner/project.git"):
+            self.assertEqual(line(placeholder), "", placeholder)
+
+
 if __name__ == "__main__":
     unittest.main()

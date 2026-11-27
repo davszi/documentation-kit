@@ -43,8 +43,9 @@ What a project meets after moving its pin:
 - The build writes one more file, `html/build-info.js`, which holds the day
   and hour of the last build and nothing else. A site therefore publishes
   two things it did not publish before: that it is built with the kit, with
-  the version, and when it was last built. On a locked site both stay
-  readable without a password. `kit_link = false` removes both. A project
+  the version, and when it was last built. On a locked site the sidebar is
+  sealed with its page, so only the build time, in `html/build-info.js`,
+  stays readable without a password. `kit_link = false` removes both. A project
   check that lists the files of the built site has to know the file.
 - The reader shows a leading slide face alone in a chapter's first view.
 - The starter router has one more row, for the discussion before the work.
@@ -114,8 +115,8 @@ address gets no link. The kit's home page links its repository as well.
 
 On a 1440 by 900 window the foot of the reader's sidebar took 224 px, so
 the page list kept 544 px. "Also show" now sets its options on one line and
-takes 83 px where it took 157 px; with the kit line at 47 px the page list
-keeps 642 px. Every menu group is a disclosure: its label opens and closes
+takes 91 px where it took 157 px, and the foot under it, the repository
+link and the kit line, takes 64 px. Every menu group is a disclosure: its label opens and closes
 its pages, the choice is remembered, and the group of the current page
 opens all the same. A group starts open; `folded_groups` names the groups
 that start closed, where it used to name the only groups that could fold.

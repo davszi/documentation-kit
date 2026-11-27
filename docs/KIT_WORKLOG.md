@@ -2,6 +2,34 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — Second review of 5.9.0: fit to tag after two corrections; both made
+
+- The full check script passed on `3c00ac2`: exit 0, 525 tests.
+- A second review read the four commits after the first one, in its own
+  worktree, and ran the unit tests, builds and an export. Verdict: fit to
+  tag after two corrections, no high finding.
+- Fixed, medium: the export let the build-time file replace its older copy
+  only when the whole built site was exported. `publish` exports the `html`
+  folder, where the file has no folder in its name. Both names are exempt
+  now, and a test covers both and a third file that must still stop.
+- Fixed, medium: the release note and the migration guide said the
+  sidebar's foot stays readable on a locked site. The lock seals the whole
+  page, sidebar included; only the build-time file stays readable. I had
+  told the owner the same wrong thing in chat.
+- Fixed, low: the host of a repository link was found by searching the
+  address for "github.com", so a GitLab address that holds those letters
+  read "Source on GitHub"; the starter's placeholder with a trailing slash
+  got a link. The address is parsed now. The reader check ran before the
+  kit-line setting was fixed. A comment in the navigation script was stale.
+- Fixed, low, measured in a browser at 1440 by 900: the lowest 8 px of the
+  "All" switch were taken by the option under it. The overlap is gone and
+  the panel is 91 px, not 83 px.
+- Not changed: a group that is not folded and split by other entries is
+  two disclosures with one remembered state; a `--page` build reports an
+  old build-time file as stray where a full build removes it; the
+  engineering page's table does not name the new router row.
+- Not reviewed: these corrections.
+
 ## 2026-11-27 — The owner's decisions on the open points; a migration guide for 5.9.0
 
 - The owner decided the points the review and I had left open:

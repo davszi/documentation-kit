@@ -37,6 +37,7 @@ import re
 import sys
 import subprocess
 import tomllib
+from urllib.parse import urlsplit
 from pathlib import Path
 
 try:
@@ -294,10 +295,11 @@ def kit_line(site: dict) -> str:
     with its pinned version and the place for the build time unless `kit_link` is false."""
     parts = []
     repo = site.get("gh_repo", "")
+    address = urlsplit(repo)
     # A real address only: the starter's placeholder would send readers to a repository that is not the project's.
-    if repo.startswith(("https://", "http://")) and repo != STARTER_REPOSITORY:
-        host = "GitHub" if "github.com" in repo else "the repository host"
-        parts.append(f'<a class="kit-source" href="{html.escape(repo, quote=True)}">Source on {host}<span aria-hidden="true"> ↗</span></a>')
+    if address.scheme in ("https", "http") and address.hostname and repo.rstrip("/").removesuffix(".git") != STARTER_REPOSITORY:
+        host = "GitHub" if address.hostname in ("github.com", "www.github.com") else address.hostname
+        parts.append(f'<a class="kit-source" href="{html.escape(repo, quote=True)}">Source on {html.escape(host)}<span aria-hidden="true"> ↗</span></a>')
     if site.get("_kit_line", True):
         version = (KIT_SITE.parent / "VERSION").read_text().strip()
         parts.append(f'<a href="{KIT_SITE_URL}">Built with the documentation kit {html.escape(version)}<span aria-hidden="true"> ↗</span></a>'
@@ -1305,6 +1307,7 @@ def main() -> int:
     for name in extra:
         if not component_script(name).is_file():
             ap.error(f"local component missing: {name}.js")
+    site["_kit_line"] = kit_line_shown(site)
     shell = (COMPONENTS / "shell.html").read_text()
     if args.check_reader:
         if not site.get("chapter_reader"):
@@ -1320,7 +1323,6 @@ def main() -> int:
     site["_edit_ref"] = site.get("gh_ref", "main")
     if os.environ.get("GITHUB_SHA"):
         site["gh_ref"] = os.environ["GITHUB_SHA"]
-    site["_kit_line"] = kit_line_shown(site)
     bundle = SiteBundle(site)
     origins: dict[str, str] = {}
     outputs: dict[str, bytes] = {"html/" + name: data for name, data in gather_assets(site, origins=origins).items()}
