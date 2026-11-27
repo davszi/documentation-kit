@@ -2,6 +2,25 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-27 — One helper for the projects that tests build
+
+- deivid chose maintenance debt as the next work. Measured on 5.8.0 first:
+  21 test files build a project with their own setup code, and
+  `tests/test_slide_faces.py` failed when run alone, with
+  `FileNotFoundError` for `examples/starter/.build/docs/html/guide.html`,
+  because it read a build that another step of the check script makes.
+- New `tests/starter_project.py`: a starter in a temporary Git repository,
+  with `write`, `configure`, `page`, `run`, `build` and `html`. Six setups
+  in `tests/test_lint.py` moved onto it: 524 lines to 426, 26
+  `subprocess.run` calls to 2, 32 tests before and after. The slide-face
+  test now builds its own starter and passes alone, 15 tests.
+- The moved tests still catch what they were written for. On the 5.7.0
+  code the three opening tests fail; on the 5.6.1 code the inlined-figure
+  id test fails. Both were run in throwaway worktrees.
+- Not done: the other 20 test files keep their own setup code. Tests only;
+  no rule, tool or theme file changed, so no release follows from this.
+- On branch `debt-test-projects`, not on `main`.
+
 ## 2026-11-27 — Release 5.8.0
 
 - deivid gave the go: "Yes, release 5.8.0". The ask named what the go
