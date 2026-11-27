@@ -31,7 +31,7 @@
   .wp-type > b { grid-row: auto; }
 }
 
-/* Figure 3: form chooser and the schematic of a value over its setting. */
+/* Figure 3: form chooser and an example plot of a value over its setting, with invented values. */
 .wp-forms { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; }
 .wp-chooser { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .wp-form { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 2px 12px; align-items: center; padding: 12px; border: 1px solid var(--border);
@@ -43,16 +43,21 @@
 .wp-form span { font-size: 13.5px; line-height: 1.4; color: var(--text); }
 .wp-form.wp-hot { border-color: rgba(var(--orange-rgb), .55); }
 .wp-form.wp-hot svg { stroke: var(--orange); } .wp-form.wp-hot svg circle { fill: var(--orange); }
-.wp-schematic { --tone: var(--orange); padding: 12px 14px; border: 1px dashed rgba(var(--orange-rgb), .5); border-radius: 10px; background: var(--panel); }
-.wp-schematic svg { display: block; width: 100%; max-width: 320px; height: auto; fill: none; stroke-linecap: round; }
-.wp-schematic .wp-axis { stroke: var(--muted); stroke-width: 1.5; }
-.wp-schematic .wp-line { stroke: var(--orange); stroke-width: 2.5; }
-.wp-schematic circle { fill: var(--orange); }
-.wp-schematic circle.wp-gap { fill: none; stroke: var(--muted); stroke-width: 2; stroke-dasharray: 4 3; }
-.wp-schematic .wp-dash { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.wp-numbers { --tone: var(--orange); padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--panel); }
+.wp-numbers svg { display: block; width: 100%; max-width: 360px; height: auto; fill: none; stroke-linecap: round; }
+.wp-numbers .wp-axis { stroke: var(--figure-line); stroke-width: 1.5; }
+.wp-numbers .wp-grid { stroke: var(--figure-line); stroke-width: 1; stroke-opacity: .45; }
+.wp-numbers .wp-line { stroke: var(--orange); stroke-width: 2.5; }
+.wp-numbers .wp-pt { fill: var(--orange); stroke: var(--panel); stroke-width: 1.5; }
+.wp-numbers .wp-gap { fill: rgba(var(--orange-rgb), .05); stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.wp-numbers text { stroke: none; }
+.wp-numbers .wp-tx { font: 16px var(--sans); fill: var(--figure-sub); }
+.wp-numbers .wp-tick { font: 16px var(--mono); fill: var(--figure-sub); }
+.wp-numbers .wp-val { font: 700 16px var(--mono); fill: var(--figure-ink); }
+.wp-numbers .wp-gaplabel { font: 700 16px var(--mono); fill: var(--figure-sub); }
 .wp-keys { margin: 8px 0 0; padding: 0; list-style: none; font-size: 13.5px; line-height: 1.5; color: var(--text); }
-.wp-keys b { display: inline-block; min-width: 22px; font: 700 12.5px var(--mono); color: var(--orange); }
-.wp-keys b.wp-gapkey { color: var(--muted); }
+.wp-keys b { display: inline-block; min-width: 22px; font: 700 12.5px var(--mono); color: var(--bright); }
+.wp-keys b.wp-gapkey { min-width: 0; width: 11px; height: 14px; margin: 0 11px 0 2px; vertical-align: -2px; border: 1.5px dashed var(--muted); border-radius: 3px; }
 @container (max-width: 760px) {
   .wp-forms { grid-template-columns: 1fr; }
 }

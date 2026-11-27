@@ -63,25 +63,32 @@
   .xp-wall { height: 8px; background: repeating-linear-gradient(90deg, var(--figure-line) 0 6px, transparent 6px 10px); }
 }
 
-/* Figure 4: two schematic plots, drawn without data. Each has a wide and a narrow
-   drawing; the plot's own width picks one, so its labels stay at 11 px or more. */
+/* Figure 4: two example plots with invented values. Each has a wide and a narrow
+   drawing; the plot's own width picks one, so its labels stay at 11 px or more.
+   Text takes text colours; filled marks are measured, dashed marks are not. */
 .xp-plots { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
 .xp-plot { container-type: inline-size; margin: 0; padding: 10px 12px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--figure-bg); }
 .xp-plot svg { display: block; width: 100%; height: auto; max-width: 480px; margin: 0 auto; }
 .xp-plot .xp-tag { margin-bottom: 4px; }
-.xp-plot .xax { stroke: var(--figure-line); stroke-width: 2; fill: none; }
+.xp-plot .xax { stroke: var(--figure-line); stroke-width: 1.5; fill: none; }
+.xp-plot .xgrid { stroke: var(--figure-line); stroke-width: 1; stroke-opacity: .45; fill: none; }
+.xp-plot .xlim { stroke: var(--figure-sub); stroke-width: 1.5; stroke-dasharray: 8 5; fill: none; }
+.xp-plot .xguide { stroke: var(--figure-dim); stroke-width: 1.2; stroke-dasharray: 3 3; fill: none; }
 .xp-plot .xt { font-family: var(--sans); font-size: 16px; fill: var(--figure-sub); }
 .xp-plot .xtb { font-family: var(--sans); font-size: 16px; font-weight: 700; fill: var(--figure-ink); }
-.xp-plot .xtm { font-family: var(--mono); font-size: 15px; fill: var(--figure-dim); }
-.xp-plot .xtn { font-family: var(--mono); font-size: 15px; font-weight: 700; fill: var(--red); }
-.xp-plot .xln { stroke: var(--accent); stroke-width: 3; fill: none; }
+.xp-plot .xtick { font-family: var(--mono); font-size: 15px; fill: var(--figure-sub); }
+.xp-plot .xval { font-family: var(--mono); font-size: 15px; font-weight: 700; fill: var(--figure-ink);
+  paint-order: stroke; stroke: var(--figure-bg); stroke-width: 5px; stroke-linejoin: round; }
+.xp-plot .xdiff { font-family: var(--mono); font-size: 15px; fill: var(--figure-sub); }
+.xp-plot .xtn { font-family: var(--mono); font-size: 15px; font-weight: 700; fill: var(--figure-sub); }
+.xp-plot .xln { stroke: var(--accent); stroke-width: 2.5; fill: none; }
 .xp-plot .xpt { fill: var(--accent); stroke: var(--figure-bg); stroke-width: 2; }
-.xp-plot .xopen { fill: none; stroke: var(--red); stroke-width: 2.5; stroke-dasharray: 5 4; }
-.xp-plot .xest { fill: none; stroke: var(--figure-sub); stroke-width: 2.5; stroke-dasharray: 7 5; }
-.xp-plot .xmeas { fill: var(--orange); fill-opacity: .85; }
-.xp-plot .xnext { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 7 5; }
+.xp-plot .xcol { fill: var(--red); fill-opacity: .06; stroke: var(--red); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.xp-plot .xest { fill: none; stroke: var(--figure-sub); stroke-width: 2; stroke-dasharray: 7 5; }
+.xp-plot .xmeas { fill: var(--accent); fill-opacity: .8; }
+.xp-plot .xnext { fill: var(--accent); fill-opacity: .08; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 7 5; }
 .xp-plot .xarr { stroke: var(--figure-dim); stroke-width: 2; fill: none; }
-.xp-plot .xstamp { font-family: var(--mono); font-size: 15px; letter-spacing: .04em; fill: var(--figure-dim); }
+.xp-plot .xstamp { font-family: var(--mono); font-size: 15px; fill: var(--figure-sub); }
 @container (max-width: 640px) { .xp-plots { grid-template-columns: minmax(0,1fr); } }
 .xp-plot svg.xp-narrow { display: none; max-width: 380px; }
 @container (max-width: 400px) {

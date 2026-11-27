@@ -100,66 +100,82 @@ An investigation set aside before its question is answered is [shelved](records.
 <figure id="fig-setting">
 <div class="xp-fig">
 <div class="xp-plots">
-<div class="xp-plot"><span class="xp-tag">Decide a setting</span>
-<svg class="xp-wide" viewBox="0 0 400 300" role="img" aria-label="Schematic plot without data. The vertical axis is minutes per run, the unit the question is asked in; the horizontal axis is the candidate value of the setting, c1 to c5. Four candidates are measured and joined by a line; their script and output are tracked. The fifth candidate is a dashed empty circle labelled not run.">
+<div class="xp-plot"><span class="xp-tag">Decide a setting · workers per run</span>
+<svg class="xp-wide" viewBox="0 0 400 300" role="img" aria-label="Example plot with invented values. The vertical axis is minutes per run, from 0 to 90, the unit the question is asked in; the horizontal axis is the number of workers per run: 1, 2, 4 and 8 measured, 16 not run. A dashed line marks a budget of 30 minutes per run. The measured runs take 80, 44, 26 and 21 minutes: the line flattens, so 8 workers save only 5 minutes over 4, and both stay within the budget. The column for 16 workers holds no point and is labelled not run.">
 <text class="xt" x="6" y="20">↑ minutes per run</text>
-<text class="xstamp" x="394" y="20" text-anchor="end">SCHEMATIC · NO DATA</text>
-<path class="xax" d="M62 34V240H394"/>
-<polyline class="xln" points="105,192 165,138 225,110 285,100"/>
-<circle class="xpt" cx="105" cy="192" r="7"/><circle class="xpt" cx="165" cy="138" r="7"/><circle class="xpt" cx="225" cy="110" r="7"/><circle class="xpt" cx="285" cy="100" r="7"/>
-<circle class="xopen" cx="350" cy="100" r="9"/>
-<text class="xtn" x="350" y="76" text-anchor="middle">not run</text>
-<text class="xtm" x="72" y="228">measured values go here · script tracked</text>
-<text class="xtm" x="105" y="263" text-anchor="middle">c1</text><text class="xtm" x="165" y="263" text-anchor="middle">c2</text><text class="xtm" x="225" y="263" text-anchor="middle">c3</text><text class="xtm" x="285" y="263" text-anchor="middle">c4</text><text class="xtm" x="350" y="263" text-anchor="middle">c5</text>
-<text class="xt" x="228" y="292" text-anchor="middle">candidate value of the setting →</text>
+<text class="xstamp" x="394" y="20" text-anchor="end">INVENTED VALUES</text>
+<path class="xgrid" d="M62 105H392M62 40H392"/>
+<path class="xax" d="M62 34V236H392"/>
+<path class="xlim" d="M62 171H392"/>
+<text class="xt" x="68" y="192">budget 30 min</text>
+<rect class="xcol" x="343" y="70" width="34" height="166" rx="5"/>
+<text class="xtn" x="360" y="60" text-anchor="middle">not run</text>
+<polyline class="xln" points="100,62 170,140 240,179 310,190"/>
+<circle class="xpt" cx="100" cy="62" r="6"/><circle class="xpt" cx="170" cy="140" r="6"/><circle class="xpt" cx="240" cy="179" r="6"/><circle class="xpt" cx="310" cy="190" r="6"/>
+<text class="xval" x="114" y="60">80</text><text class="xval" x="183" y="136">44</text><text class="xval" x="240" y="207" text-anchor="middle">26</text><text class="xval" x="310" y="217" text-anchor="middle">21</text>
+<text class="xtick" x="54" y="241" text-anchor="end">0</text><text class="xtick" x="54" y="176" text-anchor="end">30</text><text class="xtick" x="54" y="110" text-anchor="end">60</text><text class="xtick" x="54" y="45" text-anchor="end">90</text>
+<text class="xtick" x="100" y="260" text-anchor="middle">1</text><text class="xtick" x="170" y="260" text-anchor="middle">2</text><text class="xtick" x="240" y="260" text-anchor="middle">4</text><text class="xtick" x="310" y="260" text-anchor="middle">8</text><text class="xtick" x="360" y="260" text-anchor="middle">16</text>
+<text class="xt" x="228" y="292" text-anchor="middle">workers per run →</text>
 </svg>
-<svg class="xp-narrow" viewBox="0 0 300 264" role="img" aria-label="Schematic plot without data, narrow version. The vertical axis is minutes per run; the horizontal axis is the candidate value of the setting, c1 to c5. Four candidates are measured, tracked and joined by a line. The fifth is a dashed empty circle labelled not run.">
+<svg class="xp-narrow" viewBox="0 0 300 264" role="img" aria-label="Example plot with invented values, narrow version. Minutes per run over the number of workers: 80, 44, 26 and 21 minutes for 1, 2, 4 and 8 workers, against a dashed budget of 30 minutes; the line flattens. The column for 16 workers is labelled not run.">
 <text class="xt" x="4" y="18">↑ minutes per run</text>
-<text class="xstamp" x="296" y="40" text-anchor="end">SCHEMATIC · NO DATA</text>
-<path class="xax" d="M44 52V206H296"/>
-<polyline class="xln" points="78,170 128,126 178,104 228,96"/>
-<circle class="xpt" cx="78" cy="170" r="7"/><circle class="xpt" cx="128" cy="126" r="7"/><circle class="xpt" cx="178" cy="104" r="7"/><circle class="xpt" cx="228" cy="96" r="7"/>
-<circle class="xopen" cx="272" cy="96" r="8"/>
-<text class="xtn" x="264" y="76" text-anchor="middle">not run</text>
-<text class="xtm" x="96" y="196">measured · tracked</text>
-<text class="xtm" x="78" y="226" text-anchor="middle">c1</text><text class="xtm" x="128" y="226" text-anchor="middle">c2</text><text class="xtm" x="178" y="226" text-anchor="middle">c3</text><text class="xtm" x="228" y="226" text-anchor="middle">c4</text><text class="xtm" x="272" y="226" text-anchor="middle">c5</text>
-<text class="xt" x="170" y="254" text-anchor="middle">candidate value of the setting →</text>
+<text class="xstamp" x="296" y="18" text-anchor="end">INVENTED VALUES</text>
+<path class="xgrid" d="M44 100H292"/>
+<path class="xax" d="M44 50V200H292"/>
+<path class="xlim" d="M44 150H292"/>
+<text class="xt" x="48" y="172">budget 30 min</text>
+<rect class="xcol" x="256" y="62" width="28" height="138" rx="5"/>
+<text class="xtn" x="296" y="52" text-anchor="end">not run</text>
+<polyline class="xln" points="74,67 124,127 174,157 224,165"/>
+<circle class="xpt" cx="74" cy="67" r="5.5"/><circle class="xpt" cx="124" cy="127" r="5.5"/><circle class="xpt" cx="174" cy="157" r="5.5"/><circle class="xpt" cx="224" cy="165" r="5.5"/>
+<text class="xval" x="86" y="66">80</text><text class="xval" x="136" y="124">44</text><text class="xval" x="174" y="182" text-anchor="middle">26</text><text class="xval" x="224" y="189" text-anchor="middle">21</text>
+<text class="xtick" x="38" y="205" text-anchor="end">0</text><text class="xtick" x="38" y="155" text-anchor="end">30</text><text class="xtick" x="38" y="105" text-anchor="end">60</text><text class="xtick" x="38" y="55" text-anchor="end">90</text>
+<text class="xtick" x="74" y="222" text-anchor="middle">1</text><text class="xtick" x="124" y="222" text-anchor="middle">2</text><text class="xtick" x="174" y="222" text-anchor="middle">4</text><text class="xtick" x="224" y="222" text-anchor="middle">8</text><text class="xtick" x="270" y="222" text-anchor="middle">16</text>
+<text class="xt" x="168" y="254" text-anchor="middle">workers per run →</text>
 </svg></div>
-<div class="xp-plot"><span class="xp-tag">Size a later run</span>
-<svg class="xp-wide" viewBox="0 0 400 300" role="img" aria-label="Schematic bars without data. The vertical axis is minutes. For the earlier run, a dashed bar shows its estimate and a filled bar its measured cost, which is taller. An arrow leads to a dashed bar for the later run, sized from the measured cost. The report gives the measured cost against the estimate before the sizing.">
+<div class="xp-plot"><span class="xp-tag">Size a later run · twice the steps</span>
+<svg class="xp-wide" viewBox="0 0 400 300" role="img" aria-label="Example bars with invented values. The vertical axis is minutes, from 0 to 140, with gridlines every 40. Step 1, the earlier run: a dashed bar shows its estimate of 40 minutes and a filled bar its measured cost of 65 minutes, 25 minutes more. Step 2, the later run with twice the steps: a dashed bar sized from the measured cost, 2 × 65 = 130 minutes. The report gives the measured cost against the estimate before the sizing.">
 <text class="xt" x="6" y="20">↑ minutes</text>
-<text class="xstamp" x="394" y="20" text-anchor="end">SCHEMATIC · NO DATA</text>
-<path class="xax" d="M62 34V240H394"/>
-<text class="xtb" x="72" y="58">1 · measured vs estimate</text>
-<rect class="xest" x="78" y="150" width="54" height="90" rx="3"/>
-<rect class="xmeas" x="163" y="96" width="54" height="144" rx="3"/>
-<path class="xarr" d="M230 150H270M262 143l8 7-8 7"/>
-<text class="xtb" x="296" y="58">2 · sizing</text>
-<rect class="xnext" x="300" y="82" width="54" height="158" rx="3"/>
-<text class="xtm" x="105" y="263" text-anchor="middle">estimate</text><text class="xtm" x="190" y="263" text-anchor="middle">measured</text><text class="xtm" x="327" y="263" text-anchor="middle">sized</text>
-<text class="xt" x="148" y="292" text-anchor="middle">earlier run</text><text class="xt" x="327" y="292" text-anchor="middle">later run</text>
+<text class="xstamp" x="394" y="20" text-anchor="end">INVENTED VALUES</text>
+<path class="xgrid" d="M62 180H392M62 124H392M62 68H392"/>
+<path class="xax" d="M62 34V236H392"/>
+<rect class="xest" x="72" y="180" width="48" height="56" rx="3"/>
+<rect class="xmeas" x="162" y="145" width="48" height="91" rx="3"/>
+<path class="xguide" d="M120 180H162"/>
+<text class="xval" x="96" y="172" text-anchor="middle">40</text><text class="xval" x="186" y="137" text-anchor="middle">65</text>
+<text class="xdiff" x="141" y="168" text-anchor="middle">+25</text>
+<path class="xarr" d="M222 145H286M278 138l8 7-8 7"/>
+<rect class="xnext" x="300" y="54" width="60" height="182" rx="3"/>
+<text class="xval" x="330" y="46" text-anchor="middle">2 × 65 = 130</text>
+<text class="xtick" x="54" y="241" text-anchor="end">0</text><text class="xtick" x="54" y="185" text-anchor="end">40</text><text class="xtick" x="54" y="129" text-anchor="end">80</text><text class="xtick" x="54" y="73" text-anchor="end">120</text>
+<text class="xtick" x="96" y="260" text-anchor="middle">estimate</text><text class="xtick" x="186" y="260" text-anchor="middle">measured</text><text class="xtick" x="330" y="260" text-anchor="middle">sized</text>
+<text class="xtb" x="141" y="292" text-anchor="middle">1 · earlier run</text><text class="xtb" x="330" y="292" text-anchor="middle">2 · later run</text>
 </svg>
-<svg class="xp-narrow" viewBox="0 0 300 264" role="img" aria-label="Schematic bars without data, narrow version. For the earlier run, a dashed bar shows its estimate and a taller filled bar its measured cost. An arrow leads to a dashed bar for the later run, sized from the measured cost.">
+<svg class="xp-narrow" viewBox="0 0 300 264" role="img" aria-label="Example bars with invented values, narrow version. Step 1, the earlier run: estimate 40 minutes, dashed, and measured cost 65 minutes, filled, 25 more. Step 2, the later run with twice the steps: a dashed bar sized from the measured cost, 2 × 65 = 130 minutes.">
 <text class="xt" x="4" y="18">↑ minutes</text>
-<text class="xstamp" x="296" y="40" text-anchor="end">SCHEMATIC · NO DATA</text>
-<path class="xax" d="M44 52V206H296"/>
-<text class="xtb" x="52" y="70">1 · measured vs estimate</text>
-<text class="xtb" x="296" y="92" text-anchor="end">2 · sizing</text>
-<rect class="xest" x="48" y="140" width="40" height="66" rx="3"/>
-<rect class="xmeas" x="138" y="110" width="40" height="96" rx="3"/>
-<path class="xarr" d="M186 156H216M209 150l7 6-7 6"/>
-<rect class="xnext" x="232" y="102" width="40" height="104" rx="3"/>
-<text class="xtm" x="68" y="226" text-anchor="middle">estimate</text><text class="xtm" x="158" y="226" text-anchor="middle">measured</text><text class="xtm" x="252" y="226" text-anchor="middle">sized</text>
-<text class="xt" x="113" y="254" text-anchor="middle">earlier run</text><text class="xt" x="252" y="254" text-anchor="middle">later run</text>
+<text class="xstamp" x="296" y="18" text-anchor="end">INVENTED VALUES</text>
+<path class="xgrid" d="M44 157H292M44 114H292M44 71H292"/>
+<path class="xax" d="M44 50V200H292"/>
+<rect class="xest" x="57" y="157" width="34" height="43" rx="3"/>
+<rect class="xmeas" x="135" y="130" width="34" height="70" rx="3"/>
+<path class="xguide" d="M91 157H135"/>
+<text class="xval" x="74" y="150" text-anchor="middle">40</text><text class="xval" x="152" y="123" text-anchor="middle">65</text>
+<text class="xdiff" x="113" y="148" text-anchor="middle">+25</text>
+<path class="xarr" d="M176 130H218M211 124l7 6-7 6"/>
+<rect class="xnext" x="228" y="61" width="48" height="139" rx="3"/>
+<text class="xval" x="296" y="52" text-anchor="end">2 × 65 = 130</text>
+<text class="xtick" x="38" y="205" text-anchor="end">0</text><text class="xtick" x="38" y="162" text-anchor="end">40</text><text class="xtick" x="38" y="119" text-anchor="end">80</text><text class="xtick" x="38" y="76" text-anchor="end">120</text>
+<text class="xtick" x="74" y="224" text-anchor="middle">estimate</text><text class="xtick" x="152" y="224" text-anchor="middle">measured</text><text class="xtick" x="252" y="224" text-anchor="middle">sized</text>
+<text class="xtb" x="113" y="255" text-anchor="middle">1 · earlier run</text><text class="xtb" x="296" y="255" text-anchor="end">2 · later run</text>
 </svg></div>
 </div>
 </div>
-<figcaption><b>Figure 4.</b> Where a measured number goes before the person decides. Schematic: the shapes are invented to show placement and hold no data; the plots are drawn in the page source.</figcaption>
+<figcaption><b>Figure 4.</b> A measured number where the person decides, drawn with example values, invented for this page. Left: minutes per run over the number of workers, against the budget; the largest candidate was not run and holds no point. Right: an earlier run's estimate beside its measured cost, then a later run of twice the steps sized from the measured cost. Filled marks are measured; dashed marks are estimates, sizings and runs not made. The plots are drawn in the page source.</figcaption>
 </figure>
 
-In the left panel of [Figure 4](#fig-setting), the cost of a run is plotted over the candidate values, because a cost that depends on a setting tells little at one setting alone. The axis keeps the unit the question is asked in, and a candidate that was not measured stands in its place as *not run* ([page design](page-design.html#page-design)). The number meets the [measurement rules](records.html#numbers-and-staleness) before the question reaches the person: its script and its output are tracked, so the person can check what the choice rests on.
+In the left panel of [Figure 4](#fig-setting), the minutes per run are plotted over the number of workers, because a cost that depends on a setting tells little at one setting alone. Read from the first run alone, more workers would seem to cut the time in proportion; the measured line flattens instead, and the person sees that the most workers measured save little over half as many, while both stay within the budget. The axis keeps the unit the question is asked in, and the candidate that was not measured stands in its place as *not run* ([page design](page-design.html#page-design)). The number meets the [measurement rules](records.html#numbers-and-staleness) before the question reaches the person: its script and its output are tracked, so the person can check what the choice rests on.
 
-In the right panel a later run is sized from an earlier one. The report first gives the earlier run's measured cost against its estimate, then the sizing, so the person sees how far the last estimate held before trusting the next. See [start from evidence](experiment-workflow.html#start-from-evidence-and-bound-the-question).
+In the right panel a later run is sized from an earlier one. The report first gives the earlier run's measured cost against its estimate, then the sizing, so the person sees how far the last estimate held before trusting the next. Here the earlier run took well over its estimate, so the later run is sized from the measured cost; sized from the estimate, it would fall short by the same proportion. See [start from evidence](experiment-workflow.html#start-from-evidence-and-bound-the-question).
 
 </section>
 
