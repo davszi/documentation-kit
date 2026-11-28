@@ -2,6 +2,42 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-28 — A step in the One chapter view only slides; what the lag search found
+
+- The owner reported that adaptation's site feels laggy when he scrolls
+  inside a chapter and when he goes from one chapter to the next, and
+  proposed: "we could stop the shrink aswell, keeping them full height just
+  moving left and right".
+- Steps, measured in headless Firefox and Chromium at 1920 by 1080 on
+  adaptation's pages "Cursor study v2" and "Cursor study history", four steps
+  each, frames over 33 ms of about 150 to 210: as built 14 to 17 in Firefox
+  and 4 to 8 in Chromium; with every transition off 0 to 3 and 0; on the
+  kit's page "Writing pages" 0. Taken out one at a time, none of these
+  changed it: blur and filters, shadows, the fade under the stepper,
+  adaptation's `figure-legibility.js`, `slide-face.js`, the size change
+  alone, the fade alone, a layer of their own for the chapters. Size and
+  fade off together: 6 to 11 in Firefox.
+- `theme/components/chapter-reader.css` therefore draws the neighbours at
+  full size and full brightness; a step only slides the row.
+  [Chapter reader](../rules/site/reader.md) and the release notes of 6.1.0
+  say so. Looked at on "Writing pages" at 1600 and 390 px: the neighbours'
+  strips show at the edges, no sideways overflow.
+- The click zones over the neighbours' strips took 90% of the height, for
+  the smaller neighbours. The own-site review failed on that, 44 px off at
+  the top and the bottom; the zones now take the full height.
+- Scrolling inside a chapter: no finding. Every variant showed the same
+  frame times; a browser scrolls outside the part this method times.
+- Not kept: a change that leaves chapters far from the shown ones out of
+  layout. It cut the switch to two chapters from 300 to 533 ms for the worst
+  frame to 133 ms, with the processor slowed four times and without
+  adaptation's own script, and gave nothing for steps. The owner had not
+  switched views when he felt the lag. It is in a stash of this checkout
+  and passed the full check script.
+- Limits: headless browsers draw on the processor; no real graphics card,
+  no real Firefox on Windows, where the owner reads the site. He cannot try
+  a local copy over his remote desktop, so the published site is the test.
+- The full check script has not run on this commit.
+
 ## 2026-11-28 — Review of the Open work change before 6.1.0: nothing blocks, its points taken
 
 - A reviewer, a separate agent, read `1274aa6` against `v6.0.0` on six

@@ -73,6 +73,24 @@ Checked by the page lock's unit tests, the WebCrypto cross-check and the
 browser suite in Chromium. Firefox and WebKit were not run for this change.
 The [migration guide](migration.md#new-in-610) lists what a project meets.
 
+### A step to the next chapter only slides
+
+In the One chapter view the neighbouring chapters showed at the edges at 90%
+of their size and dimmer, and a step animated three things at once: the row
+slid, the two chapters changed size, and both faded. On a page whose chapters
+hold large drawings the browser redrew both chapters on every frame of that.
+Measured in headless Firefox on two such pages of a consuming project, four
+steps: 14 to 17 of about 150 frames took more than 33 ms, the worst 66 to
+117 ms; on a page of the kit's own site, none. With the neighbours at full
+size and full brightness, 6 to 11 frames, the worst 34 to 50 ms. Size alone
+or fade alone gave no gain. A headless browser draws on the processor, so
+these numbers compare the variants and are no measure of a reader's machine.
+
+The neighbours now stand at full size and full brightness, and a step only
+slides the row. The shown chapter keeps its border colour. A reader whose
+system asks for reduced motion gets no slide, as before.
+[Chapter reader](../../../rules/site/reader.md) says so.
+
 ### Every project offers the owner's global agent instructions
 
 A project made from the starter tells its agents to offer the person, once

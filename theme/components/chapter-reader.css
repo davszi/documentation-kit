@@ -514,14 +514,15 @@ body.reader-enabled.reader-nav-docked {--reader-header:0px;}
   .reader-enabled .content[data-topic-layout="deck"][data-topic-view="single"] :is(.chapter-body,.slide-chapter).has-slide-face .chapter-headline.slide-bridge-title {font-size:clamp(32px,3.6vw,50px)!important;line-height:1.08!important;letter-spacing:-.012em!important;}
   .reader-enabled .content[data-topic-layout="deck"][data-topic-view="single"] :is(.chapter-body,.slide-chapter).has-slide-face .chapter-headline.slide-bridge-title {margin:28px 0 16px!important;}
 
-  /* The neighbours still peek, drawn at 90% and dimmer; each click zone is
-     fitted by the script to the strip of its neighbour that shows. */
-  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-strip > .topic-card {transition:transform .3s ease,opacity .3s ease,border-color .35s;}
-  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-strip > .topic-card:not(.topic-active) {transform:scale(.9);opacity:.55;}
-  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-strip > .topic-active ~ .topic-card {transform-origin:left center;}
-  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-strip > .topic-card:has(~ .topic-active) {transform-origin:right center;}
+  /* The neighbours still peek, at full size and full brightness: a step only
+     slides the row. Drawn at 90% and dimmer, both chapters were redrawn with
+     all their drawings on every frame of the step. The shown chapter keeps its
+     border colour; each click zone is fitted by the script to the strip of
+     its neighbour that shows. */
+  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-strip > .topic-card {transition:border-color .35s;}
+  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-strip > .topic-card:not(.topic-active) {opacity:1;}
   .content[data-topic-layout="deck"][data-topic-view="single"] .topic-strip > .topic-preview-hover {opacity:.95;}
-  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-peek:not([hidden]) {top:5%;bottom:auto;height:90%;display:grid;place-items:center;}
+  .content[data-topic-layout="deck"][data-topic-view="single"] .topic-peek:not([hidden]) {display:grid;place-items:center;}
   .topic-peek::after {content:'\203A';font-size:26px;line-height:1;color:var(--text);opacity:.4;transition:opacity .15s,transform .15s;}
   .topic-peek-prev::after {content:'\2039';}
   .topic-peek:is(:hover,:focus-visible)::after {opacity:1;}
