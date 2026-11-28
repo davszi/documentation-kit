@@ -112,8 +112,11 @@ as **Optional: the owner's global agent instructions** in
 hold it or decline it.
 ```
 
-Neither the build nor lint checks the line: until it is changed, both pass,
-and an agent that follows the offer finds no file at the old path. A person
+Neither the build nor lint checks this line, because it names the path in
+code and not as a link: until it is changed, both pass, and an agent that
+follows the offer finds no file at the old path. A file of the project that
+links the old path does fail lint with a dead-link error; give such a link
+the new path. A person
 who already added the copy to their global agent file, or replaced theirs
 with it, needs to do nothing for the move. A person who wants the copy now
 runs the commands of [the README](../../../README.md#optional-the-owners-global-agent-instructions),

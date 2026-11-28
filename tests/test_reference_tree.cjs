@@ -148,7 +148,9 @@ async function treeFacts(page, current) {
       // Without JavaScript the disclosure links the index page, which holds the whole tree.
       // The narrow menu itself needs JavaScript, so this runs at the wide width.
       if (narrow) continue;
-      const plain = await browser.newContext({viewport, javaScriptEnabled: false});
+      // Without motion, as in the contexts above: the disclosure otherwise opens over 0.18 s, and a
+      // click that scrolls the link into view during the opening can land on the summary.
+      const plain = await browser.newContext({viewport, javaScriptEnabled: false, reducedMotion: 'reduce'});
       const still = await plain.newPage();
       still.setDefaultTimeout(10000);
       await still.goto(url('guide.html'));

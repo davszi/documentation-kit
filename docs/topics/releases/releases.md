@@ -33,18 +33,28 @@ shows the new warnings.
 ## 6.0.0 — the owner's global agent instructions move beside their own page
 
 6.0.0 is a major release under
-[what a version number promises](#what-a-version-number-promises): it
-renames a path that projects rely on. The kit's copy of its owner's global
+[what a version number promises](#what-a-version-number-promises): it can
+stop a project that passed before. The kit's copy of its owner's global
 agent instructions moved from `examples/global-agent-context.md` to
 `docs/topics/global-agent-instructions/global-agent-instructions.md`, and
-nothing is left at the old path. Every router written from the starter names
-that file in its section "Offer the kit owner's global instructions", so the
-line points at nothing until the project changes it. The
-[migration guide](migration.md) has the old and the new text of that line.
+nothing is left at the old path. A project whose files link the old path
+gets a dead-link error from lint after it moves its pin. The path was not
+among the stable interfaces; the release is major because of that error,
+and because every router written from the starter names the file.
 
-No lint error, warning or build failure is added: a project that has not yet
-changed the line still builds and passes strict lint. Only its agent's
-optional offer points at a file that is not there.
+Two cases, both run on this release:
+
+- The starter's router names the file in its section "Offer the kit owner's
+  global instructions" as a path in code, not as a link. Such a project
+  still builds and passes strict lint before it changes the line. Only its
+  agent's optional offer points at a file that is not there.
+- A file that links the old path, such as
+  `[the copy](.docs-kit/examples/global-agent-context.md)`, fails lint with
+  `dead link .docs-kit/examples/global-agent-context.md` until the link
+  names the new path.
+
+The [migration guide](migration.md) has the old and the new text of the
+router's line.
 
 What a project meets after moving its pin:
 
@@ -75,9 +85,10 @@ to the new page. A consuming project's site is not changed.
 Corrected: since 5.9.0, `captureElement` with `unclip: true` timed out on a
 chapter that opens with a slide face. The reader measured the room around
 the face from the height of the chapter's window; with the height limit
-removed, the page grew on every frame. The reader now fits a face only
-while its chapter scrolls. A project's own browser check that captures
-whole chapters passes again; nothing needs changing in the project.
+removed, the page grew on every frame. The reader now gives a face no room
+when the chapter body's height follows its content. The capture finishes
+whether it aims at the face, at the chapter body or at the whole chapter;
+nothing needs changing in the project.
 
 ## 5.10.0 — the kit's pages brought up to its rules, one migration guide, a button that copies a record
 

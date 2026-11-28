@@ -2,6 +2,70 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-28 — Review before 6.0.0: the capture fix completed, the page and the notes corrected
+
+- The owner saw the new page in the local build and gave the word for the
+  release: "looks good, we should put out the new release and update tempo
+  to it". The push without a tag that the entry below announces did not
+  happen; the release replaces it.
+- An independent reviewer read the changes since `v5.10.0` at `b0b06d2`.
+  Verdict: not fit to tag. One finding blocked, the others asked for
+  corrections.
+- Blocking finding: the reader fix was incomplete. It looked at the chapter
+  body's `overflow-y`. A capture that aims at the whole chapter removes the
+  height limits of the chapter and of what is around it, not of the body
+  inside; the body keeps `overflow: auto` and still loses its window. The
+  reviewer measured at `b0b06d2`, 1600 by 900 px: 7,206, then 13,099, then
+  18,986 px, and the capture timed out. The release note claimed that
+  whole-chapter captures pass.
+- The fix now rests on a measurement, not on a style: after the room is
+  set, a body whose height changed with it has no window and gets no room.
+  Measured after the change on the kit's own Build a site page, captures
+  aimed at the face, at the body and at the whole chapter: 2,291, 2,292 and
+  2,292 px at 1600 by 900 px and 3,183 px each at 390 by 844 px, three equal
+  readings each, every capture finished, no page error. The own-site review
+  now runs all three targets.
+- Corrections to the page "Global agent instructions": figures are numbered
+  in reading order, so the compacting figure is Figure 3 and the three ways
+  Figure 4; the two quotes in Figure 1 are whole sentences; the preprint is
+  cited as the abstract states it, for models that use the interface
+  effectively, and as run in NVIDIA's agent harness, since the abstract
+  names no employer of the authors; statements about a harness name Claude
+  Code and say that the agent of the owner's session found no way to compact
+  by itself; Figure 3 no longer puts a wrong fact in the harness's lane,
+  because a summary made on request is the same kind of summary and the two
+  lanes differ in timing.
+- Correction of a statement in the entry on the chapter, below: "an agent
+  cannot wait on a clock" is too general. A harness may offer a timed
+  wake-up; the instruction does not use one, so after its ask the agent
+  stays stopped until the person writes.
+- Correction of a count in the entry on the page, below: 552 tests ran, 550
+  passed and 2 were skipped.
+- Correction to the entry on the capture fix, below: on the unfixed reader
+  the new test fails when the capture times out, before it reads the
+  heights.
+- The 6.0.0 note argued "major" from a renamed path that projects rely on.
+  That path was not among the stable interfaces. The promise supports major
+  another way: a project file that links the old path gets a dead-link lint
+  error after the pin moves. The reviewer ran both cases: a router with the
+  starter's line, which names the path in code, builds and passes strict
+  lint; a router that links the old path fails lint. The note and the
+  migration step now state both.
+- The intermittent failure of `tests/test_reference_tree.cjs` at its click
+  without JavaScript, twice in three full runs on this day and once before
+  the reader fix: that browser context was the only one with motion on, so
+  the disclosure opened over 0.18 s. The reviewer saw the link stand over
+  the summary while it opened, and could not explain why the click did not
+  recover within 10 s; 0 failures in 54 runs of his own. The context now
+  has motion off like the others. If it fails again, the cause is still
+  open.
+- Left as they are: three lead paragraphs of the new page have two
+  sentences, as other pages of the kit do; violet means a different thing
+  in Figures 1, 3 and 4, which the open point on a colour table for the
+  kit's figures covers.
+- Not checked: Firefox, Safari and a real phone; the fix on a consuming
+  project's own check before the release.
+
 ## 2026-11-28 — A capture of a whole face chapter no longer grows the page; site pushed without a tag
 
 - A project that moved to 5.10.0 reported that its hand-run browser check

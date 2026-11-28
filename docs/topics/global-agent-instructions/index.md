@@ -25,7 +25,7 @@ toc = [["Two layers", "#two-layers"], ["What it holds", "#what-it-holds"], ["One
 <div class="ga-file"><code>~/.codex/AGENTS.md</code><span>read by Codex</span></div>
 <div class="ga-file"><code>~/.claude/CLAUDE.md</code><span>read by Claude Code</span></div>
 </div></div>
-<blockquote class="ga-quote"><p>Commit autonomously at coherent deliverable boundaries unless I have asked to hold commits</p><cite>the owner's global file · Commit preferences</cite></blockquote>
+<blockquote class="ga-quote"><p>Commit autonomously at coherent deliverable boundaries unless I have asked to hold commits or the repository's workflow requires otherwise.</p><cite>the owner's global file · Commit preferences</cite></blockquote>
 </div>
 </div>
 <div class="ga-rail" aria-hidden="true"><span><b>read here</b></span><span><b>and here</b></span></div>
@@ -37,7 +37,7 @@ toc = [["Two layers", "#two-layers"], ["What it holds", "#what-it-holds"], ["One
 <li><code>.docs-kit/rules/</code><span>the kit's rules, at the project's pin</span></li>
 </ul>
 <div class="ga-route"><p><b>Before</b>Staging, committing or rewriting Git history</p><p><b>Read</b><code>.docs-kit/<wbr>rules/<wbr>engineering/<wbr>git.md</code></p></div>
-<blockquote class="ga-quote"><p>Use a short imperative subject and an explanatory body</p><cite>kit rule · git.md, Commit messages</cite></blockquote>
+<blockquote class="ga-quote"><p>Use a short imperative subject and an explanatory body, separated by a blank line.</p><cite>kit rule · git.md, Commit messages</cite></blockquote>
 </div>
 <div class="ga-band ga-project-tone ga-other">
 <div class="ga-band-head"><span class="ga-tag">Project layer · <code>thesis/</code></span><span class="ga-scope">read only here</span></div>
@@ -52,7 +52,7 @@ toc = [["Two layers", "#two-layers"], ["What it holds", "#what-it-holds"], ["One
 <div class="ga-session">
 <span class="ga-k">One commit in vehicle-sim/, as the agent holds it</span>
 <ol>
-<li class="ga-person-tone"><b>When to commit</b><span>at the end of a finished deliverable, unless you asked it to hold</span><i>from your global file</i></li>
+<li class="ga-person-tone"><b>When to commit</b><span>at the end of a finished deliverable, unless you asked it to hold or the project's workflow says otherwise</span><i>from your global file</i></li>
 <li class="ga-project-tone"><b>How the message reads</b><span>a short imperative subject and a body that explains</span><i>from the project's kit rule</i></li>
 </ol>
 </div>
@@ -92,7 +92,7 @@ A project rule cannot carry that layer. Every contributor reads the project's ru
 
 [Figure 2](#fig-sections) sorts the file by what each part does for you. The quoted lines show its voice: short instructions in the first person, written by one person to the agents that work for him.
 
-**Gates** come first in the file. [Gates](global-agent-instructions-text.html#gates) are checks at fixed moments: before calling visual work done, the agent opens the page at a narrow and a wide width and sends the capture it checked; before a push, it runs the repository's full checks on the final commit; before a deletion, it lists the exact paths and checks what Git or a record keeps; before saying that something already exists, it quotes it with its location.
+**Gates** stand at the top, after the file's scope. [Gates](global-agent-instructions-text.html#gates) are checks at fixed moments: before calling visual work done, the agent opens the page at a narrow and a wide width and sends the capture it checked; before a push, it runs the repository's full checks on the final commit; before a deletion, it lists the exact paths and checks what Git or a record keeps; before saying that something already exists, it quotes it with its location.
 
 **Decisions with you** cover how a question reaches you. [Decisions with me](global-agent-instructions-text.html#decisions-with-me) asks the agent to explain before asking, to put one decision in each question with the options, the measured cost of each and its recommendation, and to report the whole state rather than the change since the last message. [Interaction preferences](global-agent-instructions-text.html#interaction-preferences) says what is not approval, and that a request to "propose" or "draft" stops before anything is applied.
 
@@ -115,7 +115,7 @@ A project rule cannot carry that layer. Every contributor reads the project's ru
 <p class="bs-lead">The copy's newest section shows how a line gets into the file: a problem seen in a real session, evidence read together with its limits, and wording that says exactly when the agent acts and what it writes.</p>
 
 <figure id="fig-compact">
-<div class="ga-time" role="img" aria-label="Two lanes show how full a session's context is over time, while a finished task and then a new task run. Illustrative values, not a measurement. In the first lane the harness decides: the context fills during the new task, the window is full in the middle of it, and the harness compacts there; the detail the new task had in flight is lost and the summary may carry a wrong fact. In the second lane the agent asks: one task is finished, a new task arrives, the agent ends its message with Compact before I start? and the ready /compact command; the person compacts and writes go, and the new task starts on a packed summary of the finished work and runs without reaching the full window.">
+<div class="ga-time" role="img" aria-label="Two lanes show how full a session's context is over time, while a finished task and then a new task run. Illustrative values, not a measurement. In the first lane the harness decides: the context fills during the new task, the window is full in the middle of it, and the harness compacts there; the detail the new task had in flight is lost. In the second lane the agent asks: one task is finished, a new task arrives, the agent ends its message with Compact before I start? and the ready /compact command; the person compacts and writes go, and the new task starts on a packed summary of the finished work and runs without reaching the full window.">
 <div class="ga-lane is-harness"><span class="ga-tag">Today · the harness decides</span><h3>Compacted when the window is full</h3>
 <div class="ga-plot"><div class="ga-axis" aria-hidden="true"><span>full</span><span>half</span><span>empty</span></div><div class="ga-cols">
 <div class="ga-track is-a" style="grid-column:1"><i style="--h:8%"></i></div>
@@ -134,7 +134,7 @@ A project rule cannot carry that layer. Every contributor reads the project's ru
 <span class="ga-seg" style="grid-column:1 / 6">finished task</span>
 <span class="ga-seg is-b" style="grid-column:6 / 13">new task</span>
 <p class="ga-event" style="grid-column:8 / 13"><b>Window full</b>The harness compacts in the middle of the new task.</p>
-</div></div><p class="ga-result"><b>Lost:</b> the detail the new task had in flight; the summary may carry a wrong fact.</p></div>
+</div></div><p class="ga-result"><b>Lost:</b> the detail the new task had in flight.</p></div>
 <div class="ga-lane is-ask"><span class="ga-tag">The instruction · the agent asks</span><h3>Compacted before the new task starts</h3>
 <div class="ga-plot"><div class="ga-axis" aria-hidden="true"><span>full</span><span>half</span><span>empty</span></div><div class="ga-cols">
 <div class="ga-track is-a" style="grid-column:1"><i style="--h:8%"></i></div>
@@ -156,18 +156,18 @@ A project rule cannot carry that layer. Every contributor reads the project's ru
 </div></div><p class="ga-result"><b>Kept:</b> the new task starts on a packed summary of finished work and runs without a cut.</p></div>
 <div class="ga-legend" aria-hidden="true"><span class="is-a">finished task in the context</span><span class="is-b">new task in the context</span><span class="is-sum">packed summary</span><span class="is-cut">compaction</span><span class="is-full">window full</span></div>
 </div>
-<figcaption><b>Figure 4.</b> A session's context over time under the two ways of compacting. The heights are an illustration, not a measurement: they show where a compaction falls, not how often. The two tasks are invented examples.</figcaption>
+<figcaption><b>Figure 3.</b> A session's context over time under the two ways of compacting. The heights are an illustration, not a measurement: they show where a compaction falls, not how often. The two tasks are invented examples.</figcaption>
 </figure>
 
-**The problem.** [Figure 4](#fig-compact) puts the two ways side by side. A harness compacts a session on its own when the context window fills, and that can fall in the middle of a task: the detail the task had in flight goes into a summary that nobody checks at that moment. In the owner's own session on the kit on 2026-11-27, the automatic summary carried two wrong facts about which kit version two projects were on: 3.2.1 where the pin was 5.6.1, and 5.0.0 where it was 5.7.0. Both were caught and corrected in the open. That is one session, an observation and not a study.
+**The problem.** [Figure 3](#fig-compact) puts the two ways side by side. A harness compacts a session on its own when the context window fills, and that can fall in the middle of a task: the detail the task had in flight goes into a summary that nobody checks at that moment. In the owner's own session on the kit on 2026-11-27, the automatic summary carried two wrong facts about which kit version two projects were on: 3.2.1 where the pin was 5.6.1, and 5.0.0 where it was 5.7.0. Both were caught and corrected in the open. That is one session, an observation and not a study.
 
-**The evidence, with its limits.** A preprint, [Letting Models Manage Their Own Context: Where We Stand](https://arxiv.org/abs/2611.34147) (NVIDIA, submitted 25 November 2026), reports in its abstract that models which decide when and what to compact reach higher accuracy, most at tight budgets; one model's score on OfficeQA Pro v2 rises from 21% to 56% at a 32K-token budget, and models differ widely in how they use the interface. Only the abstract was read. The paper tested a model compacting by itself, not an agent asking a person, and what was read does not establish a gain at large context budgets. It supports the direction, not the size of any effect here.
+**The evidence, with its limits.** A preprint, [Letting Models Manage Their Own Context: Where We Stand](https://arxiv.org/abs/2611.34147) (Devoto and others, submitted 25 November 2026, run in NVIDIA's open-source agent harness), reports in its abstract that models which decide when and what to compact, and use that interface effectively, reach higher accuracy, most at tight budgets; one model's score on OfficeQA Pro v2 rises from 21% to 56% at a 32K-token budget, and models differ widely in how they use the interface. Only the abstract was read. The paper tested a model compacting by itself, not an agent asking a person, and what was read does not establish a gain at large context budgets. It supports the direction, not the size of any effect here.
 
-**The wording.** An agent in this harness cannot compact by itself: the person types `/compact`, with a note of what to keep if they want one. So the [instruction](global-agent-instructions-text.html#compacting-a-long-session) has the agent ask, at the one moment it can judge: when a new task arrives after a finished one. At the finish it cannot know whether a task follows. It asks only when the session is long, the earlier work is done and the new task does not need its detail; not before a quick answer, not for a follow-up to work in flight, and never from a subagent. The ask closes the message, so the person cannot miss it: a bold "Compact before I start?" and the ready `/compact` command, whose note names what to keep, repeats the new task and names every job and agent still running. Running work does not forbid the ask; the note carries it across. The person compacts and writes "go", or writes "go" alone, and the agent starts without asking again.
+**The wording.** In Claude Code, the harness the owner works in, the agent of his session found no action by which it could compact by itself: the person types `/compact`, with a note of what to keep if they want one. Whether another harness takes the same note was not checked. So the [instruction](global-agent-instructions-text.html#compacting-a-long-session) has the agent ask, at the one moment it can judge: when a new task arrives after a finished one. At the finish it cannot know whether a task follows. It asks only when the session is long, the earlier work is done and the new task does not need its detail; not before a quick answer, not for a follow-up to work in flight, and never from a subagent. The ask closes the message, so the person cannot miss it: a bold "Compact before I start?" and the ready `/compact` command, whose note names what to keep, repeats the new task and names every job and agent still running. Running work does not forbid the ask; the note carries it across. The person compacts and writes "go", or writes "go" alone, and the agent starts without asking again.
 
 <div class="bs-grid g3">
-<div class="bs-part bs-orange"><span class="bs-label">Weakness</span><h3>"Long" is a judgment</h3><p>The agent has no meter of how full its context is; it judges from the session it remembers.</p></div>
-<div class="bs-part bs-orange"><span class="bs-label">Weakness</span><h3>It waits for a word</h3><p>An agent cannot wait on a clock, so after the ask it stays stopped until the person writes.</p></div>
+<div class="bs-part bs-orange"><span class="bs-label">Weakness</span><h3>"Long" is a judgment</h3><p>In the owner's setup the agent sees no meter of how full its context is; it judges from the session it remembers.</p></div>
+<div class="bs-part bs-orange"><span class="bs-label">Weakness</span><h3>It waits for a word</h3><p>After the ask the agent's message ends, and it stays stopped until the person writes. A harness may offer a timed wake-up; the instruction does not use one.</p></div>
 <div class="bs-part bs-orange"><span class="bs-label">Weakness</span><h3>One word each time</h3><p>Every ask costs the person a reply, even when compacting turns out not to matter.</p></div>
 </div>
 
@@ -187,10 +187,10 @@ The [worklog entry](../KIT_WORKLOG.md#2026-11-28--the-copy-renewed-with-compacti
 <div class="ga-way"><span class="ga-tag ga-person-tone">Replace</span><h3>The copy instead of yours</h3><div class="ga-doc"><code>$target.before-kit-snapshot</code><ol><li class="is-yours">your old file, kept</li></ol></div><div class="ga-down"><span>then</span></div><div class="ga-doc"><code>$target</code><ol><li class="ga-person-tone">the owner's copy only</li></ol></div><p>Needs an existing file, and does nothing while a kept old file is there.</p></div>
 <div class="ga-way"><span class="ga-tag">Neither</span><h3>Your file stays as it is</h3><div class="ga-doc"><code>$target</code><ol><li class="is-yours">your own instructions, unchanged</li><li class="is-yours"><code>Documentation kit global-context snapshot: declined.</code></li></ol></div><p>The last line is added only on your yes; without it, a later session asks again.</p></div>
 </div>
-<figcaption><b>Figure 3.</b> What each way does to your global file, named <code>$target</code> as in the commands. Blue marks your own lines, violet the owner's copy. This diagram contains no measured results.</figcaption>
+<figcaption><b>Figure 4.</b> What each way does to your global file, named <code>$target</code> as in the commands. Blue marks your own lines, violet the owner's copy. This diagram contains no measured results.</figcaption>
 </figure>
 
-[Figure 3](#fig-ways) shows the three ways. Set `target` to your global file first: `~/.codex/AGENTS.md` for Codex, `~/.claude/CLAUDE.md` for Claude Code. If that file only imports or links to another file, set `target` to that other file. Then run one of the two commands from the root of a project that pins the kit as `.docs-kit`:
+[Figure 4](#fig-ways) shows the three ways. Set `target` to your global file first: `~/.codex/AGENTS.md` for Codex, `~/.claude/CLAUDE.md` for Claude Code. If that file only imports or links to another file, set `target` to that other file. Then run one of the two commands from the root of a project that pins the kit as `.docs-kit`:
 
 ```bash
 { printf '\n'; cat .docs-kit/docs/topics/global-agent-instructions/global-agent-instructions.md; } >> "$target"   # add
@@ -215,7 +215,7 @@ A project does not choose for you. A project whose `AGENTS.md` asks for it, as t
 <div class="bs-checks">
 <div class="bs-check"><span class="bs-badge bs-off">whose</span><h3>One person's preferences</h3><p>The owner's habits with his agents, not a rule of the kit. Your project's rules do not depend on any of it.</p></div>
 <div class="bs-check"><span class="bs-badge bs-off">when</span><h3>A copy of 2026-11-28</h3><p>The owner's file changes; the copy does not follow it until the kit renews it.</p></div>
-<div class="bs-check"><span class="bs-badge bs-ok">optional</span><h3>Not loaded by the kit</h3><p>No build, check or router row reads it. It acts only once you put it in your own global file.</p></div>
+<div class="bs-check"><span class="bs-badge bs-ok">optional</span><h3>Not loaded by the kit</h3><p>The kit does not load it and no rule depends on it. It acts only once you put it in your own global file.</p></div>
 </div>
 
 <div class="bs-grid g2">
