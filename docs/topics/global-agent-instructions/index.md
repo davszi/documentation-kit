@@ -115,7 +115,7 @@ A project rule cannot carry that layer. Every contributor reads the project's ru
 <p class="bs-lead">The copy's newest section shows how a line gets into the file: a problem seen in a real session, evidence read together with its limits, and wording that says exactly when the agent acts and what it writes.</p>
 
 <figure id="fig-compact">
-<div class="ga-time" role="img" aria-label="Two lanes show how full a session's context is over time, while task A and then task B run. Illustrative values, not a measurement. In the first lane the harness decides: the context fills during task B, the window is full in the middle of it, and the harness compacts there; the detail task B had in flight is lost and the summary may carry a wrong fact. In the second lane the agent asks: task A is finished, task B arrives, the agent ends its message with Compact before I start? and the ready /compact command; the person compacts and writes go, and task B starts on a packed summary of the finished work and runs without reaching the full window.">
+<div class="ga-time" role="img" aria-label="Two lanes show how full a session's context is over time, while a finished task and then a new task run. Illustrative values, not a measurement. In the first lane the harness decides: the context fills during the new task, the window is full in the middle of it, and the harness compacts there; the detail the new task had in flight is lost and the summary may carry a wrong fact. In the second lane the agent asks: one task is finished, a new task arrives, the agent ends its message with Compact before I start? and the ready /compact command; the person compacts and writes go, and the new task starts on a packed summary of the finished work and runs without reaching the full window.">
 <div class="ga-lane is-harness"><span class="ga-tag">Today · the harness decides</span><h3>Compacted when the window is full</h3>
 <div class="ga-plot"><div class="ga-axis" aria-hidden="true"><span>full</span><span>half</span><span>empty</span></div><div class="ga-cols">
 <div class="ga-track is-a" style="grid-column:1"><i style="--h:8%"></i></div>
@@ -131,10 +131,10 @@ A project rule cannot carry that layer. Every contributor reads the project's ru
 <div class="ga-track is-sum" style="grid-column:11"><i style="--h:34%;--s:47%"></i></div>
 <div class="ga-track is-sum" style="grid-column:12"><i style="--h:46%;--s:35%"></i></div>
 <div class="ga-cut" style="grid-column:10"></div>
-<span class="ga-seg" style="grid-column:1 / 6">task A</span>
-<span class="ga-seg is-b" style="grid-column:6 / 13">task B</span>
-<p class="ga-event" style="grid-column:8 / 13"><b>Window full</b>The harness compacts in the middle of task B.</p>
-</div></div><p class="ga-result"><b>Lost:</b> the detail task B had in flight; the summary may carry a wrong fact.</p></div>
+<span class="ga-seg" style="grid-column:1 / 6">finished task</span>
+<span class="ga-seg is-b" style="grid-column:6 / 13">new task</span>
+<p class="ga-event" style="grid-column:8 / 13"><b>Window full</b>The harness compacts in the middle of the new task.</p>
+</div></div><p class="ga-result"><b>Lost:</b> the detail the new task had in flight; the summary may carry a wrong fact.</p></div>
 <div class="ga-lane is-ask"><span class="ga-tag">The instruction · the agent asks</span><h3>Compacted before the new task starts</h3>
 <div class="ga-plot"><div class="ga-axis" aria-hidden="true"><span>full</span><span>half</span><span>empty</span></div><div class="ga-cols">
 <div class="ga-track is-a" style="grid-column:1"><i style="--h:8%"></i></div>
@@ -150,13 +150,13 @@ A project rule cannot carry that layer. Every contributor reads the project's ru
 <div class="ga-track is-packed" style="grid-column:11"><i style="--h:80%;--s:18%"></i></div>
 <div class="ga-track is-packed" style="grid-column:12"><i style="--h:92%;--s:15%"></i></div>
 <div class="ga-cut" style="grid-column:6"></div>
-<span class="ga-seg" style="grid-column:1 / 6">task A</span>
-<span class="ga-seg is-b" style="grid-column:6 / 13">task B</span>
+<span class="ga-seg" style="grid-column:1 / 6">finished task</span>
+<span class="ga-seg is-b" style="grid-column:6 / 13">new task</span>
 <p class="ga-event" style="grid-column:4 / 9"><b>New task after a finished one</b><strong>Compact before I start?</strong> You type <code>/compact</code> with the note, then go.</p>
-</div></div><p class="ga-result"><b>Kept:</b> task B starts on a packed summary of finished work and runs without a cut.</p></div>
-<div class="ga-legend" aria-hidden="true"><span class="is-a">task A in the context</span><span class="is-b">task B in the context</span><span class="is-sum">packed summary</span><span class="is-cut">compaction</span><span class="is-full">window full</span></div>
+</div></div><p class="ga-result"><b>Kept:</b> the new task starts on a packed summary of finished work and runs without a cut.</p></div>
+<div class="ga-legend" aria-hidden="true"><span class="is-a">finished task in the context</span><span class="is-b">new task in the context</span><span class="is-sum">packed summary</span><span class="is-cut">compaction</span><span class="is-full">window full</span></div>
 </div>
-<figcaption><b>Figure 4.</b> A session's context over time under the two ways of compacting. The heights are an illustration, not a measurement: they show where a compaction falls, not how often. Tasks A and B are invented examples.</figcaption>
+<figcaption><b>Figure 4.</b> A session's context over time under the two ways of compacting. The heights are an illustration, not a measurement: they show where a compaction falls, not how often. The two tasks are invented examples.</figcaption>
 </figure>
 
 **The problem.** [Figure 4](#fig-compact) puts the two ways side by side. A harness compacts a session on its own when the context window fills, and that can fall in the middle of a task: the detail the task had in flight goes into a summary that nobody checks at that moment. In the owner's own session on the kit on 2026-11-27, the automatic summary carried two wrong facts about which kit version two projects were on: 3.2.1 where the pin was 5.6.1, and 5.0.0 where it was 5.7.0. Both were caught and corrected in the open. That is one session, an observation and not a study.

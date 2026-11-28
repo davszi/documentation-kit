@@ -2,6 +2,40 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-28 — A capture of a whole face chapter no longer grows the page; site pushed without a tag
+
+- A project that moved to 5.10.0 reported that its hand-run browser check
+  timed out on every chapter that opens with a slide face: 18 failures, each
+  in `captureElement` with `unclip: true`. Its required checks passed. The
+  same check had passed on 5.8.0.
+- Cause, confirmed in `theme/components/chapter-reader.js`: since 5.9.0 the
+  reader gives the face that opens a chapter the room it needs to stand
+  alone in the first view, measured from the height of the chapter's
+  window. An unclipped capture removes that height limit, so the height
+  included the room measured from it and every pass enlarged it. Measured
+  on the kit's own Build a site page, chapter "how a build works", at
+  1600 by 900 px: the page was 275,453, then 281,104, then 286,750 px high
+  in three readings 150 ms apart, and the capture timed out. Reading in
+  the reader was not affected, because there the chapter keeps its window.
+- Fix: a face is fitted only while its chapter body is a scroll container.
+  After it the same page reads 2,291 px three times, the face has no room
+  and the capture finishes. `tests/own_site_review.cjs` now captures a face
+  chapter unclipped and fails when the page's height changes. The kit's
+  earlier tests did not cover this: the capture helper was tested on a page
+  without the reader.
+- The copy of the owner's global instructions was compared with his live
+  file by the coordinator: below its header it equals the live file after
+  the three replacements that remove his name and e-mail address.
+- Figure 4 of the page "Global agent instructions" called its two tasks by
+  letters. They are now "finished task" and "new task", the words of the
+  instruction the figure explains.
+- The owner asked to see the new page on the published site before deciding
+  on the release: "just do a push without reelase when ww ehave the new page
+  so ican see it then we see". `main` is pushed without a tag. Until a tag
+  `v6.0.0` exists, the kit's own site names a version no project can pin.
+- Not checked: the fix on a consuming project's own check, since no project
+  is on this commit; Firefox, Safari and a real phone.
+
 ## 2026-11-28 — The copy renewed with "Compacting a long session", and a chapter on it
 
 - The owner's global file gained the section "Compacting a long session"

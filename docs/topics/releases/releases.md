@@ -70,6 +70,15 @@ to the page `global-agent-instructions-text.html`, which keeps the button
 that copies it. The home page and Get started point
 to the new page. A consuming project's site is not changed.
 
+### A capture of a whole chapter that opens with a slide face
+
+Corrected: since 5.9.0, `captureElement` with `unclip: true` timed out on a
+chapter that opens with a slide face. The reader measured the room around
+the face from the height of the chapter's window; with the height limit
+removed, the page grew on every frame. The reader now fits a face only
+while its chapter scrolls. A project's own browser check that captures
+whole chapters passes again; nothing needs changing in the project.
+
 ## 5.10.0 — the kit's pages brought up to its rules, one migration guide, a button that copies a record
 
 5.10.0 is a minor release under
