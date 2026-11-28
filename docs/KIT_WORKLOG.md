@@ -2,6 +2,32 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-28 — Release 6.0.0
+
+- The owner gave the word for the release on this day: "looks good, we
+  should put out the new release and update tempo to it".
+- Second look by the same reviewer, at `bddcfb9`: fit to tag, nothing
+  blocks. He ran the reader against the one of `v5.10.0`. In normal reading
+  the room around a face is the same at every window size he tried, 72 and
+  161 px at 1600 by 900 px among them, and the scroll correction is
+  unchanged. Unclipped captures aimed at the face, the body, the chapter, a
+  scrolled chapter and the stage keep one height at both widths and raise
+  no page error; the reader of `v5.10.0` grows in each of these cases.
+- Two small points of his are taken here. The comment in
+  `theme/components/chapter-reader.js` named print among the cases the
+  measured check covers; print is covered by `slide-face.css`, and the
+  comment now says so. The entry below points to "the open point on a
+  colour table for the kit's figures"; no such item is in `docs/open/`. The
+  point is recorded only in an earlier entry of this worklog, as reported by
+  the page authors and not settled.
+- Residual risks he named: a horizontal scrollbar that appears or leaves
+  when the room changes would change the body's height and take the room
+  away wrongly, with no trigger seen in the kit; the cause of the
+  intermittent click without JavaScript was never found, so its passing
+  runs prove little; Firefox, Safari, a real phone and a consuming
+  project's own check were not run.
+- The full check ran on this commit before the tag.
+
 ## 2026-11-28 — Review before 6.0.0: the capture fix completed, the page and the notes corrected
 
 - The owner saw the new page in the local build and gave the word for the

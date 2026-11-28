@@ -575,11 +575,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (room.lift !== was.lift || room.drop !== was.drop) {
         put(room);
         // The room is measured from the height of the chapter's window. A body
-        // whose height follows its content has no window: print, or a review
+        // whose height follows its content has no window, as in a review
         // capture that removes the height limits of the body, of its chapter or
         // of anything around them. There the room would add to the height it
         // was measured from and the page would grow on every pass, so a body
-        // that changes height with the room gets none.
+        // that changes height with the room gets none. Print needs no such
+        // check: slide-face.css sets the room to nothing there.
         if ((room.lift || room.drop) && topic.body.clientHeight !== view) { room = {lift: 0, drop: 0}; put(room); }
       }
       fittedFaces.set(face, room);
