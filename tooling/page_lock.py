@@ -300,9 +300,11 @@ def split_open_work(markup: str, name: str) -> tuple[str, str | None, int | None
     at = start + toc.opening_end + 1
     if not entries:
         return markup, None, at if markup[at - 1] == '\n' else None
-    # The entry is the menu's first line, indented, with its own line break.
-    until = start + entries[0].end
-    if entries[0].tag != 'a' or markup[at:start + entries[0].start].strip(' ') or markup[until] != '\n':
+    # The entry is the menu's first line, indented, with its own line break. Any other
+    # shape stops the lock: the place written for a page without an entry must be this one.
+    opens, until = start + entries[0].start, start + entries[0].end
+    if (entries[0].tag != 'a' or markup[at - 1] != '\n' or opens < at or markup[at:opens].strip(' ')
+            or markup[until] != '\n'):
         raise ValueError(f'The page lock cannot cut the Open work entry out of {name}')
     return markup[:at] + markup[until + 1:], markup[at:until + 1], at
 
@@ -614,7 +616,8 @@ class PageLock:
         markdown = {name for name in files if name.lower().endswith(MARKDOWN_SUFFIXES)}
         names = reference_names(built, markdown)
         pages: dict[str, tuple[int, bytes, int | None, int | None]] = {}
-        whole: dict[str, bytes] = {}   # a page as it was before anything was cut out of its sidebar
+        # A page as it was before anything was cut out of its sidebar, and which pieces were cut.
+        whole: dict[str, tuple[bytes, bool, bool]] = {}
         sections, entries, named = set(), set(), set()
         for name, text in texts.items():
             if levels[name] == 2:
@@ -622,8 +625,10 @@ class PageLock:
                 continue
             # The entry goes first: it stands before the Reference section, whose offset counts without it.
             without, entry, entry_at = split_open_work(text, name)
-            if entry is not None and levels.get(entry_target(entry, name)) != 2:
+            if entry is not None and levels.get(entry_target(entry, name)) == 1:
                 # The general password opens the list as well, so its readers keep the entry.
+                # An entry whose target is not a page of the bundle is cut like one that needs
+                # the reference password: what is not known to be open stays sealed.
                 without, entry = text, None
             stripped, section, at = split_reference(without, name)
             # Fail closed: a changed shell must not leave the tree or the entry in a general page.
@@ -637,7 +642,7 @@ class PageLock:
             if section is not None:
                 sections.add(section)
             if section is not None or entry is not None:
-                whole[name] = text.encode('utf-8')
+                whole[name] = (text.encode('utf-8'), section is not None, entry is not None)
             named |= named_references(stripped, name, names)
             offsets = [None if offset is None else len(stripped[:offset].encode('utf-8')) for offset in (at, entry_at)]
             pages[name] = (1, stripped.encode('utf-8'), *offsets)
@@ -690,7 +695,8 @@ class PageLock:
 
     def _open_again(self, bundle: Path, keyring: Keyring,
                     sealed: Mapping[str, tuple[int, bytes, int | None, int | None]],
-                    tree: bytes, whole: Mapping[str, bytes], section: str | None, entry: str | None = None) -> None:
+                    tree: bytes, whole: Mapping[str, tuple[bytes, bool, bool]], section: str | None,
+                    entry: str | None = None) -> None:
         """Fail unless the files just written open, with the passwords, to exactly what was locked.
 
         Each password goes through the key derivation a browser runs and must
@@ -722,7 +728,11 @@ class PageLock:
                                for found in (_PAGE_SECTION.search(text), _PAGE_ENTRY.search(text))]
                     same = page_header(name, data) == keyring.header and written == [at, entry_at]
                 if same and name in whole:
-                    same = join_page(plain, at, section, entry_at, entry) == whole[name]
+                    # Only what was cut out of this page goes back: a page built without one of
+                    # the two pieces is compared without it.
+                    page, had_section, had_entry = whole[name]
+                    same = join_page(plain, at, section if had_section else None,
+                                     entry_at, entry if had_entry else None) == page
             except (InvalidTag, ValueError):
                 same = False
             if not same:

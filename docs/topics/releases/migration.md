@@ -232,7 +232,7 @@ project must do. What it meets:
   - A long list shows as a large number to every reader with the reference
     password: this is a good moment to delete finished lines.
   - A project check that reads the published pages a general password opens
-    finds no `a.open-work` in them.
+    finds no Open work entry in their menu, `#toc > a.open-work`.
 
 ## New in 5.10.0
 

@@ -114,7 +114,8 @@
   // and the menu's Open work entry at byte `entryAt`. Each piece goes back at
   // its offset; at the same offset the entry stands first.
   function joinSection(plain, at, section, entryAt, entry) {
-    var decoder = new TextDecoder('utf-8');
+    // A byte order mark at the start of a slice is text of the page, not a mark to drop.
+    var decoder = new TextDecoder('utf-8', {ignoreBOM: true});
     var cuts = [];
     if (typeof entryAt === 'number' && typeof entry === 'string') cuts.push([entryAt, entry]);
     if (typeof at === 'number' && typeof section === 'string') cuts.push([at, section]);

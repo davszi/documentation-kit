@@ -2,6 +2,43 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-28 — Review of the Open work change before 6.1.0: nothing blocks, its points taken
+
+- A reviewer, a separate agent, read `1274aa6` against `v6.0.0` on six
+  questions: leaks, the cut and the rejoin, failing closed, the browser
+  side, the tests and the text. He published the fixture with and without
+  the entry, in eight variants, the kit's own site with the lock on and
+  adaptation at `c7e371b`, each with throwaway passwords.
+- His result on leaks: every unencrypted file, every lock page's attributes,
+  every sealed size of a page the general password opens and what that
+  password decrypts are the same with and without the entry. The entry adds
+  173 bytes to the tree's payload, inside its 65,536 bytes of padding.
+- Taken from him, in `tooling/page_lock.py`: an entry stays in a page only
+  when the general password is known to open its target; an entry whose
+  target is no page of the bundle is cut as well. Before, such an entry
+  stayed, so a page in a folder would have shown it to the general
+  password's readers; the kit builds no such page. An entry that is not the
+  menu's first line on a line of its own stops the lock. The read-back
+  compares each page with exactly the pieces that were cut out of it.
+- Taken in `theme/components/page-lock.js`: a byte order mark at the start
+  of a slice is kept. Python kept it and the browser dropped it; the old
+  code had the same difference at the Reference section's offset.
+- Tests added for four guards that no test covered, found by removing each:
+  the offset of the entry written wrongly, different entries on two pages,
+  an entry that survives the cut, the order of the two pieces at one offset
+  in Python. Also a page in a folder. 65 tests of the page lock and the
+  entry pass.
+- Text corrected where it said more than holds: the release notes said
+  "nothing new is published" and "`publish` reads every locked page back";
+  they now say that no reader sees more than before and which pages the
+  read-back covers. A check finds no entry in the menu, not no `a.open-work`
+  anywhere. The page lock's limits name both offsets and the change in size
+  of Reference lock pages between two publishes.
+- Not checked by him or here: Firefox and WebKit; a remembered key and a
+  missing tree file in a real browser; a project's own `404.html` with the
+  kit's sidebar.
+- The full check script has not run on this commit.
+
 ## 2026-11-28 — The offer of the owner's global instructions becomes an upgrade step
 
 - The owner asked why agents in adaptation and embodied-safety-gates do not

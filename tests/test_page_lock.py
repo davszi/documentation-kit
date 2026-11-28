@@ -536,13 +536,17 @@ class LockBundle(unittest.TestCase):
         def other_offset(name, level, data, keyring, versions, section_at=None, **more):
             return real_page(name, level, data, keyring, versions, 0 if name == 'listed.html' else section_at, **more)
 
+        def other_entry_offset(name, level, data, keyring, *rest, entry_at=None, **more):
+            return real_page(name, level, data, keyring, *rest, entry_at=0 if name == 'index.html' else entry_at, **more)
+
         def other_header(name, level, data, keyring, *rest, **more):
             stale = page_lock.Keyring(keyring.content, {**keyring.header, 'tree': 'stale'})
             return real_page(name, level, data, stale if name == 'rule.html' else keyring, *rest, **more)
 
         cases = {'listed.html': ('lock_page', other_path), 'notes/record.md': ('lock_text', other_text),
                  'index.html': ('lock_page', other_level), 'reference.tree.js': ('lock_tree', other_tree),
-                 'listed.html offset': ('lock_page', other_offset), 'rule.html': ('lock_page', other_header)}
+                 'listed.html offset': ('lock_page', other_offset), 'rule.html': ('lock_page', other_header),
+                 'index.html entry offset': ('lock_page', other_entry_offset)}
         for case, (writer, broken) in cases.items():
             name = case.split()[0]
             with self.subTest(case=case), patch.object(page_lock, writer, broken):
@@ -601,6 +605,50 @@ class LockBundle(unittest.TestCase):
         _, general = open_keyring(header, self.passwords[1])
         self.assertIsNone(opened_tree(locked['reference.tree.js'], keys)['entry'])
         self.assertIn(entry.encode(), opened(locked['index.html'], 'index.html', general)[1])
+
+    def test_an_entry_whose_target_is_no_page_of_the_bundle_is_sealed_too(self):
+        # A page in a folder resolves the entry's address beside itself, to a page that does not exist.
+        (self.bundle / 'index.html').write_bytes(kit_page('index.html', entry=ENTRY))
+        (self.bundle / 'sub').mkdir()
+        (self.bundle / 'sub/page.html').write_bytes(kit_page('index.html', files=[], entry=ENTRY))
+        self.assertEqual(page_lock.entry_target(ENTRY, 'sub/page.html'), 'sub/listed.html')
+        self.apply()
+        locked = files(self.bundle)
+        header = json.loads(re.search(r'id="page-lock-keys">([^<]+)<', locked['index.html'].decode())[1])
+        _, general = open_keyring(header, self.passwords[1])
+        self.assertNotIn(b'open-work', opened(locked['sub/page.html'], 'sub/page.html', general)[1])
+
+    def test_different_entries_on_general_pages_stop_the_lock(self):
+        (self.bundle / 'index.html').write_bytes(kit_page('index.html', entry=ENTRY))
+        (self.bundle / 'guide.html').write_bytes(kit_page('guide.html', entry=ENTRY.replace('Open work', 'Owed')))
+        with self.assertRaisesRegex(ValueError, 'different Open work entries'):
+            self.apply()
+
+    def test_an_entry_that_survives_the_cut_stops_the_lock(self):
+        (self.bundle / 'index.html').write_bytes(kit_page('index.html', entry=ENTRY))
+        real = page_lock.split_open_work
+        calls = []
+
+        def leaves_it(markup, name):
+            calls.append(name)
+            stripped, entry, at = real(markup, name)
+            return (markup, entry, at) if entry is not None and calls.count(name) == 1 else (stripped, entry, at)
+
+        with patch.object(page_lock, 'split_open_work', leaves_it):
+            with self.assertRaisesRegex(ValueError, 'found the Open work entry in index.html'):
+                self.apply()
+
+    def test_join_puts_the_entry_before_the_section_at_one_offset(self):
+        plain = '<div id="toc">\nä\n</div>'.encode()
+        self.assertEqual(page_lock.join_page(plain, 15, '\n<i></i>', 15, '<a></a>\n').decode(),
+                         '<div id="toc">\n<a></a>\n\n<i></i>ä\n</div>')
+        self.assertEqual(page_lock.join_page(plain, 17, '\n<i></i>', 15, '<a></a>\n').decode(),
+                         '<div id="toc">\n<a></a>\nä\n<i></i>\n</div>')
+        self.assertEqual(page_lock.join_page(plain, 17, None, 15, None), plain)
+        # The shape the build never writes stops the cut: no line break after the menu's opening tag.
+        page = kit_page('index.html', entry=ENTRY).decode().replace('id="toc">\n', 'id="toc">', 1)
+        with self.assertRaisesRegex(ValueError, 'cannot cut the Open work entry'):
+            split_open_work(page, 'index.html')
 
     def test_a_cut_entry_that_does_not_go_back_together_stops_the_lock(self):
         (self.bundle / 'index.html').write_bytes(kit_page('index.html', entry=ENTRY))

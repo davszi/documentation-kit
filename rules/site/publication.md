@@ -312,10 +312,17 @@ authenticated data. `tooling/page_lock.py` encrypts;
   tree within a factor of two.
 - Names of Reference files in pages the general password opens stay visible
   to those readers; `publish` counts them.
-- A lock page that holds a page with the shared sidebar carries
-  `data-section-at`, a byte offset in the page as built. It shows how long the
-  page's head and sidebar are, on every such page, whether or not the site has
-  a Reference section.
+- A lock page that holds a page with the shared sidebar, opened by the
+  general password, carries two byte offsets in the page as built:
+  `data-section-at` and `data-entry-at`. They show how long the page's head
+  and sidebar are, and how long its head and site title are, on every such
+  page, whether or not the site has a Reference section or an Open work
+  entry.
+- Reference pages are not padded and carry the Open work entry. Someone who
+  compares two publishes sees every Reference lock page grow or shrink by the
+  same amount when the entry appears or its count changes its number of
+  digits. The size of the list's own page showed the length of the list
+  before.
 - Pages need JavaScript. A project script that fetches an HTML or Markdown
   file from the bundle receives the locked file.
 - Search engines stop listing the site, because they see only lock pages.

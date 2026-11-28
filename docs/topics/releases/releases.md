@@ -34,8 +34,8 @@ shows the new warnings.
 
 6.1.0 is a minor release under
 [what a version number promises](#what-a-version-number-promises): it changes
-a default, no project that passed before stops, and no site publishes content
-it did not publish before.
+a default, no project that passed before stops, and no reader sees anything
+they could not already open.
 
 The menu's [Open work entry](#open-work-at-the-top-of-every-menu) was off on
 a [locked site](../../../rules/site/publication.md#page-lock) unless the
@@ -48,20 +48,26 @@ the menu once the reference password is in, which is the password that opens
 the list. A reader with the general password sees no entry and no count.
 Before any password, a locked page shows nothing of the menu, as before.
 
-- Nothing new is published. The entry exists only where the site already
-  shows the list as a page, and on a locked site that page needs the
-  reference password, as the entry now does.
+- No reader sees more than before. The entry exists only where the site
+  already shows the list as a page, and on a locked site that page needs the
+  reference password, as the entry now does. The Reference pages and the tree
+  file now carry the entry and its count, which come from that list.
 - Every lock page of a page with the kit's sidebar that the general password
   opens carries the place of the menu's first line, `data-entry-at`, with or
   without an entry; the tree file is padded as before. So neither shows
   whether the site has an entry.
-- `publish` reads every locked page back, as before, and stops when a page
-  does not go back together with its entry and its Reference section.
+- For every page it cut the entry or the Reference section out of,
+  `publish` checks that the page goes back together from what was sealed,
+  and stops when it does not. The check runs in Python; the browser's own
+  joining is covered by the kit's tests, not by `publish`.
+- A page with the kit's sidebar whose entry leads to no page of the bundle
+  has the entry cut out as well. Such a page with an entry different from
+  the other pages' stops `publish`. The kit builds no such page.
 - `open_work_entry = false` still leaves the entry out. A project that wrote
   `open_work_entry = true` for its locked site can delete the line: the
   general password's readers no longer see the entry.
 - A project check that reads the published pages a general password opens
-  finds no `a.open-work` there.
+  finds no Open work entry in their menu, `#toc > a.open-work`.
 
 Checked by the page lock's unit tests, the WebCrypto cross-check and the
 browser suite in Chromium. Firefox and WebKit were not run for this change.
