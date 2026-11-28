@@ -935,7 +935,7 @@ function checkFoldControls() {
   assert.deepEqual(reader.states(1), before, 'The reader opt-in leaves fold states to the reader');
   assert.equal(reader.document.querySelector('.fold-bar'), null, 'The reader opt-in installs no global fold bar');
   assert.equal(reader.window.listenerCount('hashchange'), hashHandlers, 'The reader opt-in adds no hashchange handler');
-  assert.equal(reader.document.head.querySelectorAll('style').length, 1, 'The reader opt-in keeps the fold styling');
+  assert.equal(reader.document.head.querySelectorAll('style').length, 0, 'The fold styles come from fold-controls.css, which the build links; the script adds none');
 
   // Other pages get the "Also show" bar: only the kinds present, toggles and an
   // All switch, with the reader's storage. Changed behaviour: it had six

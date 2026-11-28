@@ -100,6 +100,9 @@
     window.addEventListener("resize", centre);
     if (window.ResizeObserver) new ResizeObserver(centre).observe(box);
     show(0);
-    timer = setInterval(tick, interval);
+    // A carousel that is not on screen, or in a hidden tab, does not turn: each turn lays the page out.
+    let onScreen = true;
+    if (window.IntersectionObserver) new IntersectionObserver(entries => { onScreen = entries[entries.length - 1].isIntersecting; }).observe(box);
+    timer = setInterval(() => { if (onScreen && !document.hidden) tick(); }, interval);
   });
 })();

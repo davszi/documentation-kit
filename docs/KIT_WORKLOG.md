@@ -2,6 +2,61 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-28 — Two reviews of the site's code for waste; what went into 6.1.0 and what did not
+
+- The owner asked whether the site's code is optimal and decided: "we will
+  put all perf opt we can into 6.1". Two reviewers, separate agents, read
+  the code a site sends to the browser and measured in headless Chromium
+  with the processor slowed four times: one the kit's `theme/components/`
+  and what `tooling/build.py` loads per page, one adaptation's own styles,
+  scripts and built pages.
+- Taken from the kit's review:
+  - `tooling/build.py` loads KaTeX only where the page's content holds a
+    formula (`holds_formulas`, through the formula check's own reader). On
+    adaptation 5 of 12 pages with `math = true` hold none. His claim that
+    the kit's own pages "authoring" and the worklog loaded it was wrong:
+    only "Build a site" loads it, before and after.
+  - `theme/assets/build-sheet.css` names IBM Plex Sans once for the weights
+    400 to 600. The three files were one variable font, weight axis 100 to
+    700, with the same SHA-1; the copies for 500 and 600 are deleted from
+    `theme/assets/vendor/ibm-plex-sans/`. They are in Git before this
+    commit.
+  - The fold styles moved from a style element that `fold-controls.js`
+    added into `theme/components/fold-controls.css`, linked last in the
+    head, where the element stood in the cascade. A chapter-reader page no
+    longer loads the script.
+  - `chapter-reader.js`: `fitFaces` measures every chapter, then changes
+    them, then checks once; the All chapters view looks up the active
+    chapter once per frame, and a change of view runs a pending lookup
+    first. `slide-face.js`: all bridges are inserted before the first face
+    is measured, and a scroll runs only the faces inside what scrolled.
+    `carousel.js` stops turning off screen and in a hidden tab.
+- Measured on a scratch clone of adaptation, single runs, so differences
+  under about 10% are noise: layout passes while loading "Cursor study v2"
+  55 to 43; work to load it 2,038 to 1,855 ms, "Cursor study history" 1,751
+  to 1,588 ms; "cursor-code" 374 to 94 KB of script, 26 to 21 requests.
+  Steps and changes of view: unchanged.
+- Not taken: the change that leaves chapters far from the shown ones out of
+  layout. With it a step on adaptation laid out for 120 to 217 ms where it
+  took 13 to 31 ms, because adaptation's `figure-legibility.js` measures
+  every drawing on every click and so forces the hidden chapters to be laid
+  out. The owner had just found the steps smooth. It stays in a stash and
+  can follow once that script no longer measures hidden chapters.
+- Not taken from the kit's review: reads and writes in `render()` in one
+  pass (25 to 30 ms per render at four times slower, medium risk in the
+  reader); the reader running before the plain page is laid out (he found
+  no clean gain); the sidebar tree repeated in every page (4 KB per page
+  after compression); group tones worked out at build.
+- Adaptation's review is for that project to act on: 3.3 MB of point data
+  in "Robotics study" with 17 digits where 4 hold everything; font settings
+  repeated on every label of every drawing, about 390 KB; two stylesheets
+  of 187 and 84 KB of which a topic page uses 2 to 3%; exact copies of
+  chapter drawings in slide faces, about 306 KB; `figure-legibility.js`,
+  whose numbers can be computed at build.
+- Checks run: 562 unit tests ran, 560 passed, 2 skipped; the reader's logic
+  tests; build and strict lint of the kit's site. Not run: the full check
+  script on this commit.
+
 ## 2026-11-28 — Review of the compression in the page lock: nothing blocks, its points taken
 
 - A reviewer, a separate agent, read `a6ea0c8` against `d2184be` on seven

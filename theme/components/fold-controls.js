@@ -7,56 +7,9 @@
 // reader is in the story. A reader's own click on one fold is saved and wins on the next
 // visit. Deep links auto-open their fold. Storage matches the chapter reader.
 (() => {
-  const style = document.createElement("style");
-  // Colours read the theme's properties with the kit's value as fallback, as the
-  // other scripts do. A fold's hue reads --fold-color, which the chapter reader's
-  // stylesheet sets per kind; without the reader the kit hue applies.
-  style.textContent = `
-    details.fold { border-left: 2px solid var(--fold-color, #666); border-radius: 0;
-      margin: 0.9em 0; padding: 2px 0 2px 14px; }
-    details.fold > summary { cursor: pointer; list-style: none;
-      font-size: 0.92em; user-select: none; opacity: .92; }
-    details.fold > summary::-webkit-details-marker { display: none; }
-    details.fold > summary::before { content: "▸"; display: inline-block;
-      margin-right: 7px; transition: transform .15s; }
-    details.fold[open] > summary::before { transform: rotate(90deg); }
-    .fold-tag { font-size: 11px; letter-spacing: .04em;
-      padding: 1px 8px; border-radius: 999px; margin-right: 7px;
-      border: 1px solid currentColor; opacity: .9; }
-    details.fold-math { border-left-color: var(--fold-color, #a99df0); }
-    details.fold-math > summary { color: var(--fold-color, #a99df0); }
-    details.fold-experiment { border-left-color: var(--fold-color, #5dcaa5); }
-    details.fold-experiment > summary { color: var(--fold-color, #5dcaa5); }
-    details.fold-code { border-left-color: var(--fold-color, #85b7eb); }
-    details.fold-code > summary { color: var(--fold-color, #85b7eb); }
-    details.fold-dead-end { border-left-color: var(--fold-color, #f0997b); }
-    details.fold-dead-end > summary { color: var(--fold-color, #f0997b); }
-    details.fold-detail { border-left-color: var(--fold-color, var(--muted, #8b949e)); }
-    details.fold-detail > summary { color: var(--fold-color, var(--muted, #8b949e)); }
-    details.fold > summary + * { margin-top: .6em; }
-    .fold-bar { display: flex; flex-wrap: wrap; align-items: center;
-      gap: 7px; margin: 1em 0 1.4em; position: sticky; top: 8px;
-      z-index: 20; background: rgba(var(--bg-rgb, 13, 17, 23), 0.88);
-      backdrop-filter: blur(4px); padding: 7px 10px; border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.1); width: fit-content; }
-    .fold-bar .fb-label { font-size: 12px; opacity: .75; margin-right: 2px; }
-    .fold-bar button { font: inherit; font-size: 12.5px; color: var(--chip-text, #cdd6e0);
-      background: transparent; border: 1px solid rgba(255,255,255,.14);
-      border-radius: 999px; padding: 3px 12px; cursor: pointer;
-      transition: background .15s; }
-    .fold-bar button:hover { background: rgba(var(--control-hover-rgb, 60, 70, 90), .5); }
-    .fold-bar button[aria-pressed="true"] { background: rgba(var(--control-hover-rgb, 60, 70, 90), .75);
-      border-color: rgba(255,255,255,.3); }
-    .fold-bar .fb-all { display: inline-flex; align-items: center; gap: 7px; border: 0; }
-    .fold-bar .fb-all::after { content: ""; width: 26px; height: 14px; border-radius: 999px;
-      background: radial-gradient(circle at 7px 50%, var(--caption, #9aa4b2) 5px, transparent 5.5px), rgba(255,255,255,.16); }
-    .fold-bar .fb-all[aria-checked="true"]::after {
-      background: radial-gradient(circle at 19px 50%, var(--accent, #39d2c0) 5px, transparent 5.5px), rgba(var(--accent-rgb, 57, 210, 192), .35); }
-  `;
-  document.head.appendChild(style);
-
-  // The chapter reader owns its own "Also show" options and routing. Keep this
-  // component's fold styling; all other pages get this bar.
+  // The folds' and the bar's styles are in fold-controls.css. The chapter reader
+  // owns its own "Also show" options and routing: the build leaves this script
+  // off its pages, and a page that carries the reader's bar anyway gets no bar.
   if (document.querySelector('[data-fold-controls="columns"]')) return;
 
   const folds = [...document.querySelectorAll("details.fold")];

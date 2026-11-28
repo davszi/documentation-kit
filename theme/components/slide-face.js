@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const observer = new ResizeObserver(entries => entries.forEach(entry => measure(entry.target)));
     faces.forEach(face => observer.observe(face));
   }
+  // What follows each face's scroll position, by face; filled below.
+  const follows = new Map();
   document.fonts?.ready.then(measureAll);
   faces.forEach(face => face.querySelectorAll('img').forEach(image => image.addEventListener('load', () => measure(face), {once: true})));
   addEventListener('load', measureAll);
@@ -102,10 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
       button.innerHTML = now ? '<span class="slide-bridge-words">Back to slide</span> <span aria-hidden="true">↑</span>' : '<span class="slide-bridge-words">Continue reading</span> <span aria-hidden="true">↓</span>';
       button.classList.toggle('is-back', now);
     };
-    // Scroll events do not bubble; capture catches the card body as well as the window.
-    document.addEventListener('scroll', sync, {passive: true, capture: true});
-    addEventListener('resize', sync);
-    sync();
+    follows.set(face, sync);
     button.addEventListener('click', () => {
       const scroller = scrollerOf(face);
       const target = arrived ? topIn(face, scroller) - 8 : topIn(flowMark(), scroller) - 4;
@@ -116,4 +115,14 @@ document.addEventListener('DOMContentLoaded', () => {
       (scroller || window).scrollTo({top: Math.max(0, target), behavior: reduce() ? 'auto' : 'smooth'});
     });
   });
+  // Every bridge is in the page before the first face is measured: measuring
+  // one face between two insertions made the browser lay the page out once
+  // for each face.
+  follows.forEach(sync => sync());
+  // Scroll events do not bubble; capture catches the card body as well as the
+  // window. Only the faces inside what scrolled can have moved.
+  document.addEventListener('scroll', event => follows.forEach((sync, face) => {
+    if (event.target === document || event.target.contains?.(face)) sync();
+  }), {passive: true, capture: true});
+  addEventListener('resize', () => follows.forEach(sync => sync()));
 });

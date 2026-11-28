@@ -1,3 +1,9 @@
 IBM Plex Sans (IBM Corp.), SIL Open Font License 1.1 (OFL.txt).
-WOFF2 latin and latin-ext subsets, weights 400/500/600 normal and 400 italic,
-from Google Fonts on 2026-11-01, font version 3.201 as the files' name tables state it. Body face of the build-sheet theme.
+WOFF2 latin and latin-ext subsets, normal and 400 italic, from Google Fonts
+on 2026-11-01, font version 3.201 as the files' name tables state it. Body
+face of the build-sheet theme.
+
+The normal files are one variable font with a weight axis from 100 to 700;
+build-sheet.css uses it for the weights 400 to 600. Google Fonts served the
+same file under three names, for 400, 500 and 600. The copies for 500 and
+600, byte for byte the file for 400, were removed on 2026-11-28.

@@ -168,6 +168,7 @@ class FakeElement {
   }
   hasAttribute(key) { return this.getAttribute(key) !== null; }
   removeAttribute(key) { delete this.attrs[key]; }
+  toggleAttribute(key, on = !this.hasAttribute(key)) { if (on) this.setAttribute(key, ''); else this.removeAttribute(key); return on; }
 
   // Enough CSS selector support for the selectors the reader scripts use:
   // tag, .class, #id, [attr], [attr="v"], [attr^="v"], :not(...), descendant.
@@ -451,6 +452,8 @@ function bootReader(hash = '', options = {}) {
   vm.runInNewContext(readComponent('chapter-reader.js'), {
     document, window, location, history, localStorage, URL,
     requestAnimationFrame: callback => frames.push(callback),
+    // A cancelled frame still runs here; the reader's frame callbacks only look things up again.
+    cancelAnimationFrame: () => {},
     setTimeout: callback => { timers.set(++timerId, callback); return timerId; },
     clearTimeout: id => timers.delete(id),
     Event: class { constructor(type) { this.type = type; } },

@@ -641,6 +641,16 @@ def toc_html(toc: list, name: str, id_to_panel: dict | None = None) -> str:
     return "\n".join(lines)
 
 
+def holds_formulas(content: str) -> bool:
+    """Whether a page's content holds anything the math renderer would draw or the formula check would report.
+
+    `math = true` allows formulas on a page; the renderer, 300 KB of script and stylesheet, is loaded
+    only where the content has one.
+    """
+    from formula_checks import page_formulas
+    return any(page_formulas(f'<main class="content">{content}</main>'))
+
+
 def katex_head() -> str:
     return '<link rel="stylesheet" href="assets/katex/katex.min.css">\n'
 
@@ -1066,7 +1076,8 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
     head_extra = f'<link rel="stylesheet" href="{theme_colors.ASSET}">\n' if site.get(theme_colors.TABLE) else ""
     # Before every other stylesheet but base.css, so a page's own CSS can still set --g.
     head_extra += f'<link rel="stylesheet" href="{GROUP_COLORS_ASSET}">\n' if site.get("group_colors") else ""
-    if meta.get("math"):
+    math = bool(meta.get("math")) and holds_formulas(content)
+    if math:
         if not (KATEX_SRC / "katex.min.js").is_file():
             err(f"{name}: math=true but vendored KaTeX missing at {KATEX_SRC}")
         head_extra += katex_head()
@@ -1082,13 +1093,18 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
         if not page_stylesheet(css).is_file():
             err(f"{name}: page_css not found: {css}")
         head_extra += f'<link rel="stylesheet" href="assets/{Path(css).name}">\n'
+    # Last, where fold-controls.js used to add these rules as a style element.
+    if "fold-controls" in comps:
+        head_extra += '<link rel="stylesheet" href="assets/fold-controls.css">\n'
 
+    # The chapter reader has its own "Also show" options: its pages take the fold styles and not the script.
     scripts = "".join(
-        f'<script defer src="assets/{c}.js"></script>\n' for c in KNOWN_COMPONENTS if c in comps
+        f'<script defer src="assets/{c}.js"></script>\n' for c in KNOWN_COMPONENTS
+        if c in comps and not (c == "fold-controls" and "chapter-reader" in comps)
     )
     if "plot-toggles" in comps and site.get("plot_toggle_labels"):
         scripts = plot_toggle_labels_script(site["plot_toggle_labels"]) + scripts
-    if meta.get("math"):
+    if math:
         scripts += katex_scripts()
 
     body_class = ' class="' + html.escape(meta['body_class'], quote=True) + '"' if meta.get('body_class') else ''
@@ -1153,6 +1169,7 @@ def gather_assets(site: dict, *, origins: dict[str, str] | None = None) -> dict[
     assets["assets/chapter-reader.css"] = (COMPONENTS / "chapter-reader.css").read_bytes()
     assets["assets/panel-switcher.css"] = (COMPONENTS / "panel-switcher.css").read_bytes()
     assets["assets/slide-face.css"] = (COMPONENTS / "slide-face.css").read_bytes()
+    assets["assets/fold-controls.css"] = (COMPONENTS / "fold-controls.css").read_bytes()
     for c in KNOWN_COMPONENTS:
         script = component_script(c)
         text = script.read_text()

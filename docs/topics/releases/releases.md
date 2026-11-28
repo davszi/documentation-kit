@@ -118,6 +118,46 @@ shows: unpacking is not seen in it.
 Checked by the page lock's unit tests, the WebCrypto cross-check, and the
 browser suite in Chromium 151, Firefox 153 and WebKit 26.5.
 
+### Less to download and less to lay out on every page
+
+Two reviews of the code a site sends to the browser, one of the kit's and
+one of a consuming project's, and their measurements led to these changes.
+None changes what a reader sees.
+
+- **The math renderer loads only where a page has a formula.** `math = true`
+  loaded it, 300 KB of script and stylesheet, on every such page. It now
+  loads where the page's content holds a formula the renderer would draw or
+  the formula check would report. On the project measured, 5 of 12 pages
+  with `math = true` held none.
+- **IBM Plex Sans is downloaded once, not three times.** The files for the
+  weights 400, 500 and 600 were byte for byte one variable font. The
+  stylesheet names it once for the weights 400 to 600, and the two copies
+  are gone from `assets/fonts/ibm-plex-sans/`: 91 KB less on a first visit
+  of any page with the build-sheet theme.
+- **The fold styles are a stylesheet.** `fold-controls.js` added them as a
+  style element after the page was parsed, which made the browser restyle
+  the page. They are `assets/fold-controls.css` now, linked last in the
+  head, and a chapter-reader page no longer loads the script, which it
+  never used beyond those styles.
+- **The reader measures all chapters, then changes them.** The face fitting
+  measured and changed one chapter after the other, and the slide-face
+  script measured each face between two insertions; each made the browser
+  lay the page out once per chapter. On a page of 15 chapters the layout
+  passes while it loads went from 55 to 43.
+- **Scrolling runs less script.** In the All chapters view the chapter at
+  the top of the window is looked up once per frame, not on every scroll
+  event, and a scroll moves only the "Continue reading" button of the faces
+  inside what scrolled, where every face on the page was measured.
+- **A carousel that is off screen, or in a hidden tab, does not turn.**
+
+Measured in headless Chromium with the processor slowed four times, single
+runs: the work to load two large reader pages went from 2,038 to 1,855 ms
+and from 1,751 to 1,588 ms; one page lost 277 KB of script and 5 of 26
+requests. Steps and changes of view cost what they did. A change that left
+chapters far from the shown ones out of layout was tried and is not in: it
+made a step heavier on a project whose own script measures every drawing on
+every click.
+
 ### A step to the next chapter no longer fades the chapters
 
 In the One chapter view the neighbouring chapters showed at the edges at 90%

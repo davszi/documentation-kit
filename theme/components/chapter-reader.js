@@ -551,17 +551,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const fittedFaces = new Map();
   const faceWatch = typeof ResizeObserver === 'function' ? new ResizeObserver(() => fitFaces()) : null;
   function fitFaces() {
+    // Every chapter is measured before any is changed, and all are changed
+    // together: a chapter measured after another was changed makes the browser
+    // lay the page out again, once for each chapter.
+    const put = (face, next) => {
+      face.style.setProperty('--reader-face-lift', next.lift + 'px');
+      face.style.setProperty('--reader-face-drop', next.drop + 'px');
+      face.toggleAttribute('data-reader-face-lifted', next.lift > 0);
+    };
+    const fits = [];
     topics.forEach(topic => {
       const face = topic.body.querySelector('[data-slide-face]');
       if (!face) return;
       if (faceWatch && !fittedFaces.has(face)) { faceWatch.observe(face); faceWatch.observe(topic.body); }
       const was = fittedFaces.get(face) || {lift: 0, drop: 0};
       let room = {lift: 0, drop: 0};
-      const put = next => {
-        face.style.setProperty('--reader-face-lift', next.lift + 'px');
-        face.style.setProperty('--reader-face-drop', next.drop + 'px');
-        face.toggleAttribute('data-reader-face-lifted', next.lift > 0);
-      };
       // Only a face that opens the chapter, in the one-chapter view, is fitted:
       // the same faces the margin rule in slide-face.css names.
       const view = topic.body.clientHeight;
@@ -572,21 +576,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const dock = parseFloat(window.getComputedStyle(topic.body).getPropertyValue('--reader-dock')) || 0;
         room = faceRoom(view, top, face.offsetHeight, dock);
       }
-      if (room.lift !== was.lift || room.drop !== was.drop) {
-        put(room);
-        // The room is measured from the height of the chapter's window. A body
-        // whose height follows its content has no window, as in a review
-        // capture that removes the height limits of the body, of its chapter or
-        // of anything around them. There the room would add to the height it
-        // was measured from and the page would grow on every pass, so a body
-        // that changes height with the room gets none. Print needs no such
-        // check: slide-face.css sets the room to nothing there.
-        if ((room.lift || room.drop) && topic.body.clientHeight !== view) { room = {lift: 0, drop: 0}; put(room); }
-      }
-      fittedFaces.set(face, room);
-      if (room.lift === was.lift && room.drop === was.drop) return;
+      fits.push({topic, face, was, room, view, line: topic.body.scrollTop});
+    });
+    const changed = fits.filter(fit => fit.room.lift !== fit.was.lift || fit.room.drop !== fit.was.drop);
+    changed.forEach(fit => put(fit.face, fit.room));
+    // The room is measured from the height of the chapter's window. A body
+    // whose height follows its content has no window, as in a review capture
+    // that removes the height limits of the body, of its chapter or of
+    // anything around them. There the room would add to the height it was
+    // measured from and the page would grow on every pass, so a body that
+    // changes height with the room gets none. Print needs no such check:
+    // slide-face.css sets the room to nothing there.
+    const grown = changed.filter(fit => (fit.room.lift || fit.room.drop) && fit.topic.body.clientHeight !== fit.view);
+    grown.forEach(fit => { fit.room = {lift: 0, drop: 0}; put(fit.face, fit.room); });
+    fits.forEach(fit => fittedFaces.set(fit.face, fit.room));
+    changed.forEach(fit => {
+      if (fit.room.lift === fit.was.lift && fit.room.drop === fit.was.drop) return;
       // A reader who is past the face keeps their line when the room changes.
-      if (topic.body.scrollTop > 24) topic.body.scrollTop += room.lift + room.drop - was.lift - was.drop;
+      if (fit.line > 24) fit.topic.body.scrollTop = fit.line + fit.room.lift + fit.room.drop - fit.was.lift - fit.was.drop;
     });
   }
   function align(animate = true) {
@@ -691,7 +698,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (Array.isArray(target)) { remember(); pair = target; if (pinned !== null) activeColumn = 1 - pinned; active = pair[activeColumn]; render(); restore(); saveHistory(true, '#' + topics[active].section.id); focusChapter(); }
     else visit(topics[target].section, true, true);
   }
+  // All chapters: the chapter at the top of the window is the active one.
+  let spying = 0;
+  function spyChapter() {
+    spying = 0;
+    if (!full) return;
+    const line = nav.getBoundingClientRect().height + 80; let index = 0;
+    topics.forEach((topic, i) => { if (topic.section.getBoundingClientRect().top <= line) index = i; });
+    if (index !== active) { active = index; render(false); }
+  }
   function selectView(view) {
+    // A scroll whose frame has not come yet still decides which chapter the view starts from.
+    if (spying) { cancelAnimationFrame(spying); spyChapter(); }
     if (view === 'present') { startPresentation(active, document.activeElement); return; }
     // A choice made in the overlay navigation closes it, so the chapter takes focus.
     if (document.body.classList.contains('reader-nav-open') && !drawerDocked()) closeDrawer(false, false);
@@ -937,11 +955,11 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('hashchange', () => route()); window.addEventListener('popstate', () => route(true));
   window.addEventListener('resize', () => { syncDrawer(); setOffset(); align(false); fitFaces(); });
   window.addEventListener('load', fitFaces);
+  // All chapters: the chapter at the top of the window becomes the active one.
+  // Looked up once per frame, not once per scroll event.
   window.addEventListener('scroll', () => {
-    if (!full) return;
-    const line = nav.getBoundingClientRect().height + 80; let index = 0;
-    topics.forEach((topic, i) => { if (topic.section.getBoundingClientRect().top <= line) index = i; });
-    if (index !== active) { active = index; render(false); }
+    if (!full || spying) return;
+    spying = requestAnimationFrame(spyChapter);
   }, {passive:true});
   let printFoldStates = null;
   window.addEventListener('beforeprint', () => {

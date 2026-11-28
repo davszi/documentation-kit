@@ -248,6 +248,17 @@ project must do. What it meets:
   padded like a page now, one `0x80` byte and zeros, where its JSON was
   padded with spaces. The format name stays `docsite-lock/1`; a check reads
   `pack` in the key header to tell the formats apart.
+- **The math renderer loads only where a page has a formula.** A project
+  script that calls the renderer itself on a page whose text holds no
+  formula no longer finds it. No known project does that.
+- **Two font files are gone.** `assets/fonts/ibm-plex-sans/` no longer holds
+  the files for the weights 500 and 600; the file for 400 is the same
+  variable font and serves all three. A project stylesheet that names one of
+  the two removed files has to name `ibm-plex-sans-400-normal-latin.woff2`
+  or its `latin-ext` sibling.
+- **`assets/fold-controls.css` is new**, and a chapter-reader page no longer
+  loads `fold-controls.js`. A project check that lists a page's scripts or
+  stylesheets has to follow.
 - **The neighbours of the shown chapter are not dimmed.** In the One
   chapter view they stand at 90% of their size and at full brightness. A
   project style or check that relies on their old opacity of `.55` has to
