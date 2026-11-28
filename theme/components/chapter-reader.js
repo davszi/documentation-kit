@@ -557,25 +557,33 @@ document.addEventListener('DOMContentLoaded', () => {
       if (faceWatch && !fittedFaces.has(face)) { faceWatch.observe(face); faceWatch.observe(topic.body); }
       const was = fittedFaces.get(face) || {lift: 0, drop: 0};
       let room = {lift: 0, drop: 0};
+      const put = next => {
+        face.style.setProperty('--reader-face-lift', next.lift + 'px');
+        face.style.setProperty('--reader-face-drop', next.drop + 'px');
+        face.toggleAttribute('data-reader-face-lifted', next.lift > 0);
+      };
       // Only a face that opens the chapter, in the one-chapter view, is fitted:
-      // the same faces the margin rule in slide-face.css names. The chapter must
-      // also scroll: a body without a height limit (print, a review capture that
-      // removes the limits) has no window, and its height would include the room
-      // measured from it, so the page would grow on every pass.
-      const leads = !full && !paired && !presenting && topic.body.clientHeight > 0 && topic.section.offsetWidth > 0 && face.matches(leadingFace);
-      const bodyStyle = leads ? window.getComputedStyle(topic.body) : null;
-      if (leads && /auto|scroll/.test(bodyStyle.overflowY)) {
+      // the same faces the margin rule in slide-face.css names.
+      const view = topic.body.clientHeight;
+      if (!full && !paired && !presenting && view > 0 && topic.section.offsetWidth > 0 && face.matches(leadingFace)) {
         // Neighbouring chapters are drawn smaller; measure in the chapter's own pixels.
         const scale = topic.section.getBoundingClientRect().width / topic.section.offsetWidth || 1;
         const top = (face.getBoundingClientRect().top - topic.body.getBoundingClientRect().top) / scale + topic.body.scrollTop - was.lift;
-        const dock = parseFloat(bodyStyle.getPropertyValue('--reader-dock')) || 0;
-        room = faceRoom(topic.body.clientHeight, top, face.offsetHeight, dock);
+        const dock = parseFloat(window.getComputedStyle(topic.body).getPropertyValue('--reader-dock')) || 0;
+        room = faceRoom(view, top, face.offsetHeight, dock);
+      }
+      if (room.lift !== was.lift || room.drop !== was.drop) {
+        put(room);
+        // The room is measured from the height of the chapter's window. A body
+        // whose height follows its content has no window: print, or a review
+        // capture that removes the height limits of the body, of its chapter or
+        // of anything around them. There the room would add to the height it
+        // was measured from and the page would grow on every pass, so a body
+        // that changes height with the room gets none.
+        if ((room.lift || room.drop) && topic.body.clientHeight !== view) { room = {lift: 0, drop: 0}; put(room); }
       }
       fittedFaces.set(face, room);
       if (room.lift === was.lift && room.drop === was.drop) return;
-      face.style.setProperty('--reader-face-lift', room.lift + 'px');
-      face.style.setProperty('--reader-face-drop', room.drop + 'px');
-      face.toggleAttribute('data-reader-face-lifted', room.lift > 0);
       // A reader who is past the face keeps their line when the room changes.
       if (topic.body.scrollTop > 24) topic.body.scrollTop += room.lift + room.drop - was.lift - was.drop;
     });
