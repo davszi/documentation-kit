@@ -151,6 +151,19 @@ async function referenceTree(page) {
     await page.emulateMedia({media: 'screen'});
     results.topic = {chapters: reader.chapterIds.length, readerChecked: reader.checked, wrongPassword: wrong};
 
+    // A browser that cannot unpack compressed data says so plainly and offers no password field.
+    const oldContext = await browser.newContext({viewport: {width: 1400, height: 900}});
+    await oldContext.addInitScript(() => { delete window.DecompressionStream; });
+    const oldPage = await oldContext.newPage();
+    await oldPage.goto(url('guide.html'));
+    await oldPage.waitForFunction(() => /too old/.test(document.getElementById('page-lock-message').textContent));
+    assert.equal(await oldPage.textContent('#page-lock-message'),
+      'This browser is too old to open this page. Use a current Firefox, Chrome, Edge or Safari.');
+    assert.equal(await oldPage.locator('#page-lock-form').isVisible(), false);
+    assert.ok(!(await oldPage.content()).includes(MARKERS.topic));
+    await oldContext.close();
+    results.oldBrowser = 'told plainly';
+
     // 2. Reference pages with the general password only: told plainly, automatic pages included.
     for (const name of ['rule.html', 'notes.record.md.html', 'reference.index.html']) {
       await page.goto(url(name));

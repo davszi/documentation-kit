@@ -114,7 +114,8 @@ class Wrapping(unittest.TestCase):
         for secret in (*self.passwords.values(), *(base64.b64encode(k).decode() for k in keyring.content.values()),
                        *(k.hex() for k in keyring.content.values())):
             self.assertNotIn(secret, text)
-        self.assertEqual(sorted(keyring.header), ['format', 'id', 'kdf', 'slots'])
+        self.assertEqual(sorted(keyring.header), ['format', 'id', 'kdf', 'pack', 'slots'])
+        self.assertEqual(keyring.header['pack'], 'deflate')
 
     def test_every_publish_gets_a_fresh_id_and_content_keys_but_keeps_the_salt(self):
         # The salt once changed with every publish; it now changes only with a password,
@@ -229,18 +230,18 @@ def sealed_page(data: bytes) -> bytes:
 
 
 def opened(data: bytes, name: str, keys: dict[int, bytes]) -> tuple[int, bytes]:
-    """Decrypt a locked page or text file as the browser would; pages are sealed padded."""
+    """Decrypt a locked page or text file as the browser would; files are sealed compressed, pages padded."""
     text = data.decode()
     if name.endswith('.md'):
         level, sealed = re.search(r'^docsite-lock/1 level ([12])\n([A-Za-z0-9+/=]+)$', text, re.M).groups()
-        return int(level), unseal(keys[int(level)], base64.b64decode(sealed), file_context(name))
+        return int(level), page_lock.unpack(unseal(keys[int(level)], base64.b64decode(sealed), file_context(name)))
     level = int(re.search(r'data-level="([12])"', text)[1])
-    return level, unpad(unseal(keys[level], sealed_page(data), file_context(name)))
+    return level, page_lock.unpack(unpad(unseal(keys[level], sealed_page(data), file_context(name))))
 
 
 def opened_tree(data: bytes, keys: dict[int, bytes]) -> dict:
     sealed = re.search(r'window\.docsLockedReferenceTree = "([A-Za-z0-9+/=]+)";', data.decode())[1]
-    return json.loads(unseal(keys[2], base64.b64decode(sealed), file_context('reference.tree.js')))
+    return json.loads(page_lock.unpack(unpad(unseal(keys[2], base64.b64decode(sealed), file_context('reference.tree.js')))))
 
 
 def joined(page: bytes, lock_page: bytes, tree: dict) -> bytes:
@@ -366,9 +367,15 @@ class LockBundle(unittest.TestCase):
         self.apply()
         self.assertEqual(sizes(), (65536 + 28, 65536 + 28))
         index = kit_page('reference.index.html', 'reference-page reference-index-page')
-        self.reset({'reference.index.html': index.replace(b'</main>', b'x' * 70000 + b'</main>')})
+        # Files are padded as they are sealed, compressed: text that does not compress fills the padding.
+        noise = base64.b64encode(os.urandom(90000))
+        self.reset({'reference.index.html': index.replace(b'</main>', noise + b'</main>')})
         self.apply()
         self.assertEqual(sizes(), (131072 + 28, 131072 + 28))
+        # The same amount of text that compresses well stays inside the smallest padding.
+        self.reset({'reference.index.html': index.replace(b'</main>', b'x' * len(noise) + b'</main>')})
+        self.apply()
+        self.assertEqual(sizes(), (65536 + 28, 65536 + 28))
 
     def test_frames_only_reference_pages_use_need_the_reference_password(self):
         rule = kit_page('rule.html', 'source-page reference-page').replace(
@@ -456,14 +463,36 @@ class LockBundle(unittest.TestCase):
     def test_sealed_tree_is_padded_to_a_power_of_two(self):
         keyring = make_keyring(self.passwords, iterations=FAST)
         sizes = {}
-        for files_count in (0, 5, 500):
-            listed = [TreeFile(f'notes/n{i}.md', f'n{i}.md.html', f'Note {i}', None, False) for i in range(files_count)]
+        for files_count in (0, 5, 500, 2000):
+            # Names that do not repeat, so that many files outgrow the smallest padding after compression.
+            listed = [TreeFile(f'notes/{secrets.token_hex(24)}.md', f'n{i}.md.html', f'Note {secrets.token_hex(24)}',
+                               None, False) for i in range(files_count)]
             data = lock_tree(tree_html(listed, '') or None, None, keyring).decode()
             sizes[files_count] = len(base64.b64decode(re.search(r'"([A-Za-z0-9+/=]+)"', data)[1])) - 28
         self.assertEqual(sizes[0], sizes[5])
+        self.assertEqual(sizes[0], sizes[500], 'a tree of 500 files hides in the same size as an empty one')
         self.assertEqual(sizes[0], 65536)
-        self.assertEqual(sizes[500] & (sizes[500] - 1), 0)
-        self.assertGreater(sizes[500], 65536)
+        self.assertEqual(sizes[2000] & (sizes[2000] - 1), 0)
+        self.assertGreater(sizes[2000], 65536)
+
+    def test_files_are_compressed_before_they_are_sealed(self):
+        page = kit_page('index.html').replace(b'</main>', b'<p>the same words again</p>' * 4000 + b'</main>')
+        self.reset({'index.html': page, 'notes/record.md': b'# Record\n' + b'a line of text\n' * 4000})
+        self.apply()
+        locked = files(self.bundle)
+        header = json.loads(re.search(r'id="page-lock-keys">([^<]+)<', locked['index.html'].decode())[1])
+        _, keys = open_keyring(header, self.passwords[2])
+        self.assertEqual(header['pack'], 'deflate')
+        # The sealed page is a small part of the page it holds, and opens to the same bytes.
+        self.assertLess(len(sealed_page(locked['index.html'])), len(page) // 20)
+        self.assertLess(len(locked['notes/record.md']), 2000)
+        self.assertEqual(opened(locked['notes/record.md'], 'notes/record.md', keys)[1], b'# Record\n' + b'a line of text\n' * 4000)
+        # What is sealed is a zlib stream, the form the browser's DecompressionStream('deflate') reads.
+        packed = unpad(unseal(keys[1], sealed_page(locked['index.html']), file_context('index.html')))
+        self.assertEqual(packed[:1], b'\x78')
+        self.assertEqual(page_lock.pack(b'abc'), page_lock.pack(b'abc'))
+        with self.assertRaisesRegex(ValueError, 'Malformed compressed file'):
+            page_lock.unpack(b'not a zlib stream')
 
     def test_reference_section_split_is_exact_and_strict(self):
         page = kit_page('index.html').decode()

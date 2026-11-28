@@ -2,6 +2,41 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-28 — Locked files are compressed before they are encrypted
+
+- The owner found the steps smooth with the neighbours at 90% and no fade
+  ("stepping is moth", "scrolling is fine") and asked to look at how pages
+  open. Measured on a scratch clone of adaptation, published locked with
+  throwaway passwords: a locked page travelled at 4 to 8 times the size of
+  the same page unlocked, because encrypted bytes do not compress and the
+  lock stores them as base64. Five pages as sent with gzip: 1,257 KB
+  unlocked, 6,108 KB locked. The owner decided: compress first, "inside
+  6.1".
+- `tooling/page_lock.py` compresses every locked file with zlib before it
+  seals it: pages, exported Markdown and the Reference tree. Pages and the
+  tree are padded after compression; the tree's JSON was padded with spaces
+  and is now padded like a page. The key header gains `"pack": "deflate"`.
+  `theme/components/page-lock.js` unpacks with `DecompressionStream` after
+  decrypting when the header says so, and tells a browser without it that it
+  is too old. Keys, salt and remembered logins are unchanged.
+- The same five pages after the change, as sent: 1,218 KB locked. The
+  locked bundle of the clone went from 53 MB to 41 MB on disk; the unlocked
+  copy is 49 MB. Opening a page, median of three with and without a four
+  times slower processor: no difference between before and after beyond the
+  spread of the runs.
+- Checks run: 66 tests of the page lock and the Open work entry; the
+  WebCrypto cross-check; the lock's browser suite in Chromium 151, Firefox
+  153 and WebKit 26.5, with a new case for a browser without
+  `DecompressionStream`.
+- [Page lock](../rules/site/publication.md#page-lock) names the browsers a
+  reader needs and, among the limits, what the compressed size tells and
+  why compressing before encrypting is acceptable for a static site.
+- Two code reviews for waste, one of the kit's browser code and one of
+  adaptation's own styles and scripts, ran beside this; both named the
+  missing compression on their own. Their other findings are not acted on
+  here.
+- Not run: the full check script on this commit; a review of this change.
+
 ## 2026-11-28 — The owner found the steps smooth; the neighbours get their 90% size back
 
 - `75f4709` went to the kit's `main` without a tag, and adaptation was

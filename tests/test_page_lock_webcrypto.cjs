@@ -45,11 +45,12 @@ const reference = throwaway();
 
   // The sealed Reference tree opens with the reference password's level-2 key only.
   const sealedTree = /window\.docsLockedReferenceTree = "([A-Za-z0-9+\/=]+)";/.exec(tree)[1];
-  const reference_tree = await lock.openTree(both.keys[2], sealedTree);
+  assert.equal(header.pack, 'deflate', 'the key header says that files are compressed before they are sealed');
+  const reference_tree = await lock.openTree(both.keys[2], sealedTree, true);
   assert.deepEqual(reference_tree, {entry: '    <a class="open-work" href="open.html">Open work</a>\n',
     section: '\n<div class="repo-tree"></div>', tree: '<ul class="repo-tree-list"></ul>'});
   assert.ok(lock.fromBase64(sealedTree).length >= 65536, 'the tree is padded');
-  await assert.rejects(lock.openTree(both.keys[1], sealedTree), {name: 'OperationError'});
+  await assert.rejects(lock.openTree(both.keys[1], sealedTree, true), {name: 'OperationError'});
   // The offset counts UTF-8 bytes: 14 for the opening tag and 2 for "ä".
   const joined = lock.joinSection(new TextEncoder().encode('<div id="toc">ä\n  </div>'), 16,
     '\n<div class="repo-tree"></div>');
@@ -69,19 +70,19 @@ const reference = throwaway();
   for (const file of files) {
     const plain = lock.fromBase64(file.plain);
     let sealed;
-    // Text files are sealed as they are; pages are sealed padded.
-    let read = data => data;
+    // Every file is compressed before it is sealed; pages are padded after that.
+    let read = data => lock.unpack(data);
     if (file.envelope) {
       const envelope = lock.parseEnvelope(file.envelope);
       assert.equal(envelope.level, file.level);
       sealed = envelope.sealed;
     } else {
       sealed = lock.fromBase64(file.sealed);
-      read = lock.unpad;
+      read = data => lock.unpack(lock.unpad(data));
     }
     if (file.level === 2 && !file.envelope) assert.equal(sealed.length, 8192 + 28, 'a padded page has its fixed size');
-    assert.deepEqual(read(await lock.openFile(both.keys[file.level], file.path, sealed)), plain, file.path);
-    if (file.level === 1) assert.deepEqual(read(await lock.openFile(opened.keys[1], file.path, sealed)), plain);
+    assert.deepEqual(await read(await lock.openFile(both.keys[file.level], file.path, sealed)), plain, file.path);
+    if (file.level === 1) assert.deepEqual(await read(await lock.openFile(opened.keys[1], file.path, sealed)), plain);
     else assert.equal(opened.keys[file.level], undefined);
     // Associated data binds the path; any changed byte fails authentication.
     await assert.rejects(lock.openFile(both.keys[file.level], 'moved/' + file.path, sealed), {name: 'OperationError'});

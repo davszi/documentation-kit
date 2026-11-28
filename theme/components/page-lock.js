@@ -97,9 +97,18 @@
   function openFile(raw, path, sealed) { return open(raw, sealed, fileContext(path)); }
 
   // The sealed Reference tree and section, from the base64 that reference.tree.js sets.
-  async function openTree(raw, sealedBase64) {
+  async function openTree(raw, sealedBase64, packed) {
     var plain = await openFile(raw, TREE, fromBase64(sealedBase64));
+    // A packed tree is padded like a page; the earlier format padded its JSON with spaces.
+    if (packed) plain = await unpack(unpad(plain));
     return JSON.parse(new TextDecoder('utf-8').decode(plain));
+  }
+
+  // A file is compressed (zlib) before it is sealed, when the key header says
+  // so: sealed bytes do not compress on their way to the reader.
+  async function unpack(bytes) {
+    var stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate'));
+    return new Uint8Array(await new Response(stream).arrayBuffer());
   }
 
   // A sealed page ends with one 0x80 byte and zero bytes of padding.
@@ -135,7 +144,7 @@
   }
 
   var api = {FORMAT: FORMAT, unlock: unlock, openSlots: openSlots, openFile: openFile, openTree: openTree,
-    unpad: unpad, joinSection: joinSection, parseEnvelope: parseEnvelope, fileContext: fileContext,
+    unpad: unpad, unpack: unpack, joinSection: joinSection, parseEnvelope: parseEnvelope, fileContext: fileContext,
     fromBase64: fromBase64, toBase64: toBase64};
   if (typeof module === 'object' && module && module.exports) { module.exports = api; return; }
   if (typeof document === 'undefined') return;
@@ -144,6 +153,8 @@
   if (!shell) return;
   var header = JSON.parse(document.getElementById('page-lock-keys').textContent);
   var pageLevel = Number(shell.getAttribute('data-level'));
+  // Every file of this publish is compressed before it is sealed.
+  var packed = header.pack === 'deflate';
   var sectionAt = shell.hasAttribute('data-section-at') ? Number(shell.getAttribute('data-section-at')) : null;
   var entryAt = shell.hasAttribute('data-entry-at') ? Number(shell.getAttribute('data-entry-at')) : null;
   // The host serves the site's 404.html at every missing address.
@@ -281,6 +292,8 @@
           return null;
         }
         return openFile(keys[envelope.level], paths[0], envelope.sealed).then(function (plain) {
+          return packed ? unpack(plain) : plain;
+        }).then(function (plain) {
           return URL.createObjectURL(new Blob([plain], {type: 'text/plain;charset=utf-8'})) + url.hash;
         });
       }).then(function (target) {
@@ -304,7 +317,7 @@
       script.onerror = function () { resolve(null); };
       document.head.appendChild(script);
     }).then(function (sealed) {
-      return typeof sealed === 'string' ? openTree(raw, sealed) : null;
+      return typeof sealed === 'string' ? openTree(raw, sealed, packed) : null;
     }).catch(function () { return null; });
   }
 
@@ -336,6 +349,7 @@
     }
     if (!plain) return false;
     plain = unpad(plain);
+    if (packed) plain = await unpack(plain);
     var tree = await reference;
     // nav.js reads the folder tree from here before it would load reference.tree.js.
     if (tree && typeof tree.tree === 'string') window.docsReferenceTree = tree.tree;
@@ -383,6 +397,11 @@
   async function start() {
     if (typeof crypto === 'undefined' || !crypto.subtle) {
       explain('This browser cannot unlock the page on this connection. Open the site over HTTPS.');
+      return;
+    }
+    if (packed && typeof DecompressionStream !== 'function') {
+      explain('This browser is too old to open this page. Use a current Firefox, Chrome, Edge or Safari.');
+      form.hidden = true;
       return;
     }
     // Session keys belong to this publish (readSession checks its id), and a

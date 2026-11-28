@@ -19,8 +19,11 @@ Key layout:
   and every other page) and for level 2 (Reference pages, the Reference tree
   and exported Markdown); the general password's slot holds the level-1 key,
   the reference password's slot holds both;
-- every locked file is sealed with AES-256-GCM under its level's key, with a
-  fresh random 96-bit nonce and its public bundle path as associated data.
+- every locked file is compressed (zlib) and then sealed with AES-256-GCM
+  under its level's key, with a fresh random 96-bit nonce and its public
+  bundle path as associated data. Sealed bytes do not compress, so a file
+  sealed as it is would travel at several times the size of the page it
+  holds.
 
 Level-1 pages lose their sidebar Reference section before they are sealed,
 and the menu's Open work entry when it leads to a level-2 page. The section,
@@ -49,6 +52,7 @@ import re
 import secrets
 import sys
 import unicodedata
+import zlib
 from urllib.parse import unquote, urlsplit
 
 from chapter_layout import Structure
@@ -56,6 +60,9 @@ from source_tree import TREE_GLOBAL, TREE_SCRIPT
 from theme_colors import ASSET as THEME_COLORS
 
 FORMAT = 'docsite-lock/1'
+# What a file is before it is sealed: a zlib stream. The key header names it, and
+# page-lock.js unpacks with the browser's DecompressionStream('deflate').
+PACK = 'deflate'
 # OWASP Password Storage Cheat Sheet: 600,000 iterations for PBKDF2-HMAC-SHA256.
 ITERATIONS = 600_000
 SALT_BYTES = 16
@@ -176,6 +183,18 @@ def unseal(key: bytes, sealed: bytes, associated: bytes) -> bytes:
     return _aesgcm()(key).decrypt(sealed[:NONCE_BYTES], sealed[NONCE_BYTES:], associated)
 
 
+def pack(data: bytes) -> bytes:
+    """A file as it is sealed: compressed, the same bytes for the same file."""
+    return zlib.compress(data, 9)
+
+
+def unpack(data: bytes) -> bytes:
+    try:
+        return zlib.decompress(data)
+    except zlib.error:
+        raise ValueError('Malformed compressed file') from None
+
+
 def file_context(path: str) -> bytes:
     return f'{FORMAT} file {path}'.encode('utf-8')
 
@@ -198,7 +217,7 @@ def make_keyring(passwords: Mapping[int, str], *, iterations: int = ITERATIONS) 
     # A slot opens with one password and holds its level byte and every key it may use.
     slots = [_b64(seal(derive_key(passwords[1], salt, iterations), bytes([1]) + content[1], context)),
              _b64(seal(derive_key(passwords[2], salt, iterations), bytes([2]) + content[1] + content[2], context))]
-    header = {'format': FORMAT, 'id': lock_id,
+    header = {'format': FORMAT, 'id': lock_id, 'pack': PACK,
               'kdf': {'name': 'PBKDF2', 'hash': 'SHA-256', 'iterations': iterations, 'salt': _b64(salt)},
               'slots': slots}
     return Keyring(content, header)
@@ -357,19 +376,19 @@ def lock_tree(tree: str | None, section: str | None, keyring: Keyring, size: int
               entry: str | None = None) -> bytes:
     """``TREE_SCRIPT`` as a script that hands the sealed, padded tree, section and entry to page-lock.js.
 
-    JSON ignores the trailing spaces that pad it to ``size`` bytes.
+    The payload is compressed and then padded (``pad``) to ``size`` bytes.
     """
-    data = tree_payload(tree, section, entry)
-    size = padded_size(len(data)) if size is None else size
-    if size < len(data):
+    data = pack(tree_payload(tree, section, entry))
+    size = padded_size(len(data) + 1) if size is None else size
+    if size <= len(data):
         raise ValueError(f'The page lock cannot pad {TREE_SCRIPT} to {size} bytes')
-    sealed = seal(keyring.content[2], data + b' ' * (size - len(data)), file_context(TREE_SCRIPT))
+    sealed = seal(keyring.content[2], pad(data, size), file_context(TREE_SCRIPT))
     return (f'// Locked: only the reference password opens this file.\n'
             f'window.{LOCKED_TREE_GLOBAL} = "{_b64(sealed)}";\n').encode('ascii')
 
 
 def pad(data: bytes, size: int | None = None) -> bytes:
-    """A page sealed as itself, one 0x80 byte and zero bytes up to ``size``; ``unpad`` removes them."""
+    """A compressed page with one 0x80 byte and zero bytes up to ``size``; ``unpad`` removes them."""
     size = len(data) + 1 if size is None else size
     if size <= len(data):
         raise ValueError('The page lock cannot pad a page into fewer bytes than it has')
@@ -393,7 +412,7 @@ def _utf8(name: str, data: bytes) -> str:
 def lock_text(name: str, level: int, data: bytes, keyring: Keyring) -> bytes:
     """A readable notice, a marker line and the sealed file in base64."""
     _utf8(name, data)
-    sealed = seal(keyring.content[level], data, file_context(name))
+    sealed = seal(keyring.content[level], pack(data), file_context(name))
     return f'{TEXT_NOTICE}\n{FORMAT} level {level}\n{_b64(sealed)}\n'.encode('ascii')
 
 
@@ -418,11 +437,11 @@ def open_locked(name: str, data: bytes, keys: Mapping[int, bytes]) -> tuple[int,
         if not found:
             raise ValueError(f'{name} is not a locked text file')
         level = int(found[1])
-        return level, unseal(keys[level], base64.b64decode(found[2]), file_context(name))
+        return level, unpack(unseal(keys[level], base64.b64decode(found[2]), file_context(name)))
     level, sealed = _PAGE_LEVEL.search(text), _PAGE_DATA.search(text)
     if not level or not sealed:
         raise ValueError(f'{name} is not a lock page')
-    return int(level[1]), unpad(unseal(keys[int(level[1])], base64.b64decode(sealed[1]), file_context(name)))
+    return int(level[1]), unpack(unpad(unseal(keys[int(level[1])], base64.b64decode(sealed[1]), file_context(name))))
 
 
 def page_header(name: str, data: bytes) -> dict:
@@ -438,7 +457,7 @@ def open_tree(data: bytes, keys: Mapping[int, bytes]) -> bytes:
     found = _TREE_DATA.search(data.decode('ascii', 'replace'))
     if not found:
         raise ValueError(f'{TREE_SCRIPT} is not a locked tree file')
-    return unseal(keys[2], base64.b64decode(found[1]), file_context(TREE_SCRIPT)).rstrip(b' ')
+    return unpack(unpad(unseal(keys[2], base64.b64decode(found[1]), file_context(TREE_SCRIPT))))
 
 
 def lock_page(name: str, level: int, data: bytes, keyring: Keyring, versions: Mapping[str, str],
@@ -453,7 +472,7 @@ def lock_page(name: str, level: int, data: bytes, keyring: Keyring, versions: Ma
     missing one.
     """
     _utf8(name, data)
-    sealed = seal(keyring.content[level], pad(data, size), file_context(name))
+    sealed = seal(keyring.content[level], pad(pack(data), size), file_context(name))
     up = posixpath.relpath('.', posixpath.dirname(name) or '.')
     prefix = '' if up == '.' else up + '/'
 
@@ -653,8 +672,9 @@ class PageLock:
         tree = tree_markup(files[TREE_SCRIPT].read_bytes()) if script else None
         section, entry = next(iter(sections), None), next(iter(entries), None)
         # The Reference index lists the whole tree: it gets the tree file's padded size.
-        size = padded_size(max(len(tree_payload(tree, section, entry)),
-                               len(pages[index][1]) + 1 if index in pages else 0))
+        # Both are padded as they are sealed, compressed.
+        size = padded_size(max(len(pack(tree_payload(tree, section, entry))),
+                               len(pack(pages[index][1])) if index in pages else 0) + 1)
         envelope = lock_tree(tree, section, keyring, size, entry)
         keyring.header['tree'] = hashlib.sha256(envelope).hexdigest()[:10]
 

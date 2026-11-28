@@ -238,6 +238,18 @@ project must do. What it meets:
     has to admit the page of the open-work list. One consuming project's
     check failed on this.
 
+- **A locked site travels smaller and needs a browser from 2023.** Every
+  locked file is compressed before it is encrypted. A locked page downloads
+  at about the size of the same page unlocked, several times less than
+  before. Readers need Firefox from 113, Safari from 16.4, Chrome or Edge
+  from 80; an older browser shows one plain message. A project check that
+  decrypts published files itself has to unpack them after decrypting: a
+  zlib stream, after the page's padding is removed.
+- **The neighbours of the shown chapter are not dimmed.** In the One
+  chapter view they stand at 90% of their size and at full brightness. A
+  project style or check that relies on their old opacity of `.55` has to
+  follow.
+
 ## New in 5.10.0
 
 For a project that comes from 5.9.0 or earlier. Beyond the steps above,

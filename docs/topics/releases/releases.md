@@ -73,8 +73,44 @@ Before any password, a locked page shows nothing of the menu, as before.
   lists the pages a topic page may link has to admit the list's page.
 
 Checked by the page lock's unit tests, the WebCrypto cross-check and the
-browser suite in Chromium. Firefox and WebKit were not run for this change.
+browser suite in Chromium, Firefox and WebKit.
 The [migration guide](migration.md#new-in-610) lists what a project meets.
+
+### A locked page travels at the size of an unlocked one
+
+The page lock encrypted each page as it was. Encrypted bytes do not compress
+on their way to the reader, and the lock stores them as text, which adds a
+third. `publish` now compresses every locked file before it encrypts it,
+and the reader's browser unpacks it after decrypting. Measured on five pages
+of a consuming project, published locked with throwaway passwords, sizes as a
+server sends them with gzip:
+
+| Page | Unlocked | Locked, 6.0.0 | Locked, 6.1.0 |
+|---|---|---|---|
+| home | 25 KB | 119 KB | 26 KB |
+| a reader page | 87 KB | 613 KB | 88 KB |
+| a reader page | 118 KB | 923 KB | 118 KB |
+| a reader page | 89 KB | 594 KB | 90 KB |
+| a page with 3.4 MB of inline data | 938 KB | 3,858 KB | 896 KB |
+
+Opening a page takes the same time as before within what the measurement
+shows: unpacking is not seen in it.
+
+- Passwords, keys and a remembered login stay as they are. The key header
+  gains `"pack": "deflate"`; a lock page of 6.0.0 has none and opens as
+  before.
+- A reader needs a browser with `DecompressionStream`: Firefox from 113,
+  Safari from 16.4, Chrome and Edge from 80. An older browser shows one plain
+  message. Until 6.0.0 the lock needed WebCrypto only.
+- The sealed tree file and the Reference index page are padded as before,
+  now after compression: a tree of 500 files hides in the same 64 KiB as an
+  empty one.
+- A lock page now shows the compressed size of its page.
+  [Page lock](../../../rules/site/publication.md#limits) says what that
+  tells and why compressing before encrypting is safe for a static site.
+
+Checked by the page lock's unit tests, the WebCrypto cross-check, and the
+browser suite in Chromium 151, Firefox 153 and WebKit 26.5.
 
 ### A step to the next chapter no longer fades the chapters
 

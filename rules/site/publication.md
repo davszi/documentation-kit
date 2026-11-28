@@ -261,7 +261,16 @@ later publish without asking, until either password changes. A reader with the
 general password who opens a Reference page is told that it needs the reference
 password. A wrong password gives one plain message, whichever password it was
 meant to be. Unlocking needs JavaScript and a secure connection: HTTPS,
-`localhost` or a local file.
+`localhost` or a local file. It also needs a browser that can unpack
+compressed data itself, `DecompressionStream`: Firefox from 113, Safari from
+16.4, Chrome and Edge from 80. An older browser shows one plain message and
+no password field.
+
+Every locked file is compressed before it is encrypted, and the browser
+unpacks it after decrypting. Encrypted bytes do not compress on their way to
+the reader, so a page encrypted as it is would travel at several times the
+size of the same page unlocked; compressed first, it travels at about that
+size.
 
 ### Keys and parameters
 
@@ -303,13 +312,16 @@ authenticated data. `tooling/page_lock.py` encrypts;
   carries the repository's address.
 - `build-info.js` stays readable: it holds the day and hour of the last
   build. `kit_link = false` removes it together with the sidebar's kit line.
-- A lock page shows the size of the page it holds and which password it
-  needs. The salt changes exactly when a password changes, so anyone can see
-  that it changed.
+- A lock page shows the compressed size of the page it holds and which
+  password it needs. The compressed size also says how much of a page
+  repeats itself. Compressing before encrypting is unsafe where someone can
+  put text of their own into a page and watch its size; a static site gives
+  nobody that, as long as the project writes its own pages. The salt changes
+  exactly when a password changes, so anyone can see that it changed.
 - Reference addresses follow repository paths. Anyone can ask for a guessed
   address, such as `readme.md.html`, and learn from the lock page that the
-  file exists. Above 64 KiB, the size of the tree file shows the size of the
-  tree within a factor of two.
+  file exists. Above 64 KiB compressed, the size of the tree file shows the
+  size of the tree within a factor of two.
 - Names of Reference files in pages the general password opens stay visible
   to those readers; `publish` counts them.
 - A lock page that holds a page with the shared sidebar, opened by the

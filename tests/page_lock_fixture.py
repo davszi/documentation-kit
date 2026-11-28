@@ -197,8 +197,8 @@ def vectors() -> dict:
         if path.endswith('.md'):
             entry['envelope'] = page_lock.lock_text(path, level, data, keyring).decode()
         else:
-            # Pages are sealed padded, as lock_page seals them; one to a fixed size.
-            padded = page_lock.pad(data, 8192 if level == 2 else None)
+            # Pages are sealed compressed and padded, as lock_page seals them; one to a fixed size.
+            padded = page_lock.pad(page_lock.pack(data), 8192 if level == 2 else None)
             entry['sealed'] = base64.b64encode(page_lock.seal(keyring.content[level], padded,
                                                               page_lock.file_context(path))).decode()
         files.append(entry)
