@@ -1,4 +1,4 @@
-> Snapshot of the kit owner's global agent instructions, taken on 2026-11-27,
+> Snapshot of the kit owner's global agent instructions, taken on 2026-11-28,
 > with personal details removed. The kit does not load this file; see the
 > kit's README, section "Optional: the owner's global agent instructions". It assumes the
 > Caveman plugin and the Graphify skill and names the models the owner uses;
@@ -234,6 +234,21 @@ chat until I ask to enable it again. New chats still start with Caveman.
 - Chat is for decisions. Give a result in a few lines. Where the project
   has a place for reading results, point to the exact spot and keep the
   detail there.
+
+# Compacting a long session
+
+- When I give a new task after a finished one and you judge that
+  compacting first would help, do not start the task. Ask me to compact.
+- Compacting helps when the session is long, the earlier work is finished
+  and the new task does not need its detail. Do not ask before a quick
+  answer, for a follow-up to work still in flight, or from a subagent.
+- Put the ask in the last lines of the message, with nothing after it: the
+  bold line "Compact before I start?" and the ready `/compact` command.
+  Its note names what to keep, repeats the new task, and names every job
+  and agent still running: what it is, where its output lands and what to
+  check when it ends.
+- I compact and write "go", or I write "go" alone. Either way you start
+  then and do not ask again for that task.
 
 # Design preferences (pages, artifacts, UI)
 

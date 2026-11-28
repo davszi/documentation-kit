@@ -137,3 +137,51 @@
 @media (prefers-reduced-motion: reduce) {
   .ga-band, .ga-group, .ga-way, .ga-full { transition: none; }
 }
+
+/* ---- Figure 4: a session's context over time, two ways of compacting ---- */
+.ga-time { display: grid; gap: 14px; margin: 0; }
+.ga-lane { min-width: 0; padding: 14px 16px 16px; border: 1px solid var(--border); border-top: 3px solid var(--tone); border-radius: 10px;
+  background: var(--panel); transition: border-color .2s, box-shadow .2s; }
+.ga-lane:hover { border-color: rgba(var(--tone-rgb), .5); box-shadow: 0 0 22px rgba(var(--tone-rgb), .12); }
+.ga-lane.is-harness { --tone: var(--red); --tone-rgb: var(--red-rgb); }
+.ga-lane.is-ask { --tone: var(--green); --tone-rgb: var(--green-rgb); }
+.ga-lane h3 { margin: 4px 0 12px; font-size: 19px; }
+.ga-plot { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 0 8px; }
+.ga-axis { display: flex; flex-direction: column; justify-content: space-between; height: 132px; padding: 0 0 0;
+  font: 600 11px var(--mono); color: var(--muted); text-align: right; }
+.ga-cols { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 0 5px; }
+.ga-track { grid-row: 1; position: relative; height: 132px; border-bottom: 1px solid rgba(var(--rule-rgb), .3); }
+.ga-track::before { content: ""; position: absolute; left: -3px; right: -3px; top: 0; border-top: 2px dashed rgba(var(--red-rgb), .55); }
+.ga-track i { position: absolute; left: 0; right: 0; bottom: 0; height: var(--h); border-radius: 4px 4px 0 0;
+  background: linear-gradient(rgba(var(--rule-rgb), .55), rgba(var(--rule-rgb), .3)); }
+.ga-track.is-b i { background: linear-gradient(rgba(var(--accent-rgb), .9), rgba(var(--accent-rgb), .45)); }
+.ga-track.is-full i { background: linear-gradient(var(--red), rgba(var(--red-rgb), .55)); box-shadow: 0 0 14px rgba(var(--red-rgb), .45); }
+.ga-track.is-packed i { background: linear-gradient(rgba(var(--accent-rgb), .9), rgba(var(--accent-rgb), .45)); }
+.ga-track.is-packed i::before, .ga-track.is-sum i::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--s);
+  background: repeating-linear-gradient(135deg, rgba(var(--secondary-rgb), .95) 0 4px, rgba(var(--secondary-rgb), .55) 4px 8px); }
+.ga-track.is-sum i { background: linear-gradient(rgba(var(--accent-rgb), .9), rgba(var(--accent-rgb), .45)); }
+.ga-cut { grid-row: 1; position: relative; z-index: 1; }
+.ga-cut::before { content: ""; position: absolute; top: -6px; bottom: 0; left: -3px; width: 3px; border-radius: 2px; background: var(--orange);
+  box-shadow: 0 0 12px rgba(var(--orange-rgb), .6); }
+.ga-seg { grid-row: 2; margin-top: 8px; padding: 4px 6px; border-top: 2px solid var(--muted); font: 600 11px var(--mono); letter-spacing: .04em;
+  color: var(--text); min-width: 0; overflow-wrap: anywhere; }
+.ga-seg.is-b { border-top-color: var(--accent); color: var(--bright); }
+.ga-event { grid-row: 3; margin-top: 6px; padding: 6px 10px; border-left: 3px solid var(--orange); border-radius: 0 6px 6px 0;
+  background: rgba(var(--orange-rgb), .09); font-size: 13px; line-height: 1.4; color: var(--text); min-width: 0; }
+.ga-event b { display: block; font: 700 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--orange); }
+.ga-event code { font-size: 12px; }
+.ga-result { margin: 12px 0 0; padding: 8px 12px; border-radius: 8px; background: rgba(var(--tone-rgb), .09); font-size: 14px; line-height: 1.45; color: var(--bright); }
+.ga-result b { color: var(--tone); }
+.ga-time .ga-legend span::before { border: 0; }
+.ga-time .ga-legend .is-a::before { background: rgba(var(--rule-rgb), .5); }
+.ga-time .ga-legend .is-b::before { background: rgba(var(--accent-rgb), .8); }
+.ga-time .ga-legend .is-sum::before { background: repeating-linear-gradient(135deg, rgba(var(--secondary-rgb), .95) 0 4px, rgba(var(--secondary-rgb), .55) 4px 8px); }
+.ga-time .ga-legend .is-cut::before { width: 3px; background: var(--orange); }
+.ga-time .ga-legend .is-full::before { height: 0; border-top: 2px dashed rgba(var(--red-rgb), .7); vertical-align: 3px; }
+@media (max-width: 760px) {
+  .ga-plot { grid-template-columns: minmax(0, 1fr); }
+  .ga-axis { display: none; }
+  .ga-cols { gap: 0 3px; }
+  .ga-event { grid-column: 1 / -1 !important; }
+  .ga-seg { grid-column: auto; }
+}

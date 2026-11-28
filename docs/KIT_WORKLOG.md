@@ -2,6 +2,50 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-28 — The copy renewed with "Compacting a long session", and a chapter on it
+
+- The owner's global file gained the section "Compacting a long session"
+  on this day, and he asked for a chapter on it in the new page: "we should
+  have a chapter on this in the new page no?". The kit's copy is now of
+  2026-11-28 and holds that section, inserted between "Decisions with me"
+  and "Design preferences (pages, artifacts, UI)". Nothing else in the copy
+  changed. The block was given to the page author word for word; the
+  author did not read the owner's live file, and the owner compares the
+  result with it himself.
+- The decision, by the owner on 2026-11-28, in his words: "at a clean stop
+  the agewnts could ask for a compact (should be made very clear at the
+  end of the msg soi for sure see it)" and, on when to ask, "we neeed to
+  make it after you get a new taks but deem compact is useful".
+- The problem. A harness compacts the session on its own when the context
+  window fills, which can fall in the middle of a task. An agent in this
+  harness has no action to compact by itself: the person types
+  `/compact`, optionally with a note of what to keep.
+- An observation, not a study: in the owner's own session on the kit on
+  2026-11-27, the automatic summary carried two wrong facts about which kit
+  version two projects were on. It said 3.2.1 where the pin was 5.6.1, and
+  5.0.0 where it was 5.7.0. Both were caught and corrected in the open.
+- Evidence read: "Letting Models Manage Their Own Context: Where We
+  Stand", NVIDIA, arXiv:2611.34147, submitted 25 November 2026,
+  <https://arxiv.org/abs/2611.34147>. From its abstract only: models that
+  decide when and what to compact through a context interface reach higher
+  accuracy, most at tight budgets; one model's score on OfficeQA Pro v2
+  rises from 21% to 56% at a 32K-token budget; models differ widely in how
+  they use it. Limits: a preprint; only the abstract was read; it tested a
+  model compacting by itself, not an agent asking a person; what was read
+  does not establish a gain at large context budgets.
+- Design decisions in the discussion: the ask comes when the new task
+  arrives, not when the earlier one finishes, because at the finish the
+  agent cannot know whether a task follows. Running jobs and agents do not
+  forbid the ask; the note for `/compact` names them instead.
+- Known weaknesses: "long" is the agent's judgment, without a meter of how
+  full the context is; an agent cannot wait on a clock, so it stays stopped
+  until the person writes; each ask costs the person one word.
+- The page "Global agent instructions" gains a chapter on this section, as
+  the worked example of how one instruction comes about, with a figure of a
+  session's context over time under the two ways of compacting. Its values
+  are an illustration, and the caption says so. The 6.0.0 release note, the
+  migration guide and the page's limits name the new day of the copy.
+
 ## 2026-11-28 — A page for the owner's global agent instructions; 6.0.0 prepared
 
 - Asked by the owner: the copy of his global agent instructions is "very

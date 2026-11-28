@@ -4,7 +4,7 @@ brand_sub = "your global file · the owner's copy · add or replace"
 description = "What a person's global agent file sets that no project rule can, what the kit owner's copy of his file holds, how to take it into your own and where it needs your edits."
 components = ["toc", "nav", "code", "filelinks"]
 page_css = ["build-sheet.css", "../site/assets/global-instructions.css"]
-toc = [["Two layers", "#two-layers"], ["What it holds", "#what-it-holds"], ["Take it", "#take-it"], ["Limits", "#limits"]]
+toc = [["Two layers", "#two-layers"], ["What it holds", "#what-it-holds"], ["One instruction", "#one-instruction"], ["Take it", "#take-it"], ["Limits", "#limits"]]
 +++
 
 # Global agent instructions
@@ -77,14 +77,14 @@ A project rule cannot carry that layer. Every contributor reads the project's ru
 <p class="bs-lead">Each section of the copy tells an agent how to act at one kind of moment. Grouped by what they do for you, they fall into six kinds and a remainder.</p>
 
 <figure id="fig-sections">
-<div class="ga-map" role="img" aria-label="The sections of the owner's file in seven groups, each with a real line from the file. Gates, checks at fixed moments: section Gates; line: Before saying something already exists: quote it with its location. Decisions with you: sections Decisions with me and Interaction preferences; line: Silence or continued discussion is not approval. Delegation: sections Models and delegation, to edit for your setup, and Delivery and coordination preference; line: Keep simple tasks inline. Reports: sections Caveman subagent reporting and Default response style, both to edit for your setup; line: Clearly distinguish verified facts, reasoned inferences and unchecked points. Commits: section Commit preferences; line: Authorization to commit does not by itself authorize pushing, merging or rewriting shared history. Checking and pushback: section Fact-checking and pushback; line: When evidence contradicts my claim, say so directly. The rest: sections Scope, Memory discipline, Usage-efficient execution, Design preferences, Engineering preferences, Long-running jobs and shared resources, and Graphify and NVIDIA GPU driver changes, both to edit for your setup; line: Use agent memory only to resume unfinished work.">
+<div class="ga-map" role="img" aria-label="The sections of the owner's file in seven groups, each with a real line from the file. Gates, checks at fixed moments: section Gates; line: Before saying something already exists: quote it with its location. Decisions with you: sections Decisions with me and Interaction preferences; line: Silence or continued discussion is not approval. Delegation: sections Models and delegation, to edit for your setup, and Delivery and coordination preference; line: Keep simple tasks inline. Reports: sections Caveman subagent reporting and Default response style, both to edit for your setup; line: Clearly distinguish verified facts, reasoned inferences and unchecked points. Commits: section Commit preferences; line: Authorization to commit does not by itself authorize pushing, merging or rewriting shared history. Checking and pushback: section Fact-checking and pushback; line: When evidence contradicts my claim, say so directly. The rest: sections Scope, Memory discipline, Usage-efficient execution, Design preferences, Engineering preferences, Long-running jobs and shared resources, Compacting a long session, and Graphify and NVIDIA GPU driver changes, both to edit for your setup; line: Use agent memory only to resume unfinished work.">
 <div class="ga-group ga-person-tone"><span class="ga-tag">Gates</span><h3>Checks at fixed moments</h3><p>Before visual work is called done, before a push, before a deletion and before claiming that something exists.</p><ul class="ga-heads"><li>Gates</li></ul><blockquote class="ga-quote"><p>Before saying something already exists: quote it with its location.</p><cite>Gates</cite></blockquote></div>
 <div class="ga-group ga-person-tone"><span class="ga-tag">Decisions with you</span><h3>Explain, ask, wait for the yes</h3><p>How a question is put to you, and what does not count as your approval.</p><ul class="ga-heads"><li>Decisions with me</li><li>Interaction preferences</li></ul><blockquote class="ga-quote"><p>Silence or continued discussion is not approval.</p><cite>Interaction preferences</cite></blockquote></div>
 <div class="ga-group ga-person-tone"><span class="ga-tag">Delegation</span><h3>When to hand work on, and to which model</h3><p>What another agent gets, and a ladder of models from mechanical counts to consequential reviews.</p><ul class="ga-heads"><li class="is-edit">Models and delegation</li><li>Delivery and coordination preference</li></ul><blockquote class="ga-quote"><p>Keep simple tasks inline.</p><cite>Models and delegation</cite></blockquote></div>
 <div class="ga-group ga-person-tone"><span class="ga-tag">Reports</span><h3>What you are told, and how</h3><p>Short answers that keep every path, number and caveat, and the line between checked and assumed.</p><ul class="ga-heads"><li class="is-edit">Caveman subagent reporting</li><li class="is-edit">Default response style</li></ul><blockquote class="ga-quote"><p>Clearly distinguish verified facts, reasoned inferences and unchecked points.</p><cite>Caveman subagent reporting</cite></blockquote></div>
 <div class="ga-group ga-person-tone"><span class="ga-tag">Commits</span><h3>Commit freely, push only when asked</h3><p>Your own Git identity, no tool credit lines, and commits at the end of a finished piece of work.</p><ul class="ga-heads"><li>Commit preferences</li></ul><blockquote class="ga-quote"><p>Authorization to commit does not by itself authorize pushing, merging or rewriting shared history.</p><cite>Commit preferences</cite></blockquote></div>
 <div class="ga-group ga-person-tone"><span class="ga-tag">Checking and pushback</span><h3>Check claims, yours included</h3><p>Behaviour against code and runs, numbers against data, history against Git, and a plain answer when you are wrong.</p><ul class="ga-heads"><li>Fact-checking and pushback</li></ul><blockquote class="ga-quote"><p>When evidence contradicts my claim, say so directly.</p><cite>Fact-checking and pushback</cite></blockquote></div>
-<div class="ga-group ga-person-tone"><span class="ga-tag">The rest</span><h3>Memory, cost, pages, code and the machine</h3><p>Where a preference is kept, how much an agent reads, how pages and code are made, and what to protect on the machine.</p><ul class="ga-heads"><li>Scope</li><li>Memory discipline</li><li>Usage-efficient execution</li><li>Design preferences (pages, artifacts, UI)</li><li>Engineering preferences</li><li>Long-running jobs and shared resources</li><li class="is-edit">Graphify</li><li class="is-edit">NVIDIA GPU driver changes</li></ul><blockquote class="ga-quote"><p>Use agent memory only to resume unfinished work.</p><cite>Memory discipline</cite></blockquote></div>
+<div class="ga-group ga-person-tone"><span class="ga-tag">The rest</span><h3>Memory, context, pages, code and the machine</h3><p>Where a preference is kept, how much an agent reads, when it asks you to compact, how pages and code are made, and what to protect on the machine.</p><ul class="ga-heads"><li>Scope</li><li>Memory discipline</li><li>Usage-efficient execution</li><li>Design preferences (pages, artifacts, UI)</li><li>Engineering preferences</li><li>Long-running jobs and shared resources</li><li>Compacting a long session</li><li class="is-edit">Graphify</li><li class="is-edit">NVIDIA GPU driver changes</li></ul><blockquote class="ga-quote"><p>Use agent memory only to resume unfinished work.</p><cite>Memory discipline</cite></blockquote></div>
 </div>
 <div class="ga-legend" aria-hidden="true"><span>a section heading of the file</span><span class="is-edit">names the owner's tools or machine: edit it for your setup</span></div>
 <figcaption><b>Figure 2.</b> Every section heading of the owner's file, grouped by what it does for you, with one line quoted from each group exactly as the file has it. The grouping is this page's; the file lists the sections in its own order. This diagram contains no measured results.</figcaption>
@@ -102,9 +102,76 @@ A project rule cannot carry that layer. Every contributor reads the project's ru
 
 **Commits** follow [Commit preferences](global-agent-instructions-text.html#commit-preferences): the agent commits on its own at the end of a finished piece of work, with your Git identity and no credit line for the tool, and a yes to commit is not a yes to push. **Checking and pushback**, in [Fact-checking and pushback](global-agent-instructions-text.html#fact-checking-and-pushback), asks the agent to check your claims as well as its own and to say so when the evidence contradicts you.
 
-**The rest** keeps memory for unfinished work only, keeps reads and outputs small, asks for pages that lead with the result and for careful engineering, protects running jobs, and holds two sections about the owner's own tools and machine.
+**The rest** keeps memory for unfinished work only, keeps reads and outputs small, has the agent ask you to compact a long session before a new task, which [the next chapter](#one-instruction) follows from problem to wording, asks for pages that lead with the result and for careful engineering, protects running jobs, and holds two sections about the owner's own tools and machine.
 
 <a class="ga-full" href="global-agent-instructions-text.html"><span><b>Read every section in full</b><span>The registered source page shows the whole file and copies it with one button.</span></span><i>Full text →</i></a>
+
+</section>
+
+<section class="card" id="one-instruction">
+
+## One instruction from problem to wording: ask to compact before a new task
+
+<p class="bs-lead">The copy's newest section shows how a line gets into the file: a problem seen in a real session, evidence read together with its limits, and wording that says exactly when the agent acts and what it writes.</p>
+
+<figure id="fig-compact">
+<div class="ga-time" role="img" aria-label="Two lanes show how full a session's context is over time, while task A and then task B run. Illustrative values, not a measurement. In the first lane the harness decides: the context fills during task B, the window is full in the middle of it, and the harness compacts there; the detail task B had in flight is lost and the summary may carry a wrong fact. In the second lane the agent asks: task A is finished, task B arrives, the agent ends its message with Compact before I start? and the ready /compact command; the person compacts and writes go, and task B starts on a packed summary of the finished work and runs without reaching the full window.">
+<div class="ga-lane is-harness"><span class="ga-tag">Today · the harness decides</span><h3>Compacted when the window is full</h3>
+<div class="ga-plot"><div class="ga-axis" aria-hidden="true"><span>full</span><span>half</span><span>empty</span></div><div class="ga-cols">
+<div class="ga-track is-a" style="grid-column:1"><i style="--h:8%"></i></div>
+<div class="ga-track is-a" style="grid-column:2"><i style="--h:18%"></i></div>
+<div class="ga-track is-a" style="grid-column:3"><i style="--h:30%"></i></div>
+<div class="ga-track is-a" style="grid-column:4"><i style="--h:42%"></i></div>
+<div class="ga-track is-a" style="grid-column:5"><i style="--h:55%"></i></div>
+<div class="ga-track is-b" style="grid-column:6"><i style="--h:66%"></i></div>
+<div class="ga-track is-b" style="grid-column:7"><i style="--h:78%"></i></div>
+<div class="ga-track is-b" style="grid-column:8"><i style="--h:90%"></i></div>
+<div class="ga-track is-full" style="grid-column:9"><i style="--h:100%"></i></div>
+<div class="ga-track is-sum" style="grid-column:10"><i style="--h:22%;--s:73%"></i></div>
+<div class="ga-track is-sum" style="grid-column:11"><i style="--h:34%;--s:47%"></i></div>
+<div class="ga-track is-sum" style="grid-column:12"><i style="--h:46%;--s:35%"></i></div>
+<div class="ga-cut" style="grid-column:10"></div>
+<span class="ga-seg" style="grid-column:1 / 6">task A</span>
+<span class="ga-seg is-b" style="grid-column:6 / 13">task B</span>
+<p class="ga-event" style="grid-column:8 / 13"><b>Window full</b>The harness compacts in the middle of task B.</p>
+</div></div><p class="ga-result"><b>Lost:</b> the detail task B had in flight; the summary may carry a wrong fact.</p></div>
+<div class="ga-lane is-ask"><span class="ga-tag">The instruction · the agent asks</span><h3>Compacted before the new task starts</h3>
+<div class="ga-plot"><div class="ga-axis" aria-hidden="true"><span>full</span><span>half</span><span>empty</span></div><div class="ga-cols">
+<div class="ga-track is-a" style="grid-column:1"><i style="--h:8%"></i></div>
+<div class="ga-track is-a" style="grid-column:2"><i style="--h:18%"></i></div>
+<div class="ga-track is-a" style="grid-column:3"><i style="--h:30%"></i></div>
+<div class="ga-track is-a" style="grid-column:4"><i style="--h:42%"></i></div>
+<div class="ga-track is-a" style="grid-column:5"><i style="--h:55%"></i></div>
+<div class="ga-track is-packed" style="grid-column:6"><i style="--h:20%;--s:70%"></i></div>
+<div class="ga-track is-packed" style="grid-column:7"><i style="--h:32%;--s:44%"></i></div>
+<div class="ga-track is-packed" style="grid-column:8"><i style="--h:44%;--s:32%"></i></div>
+<div class="ga-track is-packed" style="grid-column:9"><i style="--h:56%;--s:25%"></i></div>
+<div class="ga-track is-packed" style="grid-column:10"><i style="--h:68%;--s:21%"></i></div>
+<div class="ga-track is-packed" style="grid-column:11"><i style="--h:80%;--s:18%"></i></div>
+<div class="ga-track is-packed" style="grid-column:12"><i style="--h:92%;--s:15%"></i></div>
+<div class="ga-cut" style="grid-column:6"></div>
+<span class="ga-seg" style="grid-column:1 / 6">task A</span>
+<span class="ga-seg is-b" style="grid-column:6 / 13">task B</span>
+<p class="ga-event" style="grid-column:4 / 9"><b>New task after a finished one</b><strong>Compact before I start?</strong> You type <code>/compact</code> with the note, then go.</p>
+</div></div><p class="ga-result"><b>Kept:</b> task B starts on a packed summary of finished work and runs without a cut.</p></div>
+<div class="ga-legend" aria-hidden="true"><span class="is-a">task A in the context</span><span class="is-b">task B in the context</span><span class="is-sum">packed summary</span><span class="is-cut">compaction</span><span class="is-full">window full</span></div>
+</div>
+<figcaption><b>Figure 4.</b> A session's context over time under the two ways of compacting. The heights are an illustration, not a measurement: they show where a compaction falls, not how often. Tasks A and B are invented examples.</figcaption>
+</figure>
+
+**The problem.** [Figure 4](#fig-compact) puts the two ways side by side. A harness compacts a session on its own when the context window fills, and that can fall in the middle of a task: the detail the task had in flight goes into a summary that nobody checks at that moment. In the owner's own session on the kit on 2026-11-27, the automatic summary carried two wrong facts about which kit version two projects were on: 3.2.1 where the pin was 5.6.1, and 5.0.0 where it was 5.7.0. Both were caught and corrected in the open. That is one session, an observation and not a study.
+
+**The evidence, with its limits.** A preprint, [Letting Models Manage Their Own Context: Where We Stand](https://arxiv.org/abs/2611.34147) (NVIDIA, submitted 25 November 2026), reports in its abstract that models which decide when and what to compact reach higher accuracy, most at tight budgets; one model's score on OfficeQA Pro v2 rises from 21% to 56% at a 32K-token budget, and models differ widely in how they use the interface. Only the abstract was read. The paper tested a model compacting by itself, not an agent asking a person, and what was read does not establish a gain at large context budgets. It supports the direction, not the size of any effect here.
+
+**The wording.** An agent in this harness cannot compact by itself: the person types `/compact`, with a note of what to keep if they want one. So the [instruction](global-agent-instructions-text.html#compacting-a-long-session) has the agent ask, at the one moment it can judge: when a new task arrives after a finished one. At the finish it cannot know whether a task follows. It asks only when the session is long, the earlier work is done and the new task does not need its detail; not before a quick answer, not for a follow-up to work in flight, and never from a subagent. The ask closes the message, so the person cannot miss it: a bold "Compact before I start?" and the ready `/compact` command, whose note names what to keep, repeats the new task and names every job and agent still running. Running work does not forbid the ask; the note carries it across. The person compacts and writes "go", or writes "go" alone, and the agent starts without asking again.
+
+<div class="bs-grid g3">
+<div class="bs-part bs-orange"><span class="bs-label">Weakness</span><h3>"Long" is a judgment</h3><p>The agent has no meter of how full its context is; it judges from the session it remembers.</p></div>
+<div class="bs-part bs-orange"><span class="bs-label">Weakness</span><h3>It waits for a word</h3><p>An agent cannot wait on a clock, so after the ask it stays stopped until the person writes.</p></div>
+<div class="bs-part bs-orange"><span class="bs-label">Weakness</span><h3>One word each time</h3><p>Every ask costs the person a reply, even when compacting turns out not to matter.</p></div>
+</div>
+
+The [worklog entry](../KIT_WORKLOG.md#2026-11-28--the-copy-renewed-with-compacting-a-long-session-and-a-chapter-on-it) records the decision, the owner's words, the observation and what was read of the paper.
 
 </section>
 
@@ -147,7 +214,7 @@ A project does not choose for you. A project whose `AGENTS.md` asks for it, as t
 
 <div class="bs-checks">
 <div class="bs-check"><span class="bs-badge bs-off">whose</span><h3>One person's preferences</h3><p>The owner's habits with his agents, not a rule of the kit. Your project's rules do not depend on any of it.</p></div>
-<div class="bs-check"><span class="bs-badge bs-off">when</span><h3>A copy of 2026-11-27</h3><p>The owner's file changes; the copy does not follow it until the kit renews it.</p></div>
+<div class="bs-check"><span class="bs-badge bs-off">when</span><h3>A copy of 2026-11-28</h3><p>The owner's file changes; the copy does not follow it until the kit renews it.</p></div>
 <div class="bs-check"><span class="bs-badge bs-ok">optional</span><h3>Not loaded by the kit</h3><p>No build, check or router row reads it. It acts only once you put it in your own global file.</p></div>
 </div>
 
@@ -165,6 +232,6 @@ A project does not choose for you. A project whose `AGENTS.md` asks for it, as t
 </ul></div>
 </div>
 
-The copy is the owner's file of 2026-11-27, with personal details removed; its first lines name the tools it assumes. When the kit renews the copy, its release notes say so, as 5.9.0 did, and the [migration guide](migrate.html) tells a person who added the earlier copy to replace that part. A copy you added does not update itself: your global file keeps what you put there until you change it.
+The copy is the owner's file of 2026-11-28, with personal details removed; its first lines name the tools it assumes. When the kit renews the copy, its release notes say so, as 5.9.0 did, and the [migration guide](migrate.html) tells a person who added the earlier copy to replace that part. A copy you added does not update itself: your global file keeps what you put there until you change it.
 
 </section>

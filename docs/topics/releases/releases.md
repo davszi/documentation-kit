@@ -52,6 +52,11 @@ What a project meets after moving its pin:
   the README's two commands name the new path.
 - The starter's router names the new path, so a project that runs `init`
   from now on gets the right line.
+- The copy is now of 2026-11-28 and gains the section "Compacting a long
+  session": an agent that gets a new task after a finished one, and judges
+  that compacting first would help, asks the person to compact before it
+  starts. A person who took an earlier copy may replace it; the README has
+  the commands.
 
 ### A page for the owner's global agent instructions
 
@@ -59,8 +64,10 @@ The kit's own site gains the page "Global agent instructions" in its menu,
 under "start here". It explains what a person's global agent file sets that a
 project rule cannot, what the owner's copy holds, how to add it to a global
 file or replace one with it, and where it needs edits for another person's
-setup. The full text moved to the page `global-agent-instructions-text.html`,
-which keeps the button that copies it. The home page and Get started point
+setup. A chapter follows one instruction, the new section on compacting,
+from the problem through the evidence to its wording. The full text moved
+to the page `global-agent-instructions-text.html`, which keeps the button
+that copies it. The home page and Get started point
 to the new page. A consuming project's site is not changed.
 
 ## 5.10.0 — the kit's pages brought up to its rules, one migration guide, a button that copies a record

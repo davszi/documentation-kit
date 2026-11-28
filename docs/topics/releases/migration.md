@@ -115,9 +115,13 @@ hold it or decline it.
 Neither the build nor lint checks the line: until it is changed, both pass,
 and an agent that follows the offer finds no file at the old path. A person
 who already added the copy to their global agent file, or replaced theirs
-with it, needs to do nothing. A person who wants the copy now runs the
-commands of [the README](../../../README.md#optional-the-owners-global-agent-instructions),
+with it, needs to do nothing for the move. A person who wants the copy now
+runs the commands of [the README](../../../README.md#optional-the-owners-global-agent-instructions),
 which name the new path.
+
+The copy is now of 2026-11-28 and gains the section "Compacting a long
+session". A person who took an earlier copy may replace that part with
+this one, with the same commands.
 
 ## Repoint links to the removed guides
 
