@@ -156,6 +156,6 @@ All three routes share the same core: a pinned submodule and router rows. They d
 <div class="bs-part bs-green"><span class="bs-label">Example · this</span><h3>Register what is already there</h3><p>The project adds <code>site.toml</code>, settles which existing Markdown files its Reference section lists and keeps every file where it was.</p></div>
 </div>
 
-**Optional: the owner's global agent instructions.** The rules in the kit say what a project does. How an agent works with a person in every project, such as how it reports, when it delegates, how it puts a decision to the person and how it checks a claim, sits in the person's own global agent file. The kit ships [a copy of its owner's file](global-agent-instructions.html) with personal details removed. A person may add it to their own file or replace theirs with it; the [README](readme.html#optional-the-owners-global-agent-instructions) has the two commands. The kit does not load the copy and no rule depends on it.
+**Optional: the owner's global agent instructions.** How an agent works with you in every project is set in your own global agent file, not by the kit. The kit ships a copy of its owner's file for you to add to yours or to replace yours with; [Global agent instructions](global-agent-instructions.html) explains it. The kit does not load the copy, and no rule depends on it.
 
 </section>

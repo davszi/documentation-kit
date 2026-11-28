@@ -60,7 +60,7 @@ bundle's page text encrypted behind two passwords.
 
 ## Optional: the owner's global agent instructions
 
-[`examples/global-agent-context.md`](examples/global-agent-context.md) is a
+[`docs/topics/global-agent-instructions/global-agent-instructions.md`](docs/topics/global-agent-instructions/global-agent-instructions.md) is a
 snapshot of the kit owner's global agent instructions with personal details
 removed: how agents report, delegate, commit, put a decision to the person
 and check facts in every project. The kit does not load it and no rule depends on it. A person may add
@@ -69,11 +69,11 @@ it to their own global agent file or replace theirs with it. Codex reads
 project root, with `target` set to that file:
 
 ```bash
-{ printf '\n'; cat .docs-kit/examples/global-agent-context.md; } >> "$target"   # add
+{ printf '\n'; cat .docs-kit/docs/topics/global-agent-instructions/global-agent-instructions.md; } >> "$target"   # add
 ```
 
 ```bash
-[ ! -e "$target.before-kit-snapshot" ] && cp "$target" "$target.before-kit-snapshot" && cp .docs-kit/examples/global-agent-context.md "$target"   # replace, keeping the old file
+[ ! -e "$target.before-kit-snapshot" ] && cp "$target" "$target.before-kit-snapshot" && cp .docs-kit/docs/topics/global-agent-instructions/global-agent-instructions.md "$target"   # replace, keeping the old file
 ```
 
 Replace needs an existing file and does nothing while a kept old file is
@@ -176,7 +176,7 @@ says how to check and create it.
 The kit is versioned in `VERSION` and tagged `v<version>`. [Releases and
 upgrades](docs/topics/releases/releases.md) lists what each version changes for
 consumers and the migration steps; 1.0.0 is the first stable version.
-The current release is 5.10.0. The kit keeps one [migration guide](docs/topics/releases/migration.md), at a fixed address, which holds every step from 5.7.0. The guides of earlier versions are in the repository at the tag `v5.9.0`.
+The current release is 6.0.0. The kit keeps one [migration guide](docs/topics/releases/migration.md), at a fixed address, which holds every step from 5.7.0. The guides of earlier versions are in the repository at the tag `v5.9.0`.
 
 Then run the [project conformance check](rules/conformance.md) and report its
 findings. Review changed human pages at wide and narrow widths before committing the

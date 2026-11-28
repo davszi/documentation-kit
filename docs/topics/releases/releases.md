@@ -30,6 +30,39 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## 6.0.0 — the owner's global agent instructions move beside their own page
+
+6.0.0 is a major release under
+[what a version number promises](#what-a-version-number-promises): it
+renames a path that projects rely on. The kit's copy of its owner's global
+agent instructions moved from `examples/global-agent-context.md` to
+`docs/topics/global-agent-instructions/global-agent-instructions.md`, and
+nothing is left at the old path. Every router written from the starter names
+that file in its section "Offer the kit owner's global instructions", so the
+line points at nothing until the project changes it. The
+[migration guide](migration.md) has the old and the new text of that line.
+
+No lint error, warning or build failure is added: a project that has not yet
+changed the line still builds and passes strict lint. Only its agent's
+optional offer points at a file that is not there.
+
+What a project meets after moving its pin:
+
+- The copy is at `.docs-kit/docs/topics/global-agent-instructions/global-agent-instructions.md`;
+  the README's two commands name the new path.
+- The starter's router names the new path, so a project that runs `init`
+  from now on gets the right line.
+
+### A page for the owner's global agent instructions
+
+The kit's own site gains the page "Global agent instructions" in its menu,
+under "start here". It explains what a person's global agent file sets that a
+project rule cannot, what the owner's copy holds, how to add it to a global
+file or replace one with it, and where it needs edits for another person's
+setup. The full text moved to the page `global-agent-instructions-text.html`,
+which keeps the button that copies it. The home page and Get started point
+to the new page. A consuming project's site is not changed.
+
 ## 5.10.0 — the kit's pages brought up to its rules, one migration guide, a button that copies a record
 
 5.10.0 is a minor release under
@@ -270,7 +303,7 @@ The kit ships a copy of its owner's global agent instructions,
 `examples/global-agent-context.md`. The copy was of 2026-11-15; it is now of
 2026-11-27 and gains two sections: "Gates", four checks at fixed moments,
 and "Decisions with me", how an agent explains and asks. The site did not
-mention the copy. It is now [a page of its own](../../../examples/global-agent-context.md),
+mention the copy. It is now [a page of its own](../global-agent-instructions/global-agent-instructions.md),
 linked from the home page and from Get started. A person who added the
 earlier copy to their own file may replace it; the
 [README](../../../README.md#optional-the-owners-global-agent-instructions)

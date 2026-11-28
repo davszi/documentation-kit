@@ -1,6 +1,6 @@
 # Migrate to the current version
 
-This is the kit's one migration guide. The current version is 5.10.0; the
+This is the kit's one migration guide. The current version is 6.0.0; the
 [release notes](releases.md) say what each version changed. The guide holds
 every step from 5.7.0 on, and each step says which versions it is for. A
 project on a version before 5.7.0 reads the guides of its versions in the
@@ -23,7 +23,7 @@ removals.
 
    ```bash
    git -C .docs-kit fetch --tags origin
-   git -C .docs-kit checkout v5.10.0
+   git -C .docs-kit checkout v6.0.0
    ```
 
    `requirements.txt` is unchanged, so the documentation environment needs no
@@ -54,7 +54,7 @@ removals.
    path that has moved, correct the URL in `.gitmodules` and run
    `git submodule sync` first.
 
-Done when `git -C .docs-kit describe --tags` prints `v5.10.0` and the build
+Done when `git -C .docs-kit describe --tags` prints `v6.0.0` and the build
 passes. Lint fails while the pinned commit is on none of the kit's remote
 branches; a tag alone does not count. A project that comes from 5.7.0 sees
 the warning of the next step until it has decided.
@@ -84,10 +84,45 @@ A link to `#reader-introduction` still lands on the text. The page has one
 chapter fewer, so a check of the project that counts chapters sees the new
 count. Records shown as pages get no warning.
 
+## Repoint the offer of the owner's global instructions
+
+For every project that comes from 5.10.0 or earlier; 6.0.0 brought this step.
+
+The kit's copy of its owner's global agent instructions moved from
+`examples/global-agent-context.md` to
+`docs/topics/global-agent-instructions/global-agent-instructions.md`, and
+nothing is left at the old path. The starter router's section "Offer the kit
+owner's global instructions" names the file. Where the project's `AGENTS.md`
+has that section, replace
+
+```markdown
+Once per session, offer the person the snapshot
+`.docs-kit/examples/global-agent-context.md` as **Optional: the owner's
+global agent instructions** in `.docs-kit/README.md` describes, unless their
+global instructions already hold it or decline it.
+```
+
+with
+
+```markdown
+Once per session, offer the person the snapshot
+`.docs-kit/docs/topics/global-agent-instructions/global-agent-instructions.md`
+as **Optional: the owner's global agent instructions** in
+`.docs-kit/README.md` describes, unless their global instructions already
+hold it or decline it.
+```
+
+Neither the build nor lint checks the line: until it is changed, both pass,
+and an agent that follows the offer finds no file at the old path. A person
+who already added the copy to their global agent file, or replaced theirs
+with it, needs to do nothing. A person who wants the copy now runs the
+commands of [the README](../../../README.md#optional-the-owners-global-agent-instructions),
+which name the new path.
+
 ## Repoint links to the removed guides
 
-For a project that links a migration guide of an earlier version; 5.10.0
-removed those files.
+For a project that comes from 5.9.0 or earlier and links a migration guide
+of an earlier version; 5.10.0 removed those files.
 
 Until 5.9.0 the kit had one guide per version, under
 `.docs-kit/docs/topics/releases/migrations/`. A link from a project's own file
@@ -100,7 +135,8 @@ worklog entry as it is.
 
 ## Update the router row for upgrades
 
-For every project. The starter router's row for upgrading the pin named
+For a project that comes from 5.9.0 or earlier; 5.10.0 brought this step.
+The starter router's row for upgrading the pin named
 `.docs-kit/docs/topics/releases/migrations/<version>.md`. It now reads:
 
 ```markdown
@@ -143,8 +179,8 @@ Only for a project that comes from 5.7.0 or 5.8.0; 5.9.0 brought these.
 
 ## New in 5.10.0
 
-For every project. Beyond the two steps above, nothing a project must do.
-What it meets:
+For a project that comes from 5.9.0 or earlier. Beyond the steps above,
+nothing a project must do. What it meets:
 
 - **Open work in the menu.** The menu of every page starts with "Open work"
   and the number of lines in the project's open-work list. A long list shows
@@ -180,7 +216,7 @@ What it meets:
 
 For a project that comes from 5.7.0 or 5.8.0; 5.9.0 renewed the copy.
 
-`.docs-kit/examples/global-agent-context.md` is renewed. A person who added
+The copy, now at `.docs-kit/docs/topics/global-agent-instructions/global-agent-instructions.md`, is renewed. A person who added
 the earlier copy to their own global agent file replaces that part with the
 new copy; [the README](../../../README.md#optional-the-owners-global-agent-instructions)
 has the commands. It gains "Gates" and "Decisions with me".

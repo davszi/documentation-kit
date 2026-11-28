@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 KIT = Path(__file__).resolve().parents[1]
-SNAPSHOT = KIT / 'examples/global-agent-context.md'
+SNAPSHOT = KIT / 'docs/topics/global-agent-instructions/global-agent-instructions.md'
 SECTION = "Optional: the owner's global agent instructions"
 
 
@@ -21,8 +21,12 @@ class Snapshot(unittest.TestCase):
         self.assertIn(f'\n## {SECTION}\n', (KIT / 'README.md').read_text())
 
     def test_the_starter_and_the_readme_name_the_file(self):
+        name = str(SNAPSHOT.relative_to(KIT))
         for path in ('examples/starter/AGENTS.md.tmpl', 'README.md', 'docs/topics/releases/migration.md'):
-            self.assertIn('examples/global-agent-context.md', ' '.join((KIT / path).read_text().split()), path)
+            self.assertIn(name, ' '.join((KIT / path).read_text().split()), path)
+
+    def test_nothing_is_left_at_the_old_path(self):
+        self.assertFalse((KIT / 'examples/global-agent-context.md').exists())
 
 
 if __name__ == '__main__':

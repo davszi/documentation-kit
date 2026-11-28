@@ -2,6 +2,55 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-28 — A page for the owner's global agent instructions; 6.0.0 prepared
+
+- Asked by the owner: the copy of his global agent instructions is "very
+  important", and one paragraph at the end of Get started was too weak:
+  "make it a proper page in the menu". Then: "also change the file path to
+  a better place". Then, on the version: "6.0.0 nothing left at the old
+  path". The owner decided the version on this day.
+- Built: the page "Global agent instructions",
+  `docs/topics/global-agent-instructions/index.md`, in the menu under
+  "start here" after "Build a site". Four chapters: the two layers an agent
+  session reads, with a figure of where each is loaded from; the copy's
+  sections grouped by what they do, with one real line quoted from each
+  group; the three ways to take it, with the README's two commands; its
+  limits. The figures use the invented project names `vehicle-sim/` and
+  `thesis/`, and the captions say so. Every quoted line was checked by a
+  script against its file.
+- The copy moved with `git mv` from `examples/global-agent-context.md` to
+  `docs/topics/global-agent-instructions/global-agent-instructions.md`,
+  beside its page; nothing is left at the old path. Its text is unchanged.
+  The README section, the starter router's offer section, the website
+  record and the snapshot test name the new path; the test also checks that
+  the old path is empty. The full text is now the page
+  `global-agent-instructions-text.html`, still with the copy button, and
+  `global-agent-instructions.html` is the new page.
+- The one link that the move broke, in the 5.9.0 section of the release
+  notes, now points at the new path; its words and the old path in
+  backticks are unchanged. Older worklog entries name the old path in
+  backticks only and are unchanged.
+- Get started keeps one short paragraph that points to the new page. The
+  home page's card already stood under "Start here"; it now carries the
+  menu's label.
+- 6.0.0 prepared, not released: `VERSION`, the current version in README,
+  `docs/KIT_CONTEXT.md`, `docs/KIT_INDEX.md` and the migration guide, a
+  6.0.0 section in the release notes and a migration step with the old and
+  the new text of the router's offer section. Steps that the guide marked
+  "for every project" at 5.10.0 now say they are for a project that comes
+  from 5.9.0 or earlier. Known weakness of the decision: a major number for
+  a one-line change in each project's router, which no check reports.
+- Open: the tag `v6.0.0` and its push wait for the owner's word. Each
+  consuming project still has to change its router's offer line, as the
+  migration guide says.
+- Checked: build, strict lint and strict lint since `v5.10.0` exit 0;
+  552 tests pass; the page, the home page's cards, the Get started
+  paragraph and the full-text page were captured at 1600 × 1000 and
+  390 × 844 in the dark theme and looked at: no sideways overflow, no text
+  below 11 px, figure labels included. Not checked: other browsers than
+  Chromium, a real phone, the light theme; the page has no slide faces, and
+  whether it should get them is a question for the owner.
+
 ## 2026-11-28 — Release 5.10.0
 
 - The owner gave the go: "Yes, release 5.10.0". The ask named what the go

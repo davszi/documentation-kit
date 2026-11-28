@@ -48,6 +48,11 @@ label = "Build a site"
 file = "build-a-site.html"
 group = "start here"
 
+[[nav]]
+label = "Global agent instructions"
+file = "global-agent-instructions.html"
+group = "start here"
+
 # ── Practices: pages for people; each links its reference guides ───────
 [[nav]]
 label = "Engineering"
@@ -90,11 +95,11 @@ group = "releases"
 # The sidebar's repository section lists these by path, pinned ones first in
 # declared order; no [[nav]] entry is needed.
 [[source_pages]]
-source = "examples/global-agent-context.md"
-slug = "global-agent-instructions"
+source = "docs/topics/global-agent-instructions/global-agent-instructions.md"
+slug = "global-agent-instructions-text"
 copy_raw = true
 title = "The owner's global agent instructions"
-description = "A copy of the kit owner's global agent instructions, without personal details: gates, delegation, reporting, decisions with the person, commits and fact-checking. Optional to adopt."
+description = "The full text of the kit owner's global agent instructions, without personal details, with a button that copies it. The page Global agent instructions explains it. Optional to adopt."
 
 [[source_pages]]
 source = "README.md"
