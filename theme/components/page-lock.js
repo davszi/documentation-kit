@@ -153,7 +153,8 @@
   if (!shell) return;
   var header = JSON.parse(document.getElementById('page-lock-keys').textContent);
   var pageLevel = Number(shell.getAttribute('data-level'));
-  // Every file of this publish is compressed before it is sealed.
+  // Every file of this publish is compressed before it is sealed. A header
+  // without `pack` is the earlier format, sealed as the files were.
   var packed = header.pack === 'deflate';
   var sectionAt = shell.hasAttribute('data-section-at') ? Number(shell.getAttribute('data-section-at')) : null;
   var entryAt = shell.hasAttribute('data-entry-at') ? Number(shell.getAttribute('data-entry-at')) : null;
@@ -397,6 +398,12 @@
   async function start() {
     if (typeof crypto === 'undefined' || !crypto.subtle) {
       explain('This browser cannot unlock the page on this connection. Open the site over HTTPS.');
+      return;
+    }
+    if (header.pack && !packed) {
+      // A way of packing this script does not know: a newer publish behind an older copy of the script.
+      explain('This page was published in a newer format. Reload the page; if this stays, clear the browser\'s cache for this site.');
+      form.hidden = true;
       return;
     }
     if (packed && typeof DecompressionStream !== 'function') {

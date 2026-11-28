@@ -244,7 +244,10 @@ project must do. What it meets:
   before. Readers need Firefox from 113, Safari from 16.4, Chrome or Edge
   from 80; an older browser shows one plain message. A project check that
   decrypts published files itself has to unpack them after decrypting: a
-  zlib stream, after the page's padding is removed.
+  zlib stream, after the page's padding is removed. `reference.tree.js` is
+  padded like a page now, one `0x80` byte and zeros, where its JSON was
+  padded with spaces. The format name stays `docsite-lock/1`; a check reads
+  `pack` in the key header to tell the formats apart.
 - **The neighbours of the shown chapter are not dimmed.** In the One
   chapter view they stand at 90% of their size and at full brightness. A
   project style or check that relies on their old opacity of `.55` has to

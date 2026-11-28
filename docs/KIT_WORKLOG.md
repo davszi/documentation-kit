@@ -2,6 +2,45 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-28 — Review of the compression in the page lock: nothing blocks, its points taken
+
+- A reviewer, a separate agent, read `a6ea0c8` against `d2184be` on seven
+  questions and ran the three suites in Chromium 151, Firefox 153 and WebKit
+  26.5. His result: the Reference section and the Open work entry are cut
+  out before a page is compressed; each compressed stream holds one level
+  only; nothing an outsider can change is compressed with hidden text.
+- What the compressed size shows that the plain size did not, measured by
+  him on fixture publishes: an edit that keeps a page's length now changes
+  its sealed size by a byte or two, so two publishes show which pages
+  changed; a change of the Open work count moves Reference pages by a few
+  bytes each. What it no longer shows: a page's exact length. The page
+  lock's limits now say this; the sentence that Reference pages move by the
+  same amount only when the count changes its digits was wrong after the
+  change.
+- The Reference tree hides more than before: an empty tree and one of 2,000
+  realistic file names seal to the same 65,536 bytes; before, 200 files
+  were the limit.
+- Taken in `tooling/page_lock.py`: `unpack` accepts one whole zlib stream
+  and nothing after it. Python's `zlib.decompress` ignores trailing bytes
+  and the browser refuses them, so the read-back passed files the browser
+  would not open; two of his changed copies, with the padding left on,
+  passed all three suites.
+- Taken in `theme/components/page-lock.js`: a key header that names a way
+  of packing the script does not know gets a plain message. An older copy
+  of the script with a compressed page wrote a page of broken characters in
+  his run; that needs a cache to serve an old script under the new
+  address, which the content hash in the address makes unlikely.
+- Tests added: the padding when the compressed size is exactly a power of
+  two, the earlier format through the script's path without `pack`, bytes
+  after the stream. 67 tests of the lock and the entry pass.
+- Text: the release notes of 6.1.0 now open with who loses access (Safari
+  before 16.4, so every device on iOS 15; Firefox before 113, so Firefox
+  ESR 102) and that a project's own decrypting check gets compressed bytes
+  under an unchanged format name. The migration guide and "Keys and
+  parameters" name the padding of the tree and the header's `pack`.
+- Not checked by him or here: real Safari or iOS, a real old browser, a
+  Python built on zlib-ng.
+
 ## 2026-11-28 — Locked files are compressed before they are encrypted
 
 - The owner found the steps smooth with the neighbours at 90% and no fade

@@ -283,8 +283,11 @@ a random 256-bit content key per password level. The general password's key
 wraps the general content key; the reference password's key wraps both
 content keys. Each locked file is encrypted with AES-256-GCM under its level's
 content key, with a fresh random 96-bit nonce and its path in the bundle as
-authenticated data. `tooling/page_lock.py` encrypts;
-`theme/components/page-lock.js` decrypts with the browser's WebCrypto.
+authenticated data. Before that, each file is compressed with zlib; a page
+and the tree file are then padded. The key header says so with
+`"pack": "deflate"`, while its format name stays `docsite-lock/1`.
+`tooling/page_lock.py` encrypts; `theme/components/page-lock.js` decrypts
+with the browser's WebCrypto and unpacks with its `DecompressionStream`.
 
 ### Limits
 
@@ -314,7 +317,9 @@ authenticated data. `tooling/page_lock.py` encrypts;
   build. `kit_link = false` removes it together with the sidebar's kit line.
 - A lock page shows the compressed size of the page it holds and which
   password it needs. The compressed size also says how much of a page
-  repeats itself. Compressing before encrypting is unsafe where someone can
+  repeats itself, and it changes with almost any edit: someone who compares
+  two publishes sees which pages changed, also where an edit kept the
+  page's length. Compressing before encrypting is unsafe where someone can
   put text of their own into a page and watch its size; a static site gives
   nobody that, as long as the project writes its own pages. The salt changes
   exactly when a password changes, so anyone can see that it changed.
@@ -331,10 +336,9 @@ authenticated data. `tooling/page_lock.py` encrypts;
   page, whether or not the site has a Reference section or an Open work
   entry.
 - Reference pages are not padded and carry the Open work entry. Someone who
-  compares two publishes sees every Reference lock page grow or shrink by the
-  same amount when the entry appears or its count changes its number of
-  digits. The size of the list's own page showed the length of the list
-  before.
+  compares two publishes sees Reference lock pages change size when the
+  entry appears or its count changes, each by a few bytes of its own. The
+  size of the list's own page showed that the list changed before.
 - Pages need JavaScript. A project script that fetches an HTML or Markdown
   file from the bundle receives the locked file.
 - Search engines stop listing the site, because they see only lock pages.

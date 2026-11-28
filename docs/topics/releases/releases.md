@@ -35,7 +35,13 @@ shows the new warnings.
 6.1.0 is a minor release under
 [what a version number promises](#what-a-version-number-promises): it changes
 a default, no project that passed before stops, and no reader sees anything
-they could not already open.
+they could not already open. Two things a project has to know all the same.
+A locked site now needs a browser from 2023: a reader on Safari before 16.4,
+which includes every device that stays on iOS 15, or on Firefox before 113,
+such as Firefox ESR 102, gets a plain message and no page. And a project
+check that decrypts published files itself now gets compressed bytes, with
+no error to say so: the format name stays `docsite-lock/1`, and the key
+header's `pack` tells the two apart.
 
 The menu's [Open work entry](#open-work-at-the-top-of-every-menu) was off on
 a [locked site](../../../rules/site/publication.md#page-lock) unless the

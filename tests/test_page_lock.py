@@ -493,6 +493,22 @@ class LockBundle(unittest.TestCase):
         self.assertEqual(page_lock.pack(b'abc'), page_lock.pack(b'abc'))
         with self.assertRaisesRegex(ValueError, 'Malformed compressed file'):
             page_lock.unpack(b'not a zlib stream')
+        # As strict as the browser: bytes after the stream, or a stream cut short, are refused.
+        for broken in (page_lock.pack(b'abc') + b'\x00', page_lock.pack(b'abc')[:-2], page_lock.pad(page_lock.pack(b'abc'))):
+            with self.assertRaisesRegex(ValueError, 'Malformed compressed file'):
+                page_lock.unpack(broken)
+
+    def test_padding_holds_when_the_compressed_size_is_a_power_of_two(self):
+        # The padding needs one byte beyond the data: a compressed index or tree of exactly 2^k bytes takes the next size.
+        real = page_lock.pack
+        for length in (65535, 65536):
+            with self.subTest(length=length), patch.object(page_lock, 'pack',
+                                                           lambda data, n=length: real(data).ljust(n, b'\x00')[:max(n, len(real(data)))]):
+                # The stream is no longer a valid one for the read-back, so only the sizes are checked here.
+                keyring = make_keyring(self.passwords, iterations=FAST)
+                tree = lock_tree('<ul></ul>', None, keyring).decode()
+                sealed = len(base64.b64decode(re.search(r'"([A-Za-z0-9+/=]+)"', tree)[1])) - 28
+                self.assertEqual(sealed, 65536 if length < 65536 else 131072)
 
     def test_reference_section_split_is_exact_and_strict(self):
         page = kit_page('index.html').decode()

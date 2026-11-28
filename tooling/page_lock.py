@@ -184,15 +184,20 @@ def unseal(key: bytes, sealed: bytes, associated: bytes) -> bytes:
 
 
 def pack(data: bytes) -> bytes:
-    """A file as it is sealed: compressed, the same bytes for the same file."""
+    """A file as it is sealed: compressed. Within one publish the same file gives the same bytes."""
     return zlib.compress(data, 9)
 
 
 def unpack(data: bytes) -> bytes:
+    """Reverse ``pack``, as strictly as the browser: one whole zlib stream and nothing after it."""
+    reader = zlib.decompressobj()
     try:
-        return zlib.decompress(data)
+        plain = reader.decompress(data)
     except zlib.error:
         raise ValueError('Malformed compressed file') from None
+    if not reader.eof or reader.unused_data:
+        raise ValueError('Malformed compressed file')
+    return plain
 
 
 def file_context(path: str) -> bytes:

@@ -202,8 +202,16 @@ def vectors() -> dict:
             entry['sealed'] = base64.b64encode(page_lock.seal(keyring.content[level], padded,
                                                               page_lock.file_context(path))).decode()
         files.append(entry)
+    # The format before compression, for the script's path without `pack`: a tree whose JSON is padded
+    # with spaces, a page that is only padded; and a compressed stream with a byte after it.
+    old_tree = json.dumps({'section': None, 'tree': '<ul></ul>'}, sort_keys=True, separators=(',', ':')).encode().ljust(256)
+    earlier = {'tree': f'window.{page_lock.LOCKED_TREE_GLOBAL} = "'
+                       + base64.b64encode(page_lock.seal(keyring.content[2], old_tree, page_lock.file_context(page_lock.TREE_SCRIPT))).decode() + '";\n',
+               'page': base64.b64encode(page_lock.seal(keyring.content[1], page_lock.pad(b'<p>earlier format</p>'),
+                                                       page_lock.file_context('old.html'))).decode(),
+               'trailing': base64.b64encode(page_lock.pack(b'abc') + b'\x00').decode()}
     return {'header': keyring.header, 'again': again.header, 'changed': changed.header,
-            'tree': tree.decode(), 'files': files}
+            'tree': tree.decode(), 'files': files, 'earlier': earlier}
 
 
 if __name__ == '__main__':

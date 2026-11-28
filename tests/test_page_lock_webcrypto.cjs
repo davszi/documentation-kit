@@ -19,7 +19,7 @@ const reference = throwaway();
     env: {...process.env, DOCSITE_GENERAL_PASSWORD: general, DOCSITE_REFERENCE_PASSWORD: reference},
     encoding: 'utf8'});
   assert.ok(!output.includes(general) && !output.includes(reference), 'vectors must not carry a password');
-  const {header, again, changed, tree, files} = JSON.parse(output);
+  const {header, again, changed, tree, files, earlier} = JSON.parse(output);
   assert.equal(header.kdf.iterations, 600000);
 
   const opened = await lock.unlock(general, header);
@@ -50,6 +50,14 @@ const reference = throwaway();
   assert.deepEqual(reference_tree, {entry: '    <a class="open-work" href="open.html">Open work</a>\n',
     section: '\n<div class="repo-tree"></div>', tree: '<ul class="repo-tree-list"></ul>'});
   assert.ok(lock.fromBase64(sealedTree).length >= 65536, 'the tree is padded');
+  // The earlier format, sealed as the files were: a tree padded with spaces opens when the header has no `pack`.
+  assert.equal(typeof earlier.tree, 'string');
+  assert.deepEqual(await lock.openTree(both.keys[2], /"([A-Za-z0-9+\/=]+)";/.exec(earlier.tree)[1], false),
+    {section: null, tree: '<ul></ul>'});
+  assert.equal(new TextDecoder().decode(lock.unpad(await lock.openFile(both.keys[1], 'old.html', lock.fromBase64(earlier.page)))),
+    '<p>earlier format</p>');
+  // Bytes after the compressed stream are refused, as the publish step's read-back refuses them.
+  await assert.rejects(lock.unpack(lock.fromBase64(earlier.trailing)));
   await assert.rejects(lock.openTree(both.keys[1], sealedTree, true), {name: 'OperationError'});
   // The offset counts UTF-8 bytes: 14 for the opening tag and 2 for "ä".
   const joined = lock.joinSection(new TextEncoder().encode('<div id="toc">ä\n  </div>'), 16,
