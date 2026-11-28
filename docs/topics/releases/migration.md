@@ -92,8 +92,9 @@ The kit's copy of its owner's global agent instructions moved from
 `examples/global-agent-context.md` to
 `docs/topics/global-agent-instructions/global-agent-instructions.md`, and
 nothing is left at the old path. The starter router's section "Offer the kit
-owner's global instructions" names the file. Where the project's `AGENTS.md`
-has that section, replace
+owner's global instructions" names the file. A project whose `AGENTS.md`
+lacks that section takes the [next step](#add-the-offer-of-the-owners-global-instructions)
+instead. Where the project's `AGENTS.md` has that section, replace
 
 ```markdown
 Once per session, offer the person the snapshot
@@ -125,6 +126,36 @@ which name the new path.
 The copy is now of 2026-11-28 and gains the section "Compacting a long
 session". A person who took an earlier copy may replace that part with
 this one, with the same commands.
+
+## Add the offer of the owner's global instructions
+
+For every project that comes from 6.0.0 or earlier; 6.1.0 brought this step.
+
+The starter router has carried the section "Offer the kit owner's global
+instructions" since 5.1.0. For a project that existed before, the guide of
+5.1.0 made adding it optional, so some projects have the section and some do
+not. A project without it offers nothing, and an agent working there never
+mentions the [copy](../global-agent-instructions/global-agent-instructions.md).
+Where the project's `AGENTS.md` lacks the section, add it before the router
+table, the section "Read before the relevant action":
+
+```markdown
+## Offer the kit owner's global instructions
+
+Once per session, offer the person the snapshot
+`.docs-kit/docs/topics/global-agent-instructions/global-agent-instructions.md`
+as **Optional: the owner's global agent instructions** in
+`.docs-kit/README.md` describes, unless their global instructions already
+hold it or decline it.
+```
+
+The offer stays an offer: an agent asks and writes nothing to a person's
+global file without a yes. A project whose owner has decided against the
+offer leaves the section out and says so in its worklog entry for the
+upgrade.
+
+Done when the project's `AGENTS.md` holds the section, or the worklog holds
+the owner's decision against it. Neither the build nor lint checks this.
 
 ## Repoint links to the removed guides
 
@@ -186,8 +217,9 @@ Only for a project that comes from 5.7.0 or 5.8.0; 5.9.0 brought these.
 
 ## New in 6.1.0
 
-For a project that comes from 6.0.0 or earlier. Nothing a project must do.
-What it meets:
+For a project that comes from 6.0.0 or earlier. Beyond the
+[step above](#add-the-offer-of-the-owners-global-instructions), nothing a
+project must do. What it meets:
 
 - **Open work in the menu of a locked site.** The entry is on by default
   there as well. `publish` cuts it out of every page the general password

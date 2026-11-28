@@ -67,6 +67,18 @@ Checked by the page lock's unit tests, the WebCrypto cross-check and the
 browser suite in Chromium. Firefox and WebKit were not run for this change.
 The [migration guide](migration.md#new-in-610) lists what a project meets.
 
+### Every project offers the owner's global agent instructions
+
+A project made from the starter tells its agents to offer the person, once
+per session, the kit's copy of its owner's
+[global agent instructions](../global-agent-instructions/global-agent-instructions.md).
+For a project that existed before 5.1.0, the guide of that version made the
+section optional, so not every project has it. The migration guide now has
+the step
+[Add the offer of the owner's global instructions](migration.md#add-the-offer-of-the-owners-global-instructions):
+a project without the section adds it, unless its owner has decided against
+the offer. Nothing checks the section, so no project stops without it.
+
 ## 6.0.0 — the owner's global agent instructions move beside their own page
 
 6.0.0 is a major release under

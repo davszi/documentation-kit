@@ -2,6 +2,25 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-28 — The offer of the owner's global instructions becomes an upgrade step
+
+- The owner asked why agents in adaptation and embodied-safety-gates do not
+  offer his global agent instructions, and decided: "yes add it as a step in
+  6.1.0".
+- Cause, read from Git: the starter router has the section "Offer the kit
+  owner's global instructions" since `8219885`, in 5.1.0. The guide of
+  5.1.0, in the repository at the tag `v5.9.0`, made copying it into an
+  existing project optional, for the project's owner to decide. ADP and
+  Tempo have the section; adaptation and embodied-safety-gates do not. The
+  step of 6.0.0 only corrected the path where the section exists.
+- The [migration guide](topics/releases/migration.md#add-the-offer-of-the-owners-global-instructions)
+  now has the step for every project that comes from 6.0.0 or earlier: add
+  the section unless the project's owner decided against the offer. The
+  release notes of 6.1.0 say so. Nothing in the build or lint checks the
+  section; that was offered to the owner and not chosen.
+- The full check script ran on `1274aa6`, the commit of the entry below, and
+  ended with exit 0. It has not run on this commit.
+
 ## 2026-11-28 — Open work shows on a locked site once the reference password is in; 6.1.0 prepared
 
 - The owner decided on this day: "open work should be on true on default,
