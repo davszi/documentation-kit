@@ -299,15 +299,19 @@ async function readerChecks(page, {url, expectedChapters, check = async (_label,
 //   text. The size is the font size times the drawing's scale on screen, so a drawing that shrinks
 //   to a phone column shrinks its labels with it. Text in an SVG loaded as an image is not read.
 // `problems` lists, in words, a 16:9 face that does not fit, sideways overflow, clipped text,
-// parts outside the face and drawing labels under LABEL_MIN_PX; a face is in order when it is
-// empty. Page styles can add space that the deck lacks, so check faces in their page as well as in
+// parts outside the face and, in a window of LABEL_WINDOW_PX or wider, drawing labels under
+// LABEL_MIN_PX; a face is in order when it is empty. In a narrower window a drawing fits its
+// column with smaller labels and the reader enlarges it, so small labels are counted there and
+// are no problem. Page styles can add space that the deck lacks, so check faces in their page as well as in
 // the deck.
-// The label limit of rules/writing/figures.md: charts carry labels of at least 11 px.
+// The label limit of rules/writing/figures.md: charts carry labels of at least 11 px at the
+// full width of a chapter, which a window of this width or wider gives.
 const LABEL_MIN_PX = 11;
+const LABEL_WINDOW_PX = 1280;
 
 async function slideFaces(page, {within = null} = {}) {
   await settle(page);
-  return page.evaluate(([within, labelMin]) => {
+  return page.evaluate(([within, labelMin, labelWindow]) => {
     const scope = within ? [...document.querySelectorAll(within)] : [document];
     const faces = [...new Set(scope.flatMap(root => [...(root.matches?.('[data-slide-face]') ? [root] : []),
       ...root.querySelectorAll('[data-slide-face]')]))];
@@ -430,13 +434,13 @@ async function slideFaces(page, {within = null} = {}) {
       if (sideways > 1) problems.push(`overflows sideways by ${sideways} px`);
       for (const item of clipped) problems.push(`clips text "${item.text}" in ${item.in} by ${item.by} px`);
       for (const item of outside) problems.push(`${item.part} sticks out of the face by ${item.by} px`);
-      if (drawingText && drawingText.px < labelMin)
+      if (drawingText && drawingText.px < labelMin && window.innerWidth >= labelWindow)
         problems.push(`${drawingText.below} drawing label(s) render below ${labelMin} px, the smallest at ${drawingText.px} px: "${drawingText.text}"`);
       return {chapter, shown: true, width: canvas.clientWidth, height: canvas.clientHeight, compact, fits,
               sideways, clipped, outside, emptyBand: Math.max(0, Math.round(emptyBand)), drawingText, problems,
               bridge: !!face.parentElement.querySelector(':scope > .slide-bridge, .slide-bridge')};
     });
-  }, [within, LABEL_MIN_PX]);
+  }, [within, LABEL_MIN_PX, LABEL_WINDOW_PX]);
 }
 
 // Fails with every problem of every shown face; returns the rows. `expectShown` guards against

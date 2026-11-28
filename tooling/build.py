@@ -1011,6 +1011,9 @@ def finish_page(meta: dict, slug: str, name: str, content: str, comps: list, sit
         comps.append("fold-controls")
     if not listed and "data-slide-face" in content and "slide-face" not in comps:
         comps.append("slide-face")
+    # Every picture and drawing of a page opens full-screen, where the reader enlarges it.
+    if not listed and ("<svg" in content or "<img" in content) and "lightbox" not in comps:
+        comps.append("lightbox")
     # A Reference tree too large to inline is loaded by nav.js.
     if site.get("_repository_tree_script") and "nav" not in comps:
         comps.append("nav")

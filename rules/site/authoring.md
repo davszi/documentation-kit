@@ -172,6 +172,17 @@ links and generated topic cards. That stylesheet and arrangement are optional;
 projects may author their own homepage and local styles. Follow
 [project-owned homepage composition](../writing/pages.md#project-owned-homepages).
 
+Every picture and every drawing in a page's content opens full-screen on a
+click or tap: the wheel or two fingers zoom, a drag pans, and a drawing
+stays sharp at any size, with the look it has on the page. The build adds the
+`lightbox` component to every page that holds one. A drawing therefore
+[fits its column](../writing/figures.md#figures-and-comparisons) and is not
+given a minimum width that makes the reader pan it on the page.
+`data-zoom="off"` on a drawing or on an element around it keeps it from
+opening. A drawing that is a control or holds the control that was clicked,
+that sits in a link or a button, or that is smaller than 120 by 48 px on the
+page, such as an icon or a meter, does not open.
+
 Wrap a wide comparison table in `.scroll` with `role="region"`, a useful
 `aria-label`, `tabindex="0"` and `data-reader-horizontal`. This keeps scrolling
 and keyboard arrows inside the table instead of changing chapters. Pages with

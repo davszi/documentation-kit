@@ -2,6 +2,50 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-28 — A drawing fits its column; every drawing opens in the zoom view
+
+- Adaptation keeps its drawings' labels at 11 px in narrow columns with a
+  script, `figure-legibility.js`, and minimum widths in its stylesheet: the
+  drawing keeps its width and the reader pans it inside the page. Shown to
+  the owner on "Cursor study history", Figure E1: 1,121 px of drawing in a
+  box of 433 px in the Two chapters view and of 181 px on a phone. His
+  decision: "the img shouldnt go out on the side of the slide, it sohuld fit
+  the slide and if u wanna see it better on small screens u zom in, we jiust
+  have to make sure when zooming we will see high quality not a blurry
+  mess"; then "yes kit every drawing can zoom and adapt delete that
+  featurs". A separate drawing for narrow columns stays a project's own
+  choice and no rule names it, also his word.
+- A statement of this session to him was wrong: that the kit forces a
+  drawing to 760 px. `theme/components/base.css` has that minimum for the
+  diagram component's box only; adaptation's 760 px and 40rem come from its
+  own `adaptation-content.css`. The diagram box is left as it is.
+- [Figures](../rules/writing/figures.md#figures-and-comparisons): a drawing
+  fits its column; labels at least 11 px in a window of 1280 px or wider;
+  narrower, the reader enlarges it; a picture of pixels is saved at twice
+  its shown size. [Page design](../rules/writing/pages.md#page-design), the
+  slide-face rule and [validation](../rules/site/validation.md) follow.
+  `slideFaces` in `tooling/browser_checks.cjs` reports small drawing labels
+  as a problem only from 1280 px (`LABEL_WINDOW_PX`).
+- `theme/components/lightbox.js` opens any drawing in a page's content,
+  not only `svg.inline-fig`: the outermost SVG with a `viewBox`, at least
+  120 by 48 px on the page, not a control, not in a link, not marked
+  `data-zoom="off"`. The copy carries 24 computed properties per part,
+  because a project's rules for a drawing often name what is around it. A
+  drawing fills the window when it opens. Two pointers pinch around the
+  point between them; a button closes. `tooling/build.py` adds the
+  component to every page with a picture or a drawing.
+- Looked at on a scratch clone of adaptation with its script and minimum
+  widths switched off, at 390 and 1600 px: the drawing fits its box, 181 px
+  on the phone; tapped, it opens whole; one pinch brings its smallest label
+  to 14.4 px. Captures went to the owner.
+- Checks run: the kit's browser checks with a new case for the zoom view
+  (a project's drawing opens with the colour and size its surroundings
+  give a label, fills the window, doubles under a pinch twice as wide,
+  closes; an icon, a linked drawing and one marked off do not open).
+- Not run: Firefox, WebKit, a real phone; the full check script on this
+  commit. The far-chapters change stays out; the owner doubts it for jumps
+  from the sidebar, which were never measured.
+
 ## 2026-11-28 — Two reviews of the site's code for waste; what went into 6.1.0 and what did not
 
 - The owner asked whether the site's code is optimal and decided: "we will

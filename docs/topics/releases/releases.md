@@ -118,6 +118,42 @@ shows: unpacking is not seen in it.
 Checked by the page lock's unit tests, the WebCrypto cross-check, and the
 browser suite in Chromium 151, Firefox 153 and WebKit 26.5.
 
+### A drawing fits its column and opens to be enlarged
+
+The figure rule asked 11 px of a chart's labels in whatever column it sat
+in. A vector drawing shrinks with its column, so in the Two chapters view or
+on a phone its labels fell below that, and a project met the rule by giving
+its drawings a minimum width and letting the reader pan them sideways inside
+the page: on a phone a window one sixth as wide as the drawing. The kit's
+owner looked at it and decided against it.
+
+- **The rule.** A drawing fits its column and nothing makes the reader pan
+  it on the page. Its labels are at least 11 px at the full width of a
+  chapter, in a window of 1280 px or wider. In a narrower column they
+  shrink with the drawing, and the reader enlarges it.
+  [Figures](../../../rules/writing/figures.md#figures-and-comparisons) and
+  [page design](../../../rules/writing/pages.md#page-design) say so.
+- **Every drawing opens.** A click or tap on any picture or drawing in a
+  page's content opens it full-screen. The zoom view took only drawings the
+  kit had inlined from a figure file; it now takes a drawing a project wrote
+  into its page as well, and copies the look that the page's own styles
+  give its parts. A drawing fills the window when it opens, where it opened
+  at the size of its own units, and stays sharp at any size.
+- **Two fingers zoom.** The zoom view had a wheel and a drag; a phone could
+  open a drawing and not enlarge it. It also has a button to close.
+- **Every page with a picture or a drawing loads the zoom view.** A page
+  had to name the `lightbox` component.
+- **The check.** `slideFaces` counts a face's drawing labels below 11 px at
+  every width and reports them as a problem only in a window of 1280 px or
+  wider.
+
+`data-zoom="off"` on a drawing or around it keeps it from opening; an icon,
+a meter and a drawing inside a link or a button do not open.
+[Site authoring](../../../rules/site/authoring.md) lists the cases. Checked
+in Chromium by a new case of the kit's browser checks, and looked at on a
+consuming project's page at 390 and 1600 px. Not run in Firefox or WebKit,
+and not on a real phone.
+
 ### Less to download and less to lay out on every page
 
 Two reviews of the code a site sends to the browser, one of the kit's and

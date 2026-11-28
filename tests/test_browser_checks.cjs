@@ -136,7 +136,53 @@ async function reviewReaderEdges(browser) {
 // Slide faces with the real slide-face stylesheet: a stacked face at 390 px that overflows
 // sideways, clips text or lets a part stick out is reported; a sound face reports nothing; the
 // empty band is information only; a face the page does not show is not measured. A drawing whose
-// labels shrink below 11 px with the phone column is reported, and the same drawing passes wide.
+// labels shrink below 11 px with the phone column has them counted and is no problem there: it
+// fits its column and the reader enlarges it. The same labels below 11 px in a wide window are one.
+// The zoom view with the real lightbox.js: a drawing a project wrote into its page opens with the
+// look its surroundings give it, fills the window, zooms with two fingers and closes with its
+// button; an icon, a drawing in a link and one marked data-zoom="off" do not open.
+async function reviewZoom(browser) {
+  const lightbox = await fs.readFile(path.join(__dirname, '../theme/components/lightbox.js'), 'utf8');
+  const drawing = (id, extra = '') => `<svg id="${id}" viewBox="0 0 800 300" style="display:block;width:400px"${extra}>`
+    + '<rect width="800" height="300" fill="#234"/><text class="muted" x="20" y="150">a label</text></svg>';
+  const page = await browser.newPage({viewport:{width:1600, height:1000}});
+  try {
+    await page.setContent(`<!doctype html><style>body{margin:0;background:#101720}
+      .plate svg .muted{fill:rgb(1, 2, 3);font-size:19px}</style><main>
+      <div class="plate">${drawing('mine')}</div>
+      <svg id="icon" viewBox="0 0 24 24" width="24" height="24"><rect width="24" height="24" fill="#fff"/></svg>
+      <a href="#x">${drawing('linked')}</a>
+      <div data-zoom="off">${drawing('off')}</div></main><script>${lightbox}</script>`);
+    for (const id of ['icon', 'linked', 'off']) {
+      await page.evaluate(which => document.getElementById(which).dispatchEvent(new MouseEvent('click', {bubbles:true, cancelable:true})), id);
+      assert.equal(await page.locator('.lb-overlay').count(), 0, `${id} does not open the zoom view`);
+    }
+    await page.hover('#mine');
+    assert.equal(await page.locator('#mine').evaluate(svg => getComputedStyle(svg).cursor), 'zoom-in', 'The pointer shows that a drawing opens');
+    await page.click('#mine text');
+    await page.locator('.lb-overlay svg').waitFor();
+    const opened = await page.evaluate(() => {
+      const copy = document.querySelector('.lb-overlay svg'), label = copy.querySelector('text');
+      return {fill: getComputedStyle(label).fill, size: getComputedStyle(label).fontSize, id: copy.id,
+        width: copy.getBoundingClientRect().width, transform: copy.style.transform};
+    });
+    assert.equal(opened.fill, 'rgb(1, 2, 3)', 'The copy keeps the colour its surroundings gave the label');
+    assert.equal(opened.size, '19px', 'The copy keeps the size its surroundings gave the label');
+    assert.ok(opened.width > 1400, 'A drawing fills the window when it opens: ' + JSON.stringify(opened));
+    // Two fingers that move apart enlarge the drawing.
+    const grown = await page.evaluate(() => {
+      const copy = document.querySelector('.lb-overlay svg'), before = copy.getBoundingClientRect().width;
+      const fire = (type, id, x, y) => copy.dispatchEvent(new PointerEvent(type, {pointerId:id, clientX:x, clientY:y, bubbles:true, cancelable:true}));
+      fire('pointerdown', 1, 700, 500); fire('pointerdown', 2, 900, 500);
+      fire('pointermove', 2, 1100, 500); fire('pointerup', 2, 1100, 500); fire('pointerup', 1, 700, 500);
+      return copy.getBoundingClientRect().width / before;
+    });
+    assert.ok(Math.abs(grown - 2) < 0.01, 'Fingers twice as far apart double the drawing: ' + grown);
+    await page.click('.lb-close');
+    assert.equal(await page.locator('.lb-overlay').count(), 0, 'The button closes the zoom view');
+  } finally { await page.close(); }
+}
+
 async function reviewSlideFaces(browser) {
   const css = await fs.readFile(path.join(__dirname, '../theme/components/slide-face.css'), 'utf8');
   const face = (id, main, extra = '') => `<section id="${id}"${extra}><div class="slide-face" data-slide-face><div class="slide-canvas">
@@ -177,8 +223,8 @@ async function reviewSlideFaces(browser) {
     assert.equal(rows.sound.drawingText, null, 'A face without an SVG drawing has no drawing text');
     const labels = rows.labels.drawingText;
     assert.ok(labels && labels.text === 'small part' && labels.px < 11 && labels.below === 3
-        && rows.labels.problems.some(item => /^3 drawing label\(s\) render below 11 px, the smallest at [\d.]+ px: "small part"$/.test(item)),
-      'Drawing labels below 11 px at phone width are reported with the smallest: ' + JSON.stringify(rows.labels));
+        && !rows.labels.problems.some(item => /drawing label/.test(item)),
+      'Drawing labels below 11 px at phone width are counted and are no problem: ' + JSON.stringify(rows.labels));
     // `within` limits the rows; the assertion fails with every problem and passes on a sound face.
     assert.deepEqual((await slideFaces(page, {within:'#sound'})).map(row => row.chapter), ['sound']);
     await assertSlideFaces(page, {within:'#sound'});
@@ -195,6 +241,13 @@ async function reviewSlideFaces(browser) {
       'A face with little on it reports a large empty band and no problem: ' + JSON.stringify(wide.sound));
     assert.ok(wide.labels.drawingText.px >= 11 && wide.labels.drawingText.below === 0 && wide.labels.problems.length === 0,
       'The same drawing at a wide window keeps its labels at 11 px or more: ' + JSON.stringify(wide.labels));
+    // A label that is too small at the full width of a chapter is a problem.
+    await page.evaluate(() => { document.querySelector('#labels svg tspan').setAttribute('font-size', '6'); });
+    const small = (await slideFaces(page, {within:'#labels'}))[0];
+    assert.ok(small.drawingText.px < 11
+        && small.problems.some(item => /^1 drawing label\(s\) render below 11 px, the smallest at [\d.]+ px: "small part"$/.test(item)),
+      'A drawing label below 11 px in a wide window is reported with the smallest: ' + JSON.stringify(small));
+    await page.evaluate(() => { document.querySelector('#labels svg tspan').setAttribute('font-size', '14'); });
     await page.evaluate(() => {
       document.querySelector('#sound .slide-main').insertAdjacentHTML('beforeend',
         '<div style="height:360px;background:#234"></div>');
@@ -306,6 +359,7 @@ async function reviewSmallText(browser) {
   const browser = await chromium.launch({headless:true});
   try {
     await reviewSlideFaces(browser);
+    await reviewZoom(browser);
     await reviewSmallText(browser);
     await reviewFacesAfterChapterChange(browser);
     await reviewReaderEdges(browser);

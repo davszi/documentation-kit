@@ -248,6 +248,20 @@ project must do. What it meets:
   padded like a page now, one `0x80` byte and zeros, where its JSON was
   padded with spaces. The format name stays `docsite-lock/1`; a check reads
   `pack` in the key header to tell the formats apart.
+- **A drawing fits its column; the reader enlarges it.** Every picture and
+  drawing in a page's content opens full-screen on a click or tap, and
+  every page that holds one loads `lightbox.js`. What a project meets:
+  - A project that gave its drawings a minimum width, or a script that
+    scrolls them sideways, to keep labels at 11 px in a narrow column can
+    remove both: the rule asks 11 px only in a window of 1280 px or wider.
+  - A drawing with a click handler of its own on its parts also opens,
+    unless the handler calls `preventDefault()`, the click is on a control
+    inside the drawing, or the drawing carries `data-zoom="off"`.
+  - A project check that lists a page's scripts finds `lightbox.js` on more
+    pages.
+  - `slideFaces` no longer reports small drawing labels as a problem below
+    1280 px; a project check that expected that problem at 390 px has to
+    follow.
 - **The math renderer loads only where a page has a formula.** A project
   script that calls the renderer itself on a page whose text holds no
   formula no longer finds it. No known project does that.
