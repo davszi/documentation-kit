@@ -67,13 +67,16 @@ Before any password, a locked page shows nothing of the menu, as before.
   `open_work_entry = true` for its locked site can delete the line: the
   general password's readers no longer see the entry.
 - A project check that reads the published pages a general password opens
-  finds no Open work entry in their menu, `#toc > a.open-work`.
+  finds no Open work entry in their menu, `#toc > a.open-work`. A check
+  that reads the unlocked copy, `publish --plain-copy`, or the built pages
+  finds the entry and its link to the list on every page; a check that
+  lists the pages a topic page may link has to admit the list's page.
 
 Checked by the page lock's unit tests, the WebCrypto cross-check and the
 browser suite in Chromium. Firefox and WebKit were not run for this change.
 The [migration guide](migration.md#new-in-610) lists what a project meets.
 
-### A step to the next chapter only slides
+### A step to the next chapter no longer fades the chapters
 
 In the One chapter view the neighbouring chapters showed at the edges at 90%
 of their size and dimmer, and a step animated three things at once: the row
@@ -82,13 +85,18 @@ hold large drawings the browser redrew both chapters on every frame of that.
 Measured in headless Firefox on two such pages of a consuming project, four
 steps: 14 to 17 of about 150 frames took more than 33 ms, the worst 66 to
 117 ms; on a page of the kit's own site, none. With the neighbours at full
-size and full brightness, 6 to 11 frames, the worst 34 to 50 ms. Size alone
-or fade alone gave no gain. A headless browser draws on the processor, so
-these numbers compare the variants and are no measure of a reader's machine.
+size and full brightness, 6 to 11 frames, the worst 34 to 50 ms; with the
+size change kept and only the fade gone, 11 to 13, the worst 66 to 67 ms. A
+headless browser draws on the processor, so these numbers compare the
+variants and are no measure of a reader's machine.
 
-The neighbours now stand at full size and full brightness, and a step only
-slides the row. The shown chapter keeps its border colour. A reader whose
-system asks for reduced motion gets no slide, as before.
+The kit's owner tried both on a published site, on the machine where he had
+felt the lag: with neither size change nor fade the steps were smooth. The
+neighbours now stand at 90% of their size, as before, and at full
+brightness; a step slides the row and changes the size of two chapters, and
+fades nothing. Hovering a neighbour's strip no longer changes its
+brightness. The shown chapter keeps its border colour. A reader whose system
+asks for reduced motion gets no animation, as before.
 [Chapter reader](../../../rules/site/reader.md) says so.
 
 ### Every project offers the owner's global agent instructions

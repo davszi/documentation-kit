@@ -232,7 +232,11 @@ project must do. What it meets:
   - A long list shows as a large number to every reader with the reference
     password: this is a good moment to delete finished lines.
   - A project check that reads the published pages a general password opens
-    finds no Open work entry in their menu, `#toc > a.open-work`.
+    finds no Open work entry in their menu, `#toc > a.open-work`. A check
+    that reads the unlocked copy or the built pages finds the entry and its
+    link on every page: a check that lists the pages a topic page may link
+    has to admit the page of the open-work list. One consuming project's
+    check failed on this.
 
 ## New in 5.10.0
 

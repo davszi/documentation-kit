@@ -2,6 +2,34 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-28 — The owner found the steps smooth; the neighbours get their 90% size back
+
+- `75f4709` went to the kit's `main` without a tag, and adaptation was
+  pinned to it and published, both on the owner's word, because he can try
+  the reader only on a published site. His answer on the published
+  adaptation site: "its smooth could we try to add back the 90% scale of
+  the next and prev page?"
+- So the lag he felt was the step's animation. `chapter-reader.css` draws
+  the neighbours at 90% of their size again and changes that size during a
+  step, as before 6.1.0; they stay at full brightness and nothing fades.
+  The click zones over the neighbours' strips take 90% of the height again.
+  Hovering a neighbour's strip set it to 95% brightness, a brightening when
+  neighbours were dimmed; with neighbours at full brightness the rule is
+  gone.
+- This corrects the entry below, which says a step only slides: it slides
+  and changes the size of two chapters. Headless Firefox on the same two
+  pages of adaptation, four steps, frames over 33 ms: 11 to 13 for this
+  variant, 6 to 11 with no size change, 14 to 17 before. Whether this
+  variant is smooth on the owner's machine is the open question; it is why
+  it goes to the published site next.
+- Adaptation's own publication check failed when it took the pin: 17
+  failures, each a page of the unlocked copy that links the page of the
+  open-work list, which the check's list of admitted pages did not hold.
+  The project admitted the page. The release notes and the migration guide
+  now say that a check on the unlocked copy or the built pages meets the
+  entry on every page.
+- The full check script has not run on this commit.
+
 ## 2026-11-28 — A step in the One chapter view only slides; what the lag search found
 
 - The owner reported that adaptation's site feels laggy when he scrolls
