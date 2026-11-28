@@ -1,6 +1,6 @@
 # Migrate to the current version
 
-This is the kit's one migration guide. The current version is 6.0.0; the
+This is the kit's one migration guide. The current version is 6.1.0; the
 [release notes](releases.md) say what each version changed. The guide holds
 every step from 5.7.0 on, and each step says which versions it is for. A
 project on a version before 5.7.0 reads the guides of its versions in the
@@ -23,7 +23,7 @@ removals.
 
    ```bash
    git -C .docs-kit fetch --tags origin
-   git -C .docs-kit checkout v6.0.0
+   git -C .docs-kit checkout v6.1.0
    ```
 
    `requirements.txt` is unchanged, so the documentation environment needs no
@@ -54,7 +54,7 @@ removals.
    path that has moved, correct the URL in `.gitmodules` and run
    `git submodule sync` first.
 
-Done when `git -C .docs-kit describe --tags` prints `v6.0.0` and the build
+Done when `git -C .docs-kit describe --tags` prints `v6.1.0` and the build
 passes. Lint fails while the pinned commit is on none of the kit's remote
 branches; a tag alone does not count. A project that comes from 5.7.0 sees
 the warning of the next step until it has decided.
@@ -184,6 +184,24 @@ Only for a project that comes from 5.7.0 or 5.8.0; 5.9.0 brought these.
   `folded_groups` now names the groups that start closed; every other group
   starts open and can be closed.
 
+## New in 6.1.0
+
+For a project that comes from 6.0.0 or earlier. Nothing a project must do.
+What it meets:
+
+- **Open work in the menu of a locked site.** The entry is on by default
+  there as well. `publish` cuts it out of every page the general password
+  opens and seals it with the Reference section, so it shows as the menu's
+  first line once the reference password is in, and a reader with the
+  general password sees neither the entry nor its count.
+  - A project that does not want the entry writes `open_work_entry = false`
+    in `site.toml`. A project that wrote `open_work_entry = true` for its
+    locked site can delete the line.
+  - A long list shows as a large number to every reader with the reference
+    password: this is a good moment to delete finished lines.
+  - A project check that reads the published pages a general password opens
+    finds no `a.open-work` in them.
+
 ## New in 5.10.0
 
 For a project that comes from 5.9.0 or earlier. Beyond the steps above,
@@ -200,10 +218,8 @@ nothing a project must do. What it meets:
   - The entry is the first element inside the menu, `a.open-work` in
     `div.toc`. Project styles or checks that take the menu's first element
     have to follow.
-  - On a [locked site](../../../rules/site/publication.md) the entry is off
-    unless the project writes `open_work_entry = true`: pages opened with the
-    general password would otherwise show that a list exists and how long it
-    is.
+  - On a [locked site](../../../rules/site/publication.md) see
+    [New in 6.1.0](#new-in-610).
 - **Folds.** The option that read "Alternatives" reads "Not chosen". A fold
   whose content is none of math, an experiment, code or an approach not taken
   can be written `<!-- fold: detail Title -->`; moving a misfiled fold is

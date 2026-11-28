@@ -30,6 +30,43 @@ gives the step for each. A minor upgrade can therefore need work: the
 [project conformance check](../../../rules/conformance.md) runs strict lint and
 shows the new warnings.
 
+## 6.1.0 — Open work in the menu of a locked site
+
+6.1.0 is a minor release under
+[what a version number promises](#what-a-version-number-promises): it changes
+a default, no project that passed before stops, and no site publishes content
+it did not publish before.
+
+The menu's [Open work entry](#open-work-at-the-top-of-every-menu) was off on
+a [locked site](../../../rules/site/publication.md#page-lock) unless the
+project wrote `open_work_entry = true`, because the pages the general
+password opens would have shown that the list exists and how long it is. The
+entry is now on by default on every site. On a locked site `publish` cuts it
+out of every page the general password opens and seals it, with its count,
+beside the sidebar's Reference section. A reader sees it as the first line of
+the menu once the reference password is in, which is the password that opens
+the list. A reader with the general password sees no entry and no count.
+Before any password, a locked page shows nothing of the menu, as before.
+
+- Nothing new is published. The entry exists only where the site already
+  shows the list as a page, and on a locked site that page needs the
+  reference password, as the entry now does.
+- Every lock page of a page with the kit's sidebar that the general password
+  opens carries the place of the menu's first line, `data-entry-at`, with or
+  without an entry; the tree file is padded as before. So neither shows
+  whether the site has an entry.
+- `publish` reads every locked page back, as before, and stops when a page
+  does not go back together with its entry and its Reference section.
+- `open_work_entry = false` still leaves the entry out. A project that wrote
+  `open_work_entry = true` for its locked site can delete the line: the
+  general password's readers no longer see the entry.
+- A project check that reads the published pages a general password opens
+  finds no `a.open-work` there.
+
+Checked by the page lock's unit tests, the WebCrypto cross-check and the
+browser suite in Chromium. Firefox and WebKit were not run for this change.
+The [migration guide](migration.md#new-in-610) lists what a project meets.
+
 ## 6.0.0 — the owner's global agent instructions move beside their own page
 
 6.0.0 is a major release under

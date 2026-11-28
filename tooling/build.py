@@ -296,11 +296,9 @@ def open_work_page(site: dict, pages: list):
     Returns None when the setting turns the entry off or no such page exists.
     """
     from worklog_entries import configured_entry
-    # On a locked site the pages a general password opens would show that the list exists and how
-    # long it is, and would link a page that password cannot open. There the entry needs an
-    # explicit `open_work_entry = true`.
-    locked = isinstance(site.get("publication"), dict) and site["publication"].get("lock") is True
-    shown = site.get("open_work_entry", not locked)
+    # On a locked site `publish` cuts the entry out of the pages a general password opens while the
+    # list needs the reference password: page_lock.py seals it with the Reference section.
+    shown = site.get("open_work_entry", True)
     if not isinstance(shown, bool):
         err("site.toml: open_work_entry must be true or false")
         return None

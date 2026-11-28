@@ -21,7 +21,8 @@ from unittest.mock import patch
 import page_lock
 from page_lock import (ITERATIONS, PASSWORD_VARIABLES, PageLock, derive_key, derive_salt, file_context, lock_text,
                        lock_tree, make_keyring, named_references, open_keyring, open_slots, pad, prepare_lock,
-                       read_passwords, reference_names, seal, split_reference, tree_markup, unpad, unseal)
+                       read_passwords, reference_names, seal, split_open_work, split_reference, tree_markup, unpad,
+                       unseal)
 import page_lock_fixture
 from source_tree import TreeFile, tree_html, tree_script
 
@@ -242,10 +243,13 @@ def opened_tree(data: bytes, keys: dict[int, bytes]) -> dict:
     return json.loads(unseal(keys[2], base64.b64decode(sealed), file_context('reference.tree.js')))
 
 
-def joined(page: bytes, lock_page: bytes, section: str | None) -> bytes:
-    """What the browser of a reference-password reader writes: the page with its Reference section back."""
-    at = re.search(r'data-section-at="(\d+)"', lock_page.decode())
-    return page if not at or section is None else page[:int(at[1])] + section.encode() + page[int(at[1]):]
+def joined(page: bytes, lock_page: bytes, tree: dict) -> bytes:
+    """What the browser of a reference-password reader writes: the page with what was cut out of its sidebar."""
+    at, entry_at = (re.search(rf'data-{name}-at="(\d+)"', lock_page.decode()) for name in ('section', 'entry'))
+    return page_lock.join_page(page, at and int(at[1]), tree['section'], entry_at and int(entry_at[1]), tree['entry'])
+
+
+ENTRY = '    <a class="open-work" href="listed.html"><span class="open-work-label">Open work</span></a>\n'
 
 
 TITLE = 'Listed TITLE-NAME-61be'
@@ -253,13 +257,13 @@ TREE_FILES = [TreeFile('policy/rule.md', 'rule.html', 'Shared rule', None, True)
               TreeFile('docs/listed.md', 'listed.html', TITLE, 'A listed record.', False)]
 
 
-def kit_page(route: str, body_class: str = '', files=TREE_FILES) -> bytes:
+def kit_page(route: str, body_class: str = '', files=TREE_FILES, entry: str = '') -> bytes:
     """A page shaped like the shared shell: sidebar list, Reference section, content."""
     section = tree_html(files, route, script='reference.tree.js?v=0123456789')
     return ('<!DOCTYPE html>\n<html lang="en">\n<head>\n<title>Page</title>\n</head>\n'
             f'<body{f" class={chr(34)}{body_class}{chr(34)}" if body_class else ""}>\n'
             '<nav class="sidebar" id="sidebar">\n  <a class="brand" href="index.html">B<small></small></a>\n'
-            '  <div class="toc" id="toc">\n\n    <a class="xpage" href="guide.html">Guide</a>'
+            f'  <div class="toc" id="toc">\n{entry}\n    <a class="xpage" href="guide.html">Guide</a>'
             + ('\n' + section if section else '') + '\n  </div>\n</nav>\n'
             f'<main class="content" id="top"><p>{route} text ✓</p><a href="rule.html#a">rule</a></main>\n'
             '</body>\n</html>\n').encode()
@@ -307,7 +311,7 @@ class LockBundle(unittest.TestCase):
         for name in ('index.html', 'rule.html', 'listed.html', 'reference.index.html', '_media/media/frame.html',
                      'notes/record.md'):
             levels[name], plain = opened(locked[name], name, keys)
-            self.assertEqual(joined(plain, locked[name], tree['section']), self.original[name], name)
+            self.assertEqual(joined(plain, locked[name], tree), self.original[name], name)
             self.assertNotIn(b'text \xe2\x9c\x93', locked[name])
         self.assertEqual(levels, {'index.html': 1, 'rule.html': 2, 'listed.html': 2, 'reference.index.html': 2,
                                   '_media/media/frame.html': 1, 'notes/record.md': 2})
@@ -440,8 +444,10 @@ class LockBundle(unittest.TestCase):
         locked = files(self.bundle)
         header = json.loads(re.search(r'id="page-lock-keys">([^<]+)<', locked['index.html'].decode())[1])
         _, keys = open_keyring(header, self.passwords[2])
-        self.assertEqual(opened_tree(locked['reference.tree.js'], keys), {'section': None, 'tree': None})
+        self.assertEqual(opened_tree(locked['reference.tree.js'], keys), {'entry': None, 'section': None, 'tree': None})
         self.assertIn(b'data-section-at=', locked['index.html'])
+        # The offset of the menu's first line is there without an Open work entry as well.
+        self.assertIn(b'data-entry-at=', locked['index.html'])
         # Same length as the tree file of a site with a small Reference section.
         small = lock_tree(tree_markup(self.original['reference.tree.js']), 'section',
                           make_keyring(self.passwords, iterations=FAST))
@@ -524,8 +530,8 @@ class LockBundle(unittest.TestCase):
         def other_level(name, level, data, keyring, *rest, **more):
             return real_page(name, 2 if name == 'index.html' else level, data, keyring, *rest, **more)
 
-        def other_tree(tree, section, keyring, size=None):
-            return real_tree(tree and tree + ' ', section, keyring, size)
+        def other_tree(tree, section, keyring, size=None, entry=None):
+            return real_tree(tree and tree + ' ', section, keyring, size, entry)
 
         def other_offset(name, level, data, keyring, versions, section_at=None, **more):
             return real_page(name, level, data, keyring, versions, 0 if name == 'listed.html' else section_at, **more)
@@ -545,6 +551,68 @@ class LockBundle(unittest.TestCase):
                     self.apply()
                 for password in self.passwords.values():
                     self.assertNotIn(password, str(caught.exception))
+
+    def test_open_work_entry_split_is_exact_and_strict(self):
+        page = kit_page('index.html', entry=ENTRY).decode()
+        stripped, entry, at = split_open_work(page, 'index.html')
+        self.assertEqual((entry, stripped[:at] + entry + stripped[at:]), (ENTRY, page))
+        self.assertEqual(stripped, kit_page('index.html').decode())
+        # Without an entry the offset is the menu's first line, so its presence says nothing.
+        self.assertEqual(split_open_work(stripped, 'index.html'), (stripped, None, at))
+        self.assertEqual(split_open_work('<p>frame</p>', 'frame.html'), ('<p>frame</p>', None, None))
+        self.assertEqual(page_lock.entry_target(ENTRY, 'sub/index.html'), 'sub/listed.html')
+        with self.assertRaisesRegex(ValueError, 'at most one Open work entry'):
+            split_open_work(page.replace(ENTRY, ENTRY + ENTRY), 'x.html')
+        with self.assertRaisesRegex(ValueError, 'cannot cut the Open work entry'):
+            split_open_work(page.replace(ENTRY, '    <a class="xpage" href="a.html">A</a>\n' + ENTRY), 'y.html')
+
+    def test_open_work_entry_is_sealed_with_the_reference_section(self):
+        for name in ('index.html', 'rule.html'):
+            page = kit_page(name, 'source-page reference-page' if name == 'rule.html' else '', entry=ENTRY)
+            self.original[name] = page
+            (self.bundle / name).write_bytes(page)
+        self.apply()
+        locked = files(self.bundle)
+        header = json.loads(re.search(r'id="page-lock-keys">([^<]+)<', locked['index.html'].decode())[1])
+        _, keys = open_keyring(header, self.passwords[2])
+        _, general = open_keyring(header, self.passwords[1])
+        tree = opened_tree(locked['reference.tree.js'], keys)
+        self.assertEqual(tree['entry'], ENTRY)
+        # A general-password reader gets no trace of the list; a reference-password reader gets the page as built.
+        home = opened(locked['index.html'], 'index.html', general)[1]
+        for hidden in (b'open-work', b'Open work', b'listed.html'):
+            self.assertNotIn(hidden, home)
+        self.assertEqual(joined(home, locked['index.html'], tree), self.original['index.html'])
+        self.assertEqual(opened(locked['rule.html'], 'rule.html', keys)[1], self.original['rule.html'])
+        # The offset written into the lock page is the one a page without an entry gets.
+        at = re.search(rb'data-entry-at="(\d+)"', locked['index.html'])[1]
+        self.setUp()
+        self.apply()
+        self.assertEqual(re.search(rb'data-entry-at="(\d+)"', files(self.bundle)['index.html'])[1], at)
+
+    def test_open_work_entry_stays_where_the_general_password_opens_the_list(self):
+        entry = ENTRY.replace('listed.html', 'guide.html')
+        (self.bundle / 'guide.html').write_bytes(kit_page('guide.html', entry=entry))
+        (self.bundle / 'index.html').write_bytes(kit_page('index.html', entry=entry))
+        self.apply()
+        locked = files(self.bundle)
+        header = json.loads(re.search(r'id="page-lock-keys">([^<]+)<', locked['index.html'].decode())[1])
+        _, keys = open_keyring(header, self.passwords[2])
+        _, general = open_keyring(header, self.passwords[1])
+        self.assertIsNone(opened_tree(locked['reference.tree.js'], keys)['entry'])
+        self.assertIn(entry.encode(), opened(locked['index.html'], 'index.html', general)[1])
+
+    def test_a_cut_entry_that_does_not_go_back_together_stops_the_lock(self):
+        (self.bundle / 'index.html').write_bytes(kit_page('index.html', entry=ENTRY))
+        real = page_lock.split_open_work
+
+        def lossy(markup, name):
+            stripped, entry, at = real(markup, name)
+            return (stripped, entry, at) if entry is None else (stripped, entry + ' ', at)
+
+        with patch.object(page_lock, 'split_open_work', lossy):
+            with self.assertRaisesRegex(ValueError, 'could not open index.html again'):
+                self.apply()
 
     def test_a_cut_page_that_does_not_go_back_together_stops_the_lock(self):
         real = page_lock.split_reference
@@ -648,11 +716,11 @@ class PublishWithLock(unittest.TestCase):
                     # What a general-password reader decrypts holds no Reference tree.
                     self.assertEqual(opened(locked[name], name, general)[1], page)
                     for hidden in (b'repo-tree', page_lock_fixture.MARKERS['title'].encode(), b'reference.tree.js',
-                                   b'notes.record.md.html', b'docs.worklog.md.html'):
+                                   b'notes.record.md.html', b'docs.worklog.md.html', b'open-work', b'Open work'):
                         self.assertNotIn(hidden, page, name)
                     named |= named_references(page.decode(), name, names)
                 # Locking is a layer over the ordinary bundle; nothing else changes.
-                self.assertEqual(joined(page, locked[name], tree['section']), data, name)
+                self.assertEqual(joined(page, locked[name], tree), data, name)
             else:
                 self.assertEqual(locked[name], data, name)
         self.assertEqual({name for name, level in levels.items() if level == 2}, reference_pages | {'notes/record.md'})
@@ -691,7 +759,8 @@ class PublishWithLock(unittest.TestCase):
             if level == 2 or name.endswith('.md'):
                 self.assertEqual(page, data, name)
             else:
-                self.assertEqual(page, split_reference(data.decode(), name)[0].encode(), name)
+                # A general page is sealed without its Open work entry and its Reference section.
+                self.assertEqual(page, split_reference(split_open_work(data.decode(), name)[0], name)[0].encode(), name)
 
     def test_plain_copy_without_the_lock_equals_the_bundle(self):
         project = page_lock_fixture.make_project(self.folder / 'project', lock=False)

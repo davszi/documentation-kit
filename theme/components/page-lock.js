@@ -5,7 +5,8 @@
 // page (AES-256-GCM) through WebCrypto, then replaces the document so the
 // kit's components start exactly as on a normal load. For a reader with the
 // reference password it also opens the sealed Reference tree and puts the
-// sidebar's Reference section back into pages that the general password opens.
+// sidebar's Reference section and the menu's Open work entry back into pages
+// that the general password opens.
 // The tab keeps this publish's content keys in sessionStorage. A reader who
 // asks to be remembered keeps the password's derived key in localStorage
 // instead of the password; it opens later publishes until a password changes.
@@ -109,11 +110,21 @@
     return plain.subarray(0, end - 1);
   }
 
-  // A page as built: the publish step cut its Reference section out at byte `at`.
-  function joinSection(plain, at, section) {
+  // A page as built: the publish step cut its Reference section out at byte `at`
+  // and the menu's Open work entry at byte `entryAt`. Each piece goes back at
+  // its offset; at the same offset the entry stands first.
+  function joinSection(plain, at, section, entryAt, entry) {
     var decoder = new TextDecoder('utf-8');
-    if (at === null || typeof section !== 'string') return decoder.decode(plain);
-    return decoder.decode(plain.subarray(0, at)) + section + decoder.decode(plain.subarray(at));
+    var cuts = [];
+    if (typeof entryAt === 'number' && typeof entry === 'string') cuts.push([entryAt, entry]);
+    if (typeof at === 'number' && typeof section === 'string') cuts.push([at, section]);
+    if (cuts.length === 2 && cuts[1][0] < cuts[0][0]) cuts.reverse();
+    var markup = '', done = 0;
+    cuts.forEach(function (cut) {
+      markup += decoder.decode(plain.subarray(done, cut[0])) + cut[1];
+      done = cut[0];
+    });
+    return markup + decoder.decode(plain.subarray(done));
   }
 
   // Locked text files: a readable notice, a marker line, the sealed file in base64.
@@ -133,6 +144,7 @@
   var header = JSON.parse(document.getElementById('page-lock-keys').textContent);
   var pageLevel = Number(shell.getAttribute('data-level'));
   var sectionAt = shell.hasAttribute('data-section-at') ? Number(shell.getAttribute('data-section-at')) : null;
+  var entryAt = shell.hasAttribute('data-entry-at') ? Number(shell.getAttribute('data-entry-at')) : null;
   // The host serves the site's 404.html at every missing address.
   var notFound = shell.hasAttribute('data-not-found');
   var siteRoot = new URL(shell.getAttribute('data-root'), location.href);
@@ -326,7 +338,8 @@
     var tree = await reference;
     // nav.js reads the folder tree from here before it would load reference.tree.js.
     if (tree && typeof tree.tree === 'string') window.docsReferenceTree = tree.tree;
-    var markup = joinSection(plain, pageLevel === 1 ? sectionAt : null, tree && tree.section);
+    var markup = joinSection(plain, pageLevel === 1 ? sectionAt : null, tree && tree.section,
+      pageLevel === 1 ? entryAt : null, tree && tree.entry);
     // A saved key is ready before the lock page has finished loading. Replaced
     // in that state, the written page sometimes ran none of its scripts in
     // Chromium: no reader, no menu, no code chips. So wait for the lock page's

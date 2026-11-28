@@ -34,7 +34,7 @@ owns the shared panel switcher's authoring, behavior and extraction checks.
 
 [Releases and upgrades](topics/releases/releases.md) owns version notes and
 consumer migration steps; `VERSION` holds the current version.
-The current release is 6.0.0. The kit keeps one
+The current release is 6.1.0. The kit keeps one
 [migration guide](topics/releases/migration.md) at a fixed address; it holds
 every step from 5.7.0, each under a heading that says which versions need it.
 At a release, add the new version's steps there, set the tag in its commands

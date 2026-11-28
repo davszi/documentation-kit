@@ -22,10 +22,11 @@ Key layout:
 - every locked file is sealed with AES-256-GCM under its level's key, with a
   fresh random 96-bit nonce and its public bundle path as associated data.
 
-Level-1 pages lose their sidebar Reference section before they are sealed.
-The section and the folder tree go into ``reference.tree.js``, sealed at level
+Level-1 pages lose their sidebar Reference section before they are sealed,
+and the menu's Open work entry when it leads to a level-2 page. The section,
+the entry and the folder tree go into ``reference.tree.js``, sealed at level
 2 and padded, which the browser loads for a reference-password reader and puts
-back where the section was. The Reference index page is padded to the same
+back where they were. The Reference index page is padded to the same
 size. HTML without the kit's sidebar that only Reference pages embed or link
 is level 2 as well. Every page is sealed with ``pad``; the root ``404.html``
 opens at any address. The browser side is ``theme/components/page-lock.js``;
@@ -94,6 +95,8 @@ _SOURCE_HOST_PATH = re.compile(r'/(?:blob|tree)/[^/]+/(.+)$')
 _TREE_TAG = re.compile(r'''<[A-Za-z][^>]*(?:\b(?:class|id)\s*=\s*["']?[^"'>]*\brepo-tree|\bdata-repo-tree)''')
 # The shared shell opens the sidebar with this element; build.py fills it.
 _SIDEBAR = '<nav class="sidebar" id="sidebar">'
+# The class of the menu's Open work entry, which build.py writes as the menu's first line.
+_OPEN_WORK = 'open-work'
 _KIT_PAGE = 'id="sidebar"'
 
 
@@ -271,6 +274,61 @@ def split_reference(markup: str, name: str) -> tuple[str, str | None, int | None
     return stripped, markup[at:until], at
 
 
+def split_open_work(markup: str, name: str) -> tuple[str, str | None, int | None]:
+    """Remove the menu's Open work entry from a page.
+
+    Returns the page without it, the entry with its line break, and the offset
+    of the menu's first line, where the build writes the entry;
+    ``stripped[:at] + entry + stripped[at:]`` is the page. A page without an
+    entry still gets that offset, so the offset says nothing about the entry.
+    A page without the shared sidebar returns no offset.
+    """
+    start = markup.find(_SIDEBAR)
+    if start < 0:
+        return markup, None, None
+    end = markup.find('</nav>', start)
+    if end < 0:
+        raise ValueError(f'The page lock cannot find the end of the sidebar in {name}')
+    try:
+        nodes = [node for top in Structure(markup[start:end + len('</nav>')]).roots for node in top.descendants()]
+    except ValueError as problem:
+        raise ValueError(f'The page lock cannot read the sidebar of {name}: {problem}') from None
+    toc = next((node for node in nodes if node.tag == 'div' and node.attrs.get('id') == 'toc'), None)
+    entries = [node for node in nodes if _OPEN_WORK in (node.attrs.get('class') or '').split()]
+    if toc is None or len(entries) > 1:
+        raise ValueError(f'The page lock expects one sidebar list and at most one Open work entry in {name}')
+    at = start + toc.opening_end + 1
+    if not entries:
+        return markup, None, at if markup[at - 1] == '\n' else None
+    # The entry is the menu's first line, indented, with its own line break.
+    until = start + entries[0].end
+    if entries[0].tag != 'a' or markup[at:start + entries[0].start].strip(' ') or markup[until] != '\n':
+        raise ValueError(f'The page lock cannot cut the Open work entry out of {name}')
+    return markup[:at] + markup[until + 1:], markup[at:until + 1], at
+
+
+def entry_target(entry: str, name: str) -> str:
+    """The bundle path of the page the Open work entry on page ``name`` leads to."""
+    link = _TARGET.search(entry)
+    address = next((group for group in link.groups() if group is not None), '') if link else ''
+    path = unquote(urlsplit(html.unescape(address)).path)
+    return posixpath.normpath(posixpath.join(posixpath.dirname(name), path)) if path else ''
+
+
+def join_page(plain: bytes, at: int | None, section: str | None, entry_at: int | None, entry: str | None) -> bytes:
+    """A page as built, from what its lock page holds: page-lock.js does the same in the browser.
+
+    Each piece goes back at its byte offset in ``plain``; at the same offset the entry stands first.
+    """
+    cuts = sorted(((offset, order, piece.encode('utf-8'))
+                   for order, (offset, piece) in enumerate(((entry_at, entry), (at, section)))
+                   if offset is not None and piece is not None))
+    out, done = b'', 0
+    for offset, _, piece in cuts:
+        out, done = out + plain[done:offset] + piece, offset
+    return out + plain[done:]
+
+
 def tree_markup(data: bytes) -> str:
     """The folder tree that build.py wrote into ``TREE_SCRIPT``."""
     prefix, suffix = f'window.{TREE_GLOBAL} = ', ';\n'
@@ -288,16 +346,18 @@ def padded_size(length: int) -> int:
     return max(TREE_PADDING, 1 << (length - 1).bit_length())
 
 
-def tree_payload(tree: str | None, section: str | None) -> bytes:
-    return json.dumps({'section': section, 'tree': tree}, sort_keys=True, separators=(',', ':')).encode('utf-8')
+def tree_payload(tree: str | None, section: str | None, entry: str | None = None) -> bytes:
+    return json.dumps({'entry': entry, 'section': section, 'tree': tree}, sort_keys=True,
+                      separators=(',', ':')).encode('utf-8')
 
 
-def lock_tree(tree: str | None, section: str | None, keyring: Keyring, size: int | None = None) -> bytes:
-    """``TREE_SCRIPT`` as a script that hands the sealed, padded tree and section to page-lock.js.
+def lock_tree(tree: str | None, section: str | None, keyring: Keyring, size: int | None = None,
+              entry: str | None = None) -> bytes:
+    """``TREE_SCRIPT`` as a script that hands the sealed, padded tree, section and entry to page-lock.js.
 
     JSON ignores the trailing spaces that pad it to ``size`` bytes.
     """
-    data = tree_payload(tree, section)
+    data = tree_payload(tree, section, entry)
     size = padded_size(len(data)) if size is None else size
     if size < len(data):
         raise ValueError(f'The page lock cannot pad {TREE_SCRIPT} to {size} bytes')
@@ -337,6 +397,7 @@ def lock_text(name: str, level: int, data: bytes, keyring: Keyring) -> bytes:
 
 _PAGE_LEVEL = re.compile(r'id="page-lock" data-level="([12])"')
 _PAGE_SECTION = re.compile(r'id="page-lock" data-level="[12]" data-root="[^"]*" data-section-at="(\d+)"')
+_PAGE_ENTRY = re.compile(r'id="page-lock" data-level="[12]" data-root="[^"]*"(?: data-section-at="\d+")? data-entry-at="(\d+)"')
 _PAGE_KEYS = re.compile(r'id="page-lock-keys">([^<]+)<')
 _PAGE_DATA = re.compile(r'id="page-lock-data">([A-Za-z0-9+/=]+)<')
 _TEXT_DATA = re.compile(rf'^{re.escape(FORMAT)} level ([12])\n([A-Za-z0-9+/=]+)$', re.M)
@@ -379,11 +440,12 @@ def open_tree(data: bytes, keys: Mapping[int, bytes]) -> bytes:
 
 
 def lock_page(name: str, level: int, data: bytes, keyring: Keyring, versions: Mapping[str, str],
-              section_at: int | None = None, *, size: int | None = None) -> bytes:
+              section_at: int | None = None, *, size: int | None = None, entry_at: int | None = None) -> bytes:
     """The lock page served at ``name`` instead of the page itself.
 
     ``section_at`` is the byte offset in ``data`` where a reference-password
-    reader's browser puts the sidebar's Reference section back. The page is
+    reader's browser puts the sidebar's Reference section back, and
+    ``entry_at`` the one where it puts the menu's Open work entry. The page is
     sealed padded (``pad``), to ``size`` bytes when given. The site's root
     ``404.html`` opens at any address, because the host serves it at every
     missing one.
@@ -402,6 +464,7 @@ def lock_page(name: str, level: int, data: bytes, keyring: Keyring, versions: Ma
     header = json.dumps(keyring.header, sort_keys=True, separators=(',', ':')).replace('<', '\\u003c')
     values = {'{{ROOT}}': html.escape(prefix or './', quote=True), '{{LEVEL}}': str(level),
               '{{ATTRIBUTES}}': ('' if section_at is None else f' data-section-at="{section_at}"')
+                                + ('' if entry_at is None else f' data-entry-at="{entry_at}"')
                                 + (' data-not-found' if name == NOT_FOUND else ''),
               '{{BASE_CSS}}': base, '{{LOCK_CSS}}': asset('assets/page-lock.css'),
               '{{LOCK_JS}}': asset('assets/page-lock.js'), '{{KEYS}}': header, '{{DATA}}': _b64(sealed)}
@@ -550,51 +613,67 @@ class PageLock:
         levels = html_levels(texts, reference)
         markdown = {name for name in files if name.lower().endswith(MARKDOWN_SUFFIXES)}
         names = reference_names(built, markdown)
-        pages: dict[str, tuple[int, bytes, int | None]] = {}
-        whole: dict[str, bytes] = {}   # a page as it was before its Reference section was cut out
-        sections, named = set(), set()
+        pages: dict[str, tuple[int, bytes, int | None, int | None]] = {}
+        whole: dict[str, bytes] = {}   # a page as it was before anything was cut out of its sidebar
+        sections, entries, named = set(), set(), set()
         for name, text in texts.items():
             if levels[name] == 2:
-                pages[name] = (2, text.encode('utf-8'), None)
+                pages[name] = (2, text.encode('utf-8'), None, None)
                 continue
-            stripped, section, at = split_reference(text, name)
-            # Fail closed: a changed shell must not leave the tree in a general page.
+            # The entry goes first: it stands before the Reference section, whose offset counts without it.
+            without, entry, entry_at = split_open_work(text, name)
+            if entry is not None and levels.get(entry_target(entry, name)) != 2:
+                # The general password opens the list as well, so its readers keep the entry.
+                without, entry = text, None
+            stripped, section, at = split_reference(without, name)
+            # Fail closed: a changed shell must not leave the tree or the entry in a general page.
             if _TREE_TAG.search(stripped):
                 raise ValueError(f'The page lock found Reference markup in {name}, which the general password opens')
+            if entry is not None:
+                if split_open_work(stripped, name)[1] is not None:
+                    raise ValueError(f'The page lock found the Open work entry in {name}, which the general '
+                                     'password opens')
+                entries.add(entry)
             if section is not None:
                 sections.add(section)
+            if section is not None or entry is not None:
                 whole[name] = text.encode('utf-8')
             named |= named_references(stripped, name, names)
-            pages[name] = (1, stripped.encode('utf-8'), None if at is None else len(stripped[:at].encode('utf-8')))
+            offsets = [None if offset is None else len(stripped[:offset].encode('utf-8')) for offset in (at, entry_at)]
+            pages[name] = (1, stripped.encode('utf-8'), *offsets)
         if len(sections) > 1:
             raise ValueError('The page lock found different Reference sections on pages outside the Reference')
+        if len(entries) > 1:
+            raise ValueError('The page lock found different Open work entries on pages outside the Reference')
         tree = tree_markup(files[TREE_SCRIPT].read_bytes()) if script else None
-        section = next(iter(sections), None)
+        section, entry = next(iter(sections), None), next(iter(entries), None)
         # The Reference index lists the whole tree: it gets the tree file's padded size.
-        size = padded_size(max(len(tree_payload(tree, section)), len(pages[index][1]) + 1 if index in pages else 0))
-        envelope = lock_tree(tree, section, keyring, size)
+        size = padded_size(max(len(tree_payload(tree, section, entry)),
+                               len(pages[index][1]) + 1 if index in pages else 0))
+        envelope = lock_tree(tree, section, keyring, size, entry)
         keyring.header['tree'] = hashlib.sha256(envelope).hexdigest()[:10]
 
         locked = {1: Counter(), 2: Counter()}
         readable = Counter()
-        sealed: dict[str, tuple[int, bytes, int | None]] = {}   # what each locked file must open to
+        # What each locked file must open to, and its two offsets.
+        sealed: dict[str, tuple[int, bytes, int | None, int | None]] = {}
         for name, path in files.items():
             suffix = PurePath(name).suffix.lower() or '(no suffix)'
             if name in pages:
-                level, data, at = pages[name]
+                level, data, at, entry_at = pages[name]
                 path.write_bytes(lock_page(name, level, data, keyring, versions, at,
-                                           size=size if name == index else None))
-                sealed[name] = (level, data, at)
+                                           size=size if name == index else None, entry_at=entry_at))
+                sealed[name] = (level, data, at, entry_at)
                 locked[level][suffix] += 1
             elif name.lower().endswith(MARKDOWN_SUFFIXES):
-                sealed[name] = (2, path.read_bytes(), None)
+                sealed[name] = (2, path.read_bytes(), None, None)
                 path.write_bytes(lock_text(name, 2, sealed[name][1], keyring))
                 locked[2][suffix] += 1
             elif name != TREE_SCRIPT:
                 readable[suffix] += 1
         (bundle / TREE_SCRIPT).write_bytes(envelope)
         locked[2]['.js'] += 1
-        self._open_again(bundle, keyring, sealed, tree_payload(tree, section), whole, section)
+        self._open_again(bundle, keyring, sealed, tree_payload(tree, section, entry), whole, section, entry)
         for target, data in assets.items():
             (bundle / target).parent.mkdir(parents=True, exist_ok=True)
             (bundle / target).write_bytes(data)
@@ -609,15 +688,17 @@ class PageLock:
                          'general-password readers see those names.')
         return '\n'.join(lines)
 
-    def _open_again(self, bundle: Path, keyring: Keyring, sealed: Mapping[str, tuple[int, bytes, int | None]],
-                    tree: bytes, whole: Mapping[str, bytes], section: str | None) -> None:
+    def _open_again(self, bundle: Path, keyring: Keyring,
+                    sealed: Mapping[str, tuple[int, bytes, int | None, int | None]],
+                    tree: bytes, whole: Mapping[str, bytes], section: str | None, entry: str | None = None) -> None:
         """Fail unless the files just written open, with the passwords, to exactly what was locked.
 
         Each password goes through the key derivation a browser runs and must
         open its own level. Each locked file is read back from disk and must
         carry its level and the key header and open to the bytes that were
-        locked. A page whose Reference section was cut out must also go back
-        together, at the offset written into its lock page, to the page it was.
+        locked. A page whose Reference section or Open work entry was cut out
+        must also go back together, at the offsets written into its lock page,
+        to the page it was.
         This runs in Python: it does not test the reader script, nor the rest
         of the lock page around the sealed text.
         """
@@ -631,16 +712,17 @@ class PageLock:
             keys.update(opened[1])
         if keys != keyring.content:
             raise ValueError(failure.format('the keys'))
-        for name, (level, plain, at) in sealed.items():
+        for name, (level, plain, at, entry_at) in sealed.items():
             data = (bundle / name).read_bytes()
             try:
                 same = open_locked(name, data, keys) == (level, plain)
                 if same and not name.lower().endswith(MARKDOWN_SUFFIXES):
-                    written = _PAGE_SECTION.search(_utf8(name, data))
-                    same = (page_header(name, data) == keyring.header
-                            and (int(written[1]) if written else None) == at)
+                    text = _utf8(name, data)
+                    written = [int(found[1]) if found else None
+                               for found in (_PAGE_SECTION.search(text), _PAGE_ENTRY.search(text))]
+                    same = page_header(name, data) == keyring.header and written == [at, entry_at]
                 if same and name in whole:
-                    same = plain[:at] + section.encode('utf-8') + plain[at:] == whole[name]
+                    same = join_page(plain, at, section, entry_at, entry) == whole[name]
             except (InvalidTag, ValueError):
                 same = False
             if not same:

@@ -187,7 +187,8 @@ def vectors() -> dict:
     # A later publish with the same passwords, and one after the general password changed.
     again = page_lock.make_keyring(passwords)
     changed = page_lock.make_keyring({1: secrets.token_urlsafe(24), 2: passwords[2]})
-    tree = page_lock.lock_tree('<ul class="repo-tree-list"></ul>', '\n<div class="repo-tree"></div>', keyring)
+    tree = page_lock.lock_tree('<ul class="repo-tree-list"></ul>', '\n<div class="repo-tree"></div>', keyring,
+                               entry='    <a class="open-work" href="open.html">Open work</a>\n')
     files = []
     for path, level, text in (('guide.html', 1, '<p>Topic ünïcode ✓</p>'), ('rule.html', 2, '<p>Reference</p>'),
                               ('notes/record.md', 2, RECORD)):

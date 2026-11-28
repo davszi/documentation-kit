@@ -2,6 +2,42 @@
 
 Chronology is append-only, newest first. Shared policy stays in `rules/`.
 
+## 2026-11-28 — Open work shows on a locked site once the reference password is in; 6.1.0 prepared
+
+- The owner decided on this day: "open work should be on true on default,
+  but always not show on password locked until password gets in". Until
+  now the entry was off on a locked site unless the project wrote
+  `open_work_entry = true`, and then the general password's readers saw it
+  and its count.
+- `tooling/build.py` writes the entry on every site unless
+  `open_work_entry = false`. `tooling/page_lock.py` cuts it out of every
+  page the general password opens when the list needs the reference
+  password, seals it in `reference.tree.js` beside the Reference section,
+  and writes the place of the menu's first line into the lock page as
+  `data-entry-at`, with or without an entry. `theme/components/page-lock.js`
+  puts both pieces back for a reader with the reference password. `publish`
+  still reads every locked page back and stops when a page does not go back
+  together.
+- The owner's words leave open which password counts. The list is a
+  Reference page, so the entry follows the reference password, the one that
+  opens it. Before any password a locked page shows nothing of the menu;
+  that was so before this change.
+- Rules: [site authoring](../rules/site/authoring.md) and
+  [page lock](../rules/site/publication.md#what-is-locked) say the new
+  behaviour; the limit that named the entry is gone from the page lock's
+  list. Release notes and the migration guide carry 6.1.0, argued as a
+  minor release: nothing new is published and no passing project stops.
+- Checks run: 556 unit tests ran, 554 passed, 2 skipped; the WebCrypto
+  cross-check; the page lock's browser suite in Chromium, which now asserts
+  that a general-password reader's page holds no `open-work` and that a
+  reference-password reader gets the entry as the menu's first line; build
+  and strict lint of the kit's site. A scratch clone of adaptation at
+  `c7e371b`, published with throwaway passwords: 18 pages for the general
+  password, none holds the entry; 31 Reference pages hold it; the sealed
+  entry carries the count 10.
+- Not run: Firefox and WebKit for this change; the full check script; a
+  review. Nothing is tagged or pushed.
+
 ## 2026-11-28 — Release 6.0.0
 
 - The owner gave the word for the release on this day: "looks good, we

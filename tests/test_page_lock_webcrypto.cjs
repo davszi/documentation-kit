@@ -46,13 +46,21 @@ const reference = throwaway();
   // The sealed Reference tree opens with the reference password's level-2 key only.
   const sealedTree = /window\.docsLockedReferenceTree = "([A-Za-z0-9+\/=]+)";/.exec(tree)[1];
   const reference_tree = await lock.openTree(both.keys[2], sealedTree);
-  assert.deepEqual(reference_tree, {section: '\n<div class="repo-tree"></div>', tree: '<ul class="repo-tree-list"></ul>'});
+  assert.deepEqual(reference_tree, {entry: '    <a class="open-work" href="open.html">Open work</a>\n',
+    section: '\n<div class="repo-tree"></div>', tree: '<ul class="repo-tree-list"></ul>'});
   assert.ok(lock.fromBase64(sealedTree).length >= 65536, 'the tree is padded');
   await assert.rejects(lock.openTree(both.keys[1], sealedTree), {name: 'OperationError'});
   // The offset counts UTF-8 bytes: 14 for the opening tag and 2 for "ä".
   const joined = lock.joinSection(new TextEncoder().encode('<div id="toc">ä\n  </div>'), 16,
     '\n<div class="repo-tree"></div>');
   assert.equal(joined, '<div id="toc">ä\n<div class="repo-tree"></div>\n  </div>');
+  // The Open work entry goes back at its own offset; at the same offset it stands before the section.
+  const menu = new TextEncoder().encode('<div id="toc">\nä\n  </div>');
+  assert.equal(lock.joinSection(menu, 17, '\n<i></i>', 15, '<a></a>\n'), '<div id="toc">\n<a></a>\nä\n<i></i>\n  </div>');
+  assert.equal(lock.joinSection(menu, 15, '\n<i></i>', 15, '<a></a>\n'), '<div id="toc">\n<a></a>\n\n<i></i>ä\n  </div>');
+  assert.equal(lock.joinSection(menu, null, null, 15, '<a></a>\n'), '<div id="toc">\n<a></a>\nä\n  </div>');
+  // A reader without the reference tree gets the page as it was sealed.
+  assert.equal(lock.joinSection(menu, 17, null, 15, null), '<div id="toc">\nä\n  </div>');
   assert.deepEqual(lock.unpad(new Uint8Array([60, 0x80, 0, 0])), new Uint8Array([60]));
   assert.deepEqual(lock.unpad(new Uint8Array([0x80, 0x80])), new Uint8Array([0x80]));
   assert.throws(() => lock.unpad(new Uint8Array([60, 0, 0])), /Malformed page padding/);

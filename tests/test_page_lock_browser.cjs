@@ -134,7 +134,8 @@ async function referenceTree(page) {
     await waitUnlocked(page);
     let html = await page.content();
     assert.ok(html.includes(MARKERS.topic));
-    for (const hidden of ['repo-tree', MARKERS.title, 'Browse by folder', 'notes.record.md.html', 'reference.index.html'])
+    for (const hidden of ['repo-tree', MARKERS.title, 'Browse by folder', 'notes.record.md.html', 'reference.index.html',
+      'open-work', 'Open work', 'docs.open.open.md.html'])
       assert.ok(!html.includes(hidden), 'a general-password reader sees no Reference trace: ' + hidden);
     // The shared reader checks: chapters, next/previous, hash history, pair view and pinning.
     const reader = await readerChecks(page, {url: url('guide.html'), expectedChapters: 8});
@@ -184,6 +185,14 @@ async function referenceTree(page) {
     assert.ok((await page.content()).includes(MARKERS.widgets));
     tree = await referenceTree(page);
     assert.ok(tree && tree.files.length === results.referenceTree.files && tree.current.length === 0, JSON.stringify(tree));
+    // The menu's Open work entry is back as well, as its first line, and opens the list.
+    const openWork = await page.evaluate(() => {
+      const entry = document.querySelector('#toc > a.open-work');
+      return entry && {first: entry === document.getElementById('toc').firstElementChild, href: entry.getAttribute('href'),
+        label: entry.querySelector('.open-work-label').textContent, shown: entry.getBoundingClientRect().height > 0};
+    });
+    assert.deepEqual(openWork, {first: true, href: 'docs.open.open.md.html', label: 'Open work', shown: true});
+    results.openWork = openWork;
     await page.click('.ptab[data-ptab="1"]');
     assert.equal(await page.locator('.ptab-panel[data-ptab="1"]').isVisible(), true);
     assert.equal(await page.locator('.ptab-panel[data-ptab="0"]').isVisible(), false);

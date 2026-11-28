@@ -176,7 +176,7 @@ says how to check and create it.
 The kit is versioned in `VERSION` and tagged `v<version>`. [Releases and
 upgrades](docs/topics/releases/releases.md) lists what each version changes for
 consumers and the migration steps; 1.0.0 is the first stable version.
-The current release is 6.0.0. The kit keeps one [migration guide](docs/topics/releases/migration.md), at a fixed address, which holds every step from 5.7.0. The guides of earlier versions are in the repository at the tag `v5.9.0`.
+The current release is 6.1.0. The kit keeps one [migration guide](docs/topics/releases/migration.md), at a fixed address, which holds every step from 5.7.0. The guides of earlier versions are in the repository at the tag `v5.9.0`.
 
 Then run the [project conformance check](rules/conformance.md) and report its
 findings. Review changed human pages at wide and narrow widths before committing the
