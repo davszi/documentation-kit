@@ -558,12 +558,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const was = fittedFaces.get(face) || {lift: 0, drop: 0};
       let room = {lift: 0, drop: 0};
       // Only a face that opens the chapter, in the one-chapter view, is fitted:
-      // the same faces the margin rule in slide-face.css names.
-      if (!full && !paired && !presenting && topic.body.clientHeight > 0 && topic.section.offsetWidth > 0 && face.matches(leadingFace)) {
+      // the same faces the margin rule in slide-face.css names. The chapter must
+      // also scroll: a body without a height limit (print, a review capture that
+      // removes the limits) has no window, and its height would include the room
+      // measured from it, so the page would grow on every pass.
+      const leads = !full && !paired && !presenting && topic.body.clientHeight > 0 && topic.section.offsetWidth > 0 && face.matches(leadingFace);
+      const bodyStyle = leads ? window.getComputedStyle(topic.body) : null;
+      if (leads && /auto|scroll/.test(bodyStyle.overflowY)) {
         // Neighbouring chapters are drawn smaller; measure in the chapter's own pixels.
         const scale = topic.section.getBoundingClientRect().width / topic.section.offsetWidth || 1;
         const top = (face.getBoundingClientRect().top - topic.body.getBoundingClientRect().top) / scale + topic.body.scrollTop - was.lift;
-        const dock = parseFloat(window.getComputedStyle(topic.body).getPropertyValue('--reader-dock')) || 0;
+        const dock = parseFloat(bodyStyle.getPropertyValue('--reader-dock')) || 0;
         room = faceRoom(topic.body.clientHeight, top, face.offsetHeight, dock);
       }
       fittedFaces.set(face, room);

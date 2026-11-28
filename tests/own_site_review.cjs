@@ -6,7 +6,7 @@ const fs = require('node:fs/promises');
 const http = require('node:http');
 const path = require('node:path');
 const assert = require('node:assert/strict');
-const {settle, checkLayout, setView, goHash, assertSlideFaces} = require('../tooling/browser_checks.cjs');
+const {settle, checkLayout, setView, goHash, assertSlideFaces, captureElement} = require('../tooling/browser_checks.cjs');
 const kit = path.resolve(__dirname, '..');
 const root = path.join(kit, '.build/docs');
 const output = path.join(kit, '.build/visual-review/own-site');
@@ -421,6 +421,28 @@ async function reviewFrame(browser, origin) {
   });
   assert.ok(landed > -40 && landed < 120, 'Continue reading brings the full chapter to the top: ' + landed);
   checked.push('Full chapter row at 900, 680 and 560 px', 'face alone in the first view', 'row leaves after a scroll', 'island steps back', 'Continue reading');
+
+  // A review capture of the whole chapter removes the chapter's height limits, so there is no first
+  // view to fit the face into: the face gets no room and the page keeps one height. A project's
+  // browser check found on 5.10.0 that the room fed the height it was measured from, and the page
+  // grew on every frame until the capture timed out. A page of its own: the capture is not undone.
+  const whole = await context.newPage();
+  await whole.goto(`${origin}/html/${PRESENT_PAGE}.html#${FACE_CHAPTER}`, {waitUntil: 'networkidle'});
+  await settle(whole);
+  const wholeFace = '[data-reader-chapter].topic-active [data-slide-face]';
+  assert.ok(await whole.locator(wholeFace).evaluate(node => node.hasAttribute('data-reader-face-lifted')), 'the face is fitted before the capture');
+  await captureElement(whole, wholeFace, path.join(output, '1600-face-chapter-unclipped.png'), {unclip: true});
+  const heights = [];
+  for (let pass = 0; pass < 3; pass++) {
+    heights.push(await whole.evaluate(() => document.documentElement.scrollHeight));
+    await whole.waitForTimeout(150);
+  }
+  const unfitted = await whole.locator(wholeFace).evaluate(node => [node.hasAttribute('data-reader-face-lifted'),
+    node.style.getPropertyValue('--reader-face-lift'), node.style.getPropertyValue('--reader-face-drop')]);
+  assert.ok(heights[0] === heights[1] && heights[1] === heights[2], 'the page keeps one height after an unclipped capture: ' + JSON.stringify(heights));
+  assert.deepEqual(unfitted, [false, '0px', '0px'], 'a chapter without a window gives its face no room');
+  await whole.close();
+  checked.push('unclipped capture of a face chapter keeps one height');
 
   // Click zones: each covers exactly the strip of its neighbour that shows.
   await page.goto(`${origin}/html/${PRESENT_PAGE}.html#${PLAIN_CHAPTERS[1]}`, {waitUntil: 'networkidle'});
